@@ -1,0 +1,110 @@
+{
+  "title": "HealthTech | Operator Exposure Dashboard",
+  "description": "Monitor and manage exposure to dust, vibration, and noise.",
+  "layout": {
+    "overview": "Overview"
+  },
+  "overview" : {
+    "title": "Overview of the {{view}}",
+    "day": "day",
+    "week": "week",
+    "month": "month",
+    "dust": "Dust",
+    "vibration": "Vibration",
+    "noise": "Noise"
+  },
+  "dustExposure": {
+    "title": "Dust Exposure"
+  },
+  "vibrationExposure": {
+    "title": "Vibration Exposure"
+  },
+  "noiseExposure": {
+    "title": "Noise Exposure"
+  },
+  "exposure_summary": {
+    "title": "Exposure Summary",
+    "greenHourText" : "Hours with safe amount of exposure",
+    "greenDayText" : "Days with safe amount of exposure",
+    "orangeHourText" : "Hours close to exposure limit",
+    "orangeDayText" : "Days close to exposure limit",
+    "redHourText" : "Hours above exposure limit",
+    "redDayText" : "Days above exposure limit",
+    "dust": "Dust",
+    "vibration": "Vibration",
+    "noise": "Noise",
+    "allSensors": "All sensors",
+    "all": "Every sensor"
+  },
+  "line_chart": {
+    "danger": "Exposure Limit",
+    "warning": "Action Limit",
+    "safe": "Safely within exposure limit"
+  },
+  "monthly_view": {
+    "safe": "Safe day on",
+    "warning": "Warnings issued on",
+    "danger": "Danger: Exposure limits exceeded on"
+  },
+  "daily_notes": {
+    "dayTitle": "Daily Notes",
+    "daySubtitle": "Note for {{day}}:",
+    "writeHere": "Write here...",
+    "edit": "Edit",
+    "save": "Save",
+    "notesFromThis": "Notes from this ",
+    "day": "day",
+    "week": "week",
+    "month": "month"
+  },
+  "buttons": {
+    "confirm": "Ok",
+    "close": "Close"
+  },
+  "english": "English",
+  "norwegian": "Norwegian",
+
+  "time": "Time",
+  "today": "Today",
+
+  "safe": "Safe",
+  "warning": "Warning",
+  "danger": "Danger",
+
+  "light": "Light",
+  "dark": "Dark",
+  "system": "System",
+
+  "dust": "Dust",
+  "vibration": "Vibration",
+  "noise": "Noise",
+
+  "views": "Views",
+  "day": "Day",
+  "week": "Week",
+  "month": "Month",
+  "notifications": "Notifications",
+  "popup": {
+    "toDay": "See details",
+    "notesTitle": "Note for this day:",
+    "exposureTitle": "Exposure:",
+    "safe": "No exposure limit was exceeded",
+    "warning": "An exposure limit was almost exceeded",
+    "danger": "An exposure limit was exceeded",
+    "openDaily": "See details for information about type of exposure",
+    "eventTitle": "{{day}}, from {{start}} to {{end}}",
+    "notifTitle": "Notification received {{date}}"
+  },
+  "profile": {
+    "title": "Profile",
+    "location": "Location",
+    "name": "Name",
+    "prefLanguage": "Preferred language",
+    "secReg": "Current security regulations"
+  },
+  "loadingData": "Loading data...",
+  "errorLoadingData": "Something went wrong while fetching sensor data.",
+  "noData": "No exposure data found for this day",
+  "points": "Points",
+  "dust_y_axis": "µg/m³"
+}

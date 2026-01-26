@@ -1,0 +1,58 @@
+# .NET build outputs
+bin/
+obj/
+out/
+
+# Rider IDE files
+.idea/
+*.sln.iml
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet packages
+*.nupkg
+packages/
+*.snupkg
+
+# Build results
+*.dll
+*.exe
+*.app
+*.log
+
+# Others
+*.pdb
+*.cache
+*.db
+*.mdb
+*.pidb
+*.svclog
+*.scc
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Rider workspace
+*.DotSettings.user
+
+# Test results
+TestResults/
+*.coverage
+*.coveragexml
+
+# Publish output
+publish/
+
+# Csv files
+*.csv
+
+# Environment files
+.env

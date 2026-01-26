@@ -1,0 +1,6 @@
+@backend_HostAddress = http://localhost:5063
+
+GET {{backend_HostAddress}}/exposure/noise
+Accept: application/json
+
+###

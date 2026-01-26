@@ -1,0 +1,9 @@
+**/bin/
+**/obj/
+**/*.user
+**/*.suo
+.git
+.gitignore
+.vscode
+.idea
+Dockerfile*   # keep only if at root; not needed if Dockerfile lives under src/Backend

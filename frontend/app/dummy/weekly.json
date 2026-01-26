@@ -1,0 +1,30 @@
+[
+    { "date": "2025-09-08", "hours": [
+        { "hourNo": 1, "status": "green" }, { "hourNo": 2, "status": "green" }, { "hourNo": 3, "status": "green" }, { "hourNo": 4, "status": "green" },
+        { "hourNo": 5, "status": "green" }, { "hourNo": 6, "status": "orange" }, { "hourNo": 7, "status": "red" }, { "hourNo": 8, "status": "red" }
+    ] },
+    { "date": "2025-09-09", "hours": [
+        { "hourNo": 1, "status": "green" }, { "hourNo": 2, "status": "green" }, { "hourNo": 3, "status": "green" }, { "hourNo": 4, "status": "orange" },
+        { "hourNo": 5, "status": "orange" }, { "hourNo": 6, "status": "orange" }, { "hourNo": 7, "status": "orange" }, { "hourNo": 8, "status": "red" }
+    ] },
+    { "date": "2025-09-10", "hours": [
+        { "hourNo": 1, "status": "green" }, { "hourNo": 2, "status": "green" }, { "hourNo": 3, "status": "green" }, { "hourNo": 4, "status": "green" },
+        { "hourNo": 5, "status": "green" }, { "hourNo": 6, "status": "green" }, { "hourNo": 7, "status": "green" }, { "hourNo": 8, "status": "green" }
+    ] },
+    { "date": "2025-09-11", "hours": [
+        { "hourNo": 1, "status": "green" }, { "hourNo": 2, "status": "green" }, { "hourNo": 3, "status": "orange" }, { "hourNo": 4, "status": "red" },
+        { "hourNo": 5, "status": "red" }, { "hourNo": 6, "status": "red" }, { "hourNo": 7, "status": "red" }, { "hourNo": 8, "status": "red" }
+    ] },
+    { "date": "2025-09-12", "hours": [
+        { "hourNo": 1, "status": "green" }, { "hourNo": 2, "status": "green" }, { "hourNo": 3, "status": "green" }, { "hourNo": 4, "status": "green" },
+        { "hourNo": 5, "status": "green" }, { "hourNo": 6, "status": "green" }, { "hourNo": 7, "status": "green" }, { "hourNo": 8, "status": "green" }
+    ] },
+    { "date": "2025-09-13", "hours": [
+        { "hourNo": 1, "status": "none" }, { "hourNo": 2, "status": "none" }, { "hourNo": 3, "status": "none" }, { "hourNo": 4, "status": "none" },
+        { "hourNo": 5, "status": "none" }, { "hourNo": 6, "status": "none" }, { "hourNo": 7, "status": "none" }, { "hourNo": 8, "status": "none" }
+    ] },
+    { "date": "2025-09-14", "hours": [
+        { "hourNo": 1, "status": "none" }, { "hourNo": 2, "status": "none" }, { "hourNo": 3, "status": "none" }, { "hourNo": 4, "status": "none" },
+        { "hourNo": 5, "status": "none" }, { "hourNo": 6, "status": "none" }, { "hourNo": 7, "status": "none" }, { "hourNo": 8, "status": "none" }
+    ] }
+]
