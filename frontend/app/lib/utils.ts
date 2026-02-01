@@ -69,6 +69,6 @@ export const makeCumulative = (
 			currentDate = point.time;
 		}
 		sum += point.value;
-		return { time: point.time, value: sum };
+		return { time: point.time, value: sum, dangerLevel: point.dangerLevel };
 	});
 };

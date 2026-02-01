@@ -4,13 +4,14 @@ import type { View } from "@/features/views/views";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { type DangerKey, dangerLevels } from "@/lib/danger-levels";
 import type { AllSensors, SensorDataResponseDto } from "@/lib/dto";
-import { thresholds } from "@/lib/thresholds";
 import { cn } from "@/lib/utils";
 import { Card } from "@/ui/card";
 import { useTranslation } from "react-i18next";
 
+type ExposureType = Sensor | "all";
+
 type SummaryProps = {
-	exposureType: Sensor | "all";
+	exposureType: ExposureType;
 	data: Array<SensorDataResponseDto> | AllSensors | undefined;
 };
 
@@ -156,24 +157,19 @@ type SummaryType = {
 
 const getSingleSummary = (
 	view: View,
-	sensor: Sensor,
+	exposureType: ExposureType,
 	data: Array<SensorDataResponseDto>,
 ): SummaryType => {
-	const summaryData = { safeCount: 0, dangerCount: 0, warningCount: 0 };
+	const summaryData = {
+		safeCount: data.filter((d) => d.dangerLevel === "safe").length,
+		dangerCount: data.filter((d) => d.dangerLevel === "danger").length,
+		warningCount: data.filter((d) => d.dangerLevel === "warning").length,
+	};
 
-	const threshold = thresholds[sensor];
-
-	for (const item of data) {
-		if (item.value < threshold.warning) {
-			summaryData.safeCount++;
-		} else if (item.value < threshold.danger) {
-			summaryData.warningCount++;
-		} else {
-			summaryData.dangerCount++;
-		}
-	}
-
-	if (view === "day") {
+	// In the 'all' type we use hour granularity instead of minute granularity for the day view, so we don't need to adjust here TODO: This override is a bit messy
+	//TODO: This calculation doesn't work because it assumes perfect data with one entry per minute - related to issue #HLTH-11
+	if (view === "day" && exposureType !== "all") {
+		console.log("was dumb", exposureType);
 		summaryData.dangerCount = Math.ceil(summaryData.dangerCount / 60);
 		summaryData.warningCount = Math.round(summaryData.warningCount / 60);
 		summaryData.safeCount = Math.floor(summaryData.safeCount / 60);
@@ -182,22 +178,59 @@ const getSingleSummary = (
 	return summaryData;
 };
 
+// TODO: Rewrite this method
 const getSummaryForAll = (view: View, data: AllSensors): SummaryType => {
-	let allData = Object.entries(data)
-		.map(
-			([sensor, sensorData]) =>
-				data && getSingleSummary(view, sensor as Sensor, sensorData.data ?? []),
-		)
-		.reduce(
-			(acc: SummaryType, curr) => {
-				if (!curr) return acc;
-				acc.safeCount += curr.safeCount;
-				acc.dangerCount += curr.dangerCount;
-				acc.warningCount += curr.warningCount;
-				return acc;
-			},
-			{ safeCount: 0, dangerCount: 0, warningCount: 0 },
-		);
-	if (!allData) allData = { safeCount: 0, dangerCount: 0, warningCount: 0 };
-	return allData;
+	if (view === "day") {
+		let allData = Object.entries(data)
+			.map(
+				([sensor, sensorData]) =>
+					data && getSingleSummary(view, "all", sensorData.data ?? []),
+			)
+			.reduce(
+				(acc: SummaryType, curr) => {
+					if (!curr) return acc;
+					acc.safeCount += curr.safeCount;
+					acc.dangerCount += curr.dangerCount;
+					acc.warningCount += curr.warningCount;
+					return acc;
+				},
+				{ safeCount: 0, dangerCount: 0, warningCount: 0 },
+			);
+		if (!allData) allData = { safeCount: 0, dangerCount: 0, warningCount: 0 };
+		return allData;
+	}
+
+	//TODO: This will always be a bit wrong because we only show hours 8-16 in the calendar but have more data than that. also we should only remove time duplicates if we're not on day view as that's the only time we show all three sensors at once
+
+	const timePeriodDangerLevels = new Map<string, DangerKey>();
+
+	Object.entries(data).forEach(([sensor, sensorData]) => {
+		(sensorData.data ?? []).forEach((item) => {
+			const timeKey = new Date(item.time).toISOString();
+			const existingLevel = timePeriodDangerLevels.get(timeKey);
+
+			// Keep the worst danger level for each time period
+			if (
+				!existingLevel ||
+				item.dangerLevel === "danger" ||
+				(item.dangerLevel === "warning" && existingLevel === "safe")
+			) {
+				timePeriodDangerLevels.set(timeKey, item.dangerLevel);
+			}
+		});
+	});
+
+	const summaryData = {
+		safeCount: 0,
+		warningCount: 0,
+		dangerCount: 0,
+	};
+
+	timePeriodDangerLevels.forEach((level) => {
+		if (level === "safe") summaryData.safeCount++;
+		else if (level === "warning") summaryData.warningCount++;
+		else if (level === "danger") summaryData.dangerCount++;
+	});
+
+	return summaryData;
 };

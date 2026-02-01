@@ -30,13 +30,16 @@ export default function Home() {
 	const translatedView = t(($) => $.overview[view]);
 	const { date, setDate } = useDate();
 
+	// The overview daily page shows hour granularity for all sensors instead of minute granularity, so we override it here
+	const granularity = view === "day" ? "hour" : undefined;
+
 	const sensorQueries = useMemo(
 		() =>
 			sensors.map((sensor) => ({
 				sensor,
-				query: buildSensorQuery(sensor, view, date),
+				query: buildSensorQuery(sensor, view, date, granularity),
 			})),
-		[view, date],
+		[view, date, granularity],
 	);
 
 	const results = useQueries({
@@ -60,7 +63,7 @@ export default function Home() {
 		(res) => res.isLoading,
 	);
 	const isErrorAny = Object.values(everySensorData).some((res) => res.isError);
-
+	
 	return (
 		<div className="flex w-full flex-col items-center md:items-start">
 			<div className="mb-4 flex w-full flex-col items-start gap-2 md:mb-0 md:flex-row md:justify-between">

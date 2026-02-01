@@ -5,9 +5,8 @@ import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { sensors } from "@/features/sensor-picker/sensors";
+import type { DangerKey } from "@/lib/danger-levels";
 import type { AllSensors } from "@/lib/dto";
-import { thresholds } from "@/lib/thresholds";
-import { makeCumulative } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts";
@@ -21,35 +20,24 @@ const generateChartData = (): Array<Record<string, Sensor>> =>
 		),
 	}));
 
-function aggregateHourlyMax(data: AllSensors): Record<Sensor, Array<number>> {
-	const _data = {
-		dust: data.dust,
-		vibration: {
-			data: makeCumulative(data.vibration.data ?? []),
-			isLoading: data.vibration.isLoading,
-			isError: data.vibration.isError,
-		},
-		noise: data.noise,
-	};
-	const result = {} as Record<Sensor, Array<number>>;
-
-	(Object.keys(_data) as Array<Sensor>).forEach((sensor) => {
-		const sensorData = _data[sensor].data ?? [];
-		const hourlyMax = Array(24).fill(-1);
-
-		for (const { time, value } of sensorData) {
-			const hour = new Date(time).getUTCHours();
-			if (value > hourlyMax[hour]) {
-				hourlyMax[hour] = value;
-			}
-		}
-
-		result[sensor] = hourlyMax;
-	});
-
-	return result;
+function getHourlyDangerLevels(data: AllSensors): Record<Sensor, Array<DangerKey | null>> {
+  const result = {} as Record<Sensor, Array<DangerKey | null>>;
+  
+  sensors.forEach((sensor) => {
+    const hourlyLevels = Array(24).fill(null);
+    
+    for (const item of data[sensor].data ?? []) {
+      const hour = new Date(item.time).getUTCHours();
+      hourlyLevels[hour] = item.dangerLevel;
+    }
+    
+    result[sensor] = hourlyLevels;
+  });
+  
+  return result;
 }
 
+//TODO: Here it says vibration 9-10 is safe, but in vibration week chart it says 9-10 warning. But looking at the vibration day chart, there is a point between 9 and 10 that is above warning level. So maybe the week chart is wrong, or maybe the date timezones again
 export function DailyBarChart({
 	data,
 	chartTitle,
@@ -67,7 +55,7 @@ export function DailyBarChart({
 	const totalHours = endHour - startHour + 1;
 	const hours = Array.from({ length: totalHours }, (_, i) => startHour + i);
 
-	const hourlyMax = aggregateHourlyMax(data);
+	const hourlyDangerLevels = getHourlyDangerLevels(data);
 
 	//the default color is var(--card), i.e. same as background
 	const chartConfig = Object.fromEntries(
@@ -119,15 +107,14 @@ export function DailyBarChart({
 							>
 								{generateChartData().map((entry, index) => {
 									const sensor = entry.sensor;
-									const _threshold = thresholds[entry.sensor];
 									const i = Number(key);
 
 									let color = chartConfig[key].color;
-									if (hourlyMax[sensor][i] > _threshold.danger) {
+									if (hourlyDangerLevels[sensor][i] === "danger") {
 										color = "var(--danger)";
-									} else if (hourlyMax[sensor][i] > _threshold.warning) {
+									} else if (hourlyDangerLevels[sensor][i] === "warning") {
 										color = "var(--warning)";
-									} else if (hourlyMax[sensor][i] > -1) {
+									} else if (hourlyDangerLevels[sensor][i] === "safe") {
 										color = "var(--safe)";
 									}
 									if (color === `var(--card)`) {
@@ -140,7 +127,7 @@ export function DailyBarChart({
 											onClick={() =>
 												navigate({
 													pathname: entry.sensor,
-													search: `?view=Day&date=${date.toLocaleDateString("en-CA")}`,
+													search: `?view=Day&date=${date.toLocaleDateString("en-CA")}`,//TODO: Why en-CA?
 												})
 											}
 											key={`cell-${index}-${key}`}

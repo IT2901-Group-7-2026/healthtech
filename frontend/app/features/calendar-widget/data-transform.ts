@@ -1,47 +1,15 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import type { AllSensors, SensorDataResponseDto } from "@/lib/dto";
-import { thresholds } from "@/lib/thresholds";
 import type { MonthData } from "./calendar-widget";
-
-const _mapMonthDataToDangerLists = (
-	data: Array<SensorDataResponseDto>,
-	sensor: Sensor,
-) => {
-	const safe: Array<Date> = [];
-	const warning: Array<Date> = [];
-	const danger: Array<Date> = [];
-	const _thresholds = thresholds[sensor];
-
-	Object.values(data).forEach((item) => {
-		if (item.value < _thresholds.warning) {
-			safe.push(new Date(item.time));
-		} else if (item.value < _thresholds.danger) {
-			warning.push(new Date(item.time));
-		} else {
-			danger.push(new Date(item.time));
-		}
-	});
-
-	return { safe, warning, danger };
-};
 
 export const mapSensorDataToMonthLists = (
 	data: Array<SensorDataResponseDto>,
 	relevantSensor: Sensor,
 ): MonthData => {
-	const safeDates: Array<Date> = [];
-	const warningDates: Array<Date> = [];
-	const dangerDates: Array<Date> = [];
+	const safeDates: Array<Date> = data.filter(d => d.dangerLevel === "safe").map(d => new Date(d.time));
+	const warningDates: Array<Date> = data.filter(d => d.dangerLevel === "warning").map(d => new Date(d.time));
+	const dangerDates: Array<Date> = data.filter(d => d.dangerLevel === "danger").map(d => new Date(d.time));
 
-	Object.values(data).forEach((item) => {
-		if (item.value < thresholds[relevantSensor].warning) {
-			safeDates.push(new Date(item.time));
-		} else if (item.value < thresholds[relevantSensor].danger) {
-			warningDates.push(new Date(item.time));
-		} else {
-			dangerDates.push(new Date(item.time));
-		}
-	});
 	return {
 		safe: { [relevantSensor]: safeDates },
 		warning: { [relevantSensor]: warningDates },

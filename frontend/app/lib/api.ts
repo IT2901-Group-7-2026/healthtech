@@ -13,6 +13,7 @@ const baseURL = import.meta.env.VITE_BASE_URL;
 
 const uid = "8f1c2d3e-4b5a-6c7d-8e9f-0a1b2c3d4e5f"; //temporary
 
+// TODO: Parse response with zod - related to issue #HLTH-17
 const fetchSensorData = async (
 	sensor: Sensor,
 	sensorDataRequest: SensorDataRequestDto,

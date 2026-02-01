@@ -73,9 +73,10 @@ export function buildSensorQuery(
 	sensor: Sensor,
 	view: View,
 	selectedDay: Date,
+	granularityOverride?: GranularityKey,
 ): SensorDataRequestDto {
 	const { startTime, endTime } = getStartEnd(view, selectedDay);
-	const granularity = viewToGranularity[view];
+	const granularity = granularityOverride ?? viewToGranularity[view];
 	const func = sensorViewToAggregateFn[sensor][view];
 	const field = sensorToField[sensor];
 
