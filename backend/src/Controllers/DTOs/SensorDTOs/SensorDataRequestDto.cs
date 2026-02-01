@@ -41,9 +41,9 @@ public class DataTypeFieldAttribute(SensorDataType dataType) : Attribute
 }
 
 public record SensorDataRequestDto(
-    [Required] DateTimeOffset? StartTime,
-    [Required] DateTimeOffset? EndTime,
-    [Required] TimeGranularity? Granularity,
-    [Required] AggregationFunction? Function,
+    [Required] DateTimeOffset StartTime,
+    [Required] DateTimeOffset EndTime,
+    [Required] TimeGranularity Granularity,
+    [Required] AggregationFunction Function,
     Field? Field
 );  

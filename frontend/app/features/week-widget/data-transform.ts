@@ -1,33 +1,23 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
-import type { DangerKey } from "@/lib/danger-levels";
 import { dangerTypes } from "@/lib/danger-levels";
 import type { AllSensors, SensorDataResponseDto } from "@/lib/dto";
-import { thresholds } from "@/lib/thresholds";
 import type { WeekEvent } from "./types";
 
 export const mapWeekDataToEvents = (
 	data: Array<SensorDataResponseDto>,
 	sensor: Sensor,
 ): Array<WeekEvent> => {
-	const _thresholds = thresholds[sensor];
-
 	return data.map((item) => {
-		let dangerLevel: DangerKey = "safe";
-		if (item.value > _thresholds.warning) {
-			dangerLevel = "warning";
-		}
-		if (item.value > _thresholds.danger) {
-			dangerLevel = "danger";
-		}
-
 		const startDate = new Date(item.time);
 		const endDate = new Date(item.time);
+
+		// TODO: GMT+1 shouldn't be calculated like this
 		endDate.setUTCHours(endDate.getUTCHours() + 1);
 
 		return {
 			startDate: startDate,
 			endDate: endDate,
-			dangerLevel: dangerLevel,
+			dangerLevel: item.dangerLevel,
 		};
 	});
 };

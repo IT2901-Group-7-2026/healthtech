@@ -1,4 +1,5 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
+import type { DangerKey } from "./danger-levels";
 
 export const granularityEnum = {
 	minute: 0,
@@ -29,6 +30,7 @@ export type SensorDataRequestDto = {
 export type SensorDataResponseDto = {
 	time: Date;
 	value: number;
+	dangerLevel: DangerKey;
 };
 
 export type SensorDataResult = {

@@ -60,11 +60,12 @@ export function ChartLineDefault({
 	const { sensor } = useSensor();
 	const { warning, danger } = thresholds[sensor];
 
-	const maxValue = Math.max(...chartData.map((d) => d.value));
-	const minValue = Math.min(...chartData.map((d) => d.value));
+	const maxData = [...chartData].sort((a, b) => b.value - a.value)[0];
+	const minData = [...chartData].sort((a, b) => a.value - b.value)[0];
 
+	// Used to position color-changes in the graph so the line changes color at threshold boundaries.
 	const getOffset = (y: number) =>
-		`${((maxValue - y) / (maxValue - minValue)) * 100}%`;
+		`${((maxData.value - y) / (maxData.value - minData.value)) * 100}%`;
 
 	const transformedData = chartData.map((item) => ({
 		time: new Date(item.time).getTime(),
@@ -79,7 +80,7 @@ export function ChartLineDefault({
 
 	const formatTime = (time: number) =>
 		new Date(time).getUTCHours().toString().padStart(2, "0");
-
+	
 	return (
 		<Card className="w-full">
 			<CardHeader>
@@ -130,13 +131,13 @@ export function ChartLineDefault({
 
 						<defs>
 							<linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-								{maxValue < warning ? (
+								{maxData.dangerLevel === "safe" ? (
 									<>
 										{/* Whole line is green */}
 										<stop offset="0%" stopColor="var(--safe)" />
 										<stop offset="100%" stopColor="var(--safe)" />
 									</>
-								) : maxValue >= warning && maxValue <= danger ? (
+								) : maxData.dangerLevel === "warning" ? (
 									<>
 										{/* Green and yellow line*/}
 										<stop
@@ -148,7 +149,7 @@ export function ChartLineDefault({
 										<stop offset="100%" stopColor="var(--safe)" />
 									</>
 								) : (
-									maxValue > danger && (
+									maxData.dangerLevel === "danger" && (
 										<>
 											{/* green, yellow and red line */}
 											<stop
