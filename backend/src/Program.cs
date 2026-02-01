@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Backend.Services;
 using Backend.Validation;
 using Backend.Utils;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +42,14 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddControllers();
+// Convert enum from numbers to camelCase strings in JSON
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+    });
+
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();

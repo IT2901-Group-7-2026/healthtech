@@ -4,7 +4,6 @@ using SensorDataType = Backend.Models.DataType;
 
 namespace Backend.DTOs;
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum TimeGranularity
 {
     Minute,
@@ -12,7 +11,6 @@ public enum TimeGranularity
     Day
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum AggregationFunction
 {
     Avg,
@@ -22,7 +20,6 @@ public enum AggregationFunction
     Count
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Field
 {
     [DataTypeField(SensorDataType.Dust)]
@@ -38,7 +35,6 @@ public enum Field
     Pm10_stel
 }
 
-[AttributeUsage(AttributeTargets.Field)]
 public class DataTypeFieldAttribute(SensorDataType dataType) : Attribute
 {
     public SensorDataType DataType { get; } = dataType;
