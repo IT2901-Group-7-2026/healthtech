@@ -59,24 +59,6 @@ export function ProfilePopup({
 							</div>
 							<h3>{location}</h3>
 						</div>
-						<div>
-							<div className="label text-muted-foreground text-sm">
-								{t(($) => $.profile.prefLanguage)}
-							</div>
-							<Select onValueChange={(value) => i18n.changeLanguage(value)}>
-								<SelectTrigger className="w-32 bg-background dark:bg-background">
-									<SelectValue placeholder="Language" />
-								</SelectTrigger>
-								<SelectContent className="w-32">
-									<SelectItem key={"en"} value={"en"}>
-										{t(($) => $.english)}
-									</SelectItem>
-									<SelectItem key={"no"} value={"no"}>
-										{t(($) => $.norwegian)}
-									</SelectItem>
-								</SelectContent>
-							</Select>
-						</div>
 					</div>
 				</div>
 				<div className="flex flex-col gap-2">
