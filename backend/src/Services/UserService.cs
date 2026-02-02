@@ -52,6 +52,7 @@ public class UserService : IUserService
             Username = createUserDto.Username,
             Email = createUserDto.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password),
+            JobDescription = createUserDto.JobDescription,
             CreatedAt = DateTime.UtcNow
         };
 
@@ -67,6 +68,12 @@ public class UserService : IUserService
 
         user.Username = updateUserDto.Username ?? user.Username;
         user.Email = updateUserDto.Email ?? user.Email;
+        
+        if (updateUserDto.JobDescription != null)
+        {
+            user.JobDescription = updateUserDto.JobDescription;
+        }
+
         if (!string.IsNullOrEmpty(updateUserDto.Password))
         {
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(updateUserDto.Password);
