@@ -169,7 +169,6 @@ const getSingleSummary = (
 	// In the 'all' type we use hour granularity instead of minute granularity for the day view, so we don't need to adjust here TODO: This override is a bit messy
 	//TODO: This calculation doesn't work because it assumes perfect data with one entry per minute - related to issue #HLTH-11
 	if (view === "day" && exposureType !== "all") {
-		console.log("was dumb", exposureType);
 		summaryData.dangerCount = Math.ceil(summaryData.dangerCount / 60);
 		summaryData.warningCount = Math.round(summaryData.warningCount / 60);
 		summaryData.safeCount = Math.floor(summaryData.safeCount / 60);
