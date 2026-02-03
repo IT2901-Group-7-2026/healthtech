@@ -1,5 +1,5 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
-import { dangerTypes } from "@/lib/danger-levels";
+import { DangerTypes } from "@/lib/danger-levels";
 import type { AllSensors, SensorDataResponseDto } from "@/lib/dto";
 import type { WeekEvent } from "./types";
 
@@ -52,7 +52,7 @@ export const mapAllWeekDataToEvents = (
 		}
 
 		// choose the event with highest danger level
-		if (dangerTypes[ev.dangerLevel] > dangerTypes[existing.dangerLevel]) {
+		if (DangerTypes[ev.dangerLevel] > DangerTypes[existing.dangerLevel]) {
 			existing.dangerLevel = ev.dangerLevel;
 		}
 	}

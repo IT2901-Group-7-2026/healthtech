@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
 import { useSensor } from "@/features/sensor-picker/use-sensor";
-import { type DangerKey, dangerLevels } from "@/lib/danger-levels";
+import { type DangerKey, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto } from "@/lib/dto";
 import { thresholds } from "@/lib/thresholds";
 import { useId } from "react";
@@ -217,7 +217,7 @@ export function ThresholdLine({
 	label?: string;
 }) {
 	const { t } = useTranslation();
-	const color = `var(--${dangerLevels[dangerLevel].color})`;
+	const color = `var(--${DangerLevels[dangerLevel].color})`;
 	const lineLabel = label ?? t(($) => $.line_chart[dangerLevel]);
 	return (
 		<ReferenceLine

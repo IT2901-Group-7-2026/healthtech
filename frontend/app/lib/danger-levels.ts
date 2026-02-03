@@ -1,17 +1,17 @@
-export const dangerTypes: Record<DangerKey, number> = {
+export const DangerTypes: Record<DangerKey, number> = {
 	danger: 2,
 	warning: 1,
 	safe: 0,
 } as const;
-export const dangerKeys = ["safe", "warning", "danger"] as const;
-export type DangerKey = (typeof dangerKeys)[number];
+export const DangerKeys = ["safe", "warning", "danger"] as const;
+export type DangerKey = (typeof DangerKeys)[number];
 
 type DangerLevelInfo = {
 	label: string;
 	color: string;
 };
 
-export const dangerLevels: Record<DangerKey, DangerLevelInfo> = {
+export const DangerLevels: Record<DangerKey, DangerLevelInfo> = {
 	danger: {
 		label: "Threshold exceeded!",
 		color: "danger",
