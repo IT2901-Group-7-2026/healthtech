@@ -100,7 +100,8 @@
     "location": "Lokasjon",
     "name": "Navn",
     "prefLanguage": "Foretrukket språk",
-    "secReg": "Gjeldende sikkerhetsreguleringer"
+    "secReg": "Gjeldende sikkerhetsreguleringer",
+    "jobTitle" : "Stillingsbetegnelse"
   },
   "loadingData": "Laster inn data...",
   "errorLoadingData": "Noe gikk galt under henting av sensordata.",
