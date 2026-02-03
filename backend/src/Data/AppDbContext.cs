@@ -12,10 +12,16 @@ public class AppDbContext : DbContext
 
     public DbSet<NoteData> NoteData { get; set; }
     public DbSet<User> User { get; set; }
+    public DbSet<Location> Location { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new Backend.Data.Configuration.UserConfiguration());
+
+        modelBuilder.Entity<User>()
+            .HasMany(user => user.Managers)
+            .WithMany(user => user.Subordinates)
+            .UsingEntity(typeBuilder => typeBuilder.ToTable("UserManagers"));
     }
 }
