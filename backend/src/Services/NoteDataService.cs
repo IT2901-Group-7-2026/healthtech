@@ -7,8 +7,8 @@ namespace Backend.Services;
 public interface INoteDataService
 {
     Task<IEnumerable<NoteDataResponseDto>> GetNotesAsync(NoteDataRequestDto request);
-    Task<string> CreateNoteAsync(NoteDataDto createDto);
-    Task<string> UpdateNoteAsync(NoteDataDto updateDto);
+    Task<NoteData> CreateNoteAsync(NoteDataDto createDto);
+    Task<NoteData> UpdateNoteAsync(NoteDataDto updateDto);
 }
 
 public class NoteDataService(AppDbContext dbContext) : INoteDataService
@@ -33,7 +33,7 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
         });
     }
 
-    public async Task<string> CreateNoteAsync(NoteDataDto createDto)
+    public async Task<NoteData> CreateNoteAsync(NoteDataDto createDto)
     {
         if (createDto.Time!.Value.Offset != TimeSpan.Zero)
         {
@@ -55,13 +55,13 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
             createDto.Time!.Value.UtcDateTime
         );
 
-        _dbContext.NoteData.Add(noteData);
+        var createdNote = _dbContext.NoteData.Add(noteData);
         await _dbContext.SaveChangesAsync();
 
-        return "Note created successfully";
+        return createdNote.Entity;
     }
 
-    public async Task<string> UpdateNoteAsync(NoteDataDto updateDto)
+    public async Task<NoteData> UpdateNoteAsync(NoteDataDto updateDto)
     {
         if (updateDto.Time!.Value.Offset != TimeSpan.Zero)
         {
@@ -79,6 +79,6 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
         note.Note = updateDto.Note;  
         await _dbContext.SaveChangesAsync();  
 
-        return "Note updated successfully";
+        return note;
     }
 }
