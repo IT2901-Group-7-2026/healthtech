@@ -71,6 +71,9 @@ export default function Home() {
 					{t(($) => $.overview.title, { view: translatedView })}
 				</h1>
 				<div className="flex flex-row gap-4">
+					<Button onClick={() => setDate(new Date())} size={"icon"} className="px-8">
+						{"Today"}
+					</Button>
 					<Button onClick={() => setDate(getPrevDay(date, view))} size={"icon"}>
 						{"<"}
 					</Button>
