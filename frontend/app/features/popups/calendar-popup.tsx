@@ -1,5 +1,5 @@
 import { BasePopup } from "@/features/popups/base-popup";
-import type { DangerKey } from "@/lib/danger-levels";
+import type { DangerLevel } from "@/lib/danger-levels";
 import type { Sensor } from "@/lib/sensors";
 import { cn } from "@/lib/utils";
 import { t } from "i18next";
@@ -15,7 +15,7 @@ type CalendarPopupProps = {
 	children?: React.ReactNode;
 };
 
-export type CalendarPopupData = Record<Sensor, DangerKey>;
+export type CalendarPopupData = Record<Sensor, DangerLevel>;
 
 export function CalendarPopup({
 	exposureData,

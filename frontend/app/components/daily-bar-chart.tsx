@@ -5,7 +5,7 @@ import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { sensors } from "@/features/sensor-picker/sensors";
-import type { DangerKey } from "@/lib/danger-levels";
+import type { DangerLevel } from "@/lib/danger-levels";
 import type { AllSensors } from "@/lib/dto";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -20,8 +20,8 @@ const generateChartData = (): Array<Record<string, Sensor>> =>
 		),
 	}));
 
-function getHourlyDangerLevels(data: AllSensors): Record<Sensor, Array<DangerKey | null>> {
-  const result = {} as Record<Sensor, Array<DangerKey | null>>;
+function getHourlyDangerLevels(data: AllSensors): Record<Sensor, Array<DangerLevel | null>> {
+  const result = {} as Record<Sensor, Array<DangerLevel | null>>;
   
   sensors.forEach((sensor) => {
     const hourlyLevels = Array(24).fill(null);

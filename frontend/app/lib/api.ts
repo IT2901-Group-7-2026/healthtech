@@ -1,19 +1,21 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { queryOptions } from "@tanstack/react-query";
-import type {
-	Note,
-	NoteDataRequest,
-	SensorDataRequestDto,
-	SensorDataResponseDto,
+import {
+	NoteSchema,
+	SensorDataResponseDtoSchema,
+	type Note,
+	type NoteDataRequest,
+	type SensorDataRequestDto,
+	type SensorDataResponseDto,
 } from "./dto";
 import { getStartEnd } from "./queries";
 import type { View } from "./views";
+import { minutesToMilliseconds } from "date-fns";
 
 const baseURL = import.meta.env.VITE_BASE_URL;
 
 const uid = "8f1c2d3e-4b5a-6c7d-8e9f-0a1b2c3d4e5f"; //temporary
 
-// TODO: Parse response with zod - related to issue #HLTH-17
 const fetchSensorData = async (
 	sensor: Sensor,
 	sensorDataRequest: SensorDataRequestDto,
@@ -30,7 +32,8 @@ const fetchSensorData = async (
 		throw new Error("Failed to fetch sensor data");
 	}
 
-	return response.json();
+	const json = await response.json()
+	return SensorDataResponseDtoSchema.array().parseAsync(json);
 };
 
 export function sensorQueryOptions({
@@ -43,7 +46,7 @@ export function sensorQueryOptions({
 	return queryOptions({
 		queryKey: [sensor, query],
 		queryFn: () => fetchSensorData(sensor, query),
-		staleTime: 10 * 60 * 1000, // 10 min
+		staleTime: minutesToMilliseconds(10)
 	});
 }
 
@@ -62,13 +65,8 @@ export const fetchNoteData = async (
 		throw new Error("Failed to fetch daily notes");
 	}
 
-	const data = await response.json();
-
-	// parse time as Date object
-	return data.map((note: Note) => ({
-		...note,
-		time: new Date(note.time),
-	}));
+	const json = await response.json();
+	return NoteSchema.array().parseAsync(json);
 };
 
 export function notesQueryOptions({
@@ -83,7 +81,7 @@ export function notesQueryOptions({
 	return queryOptions({
 		queryKey: ["notes", query],
 		queryFn: () => fetchNoteData(query),
-		staleTime: 10 * 60 * 1000, // 10 min
+		staleTime: minutesToMilliseconds(10),
 	});
 }
 
@@ -101,7 +99,8 @@ export const updateNote = async ({ note }: { note: Note }) => {
 		throw new Error(`Failed to update note: ${errorText}`);
 	}
 
-	return res.json();
+	const json = await res.json();
+	return NoteSchema.parseAsync(json);
 };
 
 export const createNote = async ({ note }: { note: Note }) => {
@@ -117,6 +116,7 @@ export const createNote = async ({ note }: { note: Note }) => {
 		const errorText = await res.text();
 		throw new Error(`Failed to create note: ${errorText}`);
 	}
-
-	return res.json();
+	
+	const json = await res.json();
+	return NoteSchema.parseAsync(json);
 };

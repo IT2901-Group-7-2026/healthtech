@@ -1,5 +1,6 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
-import type { DangerKey } from "./danger-levels";
+import { z } from "zod";
+import { DangerLevelSchema } from "./danger-levels";
 
 export const granularityEnum = {
 	minute: 0,
@@ -27,11 +28,13 @@ export type SensorDataRequestDto = {
 	field?: string;
 };
 
-export type SensorDataResponseDto = {
-	time: Date;
-	value: number;
-	dangerLevel: DangerKey;
-};
+export const SensorDataResponseDtoSchema = z.object({
+	time: z.coerce.date(),
+	value: z.number(),
+	dangerLevel: DangerLevelSchema,
+})
+
+export type SensorDataResponseDto = z.infer<typeof SensorDataResponseDtoSchema>;
 
 export type SensorDataResult = {
 	data: Array<SensorDataResponseDto> | undefined;
@@ -47,10 +50,12 @@ export type AllSensorData = {
 	isErrorAny: boolean;
 };
 
-export type Note = {
-	note: string;
-	time: Date;
-};
+export const NoteSchema = z.object({
+	note: z.string(),
+	time: z.coerce.date(),
+});
+
+export type Note = z.infer<typeof NoteSchema>;
 
 export type NoteDataRequest = {
 	startTime: Date;
