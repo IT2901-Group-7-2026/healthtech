@@ -68,11 +68,7 @@ public class UserService : IUserService
 
         user.Username = updateUserDto.Username ?? user.Username;
         user.Email = updateUserDto.Email ?? user.Email;
-        
-        if (updateUserDto.JobDescription != null)
-        {
-            user.JobDescription = updateUserDto.JobDescription;
-        }
+        user.JobDescription = updateUserDto.JobDescription ?? user.JobDescription;
 
         if (!string.IsNullOrEmpty(updateUserDto.Password))
         {
