@@ -27,7 +27,7 @@ function getHourlyDangerLevels(data: AllSensors): Record<Sensor, Array<DangerLev
     const hourlyLevels = Array(24).fill(null);
     
     for (const item of data[sensor].data ?? []) {
-      const hour = new Date(item.time).getUTCHours();
+      const hour = item.time.getUTCHours();
       hourlyLevels[hour] = item.dangerLevel;
     }
     

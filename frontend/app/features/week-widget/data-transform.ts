@@ -2,6 +2,7 @@ import type { Sensor } from "@/features/sensor-picker/sensors";
 import { DANGER_LEVEL_SEVERITY } from "@/lib/danger-levels";
 import type { AllSensors, SensorDataResponseDto } from "@/lib/dto";
 import type { WeekEvent } from "./types";
+import { addHours } from "date-fns";
 
 export const mapWeekDataToEvents = (
 	data: Array<SensorDataResponseDto>,
@@ -9,11 +10,8 @@ export const mapWeekDataToEvents = (
 ): Array<WeekEvent> => {
 	return data.map((item) => {
 		const startDate = new Date(item.time);
-		const endDate = new Date(item.time);
-
-		// TODO: GMT+1 shouldn't be calculated like this
-		endDate.setUTCHours(endDate.getUTCHours() + 1);
-
+		const endDate = addHours(new Date(item.time), 1);
+		
 		return {
 			startDate: startDate,
 			endDate: endDate,

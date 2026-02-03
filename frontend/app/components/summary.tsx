@@ -206,7 +206,7 @@ const getSummaryForAll = (view: View, data: AllSensors): SummaryType => {
 
 	Object.entries(data).forEach(([sensor, sensorData]) => {
 		(sensorData.data ?? []).forEach((item) => {
-			const timeKey = new Date(item.time).toISOString();
+			const timeKey = item.time.toISOString();
 			const existingLevel = timePeriodDangerLevels.get(timeKey);
 
 			// Keep the worst danger level for each time period

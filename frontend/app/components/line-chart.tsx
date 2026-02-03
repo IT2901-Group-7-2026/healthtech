@@ -68,7 +68,7 @@ export function ChartLineDefault({
 		`${((maxData.value - y) / (maxData.value - minData.value)) * 100}%`;
 
 	const transformedData = chartData.map((item) => ({
-		time: new Date(item.time).getTime(),
+		time: item.time.getTime(),
 		value: item.value,
 	}));
 
