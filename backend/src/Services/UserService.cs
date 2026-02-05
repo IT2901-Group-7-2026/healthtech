@@ -26,22 +26,22 @@ public class UserService : IUserService
 
     public async Task<User?> GetUserByIdAsync(Guid id)
     {
-        return await _context.User.FindAsync(id);
+        return await _context.User.Include(u => u.Location).FirstOrDefaultAsync(u => u.Id == id);
     }
 
     public async Task<User?> GetUserByUsernameAsync(string username)
     {
-        return await _context.User.FirstOrDefaultAsync(u => u.Username == username);
+        return await _context.User.Include(u => u.Location).FirstOrDefaultAsync(u => u.Username == username);
     }
 
     public async Task<User?> GetUserByEmailAsync(string email)
     {
-        return await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+        return await _context.User.Include(u => u.Location).FirstOrDefaultAsync(u => u.Email == email);
     }
 
     public async Task<List<User>> GetAllUsersAsync()
     {
-        return await _context.User.ToListAsync();
+        return await _context.User.Include(u => u.Location).ToListAsync();
     }
 
     public async Task<User> CreateUserAsync(CreateUserDto createUserDto)
@@ -65,7 +65,7 @@ public class UserService : IUserService
 
     public async Task<User?> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
     {
-        var user = await _context.User.FindAsync(id);
+        var user = await GetUserByIdAsync(id);
         if (user == null) return null;
 
         user.Username = updateUserDto.Username ?? user.Username;
@@ -84,7 +84,7 @@ public class UserService : IUserService
 
     public async Task<bool> DeleteUserAsync(Guid id)
     {
-        var user = await _context.User.FindAsync(id);
+        var user = await GetUserByIdAsync(id);
         if (user == null) return false;
 
         _context.User.Remove(user);

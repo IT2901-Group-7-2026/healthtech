@@ -19,7 +19,8 @@ public class UserController : ControllerBase
     public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
     {
         var users = await _userService.GetAllUsersAsync();
-        return Ok(users);
+        var dtos = users.Select(UserDto.FromEntity).ToList();
+        return Ok(dtos);
     }
 
     [HttpGet("{id}")]
@@ -30,14 +31,14 @@ public class UserController : ControllerBase
         {
             return NotFound();
         }
-        return Ok(user);
+        return Ok(UserDto.FromEntity(user));
     }
 
     [HttpPost]
     public async Task<ActionResult<UserDto>> CreateUser(CreateUserDto createUserDto)
     {
         var user = await _userService.CreateUserAsync(createUserDto);
-        return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+        return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, UserDto.FromEntity(user));
     }
 
     [HttpPut("{id}")]
@@ -48,7 +49,7 @@ public class UserController : ControllerBase
         {
             return NotFound();
         }
-        return Ok(user);
+        return Ok(UserDto.FromEntity(user));
     }
 
     [HttpDelete("{id}")]
