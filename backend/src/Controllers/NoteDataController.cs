@@ -28,12 +28,13 @@ public class NoteDataController(INoteDataService noteDataService) : ControllerBa
     }
 
     [HttpPost("{userId}/create")]
-    public async Task<ActionResult<string>> CreateNoteAsync([FromBody] NoteDataCreateDto createDto, [FromRoute] Guid userId)
+    public async Task<ActionResult<NoteDataDto>> CreateNoteAsync([FromBody] NoteDataCreateDto createDto, [FromRoute] Guid userId)
     {
         try
         {
             var createdNote = await _noteDataService.CreateNoteAsync(createDto, userId);
-            return Created($"/api/notes/{userId}", createdNote);
+            var dto = NoteDataDto.FromEntity(createdNote);
+            return dto;
         }
         catch (InvalidOperationException ex)
         {
@@ -46,12 +47,13 @@ public class NoteDataController(INoteDataService noteDataService) : ControllerBa
     }
 
     [HttpPut("{userId}")]
-    public async Task<ActionResult<string>> UpdateNoteAsync([FromBody] NoteDataDto updateDto, [FromRoute] string userId)
+    public async Task<ActionResult<NoteDataDto>> UpdateNoteAsync([FromBody] NoteDataDto updateDto, [FromRoute] Guid userId)
     {
         try
         {
             var result = await _noteDataService.UpdateNoteAsync(updateDto);
-            return Ok(result);
+            var dto = NoteDataDto.FromEntity(result);
+            return dto;
         }
         catch (InvalidOperationException ex)
         {
