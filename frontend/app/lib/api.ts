@@ -1,8 +1,10 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { queryOptions } from "@tanstack/react-query";
+import { minutesToMilliseconds } from "date-fns";
 import {
 	NoteSchema,
 	SensorDataResponseDtoSchema,
+	UserSchema,
 	type Note,
 	type NoteDataRequest,
 	type SensorDataRequestDto,
@@ -10,17 +12,39 @@ import {
 } from "./dto";
 import { getStartEnd } from "./queries";
 import type { View } from "./views";
-import { minutesToMilliseconds } from "date-fns";
 
 const baseURL = import.meta.env.VITE_BASE_URL;
 
-const uid = "8f1c2d3e-4b5a-6c7d-8e9f-0a1b2c3d4e5f"; //temporary
+const fetchAllUsers = async () => {
+	const response = await fetch(`${baseURL}users`, {
+		method: "GET",
+		headers: {
+			"Content-Type": "application/json",
+		},
+	});
+
+	if (!response.ok) {
+		throw new Error("Failed to fetch users");
+	}
+
+	const json = await response.json();
+	return UserSchema.array().parseAsync(json);
+};
+
+export function usersQueryOptions() {
+	return queryOptions({
+		queryKey: ["users"],
+		queryFn: () => fetchAllUsers(),
+		staleTime: minutesToMilliseconds(10),
+	});
+}
 
 const fetchSensorData = async (
+	userId: string,
 	sensor: Sensor,
 	sensorDataRequest: SensorDataRequestDto,
 ): Promise<Array<SensorDataResponseDto>> => {
-	const response = await fetch(`${baseURL}sensor/${sensor}/${uid}`, {
+	const response = await fetch(`${baseURL}sensor/${sensor}/${userId}`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -39,21 +63,24 @@ const fetchSensorData = async (
 export function sensorQueryOptions({
 	sensor,
 	query,
+	userId,
 }: {
 	sensor: Sensor;
 	query: SensorDataRequestDto;
+	userId: string;
 }) {
 	return queryOptions({
 		queryKey: [sensor, query],
-		queryFn: () => fetchSensorData(sensor, query),
+		queryFn: () => fetchSensorData(userId, sensor, query),
 		staleTime: minutesToMilliseconds(10)
 	});
 }
 
 export const fetchNoteData = async (
 	noteDataRequest: NoteDataRequest,
+	userId: string,
 ): Promise<Array<Note>> => {
-	const response = await fetch(`${baseURL}notes/${uid}`, {
+	const response = await fetch(`${baseURL}notes/${userId}`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -72,21 +99,23 @@ export const fetchNoteData = async (
 export function notesQueryOptions({
 	view,
 	selectedDay,
+	userId,
 }: {
 	view: View;
 	selectedDay: Date;
+	userId: string;
 }) {
 	const query = getStartEnd(view, selectedDay);
 
 	return queryOptions({
 		queryKey: ["notes", query],
-		queryFn: () => fetchNoteData(query),
+		queryFn: () => fetchNoteData(query, userId),
 		staleTime: minutesToMilliseconds(10),
 	});
 }
 
-export const updateNote = async ({ note }: { note: Note }) => {
-	const res = await fetch(`${baseURL}notes/${uid}`, {
+export const updateNote = async ({ note, userId }: { note: Note; userId: string }) => {
+	const res = await fetch(`${baseURL}notes/${userId}`, {
 		method: "PUT",
 		headers: {
 			"Content-Type": "application/json",
@@ -103,8 +132,8 @@ export const updateNote = async ({ note }: { note: Note }) => {
 	return NoteSchema.parseAsync(json);
 };
 
-export const createNote = async ({ note }: { note: Note }) => {
-	const res = await fetch(`${baseURL}notes/${uid}/create`, {
+export const createNote = async ({ note, userId }: { note: Note, userId: string }) => {
+	const res = await fetch(`${baseURL}notes/${userId}/create`, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
