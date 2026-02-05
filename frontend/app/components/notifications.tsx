@@ -1,15 +1,15 @@
 import {
-	Item,
-	ItemContent,
-	ItemDescription,
-	ItemGroup,
-	ItemMedia,
-	ItemTitle,
+    Item,
+    ItemContent,
+    ItemDescription,
+    ItemGroup,
+    ItemMedia,
+    ItemTitle,
 } from "@/components/ui/item";
 import { Icon } from "@/features/icon";
 import { NotificationPopup } from "@/features/popups/notification-popup";
 import { usePopup } from "@/features/popups/use-popup";
-import type { DangerKey } from "@/lib/danger-levels";
+import type { DangerLevel } from "@/lib/danger-levels";
 import type { Sensor } from "@/lib/sensors";
 import { cn } from "@/lib/utils";
 import { Card } from "@/ui/card";
@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 
 const notifications: Array<{
 	sensor: Sensor;
-	dangerLevel: DangerKey;
+	dangerLevel: DangerLevel;
 	date: Date;
 }> = [
 	{
@@ -50,7 +50,7 @@ const notifications: Array<{
 type NotifData = {
 	date: Date;
 	sensor: Sensor;
-	dangerLevel: DangerKey;
+	dangerLevel: DangerLevel;
 };
 
 export function Notifications({

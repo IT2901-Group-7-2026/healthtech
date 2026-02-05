@@ -2,12 +2,12 @@
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
 import { languageToLocale } from "@/i18n/locale";
-import type { DangerKey } from "@/lib/danger-levels";
+import type { DangerLevel } from "@/lib/danger-levels";
 import { cn } from "@/lib/utils";
 import type { CalendarDay, Modifiers } from "react-day-picker";
 import { useTranslation } from "react-i18next";
 
-export type MonthData = Record<DangerKey, Partial<Record<Sensor, Array<Date>>>>;
+export type MonthData = Record<DangerLevel, Partial<Record<Sensor, Array<Date>>>>;
 
 type CalendarProps = {
 	selectedDay: Date;
@@ -17,8 +17,8 @@ type CalendarProps = {
 
 import { DialogDescription } from "@/components/ui/dialog";
 import {
-	CalendarPopup,
-	type CalendarPopupData,
+    CalendarPopup,
+    type CalendarPopupData,
 } from "@/features/popups/calendar-popup";
 import { useState } from "react";
 import { useDate } from "../date-picker/use-date";
@@ -58,7 +58,7 @@ export function CalendarWidget({ selectedDay, data }: CalendarProps) {
 	const hasData = (list: Array<Date>, d: Date) =>
 		list.some((day) => day.toDateString() === d.toDateString());
 
-	function getDayType(day: Date): Lowercase<DangerKey> | "none" {
+	function getDayType(day: Date): Lowercase<DangerLevel> | "none" {
 		if (hasData(safeDays, day)) return "safe";
 		if (hasData(warningDays, day)) return "warning";
 		if (hasData(dangerDays, day)) return "danger";
@@ -84,7 +84,7 @@ export function CalendarWidget({ selectedDay, data }: CalendarProps) {
 	function getExposureData(clickedDay: Date) {
 		const exposureData: CalendarPopupData = {} as CalendarPopupData;
 
-		(Object.keys(data) as Array<DangerKey>).forEach((dangerKey) => {
+		(Object.keys(data) as Array<DangerLevel>).forEach((dangerKey) => {
 			Object.entries(data[dangerKey]).forEach(([sensor, dates]) => {
 				if (dates.some((d) => d.toDateString() === clickedDay.toDateString())) {
 					//Override lower danger with the higher one
@@ -159,7 +159,7 @@ type CustomDayProps = {
 	day: CalendarDay;
 	modifiers: Modifiers;
 	className?: string;
-	getDayType: (day: Date) => Lowercase<DangerKey> | "none";
+	getDayType: (day: Date) => Lowercase<DangerLevel> | "none";
 	handleDayClick: (day: Date) => void;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 

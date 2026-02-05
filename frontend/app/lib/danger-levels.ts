@@ -1,17 +1,20 @@
-export const DangerTypes: Record<DangerKey, number> = {
+import z from "zod";
+
+export const DANGER_LEVEL_SEVERITY: Record<DangerLevel, number> = {
 	danger: 2,
 	warning: 1,
 	safe: 0,
 } as const;
-export const DangerKeys = ["safe", "warning", "danger"] as const;
-export type DangerKey = (typeof DangerKeys)[number];
+
+export const DangerLevelSchema = z.enum(["safe", "warning", "danger"]);
+export type DangerLevel = z.infer<typeof DangerLevelSchema>;
 
 type DangerLevelInfo = {
 	label: string;
 	color: string;
 };
 
-export const DangerLevels: Record<DangerKey, DangerLevelInfo> = {
+export const DangerLevels: Record<DangerLevel, DangerLevelInfo> = {
 	danger: {
 		label: "Threshold exceeded!",
 		color: "danger",

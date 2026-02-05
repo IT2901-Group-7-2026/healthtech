@@ -1,6 +1,7 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
-import { DangerTypes } from "@/lib/danger-levels";
+import { DANGER_LEVEL_SEVERITY } from "@/lib/danger-levels";
 import type { AllSensors, SensorDataResponseDto } from "@/lib/dto";
+import { addHours } from "date-fns";
 import type { WeekEvent } from "./types";
 
 export const mapWeekDataToEvents = (
@@ -9,11 +10,8 @@ export const mapWeekDataToEvents = (
 ): Array<WeekEvent> => {
 	return data.map((item) => {
 		const startDate = new Date(item.time);
-		const endDate = new Date(item.time);
-
-		// TODO: GMT+1 shouldn't be calculated like this
-		endDate.setUTCHours(endDate.getUTCHours() + 1);
-
+		const endDate = addHours(new Date(item.time), 1);
+		
 		return {
 			startDate: startDate,
 			endDate: endDate,
@@ -52,7 +50,7 @@ export const mapAllWeekDataToEvents = (
 		}
 
 		// choose the event with highest danger level
-		if (DangerTypes[ev.dangerLevel] > DangerTypes[existing.dangerLevel]) {
+		if (DANGER_LEVEL_SEVERITY[ev.dangerLevel] > DANGER_LEVEL_SEVERITY[existing.dangerLevel]) {
 			existing.dangerLevel = ev.dangerLevel;
 		}
 	}
