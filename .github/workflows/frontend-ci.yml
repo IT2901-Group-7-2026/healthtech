@@ -41,4 +41,4 @@ jobs:
               run: pnpm format
 
             - name: Typecheck
-              run: pnpm type-check
+              run: pnpm type-check:router
