@@ -1,8 +1,8 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { DANGER_LEVEL_SEVERITY } from "@/lib/danger-levels";
 import type { AllSensors, SensorDataResponseDto } from "@/lib/dto";
-import type { WeekEvent } from "./types";
 import { addHours } from "date-fns";
+import type { WeekEvent } from "./types";
 
 export const mapWeekDataToEvents = (
 	data: Array<SensorDataResponseDto>,

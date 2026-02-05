@@ -36,7 +36,7 @@ export function WeekWidget({
 	events?: Array<WeekEvent>;
 	onCellClick?: (cell: Cell) => void;
 }) {
-	const { days, nextWeek, previousWeek, goToToday, viewTitle } = useWeekView({
+	const { days, nextWeek, previousWeek, viewTitle } = useWeekView({
 		minuteStep,
 		weekStartsOn,
 		dayStartHour,
@@ -86,12 +86,6 @@ export function WeekWidget({
 						title={viewTitle}
 						onNext={nextWeek}
 						onPrev={previousWeek}
-						onToday={goToToday}
-						showTodayButton={
-							!isSameWeek(days[0].date, new Date(), {
-								weekStartsOn: weekStartsOn,
-							})
-						}
 					/>
 					<div className="flex flex-1 select-none flex-col overflow-hidden">
 						<div className="isolate flex flex-1 flex-col overflow-auto">

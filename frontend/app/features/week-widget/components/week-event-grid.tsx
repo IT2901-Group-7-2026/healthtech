@@ -1,4 +1,4 @@
-import { dangerLevels } from "@/lib/danger-levels";
+import { DangerLevels } from "@/lib/danger-levels";
 import { cn } from "@/lib/utils";
 import { type Day, getDay, getMinutes, isSameWeek } from "date-fns";
 import type { Days, WeekEvent } from "../types";
@@ -65,7 +65,7 @@ export function WeekEventGrid({
 								type="button"
 								className={cn(
 									"absolute inset-1 flex cursor-pointer flex-col overflow-y-auto rounded-md text-xs leading-5 transition",
-									`bg-${dangerLevels[event.dangerLevel].color}`,
+									`bg-${DangerLevels[event.dangerLevel].color}`,
 									"border-t-2 border-t-muted-foreground border-dotted",
 									`${event.startDate.getUTCHours() === dayStartHour && "border-t-0"} `,
 									"hover:brightness-85",

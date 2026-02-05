@@ -3,5 +3,6 @@ namespace Backend.DTOs;
 public record UpdateUserDto(
     string? Username = null,    // Optional update
     string? Email = null,       // Optional update
-    string? Password = null     // Optional password change
+    string? Password = null,     // Optional password change
+    string? JobDescription = null
 );

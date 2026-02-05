@@ -4,9 +4,6 @@ import { useTranslation } from "react-i18next";
 
 export function WeekHeader({
 	title,
-	showTodayButton = true,
-	todayButton,
-	onToday,
 	showPrevButton = false,
 	prevButton,
 	onPrev,
@@ -15,9 +12,6 @@ export function WeekHeader({
 	onNext,
 }: {
 	title: ReactNode;
-	showTodayButton?: boolean;
-	todayButton?: ({ onToday }: { onToday?: () => void }) => ReactNode;
-	onToday?: () => void;
 	showPrevButton?: boolean;
 	prevButton?: ({ onPrev }: { onPrev?: () => void }) => ReactNode;
 	onPrev?: () => void;
@@ -31,14 +25,7 @@ export function WeekHeader({
 		<div className="flex h-16 items-center justify-between border-card-highlight border-b-2 px-6 py-4">
 			<h1 className="flex items-center gap-3 font-semibold text-base text-foreground">
 				{title}
-				{showTodayButton &&
-					(todayButton ? (
-						todayButton({ onToday })
-					) : (
-						<Button variant={"default"} onClick={onToday}>
-							{t(($) => $.today)}
-						</Button>
-					))}
+				
 			</h1>
 			<div className="flex items-center space-x-5">
 				<div className="flex space-x-1">

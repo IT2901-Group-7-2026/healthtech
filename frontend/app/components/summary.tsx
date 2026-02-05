@@ -2,7 +2,7 @@ import type { Sensor } from "@/features/sensor-picker/sensors";
 import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { type DangerLevel, dangerLevels } from "@/lib/danger-levels";
+import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { AllSensors, SensorDataResponseDto } from "@/lib/dto";
 import { cn } from "@/lib/utils";
 import { Card } from "@/ui/card";
@@ -78,7 +78,7 @@ export function Summary({ exposureType, data }: SummaryProps) {
 				{/* Safe */}
 				<div
 					className="flex items-baseline justify-center p-2 md:justify-start"
-					title={dangerLevels.safe.label}
+					title={DangerLevels.safe.label}
 				>
 					<span
 						className={cn(
@@ -95,7 +95,7 @@ export function Summary({ exposureType, data }: SummaryProps) {
 				{/* Warning */}
 				<div
 					className="flex items-baseline justify-center p-2 md:justify-start"
-					title={dangerLevels.warning.label}
+					title={DangerLevels.warning.label}
 				>
 					<span
 						className={cn(
@@ -112,7 +112,7 @@ export function Summary({ exposureType, data }: SummaryProps) {
 				{/* Danger */}
 				<div
 					className="flex items-baseline justify-center p-2 md:justify-start"
-					title={dangerLevels.danger.label}
+					title={DangerLevels.danger.label}
 				>
 					<span
 						className={cn(
@@ -169,7 +169,6 @@ const getSingleSummary = (
 	// In the 'all' type we use hour granularity instead of minute granularity for the day view, so we don't need to adjust here TODO: This override is a bit messy
 	//TODO: This calculation doesn't work because it assumes perfect data with one entry per minute - related to issue #HLTH-11
 	if (view === "day" && exposureType !== "all") {
-		console.log("was dumb", exposureType);
 		summaryData.dangerCount = Math.ceil(summaryData.dangerCount / 60);
 		summaryData.warningCount = Math.round(summaryData.warningCount / 60);
 		summaryData.safeCount = Math.floor(summaryData.safeCount / 60);
