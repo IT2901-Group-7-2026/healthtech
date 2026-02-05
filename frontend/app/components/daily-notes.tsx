@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: <I prefer this over sending functions as props> */
 import { useDate } from "@/features/date-picker/use-date";
+import { useUser } from "@/features/user/user-user";
 import { useView } from "@/features/views/use-view";
 import { createNote, notesQueryOptions, updateNote } from "@/lib/api";
 import type { Note } from "@/lib/dto";
@@ -10,12 +11,12 @@ import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Textarea } from "./ui/textarea";
-import { useUser } from "@/features/user/user-user";
 
 export const DailyNotes = ({
 	popUpOverride = false,
 }: {
-	popUpOverride?: boolean;}) => {
+	popUpOverride?: boolean;
+}) => {
 	const { t, i18n } = useTranslation();
 	const locale = i18n.language;
 	const { view } = useView();

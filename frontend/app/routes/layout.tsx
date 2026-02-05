@@ -130,12 +130,14 @@ export default function Layout() {
 							value={user?.id}
 						>
 							<SelectTrigger className="w-32 bg-background dark:bg-background">
-								<SelectValue placeholder={t(($) => $.overview.userSelectPlaceholder)} />
+								<SelectValue
+									placeholder={t(($) => $.overview.userSelectPlaceholder)}
+								/>
 							</SelectTrigger>
 							<SelectContent className="w-32">
-								{users?.map((user) => (
-									<SelectItem key={user.id} value={user.id}>
-										{user.username}
+								{users?.map((u) => (
+									<SelectItem key={u.id} value={u.id}>
+										{u.username}
 									</SelectItem>
 								))}
 							</SelectContent>

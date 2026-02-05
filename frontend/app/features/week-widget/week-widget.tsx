@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { WeeklyPopup } from "@/features/popups/weekly-popup";
 import { DialogDescription } from "@radix-ui/react-dialog";
-import { type Day, isSameWeek, type Locale } from "date-fns";
+import type { Day, Locale } from "date-fns";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePopup } from "../popups/use-popup";

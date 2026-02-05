@@ -20,21 +20,23 @@ const generateChartData = (): Array<Record<string, Sensor>> =>
 		),
 	}));
 
-function getHourlyDangerLevels(data: AllSensors): Record<Sensor, Array<DangerLevel | null>> {
-  const result = {} as Record<Sensor, Array<DangerLevel | null>>;
-  
-  sensors.forEach((sensor) => {
-    const hourlyLevels = Array(24).fill(null);
-    
-    for (const item of data[sensor].data ?? []) {
-      const hour = item.time.getUTCHours();
-      hourlyLevels[hour] = item.dangerLevel;
-    }
-    
-    result[sensor] = hourlyLevels;
-  });
-  
-  return result;
+function getHourlyDangerLevels(
+	data: AllSensors,
+): Record<Sensor, Array<DangerLevel | null>> {
+	const result = {} as Record<Sensor, Array<DangerLevel | null>>;
+
+	sensors.forEach((sensor) => {
+		const hourlyLevels = Array(24).fill(null);
+
+		for (const item of data[sensor].data ?? []) {
+			const hour = item.time.getUTCHours();
+			hourlyLevels[hour] = item.dangerLevel;
+		}
+
+		result[sensor] = hourlyLevels;
+	});
+
+	return result;
 }
 
 //TODO: Here it says vibration 9-10 is safe, but in vibration week chart it says 9-10 warning. But looking at the vibration day chart, there is a point between 9 and 10 that is above warning level. So maybe the week chart is wrong, or maybe the date timezones again
@@ -127,7 +129,7 @@ export function DailyBarChart({
 											onClick={() =>
 												navigate({
 													pathname: entry.sensor,
-													search: `?view=Day&date=${date.toLocaleDateString("en-CA")}`,//TODO: Why en-CA?
+													search: `?view=Day&date=${date.toLocaleDateString("en-CA")}`, //TODO: Why en-CA?
 												})
 											}
 											key={`cell-${index}-${key}`}

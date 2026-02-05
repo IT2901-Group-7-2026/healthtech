@@ -86,7 +86,7 @@ export default function Noise() {
 						dayEndHour={16}
 						weekStartsOn={1}
 						minuteStep={60}
-						events={mapWeekDataToEvents(data ?? [], "noise")}
+						events={mapWeekDataToEvents(data ?? [])}
 					/>
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">

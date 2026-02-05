@@ -7,7 +7,10 @@ import { cn } from "@/lib/utils";
 import type { CalendarDay, Modifiers } from "react-day-picker";
 import { useTranslation } from "react-i18next";
 
-export type MonthData = Record<DangerLevel, Partial<Record<Sensor, Array<Date>>>>;
+export type MonthData = Record<
+	DangerLevel,
+	Partial<Record<Sensor, Array<Date>>>
+>;
 
 type CalendarProps = {
 	selectedDay: Date;
@@ -17,8 +20,8 @@ type CalendarProps = {
 
 import { DialogDescription } from "@/components/ui/dialog";
 import {
-    CalendarPopup,
-    type CalendarPopupData,
+	CalendarPopup,
+	type CalendarPopupData,
 } from "@/features/popups/calendar-popup";
 import { useState } from "react";
 import { useDate } from "../date-picker/use-date";

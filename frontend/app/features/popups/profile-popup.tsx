@@ -1,10 +1,3 @@
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/ui/select";
 import { useTranslation } from "react-i18next";
 import { BasePopup } from "./base-popup";
 
@@ -27,7 +20,7 @@ export function ProfilePopup({
 	jobTitle?: string;
 	jobDescription?: string;
 }) {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const title = t(($) => $.profile.title);
 
 	const tempListOfRegulations = ["Safety boots", "Helmet", "Protective mask"];
@@ -36,7 +29,7 @@ export function ProfilePopup({
 		<BasePopup title={title} open={open} relevantDate={null} onClose={onClose}>
 			{children}
 			<div className="flex flex-col gap-6 md:px-6 md:pb-2">
-				<div className="flex gap-4 flex-row items-center">
+				<div className="flex flex-row items-center gap-4">
 					<div>
 						{avatarSrc ? (
 							<img
@@ -50,23 +43,23 @@ export function ProfilePopup({
 							<div className="h-20 w-20 rounded-full bg-blue-900"></div>
 						)}
 					</div>
-					<div className="flex flex-col w-full">
+					<div className="flex w-full flex-col">
 						<div className="flex flex-row gap-3">
-							<label className="label text-muted-foreground">
+							<p className="label text-muted-foreground">
 								{t(($) => $.profile.name)}
-							</label>
+							</p>
 							<h2>{name}</h2>
 						</div>
 						<div className="flex flex-row gap-3">
-							<label className="label text-muted-foreground">
+							<p className="label text-muted-foreground">
 								{t(($) => $.profile.location)}
-							</label>
+							</p>
 							<h3>{location}</h3>
 						</div>
 						<div className="flex flex-row gap-3">
-							<label className="label text-muted-foreground">
+							<p className="label text-muted-foreground">
 								{t(($) => $.profile.jobTitle)}
-							</label>
+							</p>
 							<h3>{jobTitle}</h3>
 						</div>
 					</div>
@@ -84,9 +77,9 @@ export function ProfilePopup({
 					</div>
 				</div>
 				<div className="flex flex-col gap-2">
-					<label className="label text-muted-foreground">
+					<p className="label text-muted-foreground">
 						{t(($) => $.profile.jobDescription)}
-					</label>
+					</p>
 					<div className="w-full rounded-lg bg-card-highlight p-2">
 						<p>{jobDescription}</p>
 					</div>

@@ -88,7 +88,7 @@ export default function Vibration() {
 						dayEndHour={16}
 						weekStartsOn={1}
 						minuteStep={60}
-						events={mapWeekDataToEvents(makeCumulative(data), "vibration")}
+						events={mapWeekDataToEvents(makeCumulative(data))}
 					/>
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">

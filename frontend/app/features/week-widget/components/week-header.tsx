@@ -1,6 +1,5 @@
 import { Button } from "@/ui/button";
 import type { ReactNode } from "react";
-import { useTranslation } from "react-i18next";
 
 export function WeekHeader({
 	title,
@@ -19,13 +18,10 @@ export function WeekHeader({
 	nextButton?: ({ onNext }: { onNext?: () => void }) => ReactNode;
 	onNext?: () => void;
 }) {
-	const { t } = useTranslation();
-
 	return (
 		<div className="flex h-16 items-center justify-between border-card-highlight border-b-2 px-6 py-4">
 			<h1 className="flex items-center gap-3 font-semibold text-base text-foreground">
 				{title}
-				
 			</h1>
 			<div className="flex items-center space-x-5">
 				<div className="flex space-x-1">
