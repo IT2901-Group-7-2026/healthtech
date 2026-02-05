@@ -31,7 +31,8 @@ public class UserService : IUserService
 
     public async Task<User?> GetUserByUsernameAsync(string username)
     {
-        return await _context.User.FirstOrDefaultAsync(u => u.Username == username);
+        return await _context.User.
+        FirstOrDefaultAsync(u => u.Username == username);
     }
 
     public async Task<User?> GetUserByEmailAsync(string email)
