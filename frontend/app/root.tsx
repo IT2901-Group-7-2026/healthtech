@@ -14,6 +14,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { DateProvider } from "./features/date-picker/date-provider";
 import { SensorProvider } from "./features/sensor-picker/sensor-provider";
+import { UserProvider } from "./features/user/user-provider";
 import { ViewProvider } from "./features/views/view-provider";
 import "./i18n/config";
 
@@ -77,16 +78,18 @@ export default function App() {
 		<QueryClientProvider client={queryClient}>
 			<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
 				<NuqsAdapter>
-					<DateProvider>
-						<ViewProvider>
-							<SensorProvider>
-								{import.meta.env.DEV && (
-									<ReactQueryDevtools initialIsOpen={false} />
-								)}
-								<Outlet />
-							</SensorProvider>
-						</ViewProvider>
-					</DateProvider>
+					<UserProvider>
+						<DateProvider>
+							<ViewProvider>
+								<SensorProvider>
+									{import.meta.env.DEV && (
+										<ReactQueryDevtools initialIsOpen={false} />
+									)}
+									<Outlet />
+								</SensorProvider>
+							</ViewProvider>
+						</DateProvider>
+					</UserProvider>
 				</NuqsAdapter>
 			</ThemeProvider>
 		</QueryClientProvider>

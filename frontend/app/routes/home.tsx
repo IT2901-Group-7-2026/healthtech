@@ -9,6 +9,7 @@ import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { mapAllSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
 import { sensors } from "@/features/sensor-picker/sensors";
+import { useUser } from "@/features/user/user-user";
 import { useView } from "@/features/views/use-view";
 import { ViewSelect } from "@/features/views/view-select";
 import { mapAllWeekDataToEvents } from "@/features/week-widget/data-transform";
@@ -30,6 +31,8 @@ export default function Home() {
 	const translatedView = t(($) => $.overview[view]);
 	const { date, setDate } = useDate();
 
+	const {user} = useUser();
+
 	// The overview daily page shows hour granularity for all sensors instead of minute granularity, so we override it here
 	const granularity = view === "day" ? "hour" : undefined;
 
@@ -44,7 +47,7 @@ export default function Home() {
 
 	const results = useQueries({
 		queries: sensorQueries.map(({ sensor, query }) =>
-			sensorQueryOptions({ sensor, query }),
+			sensorQueryOptions({ sensor, query, userId: user.id }),
 		),
 	});
 

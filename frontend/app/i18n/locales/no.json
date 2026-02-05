@@ -11,7 +11,8 @@
     "month": "måned",
     "dust": "Støv",
     "vibration": "Vibrasjon",
-    "noise": "Støy"
+    "noise": "Støy",
+    "userSelectPlaceholder": "Bruker"
   },
   "dustExposure": {
     "title": "Støveksponering"

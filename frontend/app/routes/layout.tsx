@@ -18,8 +18,10 @@ import { usePopup } from "@/features/popups/use-popup";
 import { ProfileBadge } from "@/features/profile/profile-badge";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useSensor } from "@/features/sensor-picker/use-sensor";
+import { useUser } from "@/features/user/user-user";
 import { useView } from "@/features/views/use-view";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { usersQueryOptions } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import {
 	Select,
@@ -28,6 +30,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
+import { useQuery } from "@tanstack/react-query";
 import { type ReactNode, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { href, NavLink, Outlet, type To, useLocation } from "react-router";
@@ -79,6 +82,9 @@ export default function Layout() {
 		{ to: href("/noise"), label: t(($) => $.noise) },
 	];
 
+	const { user, setUser } = useUser();
+	const { data: users } = useQuery(usersQueryOptions());
+
 	return (
 		<SidebarProvider defaultOpen={false}>
 			<SidebarInset>
@@ -114,6 +120,26 @@ export default function Layout() {
 						>
 							<Icon variant="bell" size="medium" />
 						</button>
+						<Select
+							onValueChange={(value) => {
+								var selectedUser = users?.find((u) => u.id === value);
+								if (selectedUser) {
+									setUser(selectedUser);
+								}
+							}}
+							value={user?.id}
+						>
+							<SelectTrigger className="w-32 bg-background dark:bg-background">
+								<SelectValue placeholder={t(($) => $.overview.userSelectPlaceholder)} />
+							</SelectTrigger>
+							<SelectContent className="w-32">
+								{users?.map((user) => (
+									<SelectItem key={user.id} value={user.id}>
+										{user.username}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
 						<Select onValueChange={(value) => i18n.changeLanguage(value)}>
 							<SelectTrigger className="w-32 bg-background dark:bg-background">
 								<SelectValue placeholder="Language" />
@@ -131,7 +157,7 @@ export default function Layout() {
 						<div className="profile-wrapper">
 							{/* DUMMY PROFILE DISPLAY */}
 							<ProfileBadge
-								name="Olav Perator"
+								name={user?.username || "Olav Perator"}
 								location="Egersund"
 								avatarUrl="userimage.png"
 								jobTitle="Welder"

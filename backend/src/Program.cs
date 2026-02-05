@@ -60,6 +60,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<ISensorDataService, SensorDataService>();
 builder.Services.AddScoped<ValidateFieldForDataTypeFilter>();
 builder.Services.AddScoped<INoteDataService, NoteDataService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 // Migrate database during startup
