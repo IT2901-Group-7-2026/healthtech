@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Services;
 using Backend.DTOs;
+using Backend.Models;
 
 namespace Backend.Controllers;
 
@@ -11,12 +12,14 @@ public class NoteDataController(INoteDataService noteDataService) : ControllerBa
     private readonly INoteDataService _noteDataService = noteDataService;
 
     [HttpPost("{userId}")]
-    public async Task<ActionResult<IEnumerable<NoteDataResponseDto>>> GetNotesAsync([FromBody] NoteDataRequestDto request, [FromRoute] string userId)
+    public async Task<ActionResult<IEnumerable<NoteDataDto>>> GetNotesAsync([FromBody] NoteDataRequestDto request, [FromRoute] string userId)
     {
         try
         {
-            var notes = await _noteDataService.GetNotesAsync(request);
-            return Ok(notes);
+            IEnumerable<NoteData> notes = await _noteDataService.GetNotesAsync(request);
+            var dtos = notes.Select(NoteDataDto.FromEntity).ToList();
+
+            return dtos;
         }
         catch (ArgumentException ex)
         {
@@ -24,13 +27,12 @@ public class NoteDataController(INoteDataService noteDataService) : ControllerBa
         }
     }
 
-
     [HttpPost("{userId}/create")]
-    public async Task<ActionResult<string>> CreateNoteAsync([FromBody] NoteDataDto createDto, [FromRoute] string userId)
+    public async Task<ActionResult<string>> CreateNoteAsync([FromBody] NoteDataCreateDto createDto, [FromRoute] Guid userId)
     {
         try
         {
-            var createdNote = await _noteDataService.CreateNoteAsync(createDto);
+            var createdNote = await _noteDataService.CreateNoteAsync(createDto, userId);
             return Created($"/api/notes/{userId}", createdNote);
         }
         catch (InvalidOperationException ex)
