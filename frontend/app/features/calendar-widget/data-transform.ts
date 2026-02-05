@@ -6,9 +6,15 @@ export const mapSensorDataToMonthLists = (
 	data: Array<SensorDataResponseDto>,
 	relevantSensor: Sensor,
 ): MonthData => {
-	const safeDates: Array<Date> = data.filter(d => d.dangerLevel === "safe").map(d => new Date(d.time));
-	const warningDates: Array<Date> = data.filter(d => d.dangerLevel === "warning").map(d => new Date(d.time));
-	const dangerDates: Array<Date> = data.filter(d => d.dangerLevel === "danger").map(d => new Date(d.time));
+	const safeDates: Array<Date> = data
+		.filter((d) => d.dangerLevel === "safe")
+		.map((d) => new Date(d.time));
+	const warningDates: Array<Date> = data
+		.filter((d) => d.dangerLevel === "warning")
+		.map((d) => new Date(d.time));
+	const dangerDates: Array<Date> = data
+		.filter((d) => d.dangerLevel === "danger")
+		.map((d) => new Date(d.time));
 
 	return {
 		safe: { [relevantSensor]: safeDates },

@@ -1,10 +1,10 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-    type ChartConfig,
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
+	type ChartConfig,
+	ChartContainer,
+	ChartTooltip,
+	ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
 import { useSensor } from "@/features/sensor-picker/use-sensor";
@@ -14,12 +14,12 @@ import { thresholds } from "@/lib/thresholds";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    CartesianGrid,
-    Line,
-    LineChart,
-    ReferenceLine,
-    XAxis,
-    YAxis,
+	CartesianGrid,
+	Line,
+	LineChart,
+	ReferenceLine,
+	XAxis,
+	YAxis,
 } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
 
@@ -80,7 +80,7 @@ export function ChartLineDefault({
 
 	const formatTime = (time: number) =>
 		new Date(time).getUTCHours().toString().padStart(2, "0");
-	
+
 	return (
 		<Card className="w-full">
 			<CardHeader>

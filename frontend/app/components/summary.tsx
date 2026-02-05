@@ -182,7 +182,7 @@ const getSummaryForAll = (view: View, data: AllSensors): SummaryType => {
 	if (view === "day") {
 		let allData = Object.entries(data)
 			.map(
-				([sensor, sensorData]) =>
+				([, sensorData]) =>
 					data && getSingleSummary(view, "all", sensorData.data ?? []),
 			)
 			.reduce(
@@ -203,7 +203,7 @@ const getSummaryForAll = (view: View, data: AllSensors): SummaryType => {
 
 	const timePeriodDangerLevels = new Map<string, DangerLevel>();
 
-	Object.entries(data).forEach(([sensor, sensorData]) => {
+	Object.entries(data).forEach(([, sensorData]) => {
 		(sensorData.data ?? []).forEach((item) => {
 			const timeKey = item.time.toISOString();
 			const existingLevel = timePeriodDangerLevels.get(timeKey);

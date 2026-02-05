@@ -2,13 +2,13 @@ import type { Sensor } from "@/features/sensor-picker/sensors";
 import { queryOptions } from "@tanstack/react-query";
 import { minutesToMilliseconds } from "date-fns";
 import {
-	NoteSchema,
-	SensorDataResponseDtoSchema,
-	UserSchema,
 	type Note,
 	type NoteDataRequest,
+	NoteSchema,
 	type SensorDataRequestDto,
 	type SensorDataResponseDto,
+	SensorDataResponseDtoSchema,
+	UserSchema,
 } from "./dto";
 import { getStartEnd } from "./queries";
 import type { View } from "./views";
@@ -56,7 +56,7 @@ const fetchSensorData = async (
 		throw new Error("Failed to fetch sensor data");
 	}
 
-	const json = await response.json()
+	const json = await response.json();
 	return SensorDataResponseDtoSchema.array().parseAsync(json);
 };
 
@@ -72,7 +72,7 @@ export function sensorQueryOptions({
 	return queryOptions({
 		queryKey: [sensor, query],
 		queryFn: () => fetchSensorData(userId, sensor, query),
-		staleTime: minutesToMilliseconds(10)
+		staleTime: minutesToMilliseconds(10),
 	});
 }
 
@@ -114,7 +114,13 @@ export function notesQueryOptions({
 	});
 }
 
-export const updateNote = async ({ note, userId }: { note: Note; userId: string }) => {
+export const updateNote = async ({
+	note,
+	userId,
+}: {
+	note: Note;
+	userId: string;
+}) => {
 	const res = await fetch(`${baseURL}notes/${userId}`, {
 		method: "PUT",
 		headers: {
@@ -132,7 +138,13 @@ export const updateNote = async ({ note, userId }: { note: Note; userId: string 
 	return NoteSchema.parseAsync(json);
 };
 
-export const createNote = async ({ note, userId }: { note: Note, userId: string }) => {
+export const createNote = async ({
+	note,
+	userId,
+}: {
+	note: Note;
+	userId: string;
+}) => {
 	const res = await fetch(`${baseURL}notes/${userId}/create`, {
 		method: "POST",
 		headers: {
@@ -145,7 +157,7 @@ export const createNote = async ({ note, userId }: { note: Note, userId: string 
 		const errorText = await res.text();
 		throw new Error(`Failed to create note: ${errorText}`);
 	}
-	
+
 	const json = await res.json();
 	return NoteSchema.parseAsync(json);
 };

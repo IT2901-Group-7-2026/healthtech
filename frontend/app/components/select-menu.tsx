@@ -7,10 +7,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
-import { t } from "i18next";
+import type { TranslatedString } from "../../app/@types/i18n";
 
 type OptionGroup<T extends string> = {
-	label?: string;
+	label?: TranslatedString;
+	valueLabel?: TranslatedString;
 	key: string;
 	items: Array<T>;
 };
@@ -35,10 +36,10 @@ export function SelectMenu<T extends string>({
 			<SelectContent className="w-32">
 				{options.map(({ label, key, items }) => (
 					<SelectGroup key={key}>
-						{label && <SelectLabel>{t(label) ?? label}</SelectLabel>}
+						{label && <SelectLabel>{label}</SelectLabel>}
 						{items.map((value) => (
 							<SelectItem key={`${key} ${value}`} value={value}>
-								{t(value) ?? value}
+								{value}
 							</SelectItem>
 						))}
 					</SelectGroup>

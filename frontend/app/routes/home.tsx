@@ -31,7 +31,7 @@ export default function Home() {
 	const translatedView = t(($) => $.overview[view]);
 	const { date, setDate } = useDate();
 
-	const {user} = useUser();
+	const { user } = useUser();
 
 	// The overview daily page shows hour granularity for all sensors instead of minute granularity, so we override it here
 	const granularity = view === "day" ? "hour" : undefined;
@@ -66,7 +66,7 @@ export default function Home() {
 		(res) => res.isLoading,
 	);
 	const isErrorAny = Object.values(everySensorData).some((res) => res.isError);
-	
+
 	return (
 		<div className="flex w-full flex-col items-center md:items-start">
 			<div className="mb-4 flex w-full flex-col items-start gap-2 md:mb-0 md:flex-row md:justify-between">
@@ -74,7 +74,11 @@ export default function Home() {
 					{t(($) => $.overview.title, { view: translatedView })}
 				</h1>
 				<div className="flex flex-row gap-4">
-					<Button onClick={() => setDate(new Date())} size={"icon"} className="px-8">
+					<Button
+						onClick={() => setDate(new Date())}
+						size={"icon"}
+						className="px-8"
+					>
 						{"Today"}
 					</Button>
 					<Button onClick={() => setDate(getPrevDay(date, view))} size={"icon"}>
