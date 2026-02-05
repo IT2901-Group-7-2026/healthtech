@@ -15,7 +15,7 @@ namespace backend.Migrations
                 name: "LocationId",
                 table: "User",
                 type: "uuid",
-                nullable: true);
+                nullable: false);
 
             migrationBuilder.AddColumn<string>(
                 name: "Role",
@@ -99,7 +99,8 @@ namespace backend.Migrations
                 table: "User",
                 column: "LocationId",
                 principalTable: "Location",
-                principalColumn: "Id");
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
         }
 
         /// <inheritdoc />

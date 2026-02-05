@@ -46,7 +46,7 @@ public class UserService : IUserService
 
     public async Task<User> CreateUserAsync(CreateUserDto createUserDto)
     {
-        var user = new User
+        User user = new User
         {
             Id = Guid.NewGuid(),
             Username = createUserDto.Username,
@@ -60,12 +60,14 @@ public class UserService : IUserService
 
         _context.User.Add(user);
         await _context.SaveChangesAsync();
-        return user;
+
+        var createdUser = await GetUserByIdAsync(user.Id);
+        return createdUser!;
     }
 
     public async Task<User?> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
     {
-        var user = await GetUserByIdAsync(id);
+        User? user = await GetUserByIdAsync(id);
         if (user == null) return null;
 
         user.Username = updateUserDto.Username ?? user.Username;

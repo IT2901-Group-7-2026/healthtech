@@ -61,7 +61,7 @@ namespace backend.Migrations
                     b.Property<string>("JobDescription")
                         .HasColumnType("text");
 
-                    b.Property<Guid?>("LocationId")
+                    b.Property<Guid>("LocationId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("PasswordHash")
@@ -228,7 +228,9 @@ namespace backend.Migrations
                 {
                     b.HasOne("Location", "Location")
                         .WithMany("Users")
-                        .HasForeignKey("LocationId");
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Location");
                 });
