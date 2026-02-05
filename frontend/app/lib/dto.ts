@@ -61,3 +61,13 @@ export type NoteDataRequest = {
 	startTime: Date;
 	endTime: Date;
 };
+
+export const UserSchema = z.object({
+	id: z.guid(),
+	username: z.string(),
+	email: z.email(),
+	jobDescription: z.string().nullable(),
+	createdAt: z.coerce.date(),
+})
+
+export type User = z.infer<typeof UserSchema>;

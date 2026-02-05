@@ -7,6 +7,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
+import { useUser } from "@/features/user/user-user";
 import { useView } from "@/features/views/use-view";
 import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
@@ -24,6 +25,7 @@ export default function Noise() {
 	const { t, i18n } = useTranslation();
 
 	const { date } = useDate();
+	const { user } = useUser();
 
 	const dayQuery: SensorDataRequestDto = {
 		startTime: new Date(date.setUTCHours(8)),
@@ -53,6 +55,7 @@ export default function Noise() {
 		sensorQueryOptions({
 			sensor: "noise",
 			query,
+			userId: user.id,
 		}),
 	);
 

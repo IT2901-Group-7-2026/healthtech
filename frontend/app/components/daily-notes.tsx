@@ -10,20 +10,21 @@ import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Textarea } from "./ui/textarea";
+import { useUser } from "@/features/user/user-user";
 
 export const DailyNotes = ({
 	popUpOverride = false,
 }: {
-	popUpOverride?: boolean;
-}) => {
+	popUpOverride?: boolean;}) => {
 	const { t, i18n } = useTranslation();
 	const locale = i18n.language;
 	const { view } = useView();
 	const { date } = useDate();
 	const queryClient = useQueryClient();
+	const { user } = useUser();
 
 	const { data, isLoading, isError, refetch } = useQuery(
-		notesQueryOptions({ view: view, selectedDay: date }),
+		notesQueryOptions({ view: view, selectedDay: date, userId: user.id }),
 	);
 
 	const { mutate: mutateUpdateNote } = useMutation({
@@ -57,9 +58,9 @@ export const DailyNotes = ({
 	const handleSubmit = () => {
 		if (todayNote !== null && todayNote.note !== "" && data) {
 			if (data.some((note) => isSameDay(note.time, date))) {
-				mutateUpdateNote({ note: todayNote });
+				mutateUpdateNote({ note: todayNote, userId: user.id });
 			} else {
-				mutateCreateNote({ note: todayNote });
+				mutateCreateNote({ note: todayNote, userId: user.id });
 			}
 		}
 		setShowTextArea(false);
