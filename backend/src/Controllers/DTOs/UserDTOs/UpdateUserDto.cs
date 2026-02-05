@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+
 namespace Backend.DTOs;
+
 public record UpdateUserDto(
     string? Username = null,
     string? Email = null,

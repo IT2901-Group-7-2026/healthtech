@@ -14,15 +14,14 @@ namespace backend.Migrations
                 name: "JobDescription",
                 table: "User",
                 type: "text",
-                nullable: true);
+                nullable: true
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "JobDescription",
-                table: "User");
+            migrationBuilder.DropColumn(name: "JobDescription", table: "User");
         }
     }
 }

@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using Backend.Services;
 using Backend.DTOs;
+using Backend.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
@@ -11,7 +11,10 @@ public class NoteDataController(INoteDataService noteDataService) : ControllerBa
     private readonly INoteDataService _noteDataService = noteDataService;
 
     [HttpPost("{userId}")]
-    public async Task<ActionResult<IEnumerable<NoteDataResponseDto>>> GetNotesAsync([FromBody] NoteDataRequestDto request, [FromRoute] string userId)
+    public async Task<ActionResult<IEnumerable<NoteDataResponseDto>>> GetNotesAsync(
+        [FromBody] NoteDataRequestDto request,
+        [FromRoute] string userId
+    )
     {
         try
         {
@@ -24,9 +27,11 @@ public class NoteDataController(INoteDataService noteDataService) : ControllerBa
         }
     }
 
-
     [HttpPost("{userId}/create")]
-    public async Task<ActionResult<string>> CreateNoteAsync([FromBody] NoteDataDto createDto, [FromRoute] string userId)
+    public async Task<ActionResult<string>> CreateNoteAsync(
+        [FromBody] NoteDataDto createDto,
+        [FromRoute] string userId
+    )
     {
         try
         {
@@ -44,7 +49,10 @@ public class NoteDataController(INoteDataService noteDataService) : ControllerBa
     }
 
     [HttpPut("{userId}")]
-    public async Task<ActionResult<string>> UpdateNoteAsync([FromBody] NoteDataDto updateDto, [FromRoute] string userId)
+    public async Task<ActionResult<string>> UpdateNoteAsync(
+        [FromBody] NoteDataDto updateDto,
+        [FromRoute] string userId
+    )
     {
         try
         {
