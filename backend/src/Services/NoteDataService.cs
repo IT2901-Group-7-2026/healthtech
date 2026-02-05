@@ -24,12 +24,51 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
 
         var notes = await _dbContext.NoteData
             .Where(n => n.Time >= request.StartTime && n.Time <= request.EndTime && !string.IsNullOrEmpty(n.Note))
+            .Include(n => n.User)
             .ToListAsync();
 
-        return notes.Select(n => new NoteDataResponseDto
+        return notes.Select(n =>
         {
-            Note = n.Note,
-            Time = n.Time
+            var managers = n.User.Managers.Select(m => new UserDto(
+            m.Id,
+            m.Username,
+            m.Email,
+            m.JobDescription,
+            m.CreatedAt,
+            m.Role,
+            m.Location,
+            null,
+            null
+        )).ToList();
+
+            var subordinates = n.User.Subordinates.Select(s => new UserDto(
+                s.Id,
+                s.Username,
+                s.Email,
+                s.JobDescription,
+                s.CreatedAt,
+                s.Role,
+                s.Location,
+                null,
+                null
+            )).ToList();
+                
+            return new NoteDataResponseDto
+            {
+                Note = n.Note,
+                Time = n.Time,
+                User = new UserDto(
+                    n.User.Id,
+                    n.User.Username,
+                    n.User.Email,
+                    n.User.JobDescription,
+                    n.User.CreatedAt,
+                    n.User.Role,
+                    n.User.Location,
+                    managers,
+                    subordinates
+                )
+            };
         });
     }
 
@@ -41,7 +80,7 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
         }
 
         var existingNote = await _dbContext.NoteData
-            .AnyAsync(n => n.Time == createDto.Time);
+            .AnyAsync(n => n.Time == createDto.Time && n.UserId == createDto.User.Id);
 
         if (existingNote)
         {
@@ -49,11 +88,14 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
         }
 
 
-        var noteData = new NoteData(
-            Guid.NewGuid(),
-            createDto.Note,
-            createDto.Time!.Value.UtcDateTime
-        );
+        var noteData = new NoteData
+        {
+            Id = Guid.NewGuid(),
+            Note = createDto.Note,
+            Time = createDto.Time!.Value.UtcDateTime,
+            UserId = createDto.User.Id,
+            User = null!
+        };
 
         var createdNote = _dbContext.NoteData.Add(noteData);
         await _dbContext.SaveChangesAsync();

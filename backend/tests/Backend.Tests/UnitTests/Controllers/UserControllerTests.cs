@@ -9,6 +9,19 @@ namespace Backend.Tests.UnitTests.Controllers;
 
 public class UserControllerTests
 {
+    private readonly Location MockLocation = new()
+    {
+        Id = Guid.Parse("b7c814ea-47c2-4b11-9841-38d9c429a8be"), // Random GUID
+        Latitude = 63.787778f, // Coordinates for Aker Solutions Verdal "The Yard"
+        Longitude = 11.440556f,
+        Country = "Norway",
+        Region = "Trøndelag",
+        City = "Verdal",
+        Site = "The Yard",
+        Building = "A2",
+        Users = []
+    };
+
     [Fact]
     public async Task GetAllUsers_ReturnsEmptyList_WhenNoUsers()
     {
@@ -54,7 +67,11 @@ public class UserControllerTests
         var createUserDto = new CreateUserDto(
             Username: "testuser",
             Email: "test@example.com",
-            Password: "password123"
+            Password: "password123",
+            LocationId: MockLocation.Id,
+            ManagerIds: [],
+            Role: UserRole.Operator,
+            JobDescription: "Welder"
         );
 
         var expectedUser = new User
@@ -63,7 +80,13 @@ public class UserControllerTests
             Username = createUserDto.Username,
             Email = createUserDto.Email,
             PasswordHash = "hashed",
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            Role = createUserDto.Role,
+            LocationId = createUserDto.LocationId,
+            Location = MockLocation,
+            JobDescription = createUserDto.JobDescription,
+            Managers = [],
+            Subordinates = []
         };
 
         mockService.Setup(service => service.CreateUserAsync(createUserDto))
