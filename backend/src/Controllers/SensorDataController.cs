@@ -15,7 +15,7 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
 
     [HttpPost("{dataType}/{userId}")]
     [ServiceFilter(typeof(ValidateFieldForDataTypeFilter))]
-    public async Task<ActionResult<IEnumerable<SensorDataResponseDto>>> GetAggregatedData(
+    public async Task<ActionResult<IEnumerable<SensorDataDto>>> GetAggregatedData(
         [FromBody] SensorDataRequestDto request,
         [FromRoute] Guid userId,
         [FromRoute] DataType dataType)

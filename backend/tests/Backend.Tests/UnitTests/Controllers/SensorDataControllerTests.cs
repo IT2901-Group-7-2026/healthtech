@@ -32,7 +32,7 @@ public class SensorDataControllerTests
             _mockService = new Mock<ISensorDataService>();
             _controller = new SensorDataController(_mockService.Object);
             _mockService.Setup(service => service.GetAggregatedDataAsync(It.IsAny<RequestContext>()))
-                        .ReturnsAsync(new List<SensorDataResponseDto>());
+                        .ReturnsAsync(new List<SensorDataDto>());
         }
 
 
@@ -52,7 +52,7 @@ public class SensorDataControllerTests
             var noiseResult = await _controller.GetAggregatedData(noiseRequest, Guid.NewGuid(), DataType.Noise);
             var okNoiseResult = noiseResult.Result as OkObjectResult;
             Assert.IsType<OkObjectResult>(okNoiseResult);
-            var noiseData = okNoiseResult.Value as IEnumerable<SensorDataResponseDto>;
+            var noiseData = okNoiseResult.Value as IEnumerable<SensorDataDto>;
             Assert.NotNull(noiseData);
             Assert.Empty(noiseData);
         }
@@ -75,7 +75,7 @@ public class SensorDataControllerTests
             var dustResult = await _controller.GetAggregatedData(dustRequest, Guid.NewGuid(), DataType.Dust);
             var okDustResult = dustResult.Result as OkObjectResult;
             Assert.IsType<OkObjectResult>(okDustResult);
-            var dustData = okDustResult.Value as IEnumerable<SensorDataResponseDto>;
+            var dustData = okDustResult.Value as IEnumerable<SensorDataDto>;
             Assert.NotNull(dustData);
             Assert.Empty(dustData);
         }
@@ -97,7 +97,7 @@ public class SensorDataControllerTests
             var vibrationResult = await _controller.GetAggregatedData(vibrationRequest, Guid.NewGuid(), DataType.Vibration);
             var okVibrationResult = vibrationResult.Result as OkObjectResult;
             Assert.IsType<OkObjectResult>(okVibrationResult);
-            var vibrationData = okVibrationResult.Value as IEnumerable<SensorDataResponseDto>;
+            var vibrationData = okVibrationResult.Value as IEnumerable<SensorDataDto>;
             Assert.NotNull(vibrationData);
             Assert.Empty(vibrationData);
         }
@@ -131,10 +131,10 @@ public class SensorDataControllerTests
         public async Task GetAggregatedData_ReturnsDataList_WhenNoiseDataExists()
         {
             _mockService.Setup(service => service.GetAggregatedDataAsync(It.IsAny<RequestContext>()))
-                    .ReturnsAsync(new List<SensorDataResponseDto>
+                    .ReturnsAsync(new List<SensorDataDto>
                     {
-                        new SensorDataResponseDto { Time = DateTime.Parse("2025-02-12T10:12:31+00:00"), Value = 42.0 },
-                        new SensorDataResponseDto { Time = DateTime.Parse("2025-02-13T11:15:45+00:00"), Value = 36.5 }
+                        new SensorDataDto { Time = DateTime.Parse("2025-02-12T10:12:31+00:00"), Value = 42.0 },
+                        new SensorDataDto { Time = DateTime.Parse("2025-02-13T11:15:45+00:00"), Value = 36.5 }
                     });
 
             var request = new SensorDataRequestDto(
@@ -148,7 +148,7 @@ public class SensorDataControllerTests
             var okResult = result.Result as OkObjectResult;
             Assert.IsType<OkObjectResult>(okResult);
 
-            var data = okResult.Value as IEnumerable<SensorDataResponseDto>;
+            var data = okResult.Value as IEnumerable<SensorDataDto>;
             Assert.NotNull(data);
             Assert.Equal(2, data.Count());
         }
@@ -161,10 +161,10 @@ public class SensorDataControllerTests
         public async Task GetAggregatedData_ReturnsDataList_WhenDustDataExists()
         {
             _mockService.Setup(service => service.GetAggregatedDataAsync(It.IsAny<RequestContext>()))
-                    .ReturnsAsync(new List<SensorDataResponseDto>
+                    .ReturnsAsync(new List<SensorDataDto>
                     {
-                        new SensorDataResponseDto { Time = DateTime.Parse("2025-02-12T10:12:31+00:00"), Value = 15.0 },
-                        new SensorDataResponseDto { Time = DateTime.Parse("2025-02-13T11:15:45+00:00"), Value = 20.5 }
+                        new SensorDataDto { Time = DateTime.Parse("2025-02-12T10:12:31+00:00"), Value = 15.0 },
+                        new SensorDataDto { Time = DateTime.Parse("2025-02-13T11:15:45+00:00"), Value = 20.5 }
                     });
 
             var request = new SensorDataRequestDto(
@@ -178,7 +178,7 @@ public class SensorDataControllerTests
             var okResult = result.Result as OkObjectResult;
             Assert.IsType<OkObjectResult>(okResult);
 
-            var data = okResult.Value as IEnumerable<SensorDataResponseDto>;
+            var data = okResult.Value as IEnumerable<SensorDataDto>;
             Assert.NotNull(data);
             Assert.Equal(2, data.Count());
         }
@@ -191,10 +191,10 @@ public class SensorDataControllerTests
         public async Task GetAggregatedData_ReturnsDataList_WhenVibrationDataExists()
         {
             _mockService.Setup(service => service.GetAggregatedDataAsync(It.IsAny<RequestContext>()))
-                    .ReturnsAsync(new List<SensorDataResponseDto>
+                    .ReturnsAsync(new List<SensorDataDto>
                     {
-                        new SensorDataResponseDto { Time = DateTime.Parse("2025-02-12T10:12:31+00:00"), Value = 5.0 },
-                        new SensorDataResponseDto { Time = DateTime.Parse("2025-02-13T11:15:45+00:00"), Value = 7.5 }
+                        new SensorDataDto { Time = DateTime.Parse("2025-02-12T10:12:31+00:00"), Value = 5.0 },
+                        new SensorDataDto { Time = DateTime.Parse("2025-02-13T11:15:45+00:00"), Value = 7.5 }
                     });
 
             var request = new SensorDataRequestDto(
@@ -208,7 +208,7 @@ public class SensorDataControllerTests
             var okResult = result.Result as OkObjectResult;
             Assert.IsType<OkObjectResult>(okResult);
 
-            var data = okResult.Value as IEnumerable<SensorDataResponseDto>;
+            var data = okResult.Value as IEnumerable<SensorDataDto>;
             Assert.NotNull(data);
             Assert.Equal(2, data.Count());
         }
