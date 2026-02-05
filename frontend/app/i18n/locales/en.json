@@ -11,7 +11,8 @@
     "month": "month",
     "dust": "Dust",
     "vibration": "Vibration",
-    "noise": "Noise"
+    "noise": "Noise",
+    "userSelectPlaceholder": "User"
   },
   "dustExposure": {
     "title": "Dust Exposure"

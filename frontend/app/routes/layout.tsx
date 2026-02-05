@@ -31,7 +31,7 @@ import {
 	SelectValue,
 } from "@/ui/select";
 import { useQuery } from "@tanstack/react-query";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { href, NavLink, Outlet, type To, useLocation } from "react-router";
 
@@ -130,8 +130,7 @@ export default function Layout() {
 							value={user?.id}
 						>
 							<SelectTrigger className="w-32 bg-background dark:bg-background">
-								{/* TODO: I18 */}
-								<SelectValue placeholder="Bruker" />
+								<SelectValue placeholder={t(($) => $.overview.userSelectPlaceholder)} />
 							</SelectTrigger>
 							<SelectContent className="w-32">
 								{users?.map((user) => (
