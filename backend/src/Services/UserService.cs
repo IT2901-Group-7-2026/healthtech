@@ -53,7 +53,9 @@ public class UserService : IUserService
             Email = createUserDto.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password),
             JobDescription = createUserDto.JobDescription,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            Role = createUserDto.Role,
+            LocationId = createUserDto.LocationId
         };
 
         _context.User.Add(user);

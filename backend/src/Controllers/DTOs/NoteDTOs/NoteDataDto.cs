@@ -4,5 +4,6 @@ namespace Backend.DTOs;
 
 public record NoteDataDto(
     [Required] DateTimeOffset? Time,
-    [Required] string Note
+    [Required] string Note,
+    [Required] UserDto User
 );
