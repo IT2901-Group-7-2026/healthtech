@@ -63,13 +63,6 @@ export function BasePopup({
 							</NavLink>
 						</Button>
 					)}
-					<Button
-						variant="destructive"
-						onClick={onClose}
-						className="cursor-pointer"
-					>
-						{t(($) => $.buttons.close)}
-					</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

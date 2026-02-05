@@ -134,6 +134,8 @@ export default function Layout() {
 								name="Olav Perator"
 								location="Egersund"
 								avatarUrl="userimage.png"
+								jobTitle="Welder"
+								jobDescription="Responsible for welding operations on offshore platforms."
 							/>
 						</div>
 					</div>
