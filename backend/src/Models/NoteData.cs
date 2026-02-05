@@ -1,5 +1,3 @@
-using Microsoft.EntityFrameworkCore;
-
 namespace Backend.Models;
 
 public class NoteData
