@@ -7,15 +7,10 @@
     "dev": "react-router dev",
     "preview": "vite preview",
     "start": "npx serve -s ./build/client",
-    "typecheck": "react-router typegen && tsc",
-    "check": "biome check",
-    "check:fix": "biome check --write",
-    "check:fix:unsafe": "biome check --write --unsafe",
-    "lint": "biome lint",
-    "lint:fix": "biome lint --write",
-    "lint:fix:unsafe": "biome lint --write --unsafe",
-    "format": "biome format",
-    "format:fix": "biome format --write"
+    "type-check": "tsc --noEmit",
+    "type-check:router": "react-router typegen && tsc",
+    "lint": "biome check . --write",
+    "lint-check": "biome check ."
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
