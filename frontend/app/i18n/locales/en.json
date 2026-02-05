@@ -11,7 +11,8 @@
     "month": "month",
     "dust": "Dust",
     "vibration": "Vibration",
-    "noise": "Noise"
+    "noise": "Noise",
+    "userSelectPlaceholder": "User"
   },
   "dustExposure": {
     "title": "Dust Exposure"
@@ -100,7 +101,9 @@
     "location": "Location",
     "name": "Name",
     "prefLanguage": "Preferred language",
-    "secReg": "Current security regulations"
+    "secReg": "Current security regulations",
+    "jobTitle" : "Job title",
+    "jobDescription" : "Job description"
   },
   "loadingData": "Loading data...",
   "errorLoadingData": "Something went wrong while fetching sensor data.",

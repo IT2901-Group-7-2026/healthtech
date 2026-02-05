@@ -11,7 +11,8 @@
     "month": "måned",
     "dust": "Støv",
     "vibration": "Vibrasjon",
-    "noise": "Støy"
+    "noise": "Støy",
+    "userSelectPlaceholder": "Bruker"
   },
   "dustExposure": {
     "title": "Støveksponering"
@@ -100,7 +101,9 @@
     "location": "Lokasjon",
     "name": "Navn",
     "prefLanguage": "Foretrukket språk",
-    "secReg": "Gjeldende sikkerhetsreguleringer"
+    "secReg": "Gjeldende sikkerhetsreguleringer",
+    "jobTitle" : "Stillingsbetegnelse",
+    "jobDescription" : "Stillingsbeskrivelse"
   },
   "loadingData": "Laster inn data...",
   "errorLoadingData": "Noe gikk galt under henting av sensordata.",

@@ -6,6 +6,8 @@ export type ProfileBadgeProps = {
 	name?: string;
 	location?: string;
 	avatarUrl?: string;
+	jobTitle?: string;
+	jobDescription?: string;
 };
 
 // Dummy implementation
@@ -13,6 +15,8 @@ export const ProfileBadge = ({
 	name = "Bruker Brukersen",
 	location = "Lokasjon",
 	avatarUrl,
+	jobTitle,
+	jobDescription,
 }: ProfileBadgeProps) => {
 	let shorthandName = name;
 	const names = name.trim().split(/\s+/);
@@ -63,6 +67,8 @@ export const ProfileBadge = ({
 				name={name}
 				location={location}
 				avatarSrc={avatarUrl}
+				jobTitle={jobTitle}
+				jobDescription={jobDescription}
 			></ProfilePopup>
 		</>
 	);
