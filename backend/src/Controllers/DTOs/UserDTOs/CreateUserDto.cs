@@ -7,5 +7,6 @@ public record CreateUserDto(
     [Required] string Password,  // Password only needed during creation
     [Required] string LocationId,
     [Required] List<string> ManagerIds,
-    [Required] UserRole Role
+    [Required] UserRole Role,
+    string? JobDescription // JobDescription optional at creation
 );

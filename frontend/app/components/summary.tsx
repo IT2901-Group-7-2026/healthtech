@@ -2,7 +2,7 @@ import type { Sensor } from "@/features/sensor-picker/sensors";
 import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { type DangerKey, dangerLevels } from "@/lib/danger-levels";
+import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { AllSensors, SensorDataResponseDto } from "@/lib/dto";
 import { cn } from "@/lib/utils";
 import { Card } from "@/ui/card";
@@ -15,7 +15,7 @@ type SummaryProps = {
 	data: Array<SensorDataResponseDto> | AllSensors | undefined;
 };
 
-type SummaryLabel = Record<DangerKey, string>;
+type SummaryLabel = Record<DangerLevel, string>;
 
 export function Summary({ exposureType, data }: SummaryProps) {
 	const { t } = useTranslation();
@@ -78,7 +78,7 @@ export function Summary({ exposureType, data }: SummaryProps) {
 				{/* Safe */}
 				<div
 					className="flex items-baseline justify-center p-2 md:justify-start"
-					title={dangerLevels.safe.label}
+					title={DangerLevels.safe.label}
 				>
 					<span
 						className={cn(
@@ -95,7 +95,7 @@ export function Summary({ exposureType, data }: SummaryProps) {
 				{/* Warning */}
 				<div
 					className="flex items-baseline justify-center p-2 md:justify-start"
-					title={dangerLevels.warning.label}
+					title={DangerLevels.warning.label}
 				>
 					<span
 						className={cn(
@@ -112,7 +112,7 @@ export function Summary({ exposureType, data }: SummaryProps) {
 				{/* Danger */}
 				<div
 					className="flex items-baseline justify-center p-2 md:justify-start"
-					title={dangerLevels.danger.label}
+					title={DangerLevels.danger.label}
 				>
 					<span
 						className={cn(
@@ -201,11 +201,11 @@ const getSummaryForAll = (view: View, data: AllSensors): SummaryType => {
 
 	//TODO: This will always be a bit wrong because we only show hours 8-16 in the calendar but have more data than that. also we should only remove time duplicates if we're not on day view as that's the only time we show all three sensors at once
 
-	const timePeriodDangerLevels = new Map<string, DangerKey>();
+	const timePeriodDangerLevels = new Map<string, DangerLevel>();
 
 	Object.entries(data).forEach(([sensor, sensorData]) => {
 		(sensorData.data ?? []).forEach((item) => {
-			const timeKey = new Date(item.time).toISOString();
+			const timeKey = item.time.toISOString();
 			const existingLevel = timePeriodDangerLevels.get(timeKey);
 
 			// Keep the worst danger level for each time period

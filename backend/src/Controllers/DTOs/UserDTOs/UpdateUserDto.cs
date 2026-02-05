@@ -4,6 +4,7 @@ public record UpdateUserDto(
     string? Username = null,
     string? Email = null,
     string? Password = null,
+    string? JobDescription = null,
     string? LocationId = null,
     List<string>? ManagerIds = null,
     List<string>? SubordinateIds = null,

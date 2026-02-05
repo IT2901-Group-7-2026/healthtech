@@ -1,25 +1,25 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-	type ChartConfig,
-	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
+    type ChartConfig,
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
 import { useSensor } from "@/features/sensor-picker/use-sensor";
-import { type DangerKey, dangerLevels } from "@/lib/danger-levels";
+import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto } from "@/lib/dto";
 import { thresholds } from "@/lib/thresholds";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import {
-	CartesianGrid,
-	Line,
-	LineChart,
-	ReferenceLine,
-	XAxis,
-	YAxis,
+    CartesianGrid,
+    Line,
+    LineChart,
+    ReferenceLine,
+    XAxis,
+    YAxis,
 } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
 
@@ -68,7 +68,7 @@ export function ChartLineDefault({
 		`${((maxData.value - y) / (maxData.value - minData.value)) * 100}%`;
 
 	const transformedData = chartData.map((item) => ({
-		time: new Date(item.time).getTime(),
+		time: item.time.getTime(),
 		value: item.value,
 	}));
 
@@ -213,11 +213,11 @@ export function ThresholdLine({
 	label,
 }: {
 	y: number;
-	dangerLevel: DangerKey;
+	dangerLevel: DangerLevel;
 	label?: string;
 }) {
 	const { t } = useTranslation();
-	const color = `var(--${dangerLevels[dangerLevel].color})`;
+	const color = `var(--${DangerLevels[dangerLevel].color})`;
 	const lineLabel = label ?? t(($) => $.line_chart[dangerLevel]);
 	return (
 		<ReferenceLine
