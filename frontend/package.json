@@ -9,8 +9,12 @@
     "start": "npx serve -s ./build/client",
     "type-check": "tsc --noEmit",
     "type-check:router": "react-router typegen && tsc",
-    "lint": "biome check . --write",
-    "lint-check": "biome check ."
+    "lint": "biome lint",
+    "lint:fix": "biome lint --write",
+    "format": "biome format",
+    "format:fix": "biome format --write",
+    "check": "biome check",
+    "check:fix": "biome check --write"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
