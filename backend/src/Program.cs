@@ -1,9 +1,9 @@
-using Microsoft.EntityFrameworkCore;
-using Backend.Services;
-using Backend.Validation;
-using Backend.Utils;
-using System.Text.Json.Serialization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using Backend.Services;
+using Backend.Utils;
+using Backend.Validation;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,37 +17,41 @@ var allowedHost = configuration["AllowedHost"] ?? "localhost";
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: AllowDevFrontend,
+    options.AddPolicy(
+        name: AllowDevFrontend,
         policy =>
         {
-            policy.SetIsOriginAllowed(origin =>
-            {
+            policy
+                .SetIsOriginAllowed(origin =>
+                {
+                    var uri = new Uri(origin);
+                    var host = uri.Host;
 
-                var uri = new Uri(origin);
-                var host = uri.Host;
+                    // Allow localhost for development
+                    if (host == "localhost" || host == "127.0.0.1")
+                        return true;
 
-                // Allow localhost for development
-                if (host == "localhost" || host == "127.0.0.1")
-                    return true;
+                    // Allow configured host and its subdomains
+                    if (host == allowedHost || host.EndsWith($".{allowedHost}"))
+                        return true;
 
-                // Allow configured host and its subdomains
-                if (host == allowedHost || host.EndsWith($".{allowedHost}"))
-                    return true;
-
-                return false;
-            })
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials();
-        });
+                    return false;
+                })
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        }
+    );
 });
 
 // Convert enum from numbers to camelCase strings in JSON
-builder.Services.AddControllers()
+builder
+    .Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(
-            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+            new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+        );
     });
 
 // Add services to the container.
@@ -55,7 +59,8 @@ builder.Services.AddControllers()
 builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetValue<string>("DATABASE_URL")));
+    options.UseNpgsql(builder.Configuration.GetValue<string>("DATABASE_URL"))
+);
 
 builder.Services.AddScoped<ISensorDataService, SensorDataService>();
 builder.Services.AddScoped<ValidateFieldForDataTypeFilter>();
@@ -63,6 +68,7 @@ builder.Services.AddScoped<INoteDataService, NoteDataService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
+
 // Migrate database during startup
 using (var scope = app.Services.CreateScope())
 {

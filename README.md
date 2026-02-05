@@ -77,6 +77,14 @@ cd backend
 dotnet test
 ```
 
+## Formatting in Backend
+
+In the backend directory, you can run the following commands:
+
+```sh
+dotnet csharpier format .
+```
+
 ## Linting and Formatting in Frontend
 
 In the frontend directory, you can run the following commands:

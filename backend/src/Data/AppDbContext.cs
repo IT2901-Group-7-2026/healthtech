@@ -1,10 +1,11 @@
-using Microsoft.EntityFrameworkCore;
-using Backend.Records;
 using Backend.Models;
+using Backend.Records;
+using Microsoft.EntityFrameworkCore;
 
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options) { }
 
     public DbSet<NoiseData> NoiseData { get; set; }
     public DbSet<DustData> DustData { get; set; }
@@ -19,7 +20,8 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfiguration(new Backend.Data.Configuration.UserConfiguration());
 
-        modelBuilder.Entity<User>()
+        modelBuilder
+            .Entity<User>()
             .HasMany(user => user.Managers)
             .WithMany(user => user.Subordinates)
             .UsingEntity(typeBuilder => typeBuilder.ToTable("UserManagers"));

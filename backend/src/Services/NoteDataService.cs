@@ -17,42 +17,53 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
 
     public async Task<IEnumerable<NoteDataResponseDto>> GetNotesAsync(NoteDataRequestDto request)
     {
-        if (request.StartTime!.Value.Offset != TimeSpan.Zero || request.EndTime!.Value.Offset != TimeSpan.Zero)
+        if (
+            request.StartTime!.Value.Offset != TimeSpan.Zero
+            || request.EndTime!.Value.Offset != TimeSpan.Zero
+        )
         {
             throw new ArgumentException("Please provide time in UTC format");
         }
 
-        var notes = await _dbContext.NoteData
-            .Where(n => n.Time >= request.StartTime && n.Time <= request.EndTime && !string.IsNullOrEmpty(n.Note))
+        var notes = await _dbContext
+            .NoteData.Where(n =>
+                n.Time >= request.StartTime
+                && n.Time <= request.EndTime
+                && !string.IsNullOrEmpty(n.Note)
+            )
             .Include(n => n.User)
             .ToListAsync();
 
         return notes.Select(n =>
         {
-            var managers = n.User.Managers.Select(m => new UserDto(
-            m.Id,
-            m.Username,
-            m.Email,
-            m.JobDescription,
-            m.CreatedAt,
-            m.Role,
-            m.Location,
-            null,
-            null
-        )).ToList();
+            var managers = n
+                .User.Managers.Select(m => new UserDto(
+                    m.Id,
+                    m.Username,
+                    m.Email,
+                    m.JobDescription,
+                    m.CreatedAt,
+                    m.Role,
+                    m.Location,
+                    null,
+                    null
+                ))
+                .ToList();
 
-            var subordinates = n.User.Subordinates.Select(s => new UserDto(
-                s.Id,
-                s.Username,
-                s.Email,
-                s.JobDescription,
-                s.CreatedAt,
-                s.Role,
-                s.Location,
-                null,
-                null
-            )).ToList();
-                
+            var subordinates = n
+                .User.Subordinates.Select(s => new UserDto(
+                    s.Id,
+                    s.Username,
+                    s.Email,
+                    s.JobDescription,
+                    s.CreatedAt,
+                    s.Role,
+                    s.Location,
+                    null,
+                    null
+                ))
+                .ToList();
+
             return new NoteDataResponseDto
             {
                 Note = n.Note,
@@ -67,7 +78,7 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
                     n.User.Location,
                     managers,
                     subordinates
-                )
+                ),
             };
         });
     }
@@ -79,14 +90,14 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
             throw new ArgumentException("Please provide time in UTC format");
         }
 
-        var existingNote = await _dbContext.NoteData
-            .AnyAsync(n => n.Time == createDto.Time && n.UserId == createDto.User.Id);
+        var existingNote = await _dbContext.NoteData.AnyAsync(n =>
+            n.Time == createDto.Time && n.UserId == createDto.User.Id
+        );
 
         if (existingNote)
         {
             throw new InvalidOperationException("A note with this time already exists");
         }
-
 
         var noteData = new NoteData
         {
@@ -94,7 +105,7 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
             Note = createDto.Note,
             Time = createDto.Time!.Value.UtcDateTime,
             UserId = createDto.User.Id,
-            User = null!
+            User = null!,
         };
 
         var createdNote = _dbContext.NoteData.Add(noteData);
@@ -109,17 +120,16 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
         {
             throw new ArgumentException("Please provide time in UTC format");
         }
-        
-        var note = await _dbContext.NoteData
-            .FirstOrDefaultAsync(n => n.Time == updateDto.Time);
+
+        var note = await _dbContext.NoteData.FirstOrDefaultAsync(n => n.Time == updateDto.Time);
 
         if (note == null)
         {
             throw new InvalidOperationException("This is not a note that exists");
         }
 
-        note.Note = updateDto.Note;  
-        await _dbContext.SaveChangesAsync();  
+        note.Note = updateDto.Note;
+        await _dbContext.SaveChangesAsync();
 
         return note;
     }

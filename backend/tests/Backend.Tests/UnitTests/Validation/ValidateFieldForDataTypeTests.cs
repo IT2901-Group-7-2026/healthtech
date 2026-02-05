@@ -30,20 +30,22 @@ public class ValidateFieldForDataTypeFilterTests
             _filter = new ValidateFieldForDataTypeFilter();
         }
 
-
         /// <summary>
         /// Verifies that validation passes when no field is provided for the noise data type.
         /// </summary>
         [Fact]
         public void OnActionExecuting_PassesValidation_WhenNoFieldForNoiseDataType()
         {
-            var context = CreateActionExecutingContext(DataType.Noise, new SensorDataRequestDto(
-                DateTimeOffset.Now,
-                DateTimeOffset.Now.AddDays(1),
-                TimeGranularity.Day,
-                AggregationFunction.Avg,
-                null
-            ));
+            var context = CreateActionExecutingContext(
+                DataType.Noise,
+                new SensorDataRequestDto(
+                    DateTimeOffset.Now,
+                    DateTimeOffset.Now.AddDays(1),
+                    TimeGranularity.Day,
+                    AggregationFunction.Avg,
+                    null
+                )
+            );
 
             _filter.OnActionExecuting(context);
             Assert.Null(context.Result);
@@ -55,13 +57,16 @@ public class ValidateFieldForDataTypeFilterTests
         [Fact]
         public void OnActionExecuting_PassesValidation_WhenNoFieldForVibrationDataType()
         {
-            var context = CreateActionExecutingContext(DataType.Vibration, new SensorDataRequestDto(
-                DateTimeOffset.Now,
-                DateTimeOffset.Now.AddDays(1),
-                TimeGranularity.Day,
-                AggregationFunction.Avg,
-                null
-            ));
+            var context = CreateActionExecutingContext(
+                DataType.Vibration,
+                new SensorDataRequestDto(
+                    DateTimeOffset.Now,
+                    DateTimeOffset.Now.AddDays(1),
+                    TimeGranularity.Day,
+                    AggregationFunction.Avg,
+                    null
+                )
+            );
 
             _filter.OnActionExecuting(context);
             Assert.Null(context.Result);
@@ -73,13 +78,16 @@ public class ValidateFieldForDataTypeFilterTests
         [Fact]
         public void OnActionExecuting_PassesValidation_WhenValidFieldForDustDataType()
         {
-            var context = CreateActionExecutingContext(DataType.Dust, new SensorDataRequestDto(
-                DateTimeOffset.Now,
-                DateTimeOffset.Now.AddDays(1),
-                TimeGranularity.Day,
-                AggregationFunction.Avg,
-                Field.Pm10_stel
-            ));
+            var context = CreateActionExecutingContext(
+                DataType.Dust,
+                new SensorDataRequestDto(
+                    DateTimeOffset.Now,
+                    DateTimeOffset.Now.AddDays(1),
+                    TimeGranularity.Day,
+                    AggregationFunction.Avg,
+                    Field.Pm10_stel
+                )
+            );
 
             _filter.OnActionExecuting(context);
             Assert.Null(context.Result);
@@ -101,25 +109,30 @@ public class ValidateFieldForDataTypeFilterTests
             _filter = new ValidateFieldForDataTypeFilter();
         }
 
-
         /// <summary>
         /// Verifies that validation fails when a field is provided for the noise data type.
         /// </summary>
         [Fact]
         public void OnActionExecuting_ReturnsBadRequest_WhenFieldProvidedForNoiseDataType()
         {
-            var context = CreateActionExecutingContext(DataType.Noise, new SensorDataRequestDto(
-                DateTimeOffset.Now,
-                DateTimeOffset.Now.AddDays(1),
-                TimeGranularity.Day,
-                AggregationFunction.Avg,
-                Field.Pm10_stel
-            ));
+            var context = CreateActionExecutingContext(
+                DataType.Noise,
+                new SensorDataRequestDto(
+                    DateTimeOffset.Now,
+                    DateTimeOffset.Now.AddDays(1),
+                    TimeGranularity.Day,
+                    AggregationFunction.Avg,
+                    Field.Pm10_stel
+                )
+            );
 
             _filter.OnActionExecuting(context);
             var badRequestResult = context.Result as BadRequestObjectResult;
             Assert.IsType<BadRequestObjectResult>(badRequestResult);
-            Assert.Equal("Field must not be specified for Noise.", GetErrorMessage(badRequestResult));
+            Assert.Equal(
+                "Field must not be specified for Noise.",
+                GetErrorMessage(badRequestResult)
+            );
         }
 
         /// <summary>
@@ -128,13 +141,16 @@ public class ValidateFieldForDataTypeFilterTests
         [Fact]
         public void OnActionExecuting_ReturnsBadRequest_WhenNoFieldForDustDataType()
         {
-            var context = CreateActionExecutingContext(DataType.Dust, new SensorDataRequestDto(
-                DateTimeOffset.Now,
-                DateTimeOffset.Now.AddDays(1),
-                TimeGranularity.Day,
-                AggregationFunction.Avg,
-                null
-            ));
+            var context = CreateActionExecutingContext(
+                DataType.Dust,
+                new SensorDataRequestDto(
+                    DateTimeOffset.Now,
+                    DateTimeOffset.Now.AddDays(1),
+                    TimeGranularity.Day,
+                    AggregationFunction.Avg,
+                    null
+                )
+            );
 
             _filter.OnActionExecuting(context);
             var badRequestResult = context.Result as BadRequestObjectResult;
@@ -148,18 +164,24 @@ public class ValidateFieldForDataTypeFilterTests
         [Fact]
         public void OnActionExecuting_ReturnsBadRequest_WhenFieldProvidedForVibrationDataType()
         {
-            var context = CreateActionExecutingContext(DataType.Vibration, new SensorDataRequestDto(
-                DateTimeOffset.Now,
-                DateTimeOffset.Now.AddDays(1),
-                TimeGranularity.Day,
-                AggregationFunction.Avg,
-                Field.Pm10_stel
-            ));
+            var context = CreateActionExecutingContext(
+                DataType.Vibration,
+                new SensorDataRequestDto(
+                    DateTimeOffset.Now,
+                    DateTimeOffset.Now.AddDays(1),
+                    TimeGranularity.Day,
+                    AggregationFunction.Avg,
+                    Field.Pm10_stel
+                )
+            );
 
             _filter.OnActionExecuting(context);
             var badRequestResult = context.Result as BadRequestObjectResult;
             Assert.IsType<BadRequestObjectResult>(badRequestResult);
-            Assert.Equal("Field must not be specified for Vibration.", GetErrorMessage(badRequestResult));
+            Assert.Equal(
+                "Field must not be specified for Vibration.",
+                GetErrorMessage(badRequestResult)
+            );
         }
 
         /// <summary>
@@ -168,20 +190,25 @@ public class ValidateFieldForDataTypeFilterTests
         [Fact]
         public void OnActionExecuting_ReturnsBadRequest_WhenInvalidFieldForDustDataType()
         {
-            var context = CreateActionExecutingContext(DataType.Dust, new SensorDataRequestDto(
-                DateTimeOffset.Now,
-                DateTimeOffset.Now.AddDays(1),
-                TimeGranularity.Day,
-                AggregationFunction.Avg,
-                (Field)999
-            ));
+            var context = CreateActionExecutingContext(
+                DataType.Dust,
+                new SensorDataRequestDto(
+                    DateTimeOffset.Now,
+                    DateTimeOffset.Now.AddDays(1),
+                    TimeGranularity.Day,
+                    AggregationFunction.Avg,
+                    (Field)999
+                )
+            );
 
             _filter.OnActionExecuting(context);
             var badRequestResult = context.Result as BadRequestObjectResult;
             Assert.IsType<BadRequestObjectResult>(badRequestResult);
-            Assert.Equal($"Field '999' is not valid for {DataType.Dust}. Valid fields: Pm1_stel, Pm25_stel, Pm4_stel, Pm10_stel", GetErrorMessage(badRequestResult));
+            Assert.Equal(
+                $"Field '999' is not valid for {DataType.Dust}. Valid fields: Pm1_stel, Pm25_stel, Pm4_stel, Pm10_stel",
+                GetErrorMessage(badRequestResult)
+            );
         }
-
     }
 
     /// <summary>
@@ -194,7 +221,10 @@ public class ValidateFieldForDataTypeFilterTests
     /// This method sets up the necessary context to simulate an action execution environment,
     /// including route data and action arguments, for testing the ValidateFieldForDataTypeFilter.
     /// </remarks>
-    private static ActionExecutingContext CreateActionExecutingContext(DataType dataType, SensorDataRequestDto dto)
+    private static ActionExecutingContext CreateActionExecutingContext(
+        DataType dataType,
+        SensorDataRequestDto dto
+    )
     {
         var actionContext = new ActionContext(
             new DefaultHttpContext(),
@@ -216,7 +246,6 @@ public class ValidateFieldForDataTypeFilterTests
         return actionExecutingContext;
     }
 
-
     /// <summary>
     /// Helper method to extract error message from BadRequestObjectResult.
     /// </summary>
@@ -224,7 +253,8 @@ public class ValidateFieldForDataTypeFilterTests
     /// <returns>The extracted error message string.</returns>
     private static String GetErrorMessage(BadRequestObjectResult result)
     {
-        var errorObject = result.Value ?? throw new InvalidOperationException("Result value is null");
+        var errorObject =
+            result.Value ?? throw new InvalidOperationException("Result value is null");
         var errorProperty = errorObject.GetType().GetProperty("error");
         var errorMessage = errorProperty?.GetValue(errorObject)?.ToString();
         return errorMessage ?? throw new InvalidOperationException("Error message is null");

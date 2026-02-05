@@ -8,7 +8,7 @@ public enum TimeGranularity
 {
     Minute,
     Hour,
-    Day
+    Day,
 }
 
 public enum AggregationFunction
@@ -17,7 +17,7 @@ public enum AggregationFunction
     Sum,
     Min,
     Max,
-    Count
+    Count,
 }
 
 public enum Field
@@ -32,7 +32,7 @@ public enum Field
     Pm4_stel,
 
     [DataTypeField(SensorDataType.Dust)]
-    Pm10_stel
+    Pm10_stel,
 }
 
 public class DataTypeFieldAttribute(SensorDataType dataType) : Attribute
@@ -46,4 +46,4 @@ public record SensorDataRequestDto(
     [Required] TimeGranularity Granularity,
     [Required] AggregationFunction Function,
     Field? Field
-);  
+);
