@@ -8,15 +8,13 @@ public class User
     public required string PasswordHash { get; set; }
     public required DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public required UserRole Role { get; set; }
-    public required ICollection<NoteData> Notes { get; set; } = [];
-    public string? LocationId { get; set; } 
+    public ICollection<NoteData> Notes { get; set; } = [];
+    public required string LocationId { get; set; } 
     /// <summary>
     /// The location associated with the user. If the user type is Worker, the user should not set a value and instead
     /// inherit the location from their supervisor.
     /// </summary>
-    public required Location Location { get; set; }
-    public string? ManagerId { get; set; }
-    public User? Manager { get; set; }
+    public Location? Location { get; set; }
     public ICollection<User> Managers { get; set; } = [];
     public ICollection<User> Subordinates { get; set; } = [];
 }

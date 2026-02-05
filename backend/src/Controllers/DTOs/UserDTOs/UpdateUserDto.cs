@@ -1,7 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 namespace Backend.DTOs;
 public record UpdateUserDto(
-    string? Username = null,    // Optional update
-    string? Email = null,       // Optional update
-    string? Password = null     // Optional password change
+    string? Username = null,
+    string? Email = null,
+    string? Password = null,
+    string? LocationId = null,
+    List<string>? ManagerIds = null,
+    List<string>? SubordinateIds = null,
+    UserRole? Role = null
 );
