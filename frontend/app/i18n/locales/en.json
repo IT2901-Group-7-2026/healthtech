@@ -101,7 +101,8 @@
     "name": "Name",
     "prefLanguage": "Preferred language",
     "secReg": "Current security regulations",
-    "jobTitle" : "Job Title"
+    "jobTitle" : "Job title",
+    "jobDescription" : "Job description"
   },
   "loadingData": "Loading data...",
   "errorLoadingData": "Something went wrong while fetching sensor data.",

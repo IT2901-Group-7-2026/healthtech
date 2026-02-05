@@ -15,6 +15,8 @@ export function ProfilePopup({
 	open,
 	onClose,
 	children,
+	jobTitle,
+	jobDescription,
 }: {
 	name: string;
 	location: string;
@@ -22,6 +24,8 @@ export function ProfilePopup({
 	open: boolean;
 	onClose: () => void;
 	children?: React.ReactNode;
+	jobTitle?: string;
+	jobDescription?: string;
 }) {
 	const { t, i18n } = useTranslation();
 	const title = t(($) => $.profile.title);
@@ -32,13 +36,13 @@ export function ProfilePopup({
 		<BasePopup title={title} open={open} relevantDate={null} onClose={onClose}>
 			{children}
 			<div className="flex flex-col gap-6 md:px-6 md:pb-2">
-				<div className="flex gap-4">
+				<div className="flex gap-4 flex-row items-center">
 					<div>
 						{avatarSrc ? (
 							<img
 								src={avatarSrc}
-								height={150}
-								width={150}
+								height={100}
+								width={100}
 								alt={name}
 								className="h-full w-full rounded-full object-cover"
 							/>
@@ -46,18 +50,24 @@ export function ProfilePopup({
 							<div className="h-20 w-20 rounded-full bg-blue-900"></div>
 						)}
 					</div>
-					<div className="flex flex-col gap-3 pt-4">
-						<div>
-							<div className="label text-muted-foreground">
+					<div className="flex flex-col w-full">
+						<div className="flex flex-row gap-3">
+							<label className="label text-muted-foreground">
 								{t(($) => $.profile.name)}
-							</div>
+							</label>
 							<h2>{name}</h2>
 						</div>
-						<div>
-							<div className="label text-muted-foreground">
+						<div className="flex flex-row gap-3">
+							<label className="label text-muted-foreground">
 								{t(($) => $.profile.location)}
-							</div>
+							</label>
 							<h3>{location}</h3>
+						</div>
+						<div className="flex flex-row gap-3">
+							<label className="label text-muted-foreground">
+								{t(($) => $.profile.jobTitle)}
+							</label>
+							<h3>{jobTitle}</h3>
 						</div>
 					</div>
 				</div>
@@ -71,6 +81,14 @@ export function ProfilePopup({
 								<li key={reg}>{reg}</li>
 							))}
 						</ul>
+					</div>
+				</div>
+				<div className="flex flex-col gap-2">
+					<label className="label text-muted-foreground">
+						{t(($) => $.profile.jobDescription)}
+					</label>
+					<div className="w-full rounded-lg bg-card-highlight p-2">
+						<p>{jobDescription}</p>
 					</div>
 				</div>
 			</div>
