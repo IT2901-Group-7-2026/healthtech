@@ -376,21 +376,40 @@ CREATE INDEX idx_dust_daily_bucket ON dust_data_daily(bucket);
 
 -- ...existing code...
 
--- USER DATA
+-- Delete existing data to avoid duplicates when reseeding
 DELETE FROM "User";
+DELETE FROM "Location";
 
-INSERT INTO "User" ("Id", "Username", "Email", "PasswordHash", "CreatedAt")
+-- Locations
+INSERT INTO "Location" ("Id", "Latitude", "Longitude", "Country", "Region", "City", "Site", "Building")
+VALUES 
+    ('11111111-1111-1111-1111-111111111111', 63.78788207165566, 11.440749156413084, 'Norway', 'Trøndelag', 'Verdal', 'Aker Solutions Verdal', 'Bygg 1'),
+    ('22222222-2222-2222-2222-222222222222', 60.29278334510331, 5.279473042646057, 'Norway', 'Bergen', 'Bergen', 'Aker Solutions Sandsli', NULL);
+
+-- Users
+INSERT INTO "User" ("Id", "Username", "Email", "PasswordHash", "CreatedAt", "JobDescription", "LocationId", "Role")
 VALUES 
     ('12345678-1234-5678-1234-567812345678', 
-    'testuser1', 
-    'test1@example.com',
+    'Ola Nordmann', 
+    'ola.nordmann@aker.com',
     '$2a$11$QXVHkr6TQC8gJvh5P4GFzOYc.HyZA3FxDC3/BghAM3hODQVAoWwwi', -- hashed 'password123'
-    NOW()),
+    NOW(),
+    'Formann for bygg 1',
+    '11111111-1111-1111-1111-111111111111',
+    'Foreman'),
     ('87654321-8765-4321-8765-432187654321',
-    'testuser2',
-    'test2@example.com',
+    'Kari Nordmann',
+    'kari.nordmann@aker.com',
     '$2a$11$k5RIyHdZgB2VrXEY8iShzOiSNr3ZVVZd5GmWJHJFHQUKJROtajTxK', -- hashed 'password456'
-    NOW());
+    NOW(),
+    'Sveiser',
+    '22222222-2222-2222-2222-222222222222',
+    'Operator');
+
+-- UserManagers
+INSERT INTO "UserManagers" ("ManagersId", "SubordinatesId")
+VALUES
+    ('12345678-1234-5678-1234-567812345678', '87654321-8765-4321-8765-432187654321'); -- Ola is the manager of Kari
 
 -- Create index for Users
 CREATE INDEX idx_users_email ON "User"("Email");

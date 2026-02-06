@@ -1,13 +1,26 @@
+using Backend.Models;
+
 namespace Backend.DTOs;
 
-public record UserDto(
-    Guid Id,
-    string Username,
-    string Email,
-    string? JobDescription,
-    DateTime CreatedAt,
-    UserRole Role,
-    Location Location,
-    List<UserDto>? Managers,
-    List<UserDto>? Subordinates
-);
+public class UserDto
+{
+
+    public Guid Id { get; set; }
+    public required string Username { get; set; }
+    public required string Email { get; set; }
+    public string? JobDescription { get; set; }
+    public required DateTime CreatedAt { get; set; }
+    public required UserRole Role { get; set; }
+    public Location? Location { get; set; }
+
+    public static UserDto FromEntity(User user) => new UserDto
+    {
+        Id = user.Id,
+        Username = user.Username,
+        Email = user.Email,
+        JobDescription = user.JobDescription,
+        CreatedAt = user.CreatedAt,
+        Role = user.Role,
+        Location = user.Location,
+    };
+}

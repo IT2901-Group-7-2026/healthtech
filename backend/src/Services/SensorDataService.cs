@@ -10,7 +10,7 @@ namespace Backend.Services;
 public interface ISensorDataService
 {
     Task<IEnumerable<NoiseData>> GetAllNoiseDataAsync();
-    Task<IEnumerable<SensorDataResponseDto>> GetAggregatedDataAsync(RequestContext requestContext);
+    Task<IEnumerable<SensorDataDto>> GetAggregatedDataAsync(RequestContext requestContext);
 }
 
 public class SensorDataService(AppDbContext context) : ISensorDataService
@@ -25,7 +25,7 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
         return await _context.NoiseData.ToListAsync();
     }
 
-    public async Task<IEnumerable<SensorDataResponseDto>> GetAggregatedDataAsync(RequestContext requestContext)
+    public async Task<IEnumerable<SensorDataDto>> GetAggregatedDataAsync(RequestContext requestContext)
     {
         var request = requestContext.Request;
         var dataType = requestContext.DataType;
@@ -55,7 +55,7 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
 
         var dataWithDangerLevels = ThresholdUtils.CalculateDangerLevels(dataType, rawSensorData);
 
-        var result = dataWithDangerLevels.Select(item => new SensorDataResponseDto
+        var result = dataWithDangerLevels.Select(item => new SensorDataDto
         {
             Time = item.data.Time,
             Value = item.data.Value,
