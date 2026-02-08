@@ -1,4 +1,5 @@
 using Backend.DTOs;
+using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,47 +19,53 @@ public class UserController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
     {
-        var users = await _userService.GetAllUsersAsync();
-        return Ok(users);
+        List<User> users = await _userService.GetAllUsersAsync();
+        List<UserDto> dtos = users.Select(UserDto.FromEntity).ToList();
+
+        return dtos;
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<UserDto>> GetUserById(Guid id)
     {
-        var user = await _userService.GetUserByIdAsync(id);
+        User? user = await _userService.GetUserByIdAsync(id);
         if (user == null)
         {
             return NotFound();
         }
-        return Ok(user);
+
+        return UserDto.FromEntity(user);
     }
 
     [HttpPost]
     public async Task<ActionResult<UserDto>> CreateUser(CreateUserDto createUserDto)
     {
-        var user = await _userService.CreateUserAsync(createUserDto);
-        return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, user);
+        User user = await _userService.CreateUserAsync(createUserDto);
+
+        return UserDto.FromEntity(user);
     }
 
     [HttpPut("{id}")]
     public async Task<ActionResult<UserDto>> UpdateUser(Guid id, UpdateUserDto updateUserDto)
     {
-        var user = await _userService.UpdateUserAsync(id, updateUserDto);
+        User? user = await _userService.UpdateUserAsync(id, updateUserDto);
         if (user == null)
         {
             return NotFound();
         }
-        return Ok(user);
+
+        return UserDto.FromEntity(user);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(Guid id)
     {
-        var result = await _userService.DeleteUserAsync(id);
-        if (!result)
+        bool success = await _userService.DeleteUserAsync(id);
+        if (!success)
         {
             return NotFound();
         }
+
         return NoContent();
     }
 }

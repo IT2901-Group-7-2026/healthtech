@@ -25,5 +25,10 @@ public class AppDbContext : DbContext
             .HasMany(user => user.Managers)
             .WithMany(user => user.Subordinates)
             .UsingEntity(typeBuilder => typeBuilder.ToTable("UserManagers"));
+
+        // Store UserRole enum as string
+        modelBuilder.Entity<User>()
+            .Property(user => user.Role)
+            .HasConversion<string>();
     }
 }
