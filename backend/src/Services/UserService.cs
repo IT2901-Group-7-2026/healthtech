@@ -31,12 +31,16 @@ public class UserService : IUserService
 
     public async Task<User?> GetUserByUsernameAsync(string username)
     {
-        return await _context.User.Include(u => u.Location).FirstOrDefaultAsync(u => u.Username == username);
+        return await _context
+            .User.Include(u => u.Location)
+            .FirstOrDefaultAsync(u => u.Username == username);
     }
 
     public async Task<User?> GetUserByEmailAsync(string email)
     {
-        return await _context.User.Include(u => u.Location).FirstOrDefaultAsync(u => u.Email == email);
+        return await _context
+            .User.Include(u => u.Location)
+            .FirstOrDefaultAsync(u => u.Email == email);
     }
 
     public async Task<List<User>> GetAllUsersAsync()
@@ -55,7 +59,7 @@ public class UserService : IUserService
             JobDescription = createUserDto.JobDescription,
             CreatedAt = DateTime.UtcNow,
             Role = createUserDto.Role,
-            LocationId = createUserDto.LocationId
+            LocationId = createUserDto.LocationId,
         };
 
         _context.User.Add(user);
@@ -68,7 +72,8 @@ public class UserService : IUserService
     public async Task<User?> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto)
     {
         User? user = await GetUserByIdAsync(id);
-        if (user == null) return null;
+        if (user == null)
+            return null;
 
         user.Username = updateUserDto.Username ?? user.Username;
         user.Email = updateUserDto.Email ?? user.Email;
@@ -87,7 +92,8 @@ public class UserService : IUserService
     public async Task<bool> DeleteUserAsync(Guid id)
     {
         var user = await GetUserByIdAsync(id);
-        if (user == null) return false;
+        if (user == null)
+            return false;
 
         _context.User.Remove(user);
         await _context.SaveChangesAsync();

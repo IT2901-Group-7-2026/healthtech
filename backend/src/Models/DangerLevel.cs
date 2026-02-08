@@ -4,5 +4,5 @@ public enum DangerLevel
 {
     Safe,
     Warning,
-    Danger
+    Danger,
 }

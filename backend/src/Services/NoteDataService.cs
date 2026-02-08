@@ -17,13 +17,20 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
 
     public async Task<IEnumerable<NoteData>> GetNotesAsync(NoteDataRequestDto request)
     {
-        if (request.StartTime!.Value.Offset != TimeSpan.Zero || request.EndTime!.Value.Offset != TimeSpan.Zero)
+        if (
+            request.StartTime!.Value.Offset != TimeSpan.Zero
+            || request.EndTime!.Value.Offset != TimeSpan.Zero
+        )
         {
             throw new ArgumentException("Please provide time in UTC format");
         }
 
-        return await _dbContext.NoteData
-            .Where(n => n.Time >= request.StartTime && n.Time <= request.EndTime && !string.IsNullOrEmpty(n.Note))
+        return await _dbContext
+            .NoteData.Where(n =>
+                n.Time >= request.StartTime
+                && n.Time <= request.EndTime
+                && !string.IsNullOrEmpty(n.Note)
+            )
             .ToListAsync();
     }
 
@@ -34,21 +41,21 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
             throw new ArgumentException("Please provide time in UTC format");
         }
 
-        var existingNote = await _dbContext.NoteData
-            .AnyAsync(n => n.Time == createDto.Time && n.UserId == userId);
+        var existingNote = await _dbContext.NoteData.AnyAsync(n =>
+            n.Time == createDto.Time && n.UserId == userId
+        );
 
         if (existingNote)
         {
             throw new InvalidOperationException("A note with this time already exists");
         }
 
-
         var noteData = new NoteData
         {
             Id = Guid.NewGuid(),
             Note = createDto.Note,
             Time = createDto.Time!.Value.UtcDateTime,
-            UserId = userId
+            UserId = userId,
         };
 
         var createdNote = _dbContext.NoteData.Add(noteData);
@@ -64,8 +71,7 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
             throw new ArgumentException("Please provide time in UTC format");
         }
 
-        var note = await _dbContext.NoteData
-            .FirstOrDefaultAsync(n => n.Time == updateDto.Time);
+        var note = await _dbContext.NoteData.FirstOrDefaultAsync(n => n.Time == updateDto.Time);
 
         if (note == null)
         {

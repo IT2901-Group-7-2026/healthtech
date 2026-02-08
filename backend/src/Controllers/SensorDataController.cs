@@ -1,9 +1,9 @@
-using Microsoft.AspNetCore.Mvc;
-using Backend.Services;
+using Backend.Data;
 using Backend.DTOs;
 using Backend.Models;
+using Backend.Services;
 using Backend.Validation;
-using Backend.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
@@ -18,7 +18,8 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
     public async Task<ActionResult<IEnumerable<SensorDataDto>>> GetAggregatedData(
         [FromBody] SensorDataRequestDto request,
         [FromRoute] Guid userId,
-        [FromRoute] DataType dataType)
+        [FromRoute] DataType dataType
+    )
     {
         if (request.StartTime >= request.EndTime)
         {

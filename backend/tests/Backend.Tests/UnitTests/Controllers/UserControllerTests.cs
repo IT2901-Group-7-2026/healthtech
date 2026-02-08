@@ -1,9 +1,9 @@
+using Backend.Controllers;
 using Backend.DTOs;
+using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Backend.Controllers;
-using Backend.Models;
 
 namespace Backend.Tests.UnitTests.Controllers;
 
@@ -19,7 +19,7 @@ public class UserControllerTests
         City = "Verdal",
         Site = "The Yard",
         Building = "A2",
-        Users = []
+        Users = [],
     };
 
     [Fact]
@@ -27,8 +27,7 @@ public class UserControllerTests
     {
         // Arrange
         var mockService = new Mock<IUserService>();
-        mockService.Setup(service => service.GetAllUsersAsync())
-                   .ReturnsAsync(new List<User>());
+        mockService.Setup(service => service.GetAllUsersAsync()).ReturnsAsync(new List<User>());
 
         var controller = new UserController(mockService.Object);
 
@@ -47,8 +46,7 @@ public class UserControllerTests
         // Arrange
         var mockService = new Mock<IUserService>();
         var userId = Guid.NewGuid();
-        mockService.Setup(service => service.GetUserByIdAsync(userId))
-                   .ReturnsAsync((User?)null);
+        mockService.Setup(service => service.GetUserByIdAsync(userId)).ReturnsAsync((User?)null);
 
         var controller = new UserController(mockService.Object);
 
@@ -86,11 +84,12 @@ public class UserControllerTests
             Location = MockLocation,
             JobDescription = createUserDto.JobDescription,
             Managers = [],
-            Subordinates = []
+            Subordinates = [],
         };
 
-        mockService.Setup(service => service.CreateUserAsync(createUserDto))
-                   .ReturnsAsync(expectedUser);
+        mockService
+            .Setup(service => service.CreateUserAsync(createUserDto))
+            .ReturnsAsync(expectedUser);
 
         var controller = new UserController(mockService.Object);
 
@@ -115,8 +114,9 @@ public class UserControllerTests
             Email: "updated@example.com"
         );
 
-        mockService.Setup(service => service.UpdateUserAsync(userId, updateUserDto))
-                   .ReturnsAsync((User?)null);
+        mockService
+            .Setup(service => service.UpdateUserAsync(userId, updateUserDto))
+            .ReturnsAsync((User?)null);
 
         var controller = new UserController(mockService.Object);
 

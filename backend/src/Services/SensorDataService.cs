@@ -25,22 +25,33 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
         return await _context.NoiseData.ToListAsync();
     }
 
-    public async Task<IEnumerable<SensorDataDto>> GetAggregatedDataAsync(RequestContext requestContext)
+    public async Task<IEnumerable<SensorDataDto>> GetAggregatedDataAsync(
+        RequestContext requestContext
+    )
     {
         var request = requestContext.Request;
         var dataType = requestContext.DataType;
 
         string materializedViewName = GetMaterializedViewName(dataType, request.Granularity);
 
-        string aggregateColumnName = GetAggregateColumnName(request.Function, dataType, request.Field);
+        string aggregateColumnName = GetAggregateColumnName(
+            request.Function,
+            dataType,
+            request.Field
+        );
 
         DateTimeOffset startTime = request.StartTime;
         DateTimeOffset endTime = request.EndTime;
 
         // We always fetch max to determine DangerLevel
-        string maxColumnName = GetAggregateColumnName(AggregationFunction.Max, dataType, request.Field);
+        string maxColumnName = GetAggregateColumnName(
+            AggregationFunction.Max,
+            dataType,
+            request.Field
+        );
 
-        var sql = $@"
+        var sql =
+            $@"
             SELECT 
                 bucket as Time,
                 {aggregateColumnName} as Value,
@@ -49,8 +60,8 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
             WHERE bucket >= {{0}} AND bucket <= {{1}}
             ORDER BY bucket";
 
-        var rawSensorData = await _context.Database
-            .SqlQueryRaw<RawSensorData>(sql, startTime, endTime)
+        var rawSensorData = await _context
+            .Database.SqlQueryRaw<RawSensorData>(sql, startTime, endTime)
             .ToListAsync();
 
         var dataWithDangerLevels = ThresholdUtils.CalculateDangerLevels(dataType, rawSensorData);
@@ -59,7 +70,7 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
         {
             Time = item.data.Time,
             Value = item.data.Value,
-            DangerLevel = item.level
+            DangerLevel = item.level,
         });
 
         return result;
@@ -76,11 +87,15 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
             TimeGranularity.Minute => dataType_split + "_minutely",
             TimeGranularity.Hour => dataType_split + "_hourly",
             TimeGranularity.Day => dataType_split + "_daily",
-            _ => throw new ArgumentException($"Unsupported scope: {granularity}")
+            _ => throw new ArgumentException($"Unsupported scope: {granularity}"),
         };
     }
 
-    private string GetAggregateColumnName(AggregationFunction function, DataType dataType, Field? field)
+    private string GetAggregateColumnName(
+        AggregationFunction function,
+        DataType dataType,
+        Field? field
+    )
     {
         var dataTypeLower = dataType.ToString().ToLower();
 
@@ -91,7 +106,7 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
             AggregationFunction.Min => "min_" + dataTypeLower,
             AggregationFunction.Max => "max_" + dataTypeLower,
             AggregationFunction.Count => "sample_count",
-            _ => throw new ArgumentException($"Unsupported aggregation type: {function}")
+            _ => throw new ArgumentException($"Unsupported aggregation type: {function}"),
         };
 
         if (field.HasValue)

@@ -11,12 +11,10 @@ public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     public AppDbContext CreateDbContext(string[] args)
     {
         EnvUtils.LoadEnvFile();
-        
+
         var builder = new DbContextOptionsBuilder<AppDbContext>();
 
-        var configuration= new ConfigurationBuilder()
-            .AddEnvironmentVariables()
-            .Build();
+        var configuration = new ConfigurationBuilder().AddEnvironmentVariables().Build();
 
         builder.UseNpgsql(configuration.GetValue<string>("DATABASE_URL"));
 

@@ -4,5 +4,5 @@ public enum DataType
 {
     Noise,
     Vibration,
-    Dust
+    Dust,
 }
