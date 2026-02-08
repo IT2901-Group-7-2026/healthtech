@@ -27,8 +27,6 @@ public class AppDbContext : DbContext
             .UsingEntity(typeBuilder => typeBuilder.ToTable("UserManagers"));
 
         // Store UserRole enum as string
-        modelBuilder.Entity<User>()
-            .Property(user => user.Role)
-            .HasConversion<string>();
+        modelBuilder.Entity<User>().Property(user => user.Role).HasConversion<string>();
     }
 }

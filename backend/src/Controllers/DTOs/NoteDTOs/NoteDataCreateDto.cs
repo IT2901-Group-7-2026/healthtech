@@ -4,6 +4,9 @@ namespace Backend.DTOs;
 
 public class NoteDataCreateDto
 {
-    [Required] public DateTimeOffset? Time { get; set; }
-    [Required] public string Note { get; set; }
+    [Required]
+    public DateTimeOffset? Time { get; set; }
+
+    [Required]
+    public string Note { get; set; }
 }
