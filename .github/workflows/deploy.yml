@@ -14,7 +14,7 @@ jobs:
         uses: ./.github/workflows/_backend-ci.yml
 
     deploy:
-        needs: pre-deploy-ci-checks
+        needs: run-ci
         runs-on: ubuntu-latest
         steps:
             - name: Deploy
