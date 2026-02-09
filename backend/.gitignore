@@ -1,5 +1,6 @@
 # .NET build outputs
-bin/
+# trailing slash makes weird artifacts in production VM
+bin
 obj/
 out/
 

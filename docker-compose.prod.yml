@@ -1,0 +1,100 @@
+services:
+  traefik:
+    image: traefik:v3.0
+    container_name: healthtech-traefik
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./infra/traefik/traefik.yml:/traefik.yml:ro
+    networks:
+      - app-network
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg17
+    container_name: healthtech-db
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+      - ./backend/seed:/seed
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: healthtech-backend
+    restart: unless-stopped
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+      migrator:
+        condition: service_completed_successfully
+    env_file:
+      - ./backend/.env
+    environment:
+      # We override `Host` to use the docker container name defined above
+      DATABASE_URL: "Host=healthtech-db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+    networks:
+      - app-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.entrypoints=web"
+      - "traefik.http.services.backend.loadbalancer.server.port=8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: healthtech-frontend
+    restart: unless-stopped
+    env_file:
+      - ./frontend/.env
+    networks:
+      - app-network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.routers.frontend.priority=1"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+
+  migrator:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: healthtech-db-migrator
+    entrypoint: ["./efbundle"]
+    # "efbundle" is created in backend/Dockerfile and is a self-contained executable for running EF Core migrations
+    command:
+      [
+        "--connection",
+        "Host=timescaledb;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}",
+      ]
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+    volumes:
+      - ./backend/seed:/seed
+    env_file:
+      - ./backend/.env
+    networks:
+      - app-network
+    restart: "no" # Don't restart after it finishes
+
+volumes:
+  timescale_data:
+
+networks:
+  app-network:
+    driver: bridge
