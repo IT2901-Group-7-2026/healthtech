@@ -10,7 +10,7 @@ public class UserDto
     public string? JobDescription { get; set; }
     public required DateTime CreatedAt { get; set; }
     public required UserRole Role { get; set; }
-    public Location? Location { get; set; }
+    public LocationDto? Location { get; set; }
 
     public static UserDto FromEntity(User user) =>
         new UserDto
@@ -21,6 +21,6 @@ public class UserDto
             JobDescription = user.JobDescription,
             CreatedAt = user.CreatedAt,
             Role = user.Role,
-            Location = user.Location,
+            Location = user.Location != null ? LocationDto.FromEntity(user.Location) : null,
         };
 }
