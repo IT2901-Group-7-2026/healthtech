@@ -1,0 +1,13 @@
+entryPoints:
+    web:
+        address: ":80"
+
+providers:
+    docker:
+        watch: true
+        endpoint: "unix:///var/run/docker.sock"
+        exposedByDefault: false
+        network: app-network
+
+log:
+    level: INFO

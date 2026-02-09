@@ -10,6 +10,7 @@
 ## Documentation
 
 - [Onboarding: READ IF ITS YOUR FIRST TIME OPENING THIS REPO](./docs/onboarding.md)
+- [Hosting](./docs/hosting.md)
 - [Tech Stack](./docs/tech-stack.md)
 
 ## Getting Started
@@ -21,7 +22,7 @@ You need two `.env` files for the project to run correctly:
 - `/backend/.env`
 - `/frontend/.env`
 
-Make a copy of the `.env.example` file in each respective directory. Remember to change the default database password (`your_secure_password_here`) in the variables POSTGRES_PASSWORD and DATABASE_URL.
+Make a copy of the `.env.example` file in each respective directory. Remember to change the default database password (`your_secure_password`) in the variables POSTGRES_PASSWORD and DATABASE_URL.
 
 ### Run the backend
 
@@ -32,17 +33,17 @@ You may also have to download `ef`, which you can do by running: `dotnet tool in
 Then run the following commands:
 
 ```sh
+# Start the database
+docker compose --env-file ./backend/.env -f docker-compose.dev.yml up -d
+
 # Navigate to the backend directory
 cd backend
-
-# Start the database
-docker compose up -d
 
 # Run migrations
 dotnet ef database update --project src
 
 # Seed the database with sample data
-docker exec -it timescaledb psql -U postgres -d mydb -f /seed/seed.sql
+docker exec -it timescaledb psql -U postgres -d healthtech -f /seed/seed.sql
 
 # Start the backend
 dotnet watch run --project src

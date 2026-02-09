@@ -21,6 +21,10 @@ RUN corepack enable
 WORKDIR /app
 COPY . .
 COPY --from=development-dependencies-env /app/node_modules ./node_modules
+
+ARG VITE_API_URL=/api
+ENV VITE_API_URL=$VITE_API_URL
+
 RUN pnpm run build
 
 FROM node:20-alpine
@@ -31,4 +35,5 @@ COPY package.json pnpm-lock.yaml ./
 COPY --from=production-dependencies-env /app/node_modules ./node_modules
 COPY --from=build-env /app/build ./build
 
+EXPOSE 3000
 CMD ["pnpm", "run", "start"]
