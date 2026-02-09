@@ -4,29 +4,32 @@
 name: Backend CI
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"]
 
 jobs:
-  build:
+    build:
+        runs-on: ubuntu-latest
 
-    runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: backend
 
-    steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 10.0.x
-    - name: Restore .Net tools
-      run: dotnet tool restore
-    - name: Restore dependencies
-      run: dotnet restore backend/src/backend.csproj
-    - name: Check formatting
-      run: dotnet csharpier check backend/
-    - name: Build
-      run: dotnet build backend/src/backend.csproj --no-restore
-    - name: Test
-      run: dotnet test backend/src/backend.csproj --no-build --verbosity normal
+        steps:
+            - uses: actions/checkout@v4
+            - name: Setup .NET
+              uses: actions/setup-dotnet@v4
+              with:
+                  dotnet-version: 10.0.x
+            - name: Restore .Net tools
+              run: dotnet tool restore
+            - name: Restore dependencies
+              run: dotnet restore src/backend.csproj
+            - name: Check formatting
+              run: dotnet csharpier check .
+            - name: Build
+              run: dotnet build src/backend.csproj --no-restore
+            - name: Test
+              run: dotnet test src/backend.csproj --no-build --verbosity normal
