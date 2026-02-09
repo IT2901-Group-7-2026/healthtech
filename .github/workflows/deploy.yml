@@ -1,0 +1,46 @@
+# The follow repository secrets are set in the GitHub repository settings:
+# - SSH_HOST
+# - SSH_USER
+# - SSH_PRIVATE_KEY
+
+name: Deploy to production
+
+# This creates the button in the Actions tab
+on:
+    workflow_dispatch:
+
+jobs:
+    run-ci:
+        uses: ./.github/workflows/_backend-ci.yml
+
+    deploy:
+        needs: pre-deploy-ci-checks
+        runs-on: ubuntu-latest
+        steps:
+            - name: Deploy
+              uses: appleboy/ssh-action@v1.0.3
+              with:
+                  host: ${{ secrets.SSH_HOST }}
+                  username: ${{ secrets.SSH_USER }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  port: 22
+                  script: |
+                      set -e # Stop if any command fails
+
+                      cd ~/healthtech
+
+                      echo "Pulling latest changes..."
+                      git pull origin main
+
+                      echo "Rebuilding and deploying..."
+                      docker compose --env-file ./backend/.env -f docker-compose.prod.yml up --build -d
+
+                      # Wait for the containers to start and check if the backend is running as a simple health check.
+                      sleep 15
+                      if [ "$(docker inspect -f '{{.State.Running}}' healthtech-backend)" == "false" ]; then
+                          echo "Backend failed to start after 15s."
+                          exit 1
+                      fi
+
+                      echo "Cleaning..."
+                      docker image prune -f
