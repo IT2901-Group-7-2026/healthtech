@@ -1,3 +1,46 @@
+-- User ID variables
+\set OLA_ID '12345678-1234-5678-1234-567812345678'
+\set KARI_ID '87654321-8765-4321-8765-432187654321'
+
+-- Location ID variables
+\set VERDAL_ID '11111111-1111-1111-1111-111111111111'
+\set SANDSLI_ID '22222222-2222-2222-2222-222222222222'
+
+-- Delete existing data to avoid duplicates when reseeding
+DELETE FROM "User";
+DELETE FROM "Location";
+
+-- Location
+INSERT INTO "Location" ("Id", "Latitude", "Longitude", "Country", "Region", "City", "Site", "Building")
+VALUES 
+    (:'VERDAL_ID', 63.78788207165566, 11.440749156413084, 'Norway', 'Trøndelag', 'Verdal', 'Aker Solutions Verdal', 'Bygg 1'),
+    (:'SANDSLI_ID', 60.29278334510331, 5.279473042646057, 'Norway', 'Bergen', 'Bergen', 'Aker Solutions Sandsli', NULL);
+
+-- User
+INSERT INTO "User" ("Id", "Username", "Email", "PasswordHash", "CreatedAt", "JobDescription", "LocationId", "Role")
+VALUES 
+    (:'OLA_ID', 
+    'Ola Nordmann', 
+    'ola.nordmann@aker.com',
+    '$2a$11$QXVHkr6TQC8gJvh5P4GFzOYc.HyZA3FxDC3/BghAM3hODQVAoWwwi', -- hashed 'password123'
+    NOW(),
+    'Formann for bygg 1',
+    :'VERDAL_ID',
+    'Foreman'),
+    (:'KARI_ID',
+    'Kari Nordmann',
+    'kari.nordmann@aker.com',
+    '$2a$11$k5RIyHdZgB2VrXEY8iShzOiSNr3ZVVZd5GmWJHJFHQUKJROtajTxK', -- hashed 'password456'
+    NOW(),
+    'Sveiser',
+    :'SANDSLI_ID',
+    'Operator');
+
+-- UserManagers
+INSERT INTO "UserManagers" ("ManagersId", "SubordinatesId")
+VALUES
+    (:'OLA_ID', :'KARI_ID'); -- Ola is the manager of Kari
+
 -- NOISE DATA
 
 -- Drop temporary table if it exists
@@ -23,8 +66,8 @@ CREATE TABLE temp_noise_data (
 -- Import to temp table
 COPY temp_noise_data FROM '/seed/NoiseData.csv' DELIMITER ',' CSV HEADER;
 
-INSERT INTO "NoiseData" ("Id", "Time", "LavgQ3")
-SELECT gen_random_uuid(), Time, "LAVG (Q3)"
+INSERT INTO "NoiseData" ("Id", "Time", "LavgQ3", "UserId")
+SELECT gen_random_uuid(), Time, "LAVG (Q3)", :'KARI_ID'
 FROM temp_noise_data;
 
 DROP TABLE temp_noise_data;
@@ -74,12 +117,13 @@ CREATE TABLE temp_vibration_data (
 COPY temp_vibration_data FROM '/seed/VibrationData.csv' DELIMITER ',' CSV HEADER;
 
 -- Insert data into VibrationData table with date format conversion
-INSERT INTO "VibrationData" ("Id", "ConnectedOn", "Exposure", "DisconnectedOn")
+INSERT INTO "VibrationData" ("Id", "ConnectedOn", "Exposure", "DisconnectedOn", "UserId")
 SELECT 
     gen_random_uuid(),
     ConnectedOn,
     "Tag Exposure Points",
-    DisconnectedOn
+    DisconnectedOn,
+    :'KARI_ID'
 FROM temp_vibration_data
 WHERE ConnectedOn IS NOT NULL AND DisconnectedOn IS NOT NULL;
 
@@ -112,7 +156,7 @@ CREATE TABLE temp_dust_data (
 -- Import to temp table
 COPY temp_dust_data FROM '/seed/DustData.csv' DELIMITER ',' CSV HEADER;
 
-INSERT INTO "DustData" ("Id", "Time", "PM1S", "PM25S", "PM4S", "PM10S", "PM1T", "PM25T", "PM4T", "PM10T")
+INSERT INTO "DustData" ("Id", "Time", "PM1S", "PM25S", "PM4S", "PM10S", "PM1T", "PM25T", "PM4T", "PM10T", "UserId")
 SELECT 
     gen_random_uuid(),
     Timestamp::TIMESTAMP WITH TIME ZONE,
@@ -123,7 +167,8 @@ SELECT
     "PM 1 TWA",
     "PM 2.5 TWA",
     "PM 4.25 TWA",
-    "PM 10.0 TWA"
+    "PM 10.0 TWA",
+    :'KARI_ID'
 FROM temp_dust_data
 WHERE Timestamp IS NOT NULL;
 
@@ -160,39 +205,42 @@ DROP MATERIALIZED VIEW IF EXISTS dust_data_minutely;
 CREATE MATERIALIZED VIEW noise_data_minutely AS
 SELECT 
     time_bucket(:MINUTE_INTERVAL, "Time") AS bucket,
+    "UserId" as user_id,
     AVG("LavgQ3") AS avg_noise,
     SUM("LavgQ3") AS sum_noise,
     COUNT(*) AS sample_count,
     MIN("LavgQ3") AS min_noise,
     MAX("LavgQ3") AS max_noise
 FROM "NoiseData"
-GROUP BY bucket
+GROUP BY bucket, "user_id"
 ORDER BY bucket ASC;
 
 -- Hour aggregation: Groups data into 1 hour intervals and calculates average, sum, count, min, and max exposure levels.
 CREATE MATERIALIZED VIEW noise_data_hourly AS
 SELECT 
     time_bucket(:HOUR_INTERVAL, "Time") AS bucket,
+    "UserId" AS user_id,
     AVG("LavgQ3") AS avg_noise,
     SUM("LavgQ3") AS sum_noise,
     COUNT(*) AS sample_count,
     MIN("LavgQ3") AS min_noise,
     MAX("LavgQ3") AS max_noise
 FROM "NoiseData"
-GROUP BY bucket
+GROUP BY bucket, "user_id"
 ORDER BY bucket ASC;
 
 -- Daily aggregation: Groups data into 1 day intervals and calculates average, sum, count, min, and max exposure levels.
 CREATE MATERIALIZED VIEW noise_data_daily AS
 SELECT 
     time_bucket(:DAY_INTERVAL, "Time") AS bucket,
+    "UserId" AS user_id,
     AVG("LavgQ3") AS avg_noise,
     SUM("LavgQ3") AS sum_noise,
     COUNT(*) AS sample_count,
     MIN("LavgQ3") AS min_noise,
     MAX("LavgQ3") AS max_noise
 FROM "NoiseData"
-GROUP BY bucket
+GROUP BY bucket, "user_id"
 ORDER BY bucket ASC;
 
 
@@ -201,6 +249,7 @@ ORDER BY bucket ASC;
 CREATE MATERIALIZED VIEW vibration_data_minutely AS
 SELECT 
     time_bucket(:MINUTE_INTERVAL, "ConnectedOn") AS bucket,
+    "UserId" AS user_id,
     AVG("Exposure") AS avg_vibration,
     SUM("Exposure") AS sum_vibration,
     COUNT(*) AS sample_count,
@@ -208,12 +257,13 @@ SELECT
     MAX("Exposure") AS max_vibration
 FROM "VibrationData"
 WHERE "ConnectedOn" IS NOT NULL
-GROUP BY bucket
+GROUP BY bucket, "user_id"
 ORDER BY bucket ASC;
 
 CREATE MATERIALIZED VIEW vibration_data_hourly AS
 SELECT 
     time_bucket(:HOUR_INTERVAL, "ConnectedOn") AS bucket,
+    "UserId" AS user_id,
     AVG("Exposure") AS avg_vibration,
     SUM("Exposure") AS sum_vibration,
     COUNT(*) AS sample_count,
@@ -221,12 +271,13 @@ SELECT
     MAX("Exposure") AS max_vibration
 FROM "VibrationData"
 WHERE "ConnectedOn" IS NOT NULL
-GROUP BY bucket
+GROUP BY bucket, "user_id"
 ORDER BY bucket ASC;
 
 CREATE MATERIALIZED VIEW vibration_data_daily AS
 SELECT 
     time_bucket(:DAY_INTERVAL, "ConnectedOn") AS bucket,
+    "UserId" AS user_id,
     AVG("Exposure") AS avg_vibration,
     SUM("Exposure") AS sum_vibration,
     COUNT(*) AS sample_count,
@@ -234,7 +285,7 @@ SELECT
     MAX("Exposure") AS max_vibration
 FROM "VibrationData"
 WHERE "ConnectedOn" IS NOT NULL
-GROUP BY bucket
+GROUP BY bucket, "user_id"
 ORDER BY bucket ASC;
 
 
@@ -243,6 +294,7 @@ ORDER BY bucket ASC;
 CREATE MATERIALIZED VIEW dust_data_minutely AS
 SELECT 
     time_bucket(:MINUTE_INTERVAL, "Time") AS bucket,
+    "UserId" AS user_id,
     AVG("PM1S") AS avg_dust_pm1_stel,
     AVG("PM25S") AS avg_dust_pm25_stel,
     AVG("PM4S") AS avg_dust_pm4_stel,
@@ -277,12 +329,13 @@ SELECT
     MAX("PM4T") AS max_dust_pm4_twa,
     MAX("PM10T") AS max_dust_pm10_twa
 FROM "DustData"
-GROUP BY bucket
+GROUP BY bucket, "user_id"
 ORDER BY bucket ASC;
 
 CREATE MATERIALIZED VIEW dust_data_hourly AS
 SELECT 
     time_bucket(:HOUR_INTERVAL, "Time") AS bucket,
+    "UserId" AS user_id,
     AVG("PM1S") AS avg_dust_pm1_stel,
     AVG("PM25S") AS avg_dust_pm25_stel,
     AVG("PM4S") AS avg_dust_pm4_stel,
@@ -317,12 +370,13 @@ SELECT
     MAX("PM4T") AS max_dust_pm4_twa,
     MAX("PM10T") AS max_dust_pm10_twa
 FROM "DustData"
-GROUP BY bucket
+GROUP BY bucket, "user_id"
 ORDER BY bucket ASC;
 
 CREATE MATERIALIZED VIEW dust_data_daily AS
 SELECT 
     time_bucket(:DAY_INTERVAL, "Time") AS bucket,
+    "UserId" AS user_id,
     AVG("PM1S") AS avg_dust_pm1_stel,
     AVG("PM25S") AS avg_dust_pm25_stel,
     AVG("PM4S") AS avg_dust_pm4_stel,
@@ -357,7 +411,7 @@ SELECT
     MAX("PM4T") AS max_dust_pm4_twa,
     MAX("PM10T") AS max_dust_pm10_twa
 FROM "DustData"
-GROUP BY bucket
+GROUP BY bucket, "user_id"
 ORDER BY bucket ASC;
 
 
@@ -375,42 +429,3 @@ CREATE INDEX idx_dust_hourly_bucket ON dust_data_hourly(bucket);
 CREATE INDEX idx_dust_daily_bucket ON dust_data_daily(bucket);
 
 -- ...existing code...
-
--- Delete existing data to avoid duplicates when reseeding
-DELETE FROM "User";
-DELETE FROM "Location";
-
--- Locations
-INSERT INTO "Location" ("Id", "Latitude", "Longitude", "Country", "Region", "City", "Site", "Building")
-VALUES 
-    ('11111111-1111-1111-1111-111111111111', 63.78788207165566, 11.440749156413084, 'Norway', 'Trøndelag', 'Verdal', 'Aker Solutions Verdal', 'Bygg 1'),
-    ('22222222-2222-2222-2222-222222222222', 60.29278334510331, 5.279473042646057, 'Norway', 'Bergen', 'Bergen', 'Aker Solutions Sandsli', NULL);
-
--- Users
-INSERT INTO "User" ("Id", "Username", "Email", "PasswordHash", "CreatedAt", "JobDescription", "LocationId", "Role")
-VALUES 
-    ('12345678-1234-5678-1234-567812345678', 
-    'Ola Nordmann', 
-    'ola.nordmann@aker.com',
-    '$2a$11$QXVHkr6TQC8gJvh5P4GFzOYc.HyZA3FxDC3/BghAM3hODQVAoWwwi', -- hashed 'password123'
-    NOW(),
-    'Formann for bygg 1',
-    '11111111-1111-1111-1111-111111111111',
-    'Foreman'),
-    ('87654321-8765-4321-8765-432187654321',
-    'Kari Nordmann',
-    'kari.nordmann@aker.com',
-    '$2a$11$k5RIyHdZgB2VrXEY8iShzOiSNr3ZVVZd5GmWJHJFHQUKJROtajTxK', -- hashed 'password456'
-    NOW(),
-    'Sveiser',
-    '22222222-2222-2222-2222-222222222222',
-    'Operator');
-
--- UserManagers
-INSERT INTO "UserManagers" ("ManagersId", "SubordinatesId")
-VALUES
-    ('12345678-1234-5678-1234-567812345678', '87654321-8765-4321-8765-432187654321'); -- Ola is the manager of Kari
-
--- Create index for Users
-CREATE INDEX idx_users_email ON "User"("Email");
-CREATE INDEX idx_users_username ON "User"("Username");

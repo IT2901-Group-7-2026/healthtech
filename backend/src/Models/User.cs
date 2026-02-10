@@ -1,3 +1,5 @@
+using Backend.Records;
+
 namespace Backend.Models;
 
 public class User
@@ -19,4 +21,7 @@ public class User
     public Location? Location { get; set; }
     public ICollection<User> Managers { get; set; } = [];
     public ICollection<User> Subordinates { get; set; } = [];
+    public ICollection<VibrationData> VibrationData { get; set; } = [];
+    public ICollection<DustData> DustData { get; set; } = [];
+    public ICollection<NoiseData> NoiseData { get; set; } = [];
 }
