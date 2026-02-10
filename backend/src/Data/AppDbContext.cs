@@ -28,5 +28,38 @@ public class AppDbContext : DbContext
 
         // Store UserRole enum as string
         modelBuilder.Entity<User>().Property(user => user.Role).HasConversion<string>();
+
+        modelBuilder.Entity<VibrationData>(entity =>
+        {
+            entity
+                .HasOne(v => v.User)
+                .WithMany(u => u.VibrationData)
+                .HasForeignKey(v => v.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(v => new { v.UserId, v.ConnectedOn });
+        });
+
+        modelBuilder.Entity<NoiseData>(entity =>
+        {
+            entity
+                .HasOne(n => n.User)
+                .WithMany(u => u.NoiseData)
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(n => new { n.UserId, n.Time });
+        });
+
+        modelBuilder.Entity<DustData>(entity =>
+        {
+            entity
+                .HasOne(d => d.User)
+                .WithMany(u => u.DustData)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(d => new { d.UserId, d.Time });
+        });
     }
 }

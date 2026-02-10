@@ -13,8 +13,12 @@ services:
       POSTGRES_PORT: ${POSTGRES_PORT:-5432}
     volumes:
       - timescale_data_dev:/var/lib/postgresql/data
+      - ./backend/seed:/seed
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
+
+volumes:
+  timescale_data_dev:
