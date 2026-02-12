@@ -5,8 +5,8 @@ import { index, layout, route } from "@react-router/dev/routes";
 export default [
 	layout("routes/layout.tsx", [
 		index("routes/landing.tsx"),
-		route("/operator/", "routes/operator/operator-home.tsx"),
-		route("/foreman/", "routes/foreman/foreman-home.tsx"),
+		route("/operator/", "routes/operator/home.tsx"),
+		route("/foreman/", "routes/foreman/home.tsx"),
 		layout("routes/operator/sensors/sensor-layout.tsx", [
 			route("/operator/dust", "routes/operator/sensors/dust.tsx"),
 			route("/operator/vibration", "routes/operator/sensors/vibration.tsx"),

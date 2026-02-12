@@ -24,6 +24,7 @@ export default function ForemanHome() {
 
 	return (
 		<div className="flex w-full flex-col items-center md:items-start">
+			{/* biome-ignore lint/nursery/noJsxLiterals: temporary */}
 			<h1 className="text-4xl">Foreman</h1>
 		</div>
 	);
