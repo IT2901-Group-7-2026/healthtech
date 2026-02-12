@@ -7,6 +7,7 @@ namespace Backend.Services;
 public interface IUserService
 {
     Task<User?> GetUserByIdAsync(Guid id);
+    Task<List<User>> GetSubordinatesAsync(Guid managerId);
     Task<User?> GetUserByUsernameAsync(string username);
     Task<User?> GetUserByEmailAsync(string email);
     Task<List<User>> GetAllUsersAsync();
@@ -27,6 +28,14 @@ public class UserService : IUserService
     public async Task<User?> GetUserByIdAsync(Guid id)
     {
         return await _context.User.Include(u => u.Location).FirstOrDefaultAsync(u => u.Id == id);
+    }
+
+    public async Task<List<User>> GetSubordinatesAsync(Guid managerId)
+    {
+        return await _context
+            .User.Where(u => u.Managers.Any(m => m.Id == managerId))
+            .Include(u => u.Location)
+            .ToListAsync();
     }
 
     public async Task<User?> GetUserByUsernameAsync(string username)

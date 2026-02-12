@@ -7,15 +7,9 @@ namespace Backend.Controllers;
 
 [ApiController]
 [Route("api/users")]
-public class UserController : ControllerBase
+public class UserController(IUserService _userService, IUserStatusService _userStatusService)
+    : ControllerBase
 {
-    private readonly IUserService _userService;
-
-    public UserController(IUserService userService)
-    {
-        _userService = userService;
-    }
-
     [HttpGet]
     public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
     {
@@ -35,6 +29,32 @@ public class UserController : ControllerBase
         }
 
         return UserDto.FromEntity(user);
+    }
+
+    [HttpGet("{managerId}/subordinates")]
+    public async Task<ActionResult<IEnumerable<UserWithStatusDto>>> GetSubordinates(Guid managerId)
+    {
+        List<User> subordinates = await _userService.GetSubordinatesAsync(managerId);
+
+        // Calculate danger level for each subordinate for the past hour
+        IEnumerable<UserStatusDto> userStatuses = await _userStatusService.GetCurrentStatusForUsers(
+            subordinates.Select(u => u.Id),
+            DateTimeOffset.UtcNow.AddHours(-1),
+            DateTimeOffset.UtcNow
+        );
+
+        List<UserWithStatusDto> dtos = subordinates
+            .Select(user =>
+            {
+                UserStatusDto? status = userStatuses.FirstOrDefault(s => s.UserId == user.Id);
+                return UserWithStatusDto.FromEntity(
+                    user,
+                    status ?? new UserStatusDto { UserId = user.Id, Status = DangerLevel.Safe }
+                );
+            })
+            .ToList();
+
+        return dtos;
     }
 
     [HttpPost]
