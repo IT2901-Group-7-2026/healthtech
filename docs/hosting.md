@@ -70,15 +70,6 @@ rsync -avP -e "ssh -i ./your-key.pem" /backend/seed/*.csv ubuntu@<HOST>:~/health
 #   chmod 600 ~/.ssh/my-key.pem
 ```
 
-When you have the seed data in the proper folder run the following command to seed the database:
-
-```bash
-migrate
-# I have created an alias for it, but if it doesn't work, you can run the full command:
-#   cd ~/healthtech
-#   docker compose --env-file ./backend/.env -f docker-compose.prod.yml exec backend dotnet ef database update --project src
-```
-
 ### Launch the application
 
 Build and start all services (database, backend, frontend, and Traefik) from the root directory:
