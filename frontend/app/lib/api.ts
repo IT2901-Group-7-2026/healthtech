@@ -1,5 +1,5 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
-import { queryOptions } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { minutesToMilliseconds } from "date-fns";
 import {
 	type Note,
@@ -9,6 +9,7 @@ import {
 	type SensorDataResponseDto,
 	SensorDataResponseDtoSchema,
 	UserSchema,
+	UserWithStatusSchema,
 } from "./dto";
 import { getStartEnd } from "./queries";
 import type { View } from "./views";
@@ -161,3 +162,26 @@ export const createNote = async ({
 	const json = await res.json();
 	return NoteSchema.parseAsync(json);
 };
+
+export const useSubordinatesQuery = (userId: string) =>
+	useQuery(
+		queryOptions({
+			queryKey: ["user.subordinates", userId],
+			queryFn: async () => {
+				const response = await fetch(`${baseURL}users/${userId}/subordinates`, {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
+
+				if (!response.ok) {
+					throw new Error("Failed to fetch subordinates");
+				}
+
+				const json = await response.json();
+				return UserWithStatusSchema.array().parseAsync(json);
+			},
+			staleTime: minutesToMilliseconds(10),
+		}),
+	);
