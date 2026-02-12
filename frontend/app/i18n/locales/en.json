@@ -2,7 +2,10 @@
 	"title": "HealthTech | Operator Exposure Dashboard",
 	"description": "Monitor and manage exposure to dust, vibration, and noise.",
 	"layout": {
-		"overview": "Overview"
+		"overview": "Overview",
+		"home": "Home",
+		"team": "Team",
+		"statistics": "Statistics"
 	},
 	"overview": {
 		"title": "Overview of the {{view}}",

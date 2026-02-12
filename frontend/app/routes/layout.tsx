@@ -22,7 +22,6 @@ import { useUser } from "@/features/user/user-user";
 import { useView } from "@/features/views/use-view";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usersQueryOptions } from "@/lib/api";
-import type { User } from "@/lib/dto.js";
 import { cn } from "@/lib/utils";
 import {
 	Select,
@@ -32,7 +31,9 @@ import {
 	SelectValue,
 } from "@/ui/select";
 import { useQuery } from "@tanstack/react-query";
-import { type ReactNode, useRef, useState } from "react";
+import type { User } from "@/lib/dto.js";
+import { House, User as UserIcon } from "lucide-react";
+import { type JSX, type ReactNode, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { href, NavLink, Outlet, type To, useLocation } from "react-router";
 
@@ -72,7 +73,7 @@ function HomeLink() {
 function getLinks(
 	t: ReturnType<typeof useTranslation>["t"],
 	role: User["role"],
-): Array<{ to: To; label: string }> {
+): Array<{ to: To; label: string; icon?: JSX.Element }> {
 	switch (role) {
 		case "operator": {
 			return [
@@ -85,7 +86,16 @@ function getLinks(
 
 		case "foreman": {
 			return [
-				{ to: href("/"), label: t(($) => $.layout.overview) }, //
+				{
+					to: href("/foreman"),
+					label: t(($) => $.layout.home),
+					icon: <House size="20" />,
+				},
+				{
+					to: href("/foreman/team"),
+					label: t(($) => $.layout.team),
+					icon: <UserIcon size="20" />,
+				},
 			];
 		}
 
@@ -210,7 +220,11 @@ export default function Layout() {
 	);
 }
 
-function NavTabs({ routes }: { routes: Array<{ label: string; to: To }> }) {
+function NavTabs({
+	routes,
+}: {
+	routes: Array<{ label: string; to: To; icon?: JSX.Element }>;
+}) {
 	const { view } = useView();
 	const { date } = useDate();
 	const location = useLocation();
@@ -224,7 +238,7 @@ function NavTabs({ routes }: { routes: Array<{ label: string; to: To }> }) {
 	);
 
 	return (
-		<div className="flew-row relative mx-auto flex h-11 rounded-full bg-[var(--card)] px-2">
+		<div className="flex-row relative mx-auto flex h-11 rounded-full bg-[var(--card)] px-2">
 			<span
 				className="absolute top-0 bottom-0 z-10 flex overflow-hidden rounded-full py-1.5 transition-all duration-300"
 				style={{ left: pillLeft, width: pillWidth }}
@@ -260,14 +274,10 @@ function NavTabs({ routes }: { routes: Array<{ label: string; to: To }> }) {
 						}
 						prefetch="intent"
 					>
-						{route.label}
-						{/* {i > 0 && (
-							<Icon
-								className={"ml-1"}
-								variant={route.to.toString().replace("/", "") as IconVariant}
-								size="small"
-							/>
-						)} */}
+						<span className="inline-flex items-center gap-2">
+							{route.label}
+							{route.icon}
+						</span>
 					</NavLink>
 				);
 			})}
