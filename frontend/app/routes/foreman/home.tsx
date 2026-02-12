@@ -51,6 +51,8 @@ export default function ForemanHome() {
 		($) => $.foremanDashboard.overview.statCards.viewDetails,
 	);
 
+	//TODO: Update card links to point to stats page
+
 	return (
 		<div>
 			<h1 className="p-2 text-3xl">
