@@ -38,9 +38,7 @@ public class UserController(IUserService _userService, IUserStatusService _userS
 
         // Calculate danger level for each subordinate for the past hour
         IEnumerable<UserStatusDto> userStatuses = await _userStatusService.GetCurrentStatusForUsers(
-            subordinates.Select(u => u.Id),
-            DateTimeOffset.UtcNow.AddHours(-1),
-            DateTimeOffset.UtcNow
+            subordinates.Select(u => u.Id)
         );
 
         List<UserWithStatusDto> dtos = subordinates

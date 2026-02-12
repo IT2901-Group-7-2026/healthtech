@@ -7,11 +7,7 @@ namespace Backend.Services;
 
 public interface IUserStatusService
 {
-    Task<IEnumerable<UserStatusDto>> GetCurrentStatusForUsers(
-        IEnumerable<Guid> userIds,
-        DateTimeOffset startTime,
-        DateTimeOffset endTime
-    );
+    Task<IEnumerable<UserStatusDto>> GetCurrentStatusForUsers(IEnumerable<Guid> userIds);
 }
 
 public record UserAggRow(Guid UserId, double? Value);
@@ -19,9 +15,7 @@ public record UserAggRow(Guid UserId, double? Value);
 public class UserStatusService(AppDbContext _context) : IUserStatusService
 {
     public async Task<IEnumerable<UserStatusDto>> GetCurrentStatusForUsers(
-        IEnumerable<Guid> userIds,
-        DateTimeOffset startTime,
-        DateTimeOffset endTime
+        IEnumerable<Guid> userIds
     )
     {
         var ids = userIds.Distinct().ToArray();
@@ -30,17 +24,18 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
             return [];
         }
 
+        DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
+
         var noiseRows = await _context
             .Database.SqlQueryRaw<UserAggRow>(
                 """
                 SELECT "user_id" as "UserId", MAX(max_noise) as "Value"
-                FROM noise_data_minutely
-                WHERE bucket >= {0} AND bucket <= {1}
-                  AND "user_id" = ANY({2})
+                FROM noise_data_daily
+                WHERE bucket = {0}
+                  AND "user_id" = ANY({1})
                 GROUP BY "user_id"
                 """,
-                startTime,
-                endTime,
+                today,
                 ids
             )
             .ToListAsync();
@@ -49,31 +44,26 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
             .Database.SqlQueryRaw<UserAggRow>(
                 """
                 SELECT "user_id" as "UserId", MAX(max_dust_Pm1_stel) as "Value"
-                FROM dust_data_minutely
-                WHERE bucket >= {0} AND bucket <= {1}
-                  AND "user_id" = ANY({2})
+                FROM dust_data_daily
+                WHERE bucket = {0}
+                  AND "user_id" = ANY({1})
                 GROUP BY "user_id"
                 """,
-                startTime,
-                endTime,
+                today,
                 ids
             )
             .ToListAsync();
-
-        // Vibration is cumulative over each day
-        var dayStartUtc = new DateTimeOffset(endTime.UtcDateTime.Date, TimeSpan.Zero);
 
         var vibrationRows = await _context
             .Database.SqlQueryRaw<UserAggRow>(
                 """
                 SELECT "user_id" as "UserId", SUM(sum_vibration) as "Value"
                 FROM vibration_data_daily
-                WHERE bucket >= {0} AND bucket <= {1}
-                  AND "user_id" = ANY({2})
+                WHERE bucket = {0}
+                  AND "user_id" = ANY({1})
                 GROUP BY "user_id"
                 """,
-                dayStartUtc,
-                endTime,
+                today,
                 ids
             )
             .ToListAsync();
