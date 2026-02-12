@@ -56,7 +56,10 @@ export default function Vibration() {
 	const { data, isLoading, isError } = useQuery(
 		sensorQueryOptions({
 			sensor: "vibration",
-			query,
+			query: {
+				...query,
+				function: "sum",
+			},
 			userId: user.id,
 		}),
 	);
