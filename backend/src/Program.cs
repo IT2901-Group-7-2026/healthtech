@@ -66,6 +66,7 @@ builder.Services.AddScoped<ISensorDataService, SensorDataService>();
 builder.Services.AddScoped<ValidateFieldForDataTypeFilter>();
 builder.Services.AddScoped<INoteDataService, NoteDataService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserStatusService, UserStatusService>();
 
 var app = builder.Build();
 
