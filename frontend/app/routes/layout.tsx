@@ -22,6 +22,7 @@ import { useUser } from "@/features/user/user-user";
 import { useView } from "@/features/views/use-view";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usersQueryOptions } from "@/lib/api";
+import type { User } from "@/lib/dto.js";
 import { cn } from "@/lib/utils";
 import {
 	Select,
@@ -68,6 +69,32 @@ function HomeLink() {
 	);
 }
 
+function getLinks(
+	t: ReturnType<typeof useTranslation>["t"],
+	role: User["role"],
+): Array<{ to: To; label: string }> {
+	switch (role) {
+		case "operator": {
+			return [
+				{ to: href("/"), label: t(($) => $.layout.overview) },
+				{ to: href("/operator/dust"), label: t(($) => $.dust) },
+				{ to: href("/operator/vibration"), label: t(($) => $.vibration) },
+				{ to: href("/operator/noise"), label: t(($) => $.noise) },
+			];
+		}
+
+		case "foreman": {
+			return [
+				{ to: href("/"), label: t(($) => $.layout.overview) }, //
+			];
+		}
+
+		default: {
+			return [];
+		}
+	}
+}
+
 // biome-ignore lint: page components can be default exports
 export default function Layout() {
 	const isMobile = useIsMobile();
@@ -75,15 +102,10 @@ export default function Layout() {
 	const { t, i18n } = useTranslation();
 	const { visible, openPopup, closePopup } = usePopup();
 
-	const links: Array<{ to: To; label: string }> = [
-		{ to: href("/"), label: t(($) => $.layout.overview) },
-		{ to: href("/dust"), label: t(($) => $.dust) },
-		{ to: href("/vibration"), label: t(($) => $.vibration) },
-		{ to: href("/noise"), label: t(($) => $.noise) },
-	];
-
 	const { user, setUser } = useUser();
 	const { data: users } = useQuery(usersQueryOptions());
+
+	const links = getLinks(t, user?.role);
 
 	return (
 		<SidebarProvider defaultOpen={false}>
@@ -161,7 +183,7 @@ export default function Layout() {
 							<ProfileBadge
 								name={user?.username || "Olav Perator"}
 								location="Egersund"
-								avatarUrl="userimage.png"
+								avatarUrl="/userimage.png"
 								jobTitle="Welder"
 								jobDescription="Responsible for welding operations on offshore platforms."
 							/>
@@ -404,7 +426,7 @@ const AkerLogo = ({ sizeOverride }: { sizeOverride?: "small" | "large" }) => {
 			height={300}
 			width={isMobile ? 300 : 1025}
 			alt="Aker Solutions Logo"
-			src={`akerlogo_${size}${isDark ? "_dark" : ""}.png`}
+			src={`/akerlogo_${size}${isDark ? "_dark" : ""}.png`}
 		/>
 	);
 };

@@ -61,6 +61,27 @@ export type NoteDataRequest = {
 	startTime: Date;
 	endTime: Date;
 };
+export const UserRoleSchema = z.enum(["operator", "foreman"]);
+
+export type UserRole = z.infer<typeof UserRoleSchema>;
+
+export const UserRole = {
+	Operator: "operator",
+	Foreman: "foreman",
+} as const satisfies Record<string, UserRole>;
+
+export const LocationSchema = z.object({
+	id: z.guid(),
+	latitude: z.number(),
+	longitude: z.number(),
+	country: z.string(),
+	region: z.string(),
+	city: z.string(),
+	site: z.string(),
+	building: z.string().nullable(),
+});
+
+export type Location = z.infer<typeof LocationSchema>;
 
 export const UserSchema = z.object({
 	id: z.guid(),
@@ -68,6 +89,8 @@ export const UserSchema = z.object({
 	email: z.email(),
 	jobDescription: z.string().nullable(),
 	createdAt: z.coerce.date(),
+	role: UserRoleSchema,
+	location: LocationSchema.nullable(),
 });
 
 export type User = z.infer<typeof UserSchema>;
