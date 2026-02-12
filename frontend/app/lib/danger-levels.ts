@@ -1,3 +1,4 @@
+import { t } from "i18next";
 import z from "zod";
 
 export const DANGER_LEVEL_SEVERITY: Record<DangerLevel, number> = {
@@ -28,3 +29,9 @@ export const DangerLevels: Record<DangerLevel, DangerLevelInfo> = {
 		color: "safe",
 	},
 };
+
+export const mapDangerLevelToLabel = (dangerLevel: DangerLevel): string =>
+	t(($) => $[dangerLevel]);
+
+export const mapDangerLevelToColor = (dangerLevel: DangerLevel): string =>
+	DangerLevels[dangerLevel].color;

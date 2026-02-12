@@ -10,5 +10,6 @@ export default [
 			route("/vibration", "routes/sensors/vibration.tsx"),
 			route("/noise", "routes/sensors/noise.tsx"),
 		]),
+		route("/foreman/team", "routes/foreman/team.tsx"),
 	]),
 ] satisfies RouteConfig;
