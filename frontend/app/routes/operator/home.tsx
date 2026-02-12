@@ -20,12 +20,14 @@ import type { AllSensors } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/queries";
 import { getNextDay, getPrevDay } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 
 // biome-ignore lint: page components can be default exports
-export default function Home() {
+export default function OperatorHome() {
 	const { t, i18n } = useTranslation();
+	const navigate = useNavigate();
 
 	const { view } = useView();
 	const translatedView = t(($) => $.overview[view]);
@@ -50,6 +52,13 @@ export default function Home() {
 			sensorQueryOptions({ sensor, query, userId: user.id }),
 		),
 	});
+
+	useEffect(() => {
+		if (user.role !== "operator") {
+			navigate("/");
+			return;
+		}
+	}, [user, navigate]);
 
 	const everySensorData: AllSensors = Object.fromEntries(
 		sensors.map((sensor, index) => [
