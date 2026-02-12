@@ -71,3 +71,20 @@ export const UserSchema = z.object({
 });
 
 export type User = z.infer<typeof UserSchema>;
+
+export const UserStatusSchema = z.object({
+	userId: z.string(),
+	status: DangerLevelSchema,
+	noise: DangerLevelSchema.nullable(),
+	dust: DangerLevelSchema.nullable(),
+	vibration: DangerLevelSchema.nullable(),
+	calculatedAt: z.coerce.date(),
+});
+
+export type UserStatusDto = z.infer<typeof UserStatusSchema>;
+
+export const UserWithStatusSchema = UserSchema.extend({
+	status: UserStatusSchema,
+});
+
+export type UserWithStatusDto = z.infer<typeof UserWithStatusSchema>;
