@@ -27,44 +27,38 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
         DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
 
         var noiseRows = await _context
-            .Database.SqlQueryRaw<UserAggRow>(
-                """
+            .Database.SqlQuery<UserAggRow>(
+                $"""
                 SELECT "user_id" as "UserId", MAX(max_noise) as "Value"
                 FROM noise_data_daily
-                WHERE bucket = {0}
-                  AND "user_id" = ANY({1})
+                WHERE bucket = {today}
+                  AND "user_id" = ANY({ids})
                 GROUP BY "user_id"
-                """,
-                today,
-                ids
+                """
             )
             .ToListAsync();
 
         var dustRows = await _context
-            .Database.SqlQueryRaw<UserAggRow>(
-                """
+            .Database.SqlQuery<UserAggRow>(
+                $"""
                 SELECT "user_id" as "UserId", MAX(max_dust_Pm1_stel) as "Value"
                 FROM dust_data_daily
-                WHERE bucket = {0}
-                  AND "user_id" = ANY({1})
+                WHERE bucket = {today}
+                  AND "user_id" = ANY({ids})
                 GROUP BY "user_id"
-                """,
-                today,
-                ids
+                """
             )
             .ToListAsync();
 
         var vibrationRows = await _context
-            .Database.SqlQueryRaw<UserAggRow>(
-                """
+            .Database.SqlQuery<UserAggRow>(
+                $"""
                 SELECT "user_id" as "UserId", SUM(sum_vibration) as "Value"
                 FROM vibration_data_daily
-                WHERE bucket = {0}
-                  AND "user_id" = ANY({1})
+                WHERE bucket = {today}
+                  AND "user_id" = ANY({ids})
                 GROUP BY "user_id"
-                """,
-                today,
-                ids
+                """
             )
             .ToListAsync();
 
