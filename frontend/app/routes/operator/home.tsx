@@ -130,9 +130,9 @@ export default function OperatorHome() {
 									events={mapAllWeekDataToEvents(everySensorData ?? [])}
 								/>
 							) : !everySensorData ||
-							  Object.values(everySensorData).every(
+								Object.values(everySensorData).every(
 									(sensor) => !sensor.data || sensor.data.length === 0,
-							  ) ? (
+								) ? (
 								<Card className="flex h-24 w-full items-center">
 									<CardTitle>
 										{date.toLocaleDateString(i18n.language, {
