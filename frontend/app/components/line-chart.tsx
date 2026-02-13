@@ -1,4 +1,15 @@
 "use client";
+import { useId } from "react";
+import { useTranslation } from "react-i18next";
+import {
+	CartesianGrid,
+	Line,
+	LineChart,
+	ReferenceLine,
+	XAxis,
+	YAxis,
+} from "recharts";
+import type { CurveType } from "recharts/types/shape/Curve";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
 	type ChartConfig,
@@ -11,17 +22,6 @@ import { useSensor } from "@/features/sensor-picker/use-sensor";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto } from "@/lib/dto";
 import { thresholds } from "@/lib/thresholds";
-import { useId } from "react";
-import { useTranslation } from "react-i18next";
-import {
-	CartesianGrid,
-	Line,
-	LineChart,
-	ReferenceLine,
-	XAxis,
-	YAxis,
-} from "recharts";
-import type { CurveType } from "recharts/types/shape/Curve";
 
 export const description = "A line chart";
 
@@ -118,7 +118,7 @@ export function ChartLineDefault({
 							domain={[0, maxY]}
 							label={{
 								value: unit,
-								position: "insideCenter",
+								position: "inside",
 								offset: -5,
 								angle: -90,
 							}}
@@ -126,8 +126,8 @@ export function ChartLineDefault({
 						<ChartTooltip
 							cursor={false}
 							content={<ChartTooltipContent hideLabel />}
-							formatter={(value: number) => [
-								`${value.toFixed(2)}`,
+							formatter={(value?: number) => [
+								`${value?.toFixed(2) ?? "N/A"}`,
 								` ${unit}`,
 							]}
 						/>
@@ -137,14 +137,8 @@ export function ChartLineDefault({
 								{maxData.dangerLevel === "safe" ? (
 									<>
 										{/* Whole line is green */}
-										<stop
-											offset="0%"
-											stopColor="var(--safe)"
-										/>
-										<stop
-											offset="100%"
-											stopColor="var(--safe)"
-										/>
+										<stop offset="0%" stopColor="var(--safe)" />
+										<stop offset="100%" stopColor="var(--safe)" />
 									</>
 								) : maxData.dangerLevel === "warning" ? (
 									<>
@@ -153,15 +147,9 @@ export function ChartLineDefault({
 											offset={getOffset(warning)}
 											stopColor="var(--warning)"
 										/>
-										<stop
-											offset={getOffset(warning)}
-											stopColor="var(--safe)"
-										/>
+										<stop offset={getOffset(warning)} stopColor="var(--safe)" />
 
-										<stop
-											offset="100%"
-											stopColor="var(--safe)"
-										/>
+										<stop offset="100%" stopColor="var(--safe)" />
 									</>
 								) : (
 									maxData.dangerLevel === "danger" && (
@@ -183,10 +171,7 @@ export function ChartLineDefault({
 												offset={getOffset(warning)}
 												stopColor="var(--safe)"
 											/>
-											<stop
-												offset="100%"
-												stopColor="var(--safe)"
-											/>
+											<stop offset="100%" stopColor="var(--safe)" />
 										</>
 									)
 								)}
