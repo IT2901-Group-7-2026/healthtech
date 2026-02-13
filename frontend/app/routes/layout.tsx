@@ -22,6 +22,7 @@ import { useUser } from "@/features/user/user-user";
 import { useView } from "@/features/views/use-view";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usersQueryOptions } from "@/lib/api";
+import type { User } from "@/lib/dto.js";
 import { cn } from "@/lib/utils";
 import {
 	Select,
@@ -31,12 +32,11 @@ import {
 	SelectValue,
 } from "@/ui/select";
 import { useQuery } from "@tanstack/react-query";
-import type { User } from "@/lib/dto.js";
-import { House, HouseIcon, User as UserIcon } from "lucide-react";
-import { type JSX, type ReactNode, useRef, useState } from "react";
+import type { LucideIcon } from "lucide-react";
+import { House, User as UserIcon } from "lucide-react";
+import { type ReactNode, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { href, NavLink, Outlet, type To, useLocation } from "react-router";
-import type { LucideIcon } from "lucide-react";
 
 const Logo = () => (
 	<svg
@@ -239,7 +239,7 @@ function NavTabs({
 	);
 
 	return (
-		<div className="flex-row relative mx-auto flex h-11 rounded-full bg-[var(--card)] px-2">
+		<div className="relative mx-auto flex h-11 flex-row rounded-full bg-[var(--card)] px-2">
 			<span
 				className="absolute top-0 bottom-0 z-10 flex overflow-hidden rounded-full py-1.5 transition-all duration-300"
 				style={{ left: pillLeft, width: pillWidth }}
