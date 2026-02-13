@@ -8,16 +8,16 @@ using Microsoft.EntityFrameworkCore.Design;
 /// </summary>
 public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
-    public AppDbContext CreateDbContext(string[] args)
-    {
-        EnvUtils.LoadEnvFile();
+	public AppDbContext CreateDbContext(string[] args)
+	{
+		EnvUtils.LoadEnvFile();
 
-        var builder = new DbContextOptionsBuilder<AppDbContext>();
+		var builder = new DbContextOptionsBuilder<AppDbContext>();
 
-        var configuration = new ConfigurationBuilder().AddEnvironmentVariables().Build();
+		var configuration = new ConfigurationBuilder().AddEnvironmentVariables().Build();
 
-        builder.UseNpgsql(configuration.GetValue<string>("DATABASE_URL"));
+		builder.UseNpgsql(configuration.GetValue<string>("DATABASE_URL"));
 
-        return new AppDbContext(builder.Options);
-    }
+		return new AppDbContext(builder.Options);
+	}
 }

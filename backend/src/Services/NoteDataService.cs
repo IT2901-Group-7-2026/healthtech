@@ -6,81 +6,81 @@ namespace Backend.Services;
 
 public interface INoteDataService
 {
-    Task<IEnumerable<NoteData>> GetNotesAsync(NoteDataRequestDto request);
-    Task<NoteData> CreateNoteAsync(NoteDataCreateDto createDto, Guid userId);
-    Task<NoteData> UpdateNoteAsync(NoteDataDto updateDto);
+	Task<IEnumerable<NoteData>> GetNotesAsync(NoteDataRequestDto request);
+	Task<NoteData> CreateNoteAsync(NoteDataCreateDto createDto, Guid userId);
+	Task<NoteData> UpdateNoteAsync(NoteDataDto updateDto);
 }
 
 public class NoteDataService(AppDbContext dbContext) : INoteDataService
 {
-    private readonly AppDbContext _dbContext = dbContext;
+	private readonly AppDbContext _dbContext = dbContext;
 
-    public async Task<IEnumerable<NoteData>> GetNotesAsync(NoteDataRequestDto request)
-    {
-        if (
-            request.StartTime!.Value.Offset != TimeSpan.Zero
-            || request.EndTime!.Value.Offset != TimeSpan.Zero
-        )
-        {
-            throw new ArgumentException("Please provide time in UTC format");
-        }
+	public async Task<IEnumerable<NoteData>> GetNotesAsync(NoteDataRequestDto request)
+	{
+		if (
+			request.StartTime!.Value.Offset != TimeSpan.Zero
+			|| request.EndTime!.Value.Offset != TimeSpan.Zero
+		)
+		{
+			throw new ArgumentException("Please provide time in UTC format");
+		}
 
-        return await _dbContext
-            .NoteData.Where(n =>
-                n.Time >= request.StartTime
-                && n.Time <= request.EndTime
-                && !string.IsNullOrEmpty(n.Note)
-            )
-            .ToListAsync();
-    }
+		return await _dbContext
+			.NoteData.Where(n =>
+				n.Time >= request.StartTime
+				&& n.Time <= request.EndTime
+				&& !string.IsNullOrEmpty(n.Note)
+			)
+			.ToListAsync();
+	}
 
-    public async Task<NoteData> CreateNoteAsync(NoteDataCreateDto createDto, Guid userId)
-    {
-        if (createDto.Time!.Value.Offset != TimeSpan.Zero)
-        {
-            throw new ArgumentException("Please provide time in UTC format");
-        }
+	public async Task<NoteData> CreateNoteAsync(NoteDataCreateDto createDto, Guid userId)
+	{
+		if (createDto.Time!.Value.Offset != TimeSpan.Zero)
+		{
+			throw new ArgumentException("Please provide time in UTC format");
+		}
 
-        var existingNote = await _dbContext.NoteData.AnyAsync(n =>
-            n.Time == createDto.Time && n.UserId == userId
-        );
+		var existingNote = await _dbContext.NoteData.AnyAsync(n =>
+			n.Time == createDto.Time && n.UserId == userId
+		);
 
-        if (existingNote)
-        {
-            throw new InvalidOperationException("A note with this time already exists");
-        }
+		if (existingNote)
+		{
+			throw new InvalidOperationException("A note with this time already exists");
+		}
 
-        var noteData = new NoteData
-        {
-            Id = Guid.NewGuid(),
-            Note = createDto.Note,
-            Time = createDto.Time!.Value.UtcDateTime,
-            UserId = userId,
-        };
+		var noteData = new NoteData
+		{
+			Id = Guid.NewGuid(),
+			Note = createDto.Note,
+			Time = createDto.Time!.Value.UtcDateTime,
+			UserId = userId,
+		};
 
-        var createdNote = _dbContext.NoteData.Add(noteData);
-        await _dbContext.SaveChangesAsync();
+		var createdNote = _dbContext.NoteData.Add(noteData);
+		await _dbContext.SaveChangesAsync();
 
-        return createdNote.Entity;
-    }
+		return createdNote.Entity;
+	}
 
-    public async Task<NoteData> UpdateNoteAsync(NoteDataDto updateDto)
-    {
-        if (updateDto.Time!.Value.Offset != TimeSpan.Zero)
-        {
-            throw new ArgumentException("Please provide time in UTC format");
-        }
+	public async Task<NoteData> UpdateNoteAsync(NoteDataDto updateDto)
+	{
+		if (updateDto.Time!.Value.Offset != TimeSpan.Zero)
+		{
+			throw new ArgumentException("Please provide time in UTC format");
+		}
 
-        var note = await _dbContext.NoteData.FirstOrDefaultAsync(n => n.Time == updateDto.Time);
+		var note = await _dbContext.NoteData.FirstOrDefaultAsync(n => n.Time == updateDto.Time);
 
-        if (note == null)
-        {
-            throw new InvalidOperationException("This is not a note that exists");
-        }
+		if (note == null)
+		{
+			throw new InvalidOperationException("This is not a note that exists");
+		}
 
-        note.Note = updateDto.Note;
-        await _dbContext.SaveChangesAsync();
+		note.Note = updateDto.Note;
+		await _dbContext.SaveChangesAsync();
 
-        return note;
-    }
+		return note;
+	}
 }
