@@ -11,7 +11,7 @@ import { useNavigate } from "react-router";
 import { StatCard } from "./stat-card";
 
 // biome-ignore lint: page components can be default exports
-export default function ForemanHome() {
+export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 
