@@ -52,7 +52,9 @@ export const StatCard = ({
 
 			<p className="w-fit font-bold text-3xl leading-tight">{value}</p>
 
-			<p className="text-xs text-zinc-500 dark:text-zinc-400">{description}</p>
+			<p className="text-xs text-zinc-500 dark:text-zinc-400">
+				{description}
+			</p>
 			<div className="mt-1 flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300">
 				<p>{viewDetailsText}</p>
 				<ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

@@ -39,11 +39,17 @@ export default function SensorLayout() {
 					>
 						{"Today"}
 					</Button>
-					<Button onClick={() => setDate(getPrevDay(date, view))} size={"icon"}>
+					<Button
+						onClick={() => setDate(getPrevDay(date, view))}
+						size={"icon"}
+					>
 						{"<"}
 					</Button>
 					<ViewPicker />
-					<Button onClick={() => setDate(getNextDay(date, view))} size={"icon"}>
+					<Button
+						onClick={() => setDate(getNextDay(date, view))}
+						size={"icon"}
+					>
 						{">"}
 					</Button>
 				</div>

@@ -56,7 +56,9 @@ export function WeekGrid({
 								gridColumnEnd: 2,
 							}}
 						>
-							<span className="text-md">{cell.hourAndMinute}</span>
+							<span className="text-md">
+								{cell.hourAndMinute}
+							</span>
 						</div>
 					),
 			)}

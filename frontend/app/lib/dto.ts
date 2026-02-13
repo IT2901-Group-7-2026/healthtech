@@ -113,4 +113,6 @@ export const UserWithStatusSchema = UserSchema.extend({
 export type UserWithStatusDto = z.infer<typeof UserWithStatusSchema>;
 
 export const createLocationName = (location: Location) =>
-	location.building ? `${location.building}, ${location.site}` : location.site;
+	location.building
+		? `${location.building}, ${location.site}`
+		: location.site;

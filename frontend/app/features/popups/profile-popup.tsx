@@ -26,7 +26,12 @@ export function ProfilePopup({
 	const tempListOfRegulations = ["Safety boots", "Helmet", "Protective mask"];
 
 	return (
-		<BasePopup title={title} open={open} relevantDate={null} onClose={onClose}>
+		<BasePopup
+			title={title}
+			open={open}
+			relevantDate={null}
+			onClose={onClose}
+		>
 			{children}
 			<div className="flex flex-col gap-6 md:px-6 md:pb-2">
 				<div className="flex flex-row items-center gap-4">

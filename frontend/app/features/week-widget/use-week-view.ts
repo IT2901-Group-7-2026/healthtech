@@ -92,10 +92,14 @@ export function useWeekView({
 	}));
 
 	const isAllSameYear = isSameYear(days[0].date, days[days.length - 1].date);
-	const isAllSameMonth = isSameMonth(days[0].date, days[days.length - 1].date);
+	const isAllSameMonth = isSameMonth(
+		days[0].date,
+		days[days.length - 1].date,
+	);
 
 	let viewTitle = "";
-	if (isAllSameMonth) viewTitle = format(days[0].date, "MMMM yyyy", { locale });
+	if (isAllSameMonth)
+		viewTitle = format(days[0].date, "MMMM yyyy", { locale });
 	else if (isAllSameYear)
 		viewTitle = `${format(days[0].date, "MMM", { locale })} - ${format(
 			days[days.length - 1].date,

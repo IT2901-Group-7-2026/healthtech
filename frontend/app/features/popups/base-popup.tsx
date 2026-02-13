@@ -35,7 +35,9 @@ export function BasePopup({
 		<Dialog open={open} onOpenChange={onClose}>
 			<DialogContent className="max-w-md">
 				<DialogHeader>
-					<DialogTitle className="font-bold text-xl">{title}</DialogTitle>
+					<DialogTitle className="font-bold text-xl">
+						{title}
+					</DialogTitle>
 				</DialogHeader>
 
 				{children}
@@ -55,7 +57,11 @@ export function BasePopup({
 										: `?view=Day&date=${relevantDate.toLocaleDateString("en-CA")}`,
 								}}
 								onClick={() =>
-									sensors.find((s) => pathname?.includes(s) && setSensor(s))
+									sensors.find(
+										(s) =>
+											pathname?.includes(s) &&
+											setSensor(s),
+									)
 								}
 								prefetch="intent"
 							>

@@ -56,7 +56,11 @@ export function WeekHeader({
 						(nextButton ? (
 							nextButton({ onNext })
 						) : (
-							<Button size={"icon"} variant={"default"} onClick={onNext}>
+							<Button
+								size={"icon"}
+								variant={"default"}
+								onClick={onNext}
+							>
 								<svg
 									width="16"
 									height="16"

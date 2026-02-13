@@ -83,7 +83,9 @@ export function Notifications({
 						<button
 							type={"button"}
 							key={`${date} ${sensor} ${dangerLevel}`}
-							onClick={() => handleNotifClick({ date, sensor, dangerLevel })}
+							onClick={() =>
+								handleNotifClick({ date, sensor, dangerLevel })
+							}
 							className="cursor-pointer"
 						>
 							<Item
@@ -99,7 +101,9 @@ export function Notifications({
 									<ItemTitle className="line-clamp-1">
 										{t(($) => $[sensor])}
 									</ItemTitle>
-									<ItemDescription className={cn(`text-${dangerLevel}`)}>
+									<ItemDescription
+										className={cn(`text-${dangerLevel}`)}
+									>
 										{t(($) => $[dangerLevel])}
 									</ItemDescription>
 								</ItemContent>
