@@ -73,7 +73,7 @@ function HomeLink() {
 function getLinks(
 	t: ReturnType<typeof useTranslation>["t"],
 	role: User["role"],
-): Array<{ to: To; label: string; icon?: JSX.Element }> {
+): Array<{ to: To; label: string; icon?: LucideIcon }> {
 	switch (role) {
 		case "operator": {
 			return [
