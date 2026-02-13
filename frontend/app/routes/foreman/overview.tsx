@@ -63,10 +63,14 @@ export default function ForemanOverview() {
 				<div className="grid items-stretch gap-4 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
 					<StatCard
 						description={t(
-							($) => $.foremanDashboard.overview.statCards.inDanger.description,
+							($) =>
+								$.foremanDashboard.overview.statCards.inDanger
+									.description,
 						)}
 						label={t(
-							($) => $.foremanDashboard.overview.statCards.inDanger.label,
+							($) =>
+								$.foremanDashboard.overview.statCards.inDanger
+									.label,
 						)}
 						to="/"
 						totalValue={total}
@@ -76,9 +80,15 @@ export default function ForemanOverview() {
 					/>
 					<StatCard
 						description={t(
-							($) => $.foremanDashboard.overview.statCards.atRisk.description,
+							($) =>
+								$.foremanDashboard.overview.statCards.atRisk
+									.description,
 						)}
-						label={t(($) => $.foremanDashboard.overview.statCards.atRisk.label)}
+						label={t(
+							($) =>
+								$.foremanDashboard.overview.statCards.atRisk
+									.label,
+						)}
 						to="/"
 						totalValue={total}
 						value={countPerDangerLevel.warning}
@@ -88,10 +98,13 @@ export default function ForemanOverview() {
 					<StatCard
 						description={t(
 							($) =>
-								$.foremanDashboard.overview.statCards.withinLimits.description,
+								$.foremanDashboard.overview.statCards
+									.withinLimits.description,
 						)}
 						label={t(
-							($) => $.foremanDashboard.overview.statCards.withinLimits.label,
+							($) =>
+								$.foremanDashboard.overview.statCards
+									.withinLimits.label,
 						)}
 						to="/"
 						totalValue={total}

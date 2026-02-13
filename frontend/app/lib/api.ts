@@ -168,12 +168,15 @@ export const useSubordinatesQuery = (userId: string) =>
 		queryOptions({
 			queryKey: ["user.subordinates", userId],
 			queryFn: async () => {
-				const response = await fetch(`${baseURL}users/${userId}/subordinates`, {
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
+				const response = await fetch(
+					`${baseURL}users/${userId}/subordinates`,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+						},
 					},
-				});
+				);
 
 				if (!response.ok) {
 					throw new Error("Failed to fetch subordinates");

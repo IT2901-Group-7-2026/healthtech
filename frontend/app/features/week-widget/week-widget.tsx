@@ -68,7 +68,10 @@ export function WeekWidget({
 			hour: "2-digit",
 			minute: "2-digit",
 		};
-		const start = event.startDate.toLocaleTimeString(i18n.language, timeConfig);
+		const start = event.startDate.toLocaleTimeString(
+			i18n.language,
+			timeConfig,
+		);
 		const end = event.endDate.toLocaleTimeString(i18n.language, timeConfig);
 		const translatedTitle = t(($) => $.popup.eventTitle, {
 			day: actualDay,
@@ -93,7 +96,10 @@ export function WeekWidget({
 								<WeekDaysHeader days={days} />
 								<div className="grid grid-cols-1 grid-rows-1">
 									<div className="col-start-1 row-start-1">
-										<WeekGrid days={days} rowHeight={rowHeight} />
+										<WeekGrid
+											days={days}
+											rowHeight={rowHeight}
+										/>
 									</div>
 									<div className="col-start-1 row-start-1">
 										<WeekEventGrid

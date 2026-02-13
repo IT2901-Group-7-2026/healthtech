@@ -77,7 +77,9 @@ export default function Noise() {
 				) : view === "month" ? (
 					<CalendarWidget
 						selectedDay={date}
-						data={mapSensorDataToMonthLists(data ?? [], "noise") ?? []}
+						data={
+							mapSensorDataToMonthLists(data ?? [], "noise") ?? []
+						}
 					/>
 				) : view === "week" ? (
 					<WeekWidget
@@ -113,8 +115,14 @@ export default function Noise() {
 						maxY={150}
 						lineType="monotone"
 					>
-						<ThresholdLine y={thresholds.noise.danger} dangerLevel="danger" />
-						<ThresholdLine y={thresholds.noise.warning} dangerLevel="warning" />
+						<ThresholdLine
+							y={thresholds.noise.danger}
+							dangerLevel="danger"
+						/>
+						<ThresholdLine
+							y={thresholds.noise.warning}
+							dangerLevel="warning"
+						/>
 					</ChartLineDefault>
 				)}
 			</div>
