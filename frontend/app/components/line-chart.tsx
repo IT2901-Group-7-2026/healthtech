@@ -137,8 +137,14 @@ export function ChartLineDefault({
 								{maxData.dangerLevel === "safe" ? (
 									<>
 										{/* Whole line is green */}
-										<stop offset="0%" stopColor="var(--safe)" />
-										<stop offset="100%" stopColor="var(--safe)" />
+										<stop
+											offset="0%"
+											stopColor="var(--safe)"
+										/>
+										<stop
+											offset="100%"
+											stopColor="var(--safe)"
+										/>
 									</>
 								) : maxData.dangerLevel === "warning" ? (
 									<>
@@ -147,9 +153,15 @@ export function ChartLineDefault({
 											offset={getOffset(warning)}
 											stopColor="var(--warning)"
 										/>
-										<stop offset={getOffset(warning)} stopColor="var(--safe)" />
+										<stop
+											offset={getOffset(warning)}
+											stopColor="var(--safe)"
+										/>
 
-										<stop offset="100%" stopColor="var(--safe)" />
+										<stop
+											offset="100%"
+											stopColor="var(--safe)"
+										/>
 									</>
 								) : (
 									maxData.dangerLevel === "danger" && (
@@ -171,7 +183,10 @@ export function ChartLineDefault({
 												offset={getOffset(warning)}
 												stopColor="var(--safe)"
 											/>
-											<stop offset="100%" stopColor="var(--safe)" />
+											<stop
+												offset="100%"
+												stopColor="var(--safe)"
+											/>
 										</>
 									)
 								)}
