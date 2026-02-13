@@ -276,8 +276,8 @@ function NavTabs({
 						prefetch="intent"
 					>
 						<span className="inline-flex items-center gap-2">
-							{route.label}
 							{route.icon && <route.icon />}
+							{route.label}
 						</span>
 					</NavLink>
 				);
