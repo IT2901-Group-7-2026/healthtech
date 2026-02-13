@@ -1,119 +1,117 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.15/schema.json",
   "root": true,
-	"vcs": {
-		"enabled": true,
-		"clientKind": "git",
-		"useIgnoreFile": true,
-		"defaultBranch": "main"
-	},
-	"files": {
-		"ignoreUnknown": false,
-    "includes": ["**", "!app/components/ui"]
-	},
-	"formatter": {
-		"enabled": true,
-		"useEditorconfig": true
-	},
-	"linter": {
-		"enabled": true,
-		"domains": {
-			"project": "recommended",
-			"react": "all"
-		},
-		"rules": {
-			"recommended": true,
-			"complexity": {
-				"noExcessiveCognitiveComplexity": "info", // avoid too complex functions
-				"useSimplifiedLogicExpression": "error",
-				"useWhile": "error"
-			},
-			"correctness": {
-				"noNodejsModules": "error", // No nodejs in SPA
-				"noReactPropAssignments": "error",
-				"noUndeclaredDependencies": "error",
-				"noUndeclaredVariables": "error"
-			},
-			"nursery": {
-				"noJsxLiterals": "error", // nicer for i18n
-				"noShadow": "error",
-				"noUnnecessaryConditions": "error",
-				"useConsistentArrowReturn": "error",
-				"useConsistentTypeDefinitions": {
-					"level": "error",
-					"options": {
-						"style": "type"
-					}
-				},
-				"useExhaustiveSwitchCases": "error",
-				"useImageSize": "error",
-				"useReactFunctionComponents": "error",
-				"useSortedClasses": {
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "main",
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": ["**", "!app/components/ui"],
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "tab",
+    "indentWidth": 4,
+  },
+  "linter": {
+    "enabled": true,
+    "domains": {
+      "project": "recommended",
+      "react": "all",
+    },
+    "rules": {
+      "recommended": true,
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "info", // avoid too complex functions
+        "useSimplifiedLogicExpression": "error",
+        "useWhile": "error",
+      },
+      "correctness": {
+        "noNodejsModules": "error", // No nodejs in SPA
+        "noReactPropAssignments": "error",
+        "noUndeclaredDependencies": "error",
+        "noUndeclaredVariables": "error",
+      },
+      "nursery": {
+        "noJsxLiterals": "error", // nicer for i18n
+        "noShadow": "error",
+        "noUnnecessaryConditions": "error",
+        "useConsistentArrowReturn": "error",
+        "useExhaustiveSwitchCases": "error",
+        "useSortedClasses": {
           "level": "error",
-          "fix":"safe",
+          "fix": "safe",
           "options": {
-            "functions": ["cn", "clsx", "tw", "*.tw"]
-          }
-        }
-			},
-			"style": {
-				"noCommonJs": "error",
-				"noDefaultExport": "error",
-				"noNegationElse": "error",
-				"noParameterAssign": "error",
-				"noProcessEnv": "error", // No nodejs in SPA
-				"noYodaExpression": "error",
-				"noUselessElse": "error",
-				"useCollapsedElseIf": "error",
-				"useConsistentArrayType": { // readability & consistency
-					"level": "error",
-					"options": {
-						"syntax": "generic"
-					}
-				},
-				"useDefaultParameterLast": "error",
-				"useFilenamingConvention": {
-					"level": "error",
-					"options": {
-						"filenameCases": ["kebab-case", "snake_case"]
-					}
-				}
-			},
-			"suspicious": {
-				"noAlert": "error",
-				"noConsole": {
+            "functions": ["cn", "clsx", "tw", "*.tw"],
+          },
+        },
+      },
+      "style": {
+        "noCommonJs": "error",
+        "noDefaultExport": "error",
+        "noNegationElse": "error",
+        "noParameterAssign": "error",
+        "noProcessEnv": "error", // No nodejs in SPA
+        "noYodaExpression": "error",
+        "noUselessElse": "error",
+        "useCollapsedElseIf": "error",
+        "useConsistentArrayType": {
+          // readability & consistency
           "level": "error",
           "options": {
-            "allow": ["assert", "error", "info", "warn"]
-          }
-        }
-			}
-		}
-	},
-	"javascript": {
-		"formatter": {
-			"quoteStyle": "double"
-		}
-	},
-	"json": {
-		"formatter": {
-			"enabled": false
-		}
-	},
-	"assist": {
-		"enabled": true,
-		"actions": {
-			"source": {
-				"organizeImports": {
+            "syntax": "generic",
+          },
+        },
+        "useDefaultParameterLast": "error",
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": {
+            "filenameCases": ["kebab-case", "snake_case"],
+          },
+        },
+      },
+      "suspicious": {
+        "noAlert": "error",
+        "noConsole": {
+          "level": "error",
+          "options": {
+            "allow": ["assert", "error", "info", "warn"],
+          },
+        },
+      },
+    },
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+    },
+  },
+  "json": {
+    "formatter": {
+      "enabled": false,
+      "indentStyle": "space",
+      "indentWidth": 2,
+    },
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": {
           "level": "on",
           "options": {
-            "groups": [
-              ["@/**"],
-              ["~/**"]
-            ]
-          }
-        }
-			}
-		}
-	}
+            "groups": [["@/**"], ["~/**"]],
+          },
+        },
+      },
+    },
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true,
+    },
+  },
 }
