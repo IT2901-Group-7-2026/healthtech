@@ -90,7 +90,7 @@ export const UserSchema = z.object({
 	jobDescription: z.string().nullable(),
 	createdAt: z.coerce.date(),
 	role: UserRoleSchema,
-	location: LocationSchema.nullable(),
+	location: LocationSchema,
 });
 
 export type User = z.infer<typeof UserSchema>;
@@ -111,3 +111,6 @@ export const UserWithStatusSchema = UserSchema.extend({
 });
 
 export type UserWithStatusDto = z.infer<typeof UserWithStatusSchema>;
+
+export const createLocationName = (location: Location) =>
+	location.building ? `${location.building}, ${location.site}` : location.site;

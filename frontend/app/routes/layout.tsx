@@ -159,7 +159,7 @@ export default function Layout() {
 							<SelectContent className="w-32">
 								{users?.map((u) => (
 									<SelectItem key={u.id} value={u.id}>
-										{u.username}
+										{`${u.username} (${u.role})`}
 									</SelectItem>
 								))}
 							</SelectContent>

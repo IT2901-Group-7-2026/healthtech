@@ -118,6 +118,28 @@
 			"email": "E-post",
 			"status": "Status",
 			"jobDescription": "Stillingsbeskrivelse"
+		},
+		"teamMembersCount": "{{count}} operatør i teamet",
+		"teamMembersCount_one": "{{count}} operatør i teamet",
+		"teamMembersCount_other": "{{count}} operatører i teamet",
+		"overview": {
+			"title": "Foreman Oversikt",
+			"statCards": {
+				"total": "Totalt",
+				"viewDetails": "Se detaljer",
+				"inDanger": {
+					"description": "Operatører som har overskredet grenseverdien",
+					"label": "Over grenseverdi"
+				},
+				"atRisk": {
+					"description": "Operatører som nærmer seg grenseverdien",
+					"label": "Nær grenseverdi"
+				},
+				"withinLimits": {
+					"description": "Operatører innenfor trygge grenseverdier",
+					"label": "Innenfor grenseverdi"
+				}
+			}
 		}
 	}
 }
