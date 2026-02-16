@@ -10,17 +10,17 @@ public class Threshold(double warning, double danger, double? peakDanger = null)
 	public double Danger { get; set; } = danger;
 	public double? PeakDanger { get; set; } = peakDanger;
 
-	public static Threshold GetThresholdForSensorType(DataType dataType)
+	public static Threshold GetThresholdForSensorType(SensorType sensorType)
 	{
-		return dataType switch
+		return sensorType switch
 		{
-			DataType.Dust => Dust,
-			DataType.Noise => Noise,
-			DataType.Vibration => Vibration,
+			SensorType.Dust => Dust,
+			SensorType.Noise => Noise,
+			SensorType.Vibration => Vibration,
 			_ => throw new ArgumentOutOfRangeException(
-				nameof(dataType),
-				dataType,
-				$"No threshold defined for data type {dataType}"
+				nameof(sensorType),
+				sensorType,
+				$"No threshold defined for data type {sensorType}"
 			),
 		};
 	}

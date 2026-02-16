@@ -29,16 +29,16 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
 	)
 	{
 		var request = requestContext.Request;
-		var dataType = requestContext.DataType;
+		var sensorType = requestContext.SensorType;
 
 		string materializedViewName = SensorUtils.GetMaterializedViewName(
-			dataType,
+			sensorType,
 			request.Granularity
 		);
 
 		string aggregateColumnName = SensorUtils.GetAggregateColumnName(
 			request.Function,
-			dataType,
+			sensorType,
 			request.Field
 		);
 
@@ -47,19 +47,19 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
 
 		string avgColumnName = SensorUtils.GetAggregateColumnName(
 			AggregationFunction.Avg,
-			dataType,
+			sensorType,
 			request.Field
 		);
 
 		string maxColumnName = SensorUtils.GetAggregateColumnName(
 			AggregationFunction.Max,
-			dataType,
+			sensorType,
 			request.Field
 		);
 
 		string sumColumnName = SensorUtils.GetAggregateColumnName(
 			AggregationFunction.Sum,
-			dataType,
+			sensorType,
 			request.Field
 		);
 
@@ -79,7 +79,7 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
 			.Database.SqlQueryRaw<RawSensorData>(sql, startTime, endTime)
 			.ToListAsync();
 
-		var dataWithDangerLevels = ThresholdUtils.CalculateDangerLevels(dataType, rawSensorData);
+		var dataWithDangerLevels = ThresholdUtils.CalculateDangerLevels(sensorType, rawSensorData);
 
 		var result = dataWithDangerLevels.Select(item => new SensorDataDto
 		{

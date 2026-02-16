@@ -50,7 +50,7 @@ public class SensorDataControllerTests
 			var noiseResult = await _controller.GetAggregatedData(
 				noiseRequest,
 				Guid.NewGuid(),
-				DataType.Noise
+				SensorType.Noise
 			);
 			var okNoiseResult = noiseResult.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okNoiseResult);
@@ -76,7 +76,7 @@ public class SensorDataControllerTests
 			var dustResult = await _controller.GetAggregatedData(
 				dustRequest,
 				Guid.NewGuid(),
-				DataType.Dust
+				SensorType.Dust
 			);
 			var okDustResult = dustResult.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okDustResult);
@@ -101,7 +101,7 @@ public class SensorDataControllerTests
 			var vibrationResult = await _controller.GetAggregatedData(
 				vibrationRequest,
 				Guid.NewGuid(),
-				DataType.Vibration
+				SensorType.Vibration
 			);
 			var okVibrationResult = vibrationResult.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okVibrationResult);
@@ -163,7 +163,7 @@ public class SensorDataControllerTests
 			var result = await _controller.GetAggregatedData(
 				request,
 				Guid.NewGuid(),
-				DataType.Noise
+				SensorType.Noise
 			);
 			var okResult = result.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okResult);
@@ -207,7 +207,7 @@ public class SensorDataControllerTests
 			var result = await _controller.GetAggregatedData(
 				request,
 				Guid.NewGuid(),
-				DataType.Dust
+				SensorType.Dust
 			);
 			var okResult = result.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okResult);
@@ -251,7 +251,7 @@ public class SensorDataControllerTests
 			var result = await _controller.GetAggregatedData(
 				request,
 				Guid.NewGuid(),
-				DataType.Vibration
+				SensorType.Vibration
 			);
 			var okResult = result.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okResult);
@@ -263,7 +263,7 @@ public class SensorDataControllerTests
 	}
 
 	/// <summary>
-	/// Nested test class for testing different invalid request scenarios. The datatype used is Noise.
+	/// Nested test class for testing different invalid request scenarios. The sensortype used is Noise.
 	/// </summary>
 	/// <remarks>
 	/// These tests ensure that the controller properly handles invalid requests and exceptions from the service layer,
@@ -298,7 +298,7 @@ public class SensorDataControllerTests
 			var result = await _controller.GetAggregatedData(
 				request,
 				Guid.NewGuid(),
-				DataType.Noise
+				SensorType.Noise
 			);
 			var badRequestResult = result.Result as BadRequestObjectResult;
 
@@ -328,7 +328,7 @@ public class SensorDataControllerTests
 			var result = await _controller.GetAggregatedData(
 				request,
 				Guid.NewGuid(),
-				DataType.Noise
+				SensorType.Noise
 			);
 			var badRequestResult = result.Result as BadRequestObjectResult;
 
@@ -358,7 +358,7 @@ public class SensorDataControllerTests
 			var result = await _controller.GetAggregatedData(
 				request,
 				Guid.NewGuid(),
-				DataType.Noise
+				SensorType.Noise
 			);
 			var notFoundResult = result.Result as NotFoundObjectResult;
 
@@ -391,7 +391,7 @@ public class SensorDataControllerTests
 			var result = await _controller.GetAggregatedData(
 				request,
 				Guid.NewGuid(),
-				DataType.Noise
+				SensorType.Noise
 			);
 			var internalErrorResult = result.Result as ObjectResult;
 
