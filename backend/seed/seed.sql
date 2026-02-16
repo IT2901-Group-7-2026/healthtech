@@ -66,8 +66,8 @@ CREATE TABLE temp_noise_data (
 -- Import to temp table
 COPY temp_noise_data FROM '/seed/NoiseData.csv' DELIMITER ',' CSV HEADER;
 
-INSERT INTO "NoiseData" ("Id", "Time", "LavgQ3", "UserId")
-SELECT gen_random_uuid(), Time, "LAVG (Q3)", :'KARI_ID'
+INSERT INTO "NoiseData" ("Id", "Time", "LCPK", "LAEQ", "UserId")
+SELECT gen_random_uuid(), Time, LCPK, LAEQ, :'KARI_ID'
 FROM temp_noise_data;
 
 DROP TABLE temp_noise_data;
@@ -206,11 +206,15 @@ CREATE MATERIALIZED VIEW noise_data_minutely AS
 SELECT 
     time_bucket(:MINUTE_INTERVAL, "Time") AS bucket,
     "UserId" as user_id,
-    AVG("LavgQ3") AS avg_noise,
-    SUM("LavgQ3") AS sum_noise,
-    COUNT(*) AS sample_count,
-    MIN("LavgQ3") AS min_noise,
-    MAX("LavgQ3") AS max_noise
+    AVG("LCPK") AS avg_noise_lcpk,
+    SUM("LCPK") AS sum_noise_lcpk,
+    MIN("LCPK") AS min_noise_lcpk,
+    MAX("LCPK") AS max_noise_lcpk,
+    AVG("LAEQ") AS avg_noise_laeq,
+    SUM("LAEQ") AS sum_noise_laeq,
+    MIN("LAEQ") AS min_noise_laeq,
+    MAX("LAEQ") AS max_noise_laeq,
+    COUNT(*) AS sample_count
 FROM "NoiseData"
 GROUP BY bucket, "user_id"
 ORDER BY bucket ASC;
@@ -220,11 +224,15 @@ CREATE MATERIALIZED VIEW noise_data_hourly AS
 SELECT 
     time_bucket(:HOUR_INTERVAL, "Time") AS bucket,
     "UserId" AS user_id,
-    AVG("LavgQ3") AS avg_noise,
-    SUM("LavgQ3") AS sum_noise,
-    COUNT(*) AS sample_count,
-    MIN("LavgQ3") AS min_noise,
-    MAX("LavgQ3") AS max_noise
+    AVG("LCPK") AS avg_noise_lcpk,
+    SUM("LCPK") AS sum_noise_lcpk,
+    MIN("LCPK") AS min_noise_lcpk,
+    MAX("LCPK") AS max_noise_lcpk,
+    AVG("LAEQ") AS avg_noise_laeq,
+    SUM("LAEQ") AS sum_noise_laeq,
+    MIN("LAEQ") AS min_noise_laeq,
+    MAX("LAEQ") AS max_noise_laeq,
+    COUNT(*) AS sample_count
 FROM "NoiseData"
 GROUP BY bucket, "user_id"
 ORDER BY bucket ASC;
@@ -234,11 +242,15 @@ CREATE MATERIALIZED VIEW noise_data_daily AS
 SELECT 
     time_bucket(:DAY_INTERVAL, "Time") AS bucket,
     "UserId" AS user_id,
-    AVG("LavgQ3") AS avg_noise,
-    SUM("LavgQ3") AS sum_noise,
-    COUNT(*) AS sample_count,
-    MIN("LavgQ3") AS min_noise,
-    MAX("LavgQ3") AS max_noise
+    AVG("LCPK") AS avg_noise_lcpk,
+    SUM("LCPK") AS sum_noise_lcpk,
+    MIN("LCPK") AS min_noise_lcpk,
+    MAX("LCPK") AS max_noise_lcpk,
+    AVG("LAEQ") AS avg_noise_laeq,
+    SUM("LAEQ") AS sum_noise_laeq,
+    MIN("LAEQ") AS min_noise_laeq,
+    MAX("LAEQ") AS max_noise_laeq,
+    COUNT(*) AS sample_count
 FROM "NoiseData"
 GROUP BY bucket, "user_id"
 ORDER BY bucket ASC;

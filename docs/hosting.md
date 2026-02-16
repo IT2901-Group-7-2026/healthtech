@@ -49,6 +49,24 @@ The migrator service in our `docker-compose.prod.yml` is set up to run the migra
 docker compose --env-file ./backend/.env -f docker-compose.prod.yml run --rm migrator
 ```
 
+### Launch the application
+
+Build and start all services (database, backend, frontend, and Traefik) from the root directory:
+
+```bash
+docker compose --env-file ./backend/.env -f docker-compose.prod.yml up --build -d
+
+# To kill the app:
+#   docker compose --env-file ./backend/.env -f docker-compose.prod.yml down
+# If you also want to kill volumes (like the database), add the -v flag:
+#   docker compose --env-file ./backend/.env -f docker-compose.prod.yml down -v
+
+# If you run into caching issues, you can try:
+#   docker compose --env-file ./backend/.env -f docker-compose.prod.yml build --no-cache backend
+```
+
+Note that our Traefik configuration is made for using an IP address instead of a domain. If you want to use a domain, you need to update the `Host` rules in `infra/traefik/traefik.yml` and ensure your DNS points to your server.
+
 ### Seed the database (optional)
 
 **NOTE:** See [root README](../README.md) for instructions about seeding.
@@ -68,25 +86,9 @@ rsync -avP -e "ssh -i ./your-key.pem" /backend/seed/*.csv ubuntu@<HOST>:~/health
 #   mkdir -p ~/.ssh
 #   cp /mnt/c/Users/.../my-key.pem ~/.ssh/
 #   chmod 600 ~/.ssh/my-key.pem
+
+docker exec -it healthtech-db psql -U postgres -d healthtech -f /seed/seed.sql
 ```
-
-### Launch the application
-
-Build and start all services (database, backend, frontend, and Traefik) from the root directory:
-
-```bash
-docker compose --env-file ./backend/.env -f docker-compose.prod.yml up --build -d
-
-# To kill the app:
-#   docker compose --env-file ./backend/.env -f docker-compose.prod.yml down
-# If you also want to kill volumes (like the database), add the -v flag:
-#   docker compose --env-file ./backend/.env -f docker-compose.prod.yml down -v
-
-# If you run into caching issues, you can try:
-#   docker compose --env-file ./backend/.env -f docker-compose.prod.yml build --no-cache backend
-```
-
-Note that our Traefik configuration is made for using an IP address instead of a domain. If you want to use a domain, you need to update the `Host` rules in `infra/traefik/traefik.yml` and ensure your DNS points to your server.
 
 ### Maintenance and logs
 

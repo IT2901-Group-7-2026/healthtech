@@ -1,5 +1,8 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
+import { useQuery } from "@tanstack/react-query";
+import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
+import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes";
 import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
 import { Summary } from "@/components/summary";
@@ -7,7 +10,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
-import { useUser } from "@/features/user/user-user";
+import { useUser } from "@/features/user-provider.js";
 import { useView } from "@/features/views/use-view";
 import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
@@ -15,9 +18,6 @@ import { languageToLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
 import { thresholds } from "@/lib/thresholds";
-import { useQuery } from "@tanstack/react-query";
-import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
-import { useTranslation } from "react-i18next";
 
 // biome-ignore lint: page components can be default exports
 export default function Noise() {
@@ -31,21 +31,21 @@ export default function Noise() {
 		startTime: new Date(date.setUTCHours(8)),
 		endTime: new Date(date.setUTCHours(16)),
 		granularity: "minute",
-		function: "max",
+		function: "avg",
 	};
 
 	const weekQuery: SensorDataRequestDto = {
 		startTime: startOfWeek(date, { weekStartsOn: 1 }),
 		endTime: endOfWeek(date, { weekStartsOn: 1 }),
 		granularity: "hour",
-		function: "max",
+		function: "avg",
 	};
 
 	const monthQuery: SensorDataRequestDto = {
 		startTime: startOfMonth(date),
 		endTime: endOfMonth(date),
 		granularity: "day",
-		function: "max",
+		function: "avg",
 	};
 
 	const query =

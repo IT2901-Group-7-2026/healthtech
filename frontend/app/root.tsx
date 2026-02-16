@@ -1,4 +1,3 @@
-import { ThemeProvider } from "@/features/dark-mode/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { NuqsAdapter } from "nuqs/adapters/react-router/v7";
@@ -10,13 +9,14 @@ import {
 	Scripts,
 	ScrollRestoration,
 } from "react-router";
+import { ThemeProvider } from "@/features/dark-mode/theme-provider";
 import type { Route } from "./+types/root";
 import "./app.css";
 import { DateProvider } from "./features/date-picker/date-provider";
 import { SensorProvider } from "./features/sensor-picker/sensor-provider";
-import { UserProvider } from "./features/user/user-provider";
 import { ViewProvider } from "./features/views/view-provider";
 import "./i18n/config";
+import { UserProvider } from "./features/user-provider.js";
 
 export const links: Route.LinksFunction = () => [
 	{ rel: "preconnect", href: "https://fonts.googleapis.com" },
