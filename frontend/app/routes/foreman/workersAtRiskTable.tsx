@@ -1,6 +1,9 @@
 import { useUser } from "@/features/user/user-user";
 import {useState, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { Link } from "react-router"
+import { cn } from "@/lib/utils"
+import { ArrowRightIcon } from "lucide-react";
 
 import {
   Card,
@@ -13,6 +16,7 @@ import {
   Table,
   TableRow,
   TableBody,
+  TableCell,
 } from "@/components/ui/table"
 
 export default function atRiskTable() {
@@ -54,47 +58,56 @@ const getDangerColor = (level: number) => {
     }
 }
 
-console.log(subordinates)
-
 return (
-    <><div className="flex w-full flex-col items-center md:items-start">
-            <Card className="w-80 max-w-3xl">
-                <CardHeader>
-                    <CardTitle className="text-center">Workers at risk</CardTitle>
-                </CardHeader>
+    <Link
+        //TODO: change routing to the subs individual page
+        to={`/foreman/team/`}
+        className="h-full w-full flex-1 basis-64 rounded-2xl"
+        >
+        <Card
+            className={cn(
+            "group flex h-full flex-col justify-between gap-4 border border-white/10 bg-white/5 p-4 transition-colors hover:ring-1",
+            "hover:border-zinc-300 hover:shadow-md hover:shadow-zinc-200/60 hover:ring-zinc-200 active:bg-zinc-50 active:shadow-sm",
+            "dark:active:bg-white/15 dark:hover:border-white/60 dark:hover:bg-white/10 dark:hover:ring-zinc-400"
+            )}
+        >
+            {/* TITLE */}
+            <CardHeader>
+                <CardTitle className="text-center">
+                    Workers at risk
+                </CardTitle>
+            </CardHeader>
 
-                <CardContent>
-                    <Table>
-                        <TableBody>
-                        {subordinates.map((sub) => (
-                            <TableRow key={sub.id}>
-                                    <div className="flex items-center gap-2">
+            {/* TABLE */}
+            <CardContent>
+                <Table>
+                    <TableBody>
+                    {subordinates
+                        .filter((sub) => sub.status?.status === "warning" || sub.status?.status === "danger" )
+                        .map((sub) => (
+                        <TableRow key={sub.id}>
+                            <TableCell>
+                                <div className="flex items-center gap-5">
                                 <div
-                                className={`w-3 h-3 rounded-sm ${getDangerColor(
-                                    sub.status?.status ?? 0
-                                )}`}
+                                    className={`w-3 h-3 rounded-sm ${getDangerColor(
+                                    sub.status!.status
+                                    )}`}
                                 />
                                 <span>{sub.username}</span>
-                            </div>
-                            </TableRow>
-                            ))}
+                                </div>                
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                    </TableBody>
+                </Table>
+            </CardContent>
 
-                            {subordinates.map((sub) => (
-                            <TableRow key={sub.id}>
-                                    <div className="flex items-center gap-2">
-                                <div
-                                className={`w-3 h-3 rounded-sm ${getDangerColor(
-                                    sub.status?.status ?? 0
-                                )}`}
-                                />
-                                <span>{sub.username}</span>
-                            </div>
-                            </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
-        </div></>
+            {/* VIEW DETAILS */}
+            <div className="mt-1 flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300">
+            <p>View details</p>
+            <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </div>
+        </Card>
+        </Link>
 	);
 }
