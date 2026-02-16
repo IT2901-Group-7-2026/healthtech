@@ -31,21 +31,21 @@ export default function Noise() {
 		startTime: new Date(date.setUTCHours(8)),
 		endTime: new Date(date.setUTCHours(16)),
 		granularity: "minute",
-		function: "max",
+		function: "avg",
 	};
 
 	const weekQuery: SensorDataRequestDto = {
 		startTime: startOfWeek(date, { weekStartsOn: 1 }),
 		endTime: endOfWeek(date, { weekStartsOn: 1 }),
 		granularity: "hour",
-		function: "max",
+		function: "avg",
 	};
 
 	const monthQuery: SensorDataRequestDto = {
 		startTime: startOfMonth(date),
 		endTime: endOfMonth(date),
 		granularity: "day",
-		function: "max",
+		function: "avg",
 	};
 
 	const query =
@@ -77,9 +77,7 @@ export default function Noise() {
 				) : view === "month" ? (
 					<CalendarWidget
 						selectedDay={date}
-						data={
-							mapSensorDataToMonthLists(data ?? [], "noise") ?? []
-						}
+						data={mapSensorDataToMonthLists(data ?? [], "noise") ?? []}
 					/>
 				) : view === "week" ? (
 					<WeekWidget
@@ -115,14 +113,8 @@ export default function Noise() {
 						maxY={150}
 						lineType="monotone"
 					>
-						<ThresholdLine
-							y={thresholds.noise.danger}
-							dangerLevel="danger"
-						/>
-						<ThresholdLine
-							y={thresholds.noise.warning}
-							dangerLevel="warning"
-						/>
+						<ThresholdLine y={thresholds.noise.danger} dangerLevel="danger" />
+						<ThresholdLine y={thresholds.noise.warning} dangerLevel="warning" />
 					</ChartLineDefault>
 				)}
 			</div>
