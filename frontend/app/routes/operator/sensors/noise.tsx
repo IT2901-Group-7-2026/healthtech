@@ -31,21 +31,21 @@ export default function Noise() {
 		startTime: new Date(date.setUTCHours(8)),
 		endTime: new Date(date.setUTCHours(16)),
 		granularity: "minute",
-		function: "max",
+		function: "avg",
 	};
 
 	const weekQuery: SensorDataRequestDto = {
 		startTime: startOfWeek(date, { weekStartsOn: 1 }),
 		endTime: endOfWeek(date, { weekStartsOn: 1 }),
 		granularity: "hour",
-		function: "max",
+		function: "avg",
 	};
 
 	const monthQuery: SensorDataRequestDto = {
 		startTime: startOfMonth(date),
 		endTime: endOfMonth(date),
 		granularity: "day",
-		function: "max",
+		function: "avg",
 	};
 
 	const query =

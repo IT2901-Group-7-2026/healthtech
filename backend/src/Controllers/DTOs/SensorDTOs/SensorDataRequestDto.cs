@@ -33,6 +33,18 @@ public enum Field
 
 	[DataTypeField(SensorDataType.Dust)]
 	Pm10_stel,
+
+	[DataTypeField(SensorDataType.Dust)]
+	Pm1_twa,
+
+	[DataTypeField(SensorDataType.Dust)]
+	Pm25_twa,
+
+	[DataTypeField(SensorDataType.Dust)]
+	Pm4_twa,
+
+	[DataTypeField(SensorDataType.Dust)]
+	Pm10_twa,
 }
 
 public class DataTypeFieldAttribute(SensorDataType dataType) : Attribute
