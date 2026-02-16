@@ -58,6 +58,10 @@ const getDangerColor = (level: number) => {
     }
 }
 
+const atRiskWorkers = subordinates.filter(
+    (sub) => sub.status?.status === "warning" || sub.status?.status === "danger"
+)
+
 return (
     <Link
         //TODO: change routing to the subs individual page
@@ -82,22 +86,28 @@ return (
             <CardContent>
                 <Table>
                     <TableBody>
-                    {subordinates
-                        .filter((sub) => sub.status?.status === "warning" || sub.status?.status === "danger" )
-                        .map((sub) => (
-                        <TableRow key={sub.id}>
-                            <TableCell>
-                                <div className="flex items-center gap-5">
-                                <div
-                                    className={`w-3 h-3 rounded-sm ${getDangerColor(
-                                    sub.status!.status
-                                    )}`}
-                                />
-                                <span>{sub.username}</span>
-                                </div>                
+                        {atRiskWorkers.length === 0 ? (
+                            <TableRow>
+                            <TableCell className="text-center text-zinc-500">
+                                No workers at risk
                             </TableCell>
-                        </TableRow>
-                    ))}
+                            </TableRow>
+                        ) : (
+                            atRiskWorkers.map((sub) => (
+                            <TableRow key={sub.id}>
+                                <TableCell>
+                                <div className="flex items-center gap-5">
+                                    <div
+                                    className={`w-3 h-3 rounded-sm ${getDangerColor(
+                                        sub.status?.status ?? 0
+                                    )}`}
+                                    />
+                                    <span>{sub.username}</span>
+                                </div>
+                                </TableCell>
+                            </TableRow>
+                            ))
+                        )}
                     </TableBody>
                 </Table>
             </CardContent>
