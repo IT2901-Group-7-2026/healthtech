@@ -3,6 +3,7 @@
 import { useUser } from "@/features/user/user-user";
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
+import AtRiskTable from "./workersAtRiskTable"
 
 // biome-ignore lint: page components can be default exports
 export default function ForemanHome() {
@@ -26,6 +27,7 @@ export default function ForemanHome() {
 		<div className="flex w-full flex-col items-center md:items-start">
 			{/* biome-ignore lint/nursery/noJsxLiterals: temporary */}
 			<h1 className="text-4xl">Foreman</h1>
+			<AtRiskTable />
 		</div>
 	);
 }
