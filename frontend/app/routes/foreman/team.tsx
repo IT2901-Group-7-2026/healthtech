@@ -1,13 +1,13 @@
+import type { ColumnDef } from "@tanstack/react-table";
+import { useTranslation } from "react-i18next";
 import { DataTable } from "@/components/ui/data-table";
-import { useUser } from "@/features/user/user-user";
+import { useUser } from "@/features/user-provider.js";
 import { useSubordinatesQuery } from "@/lib/api";
 import {
 	mapDangerLevelToColor,
 	mapDangerLevelToLabel,
 } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
-import type { ColumnDef } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
 
 const TeamPage = () => {
 	const { t } = useTranslation();

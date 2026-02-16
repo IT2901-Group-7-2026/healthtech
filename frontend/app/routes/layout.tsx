@@ -1,3 +1,9 @@
+import { useQuery } from "@tanstack/react-query";
+import type { LucideIcon } from "lucide-react";
+import { House, User as UserIcon } from "lucide-react";
+import { type ReactNode, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { href, NavLink, Outlet, type To, useLocation } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
 	Drawer,
@@ -18,7 +24,7 @@ import { usePopup } from "@/features/popups/use-popup";
 import { ProfileBadge } from "@/features/profile/profile-badge";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useSensor } from "@/features/sensor-picker/use-sensor";
-import { useUser } from "@/features/user/user-user";
+import { useUser } from "@/features/user-provider.js";
 import { useView } from "@/features/views/use-view";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usersQueryOptions } from "@/lib/api";
@@ -31,12 +37,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
-import { useQuery } from "@tanstack/react-query";
-import type { LucideIcon } from "lucide-react";
-import { House, User as UserIcon } from "lucide-react";
-import { type ReactNode, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { href, NavLink, Outlet, type To, useLocation } from "react-router";
 
 const Logo = () => (
 	<svg
@@ -75,9 +75,13 @@ function HomeLink() {
 
 function getLinks(
 	t: ReturnType<typeof useTranslation>["t"],
-	role: User["role"],
+	role: User["role"] | null,
 ): Array<{ to: To; label: string; icon?: LucideIcon }> {
 	switch (role) {
+		case null: {
+			return [];
+		}
+
 		case "operator": {
 			return [
 				{ to: href("/"), label: t(($) => $.layout.overview) },
@@ -121,7 +125,7 @@ export default function Layout() {
 	const { user, setUser } = useUser();
 	const { data: users } = useQuery(usersQueryOptions());
 
-	const links = getLinks(t, user?.role);
+	const links = getLinks(t, user?.role ?? null);
 
 	return (
 		<SidebarProvider defaultOpen={false}>
@@ -313,6 +317,42 @@ function MobileMenu({
 	const { setSensor } = useSensor();
 	const { visible, openPopup, closePopup } = usePopup();
 	const { t } = useTranslation();
+
+	const ContextMenuNavLinks = routes.map((route, i) => (
+		<li key={route.to.toString()}>
+			<DrawerClose asChild>
+				<NavLink
+					to={{
+						pathname: route.to.toString(),
+						search: `?view=${view}&date=${date.toISOString().split("T")[0]}`,
+					}}
+					onClick={() =>
+						sensors.find(
+							(s) =>
+								route.to.toString().includes(s) && setSensor(s),
+						)
+					}
+					key={route.to.toString()}
+					prefetch="intent"
+					className="text-lg text-primary"
+				>
+					{route.label}
+					{i > 0 && (
+						<Icon
+							variant={
+								route.to
+									.toString()
+									.replace("/", "") as IconVariant
+							}
+							size="medium"
+							className="ml-2"
+						/>
+					)}
+				</NavLink>
+			</DrawerClose>
+		</li>
+	));
+
 	return (
 		<div className="md:hidden">
 			<Drawer>
@@ -322,48 +362,8 @@ function MobileMenu({
 					<DrawerDescription>
 						<div className="flex items-start justify-between p-6">
 							<ul className="flex w-full flex-col items-start gap-4 text-center">
-								{routes.map((route, i) => (
-									<li key={route.to.toString()}>
-										<DrawerClose asChild>
-											<NavLink
-												to={{
-													pathname:
-														route.to.toString(),
-													search: `?view=${view}&date=${date.toISOString().split("T")[0]}`,
-												}}
-												onClick={() =>
-													sensors.find(
-														(s) =>
-															route.to
-																.toString()
-																.includes(s) &&
-															setSensor(s),
-													)
-												}
-												key={route.to.toString()}
-												prefetch="intent"
-												className="text-lg text-primary"
-											>
-												{route.label}
-												{i > 0 && (
-													<Icon
-														variant={
-															route.to
-																.toString()
-																.replace(
-																	"/",
-																	"",
-																) as IconVariant
-														}
-														size="medium"
-														className="ml-2"
-													/>
-												)}
-											</NavLink>
-										</DrawerClose>
-									</li>
-								))}
-								<li className="separator w-full border-t-2 border-t-slate-200 dark:border-t-slate-700"></li>
+								{ContextMenuNavLinks}
+								<li className="separator w-full border-t-2 border-t-slate-200 dark:border-t-slate-700" />
 								<li>
 									<DrawerClose asChild>
 										<button
