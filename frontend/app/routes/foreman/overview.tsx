@@ -24,6 +24,14 @@ export default function ForemanOverview() {
 		}
 	}, [user, navigate]);
 
+	// Required, otherwise the shadowing behind "Home" and "Teams" in the navbar does not display properly
+	useEffect(() => {
+		if (user.role === "foreman") {
+			navigate("/foreman");
+			return;
+		}
+	}, [user, navigate]);
+
 	const { data: subordinates } = useSubordinatesQuery(user.id);
 
 	const countPerDangerLevel = useMemo(() => {
