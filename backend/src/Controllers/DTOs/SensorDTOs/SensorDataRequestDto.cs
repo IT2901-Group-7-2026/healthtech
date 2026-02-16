@@ -34,16 +34,16 @@ public enum Field
 	[SensorTypeField(SensorType.Dust)]
 	Pm10_stel,
 
-	[DataTypeField(SensorDataType.Dust)]
+	[SensorTypeField(SensorType.Dust)]
 	Pm1_twa,
 
-	[DataTypeField(SensorDataType.Dust)]
+	[SensorTypeField(SensorType.Dust)]
 	Pm25_twa,
 
-	[DataTypeField(SensorDataType.Dust)]
+	[SensorTypeField(SensorType.Dust)]
 	Pm4_twa,
 
-	[DataTypeField(SensorDataType.Dust)]
+	[SensorTypeField(SensorType.Dust)]
 	Pm10_twa,
 }
 

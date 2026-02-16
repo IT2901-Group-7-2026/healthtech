@@ -5,31 +5,31 @@ namespace Backend.Utils;
 
 public class SensorUtils
 {
-	public static string GetMaterializedViewName(DataType dataType, TimeGranularity granularity)
+	public static string GetMaterializedViewName(SensorType sensorType, TimeGranularity granularity)
 	{
-		var dataTypeLower = dataType.ToString().ToLower();
+		var sensorTypeLower = sensorType.ToString().ToLower();
 
-		var dataType_split = dataTypeLower + "_data";
+		var sensorType_split = sensorTypeLower + "_data";
 
 		return granularity switch
 		{
-			TimeGranularity.Minute => dataType_split + "_minutely",
-			TimeGranularity.Hour => dataType_split + "_hourly",
-			TimeGranularity.Day => dataType_split + "_daily",
+			TimeGranularity.Minute => sensorType_split + "_minutely",
+			TimeGranularity.Hour => sensorType_split + "_hourly",
+			TimeGranularity.Day => sensorType_split + "_daily",
 			_ => throw new ArgumentException($"Unsupported scope: {granularity}"),
 		};
 	}
 
 	public static string GetAggregateColumnName(
 		AggregationFunction function,
-		DataType dataType,
+		SensorType sensorType,
 		Field? field
 	)
 	{
-		var dataTypeLower = dataType.ToString().ToLower();
+		var sensorTypeLower = sensorType.ToString().ToLower();
 
 		// Noise uses laeq for average and lcpk for max
-		if (dataType == DataType.Noise)
+		if (sensorType == SensorType.Noise)
 		{
 			if (function == AggregationFunction.Avg)
 			{
@@ -43,10 +43,10 @@ public class SensorUtils
 
 		var aggregateColumnName = function switch
 		{
-			AggregationFunction.Avg => "avg_" + dataTypeLower,
-			AggregationFunction.Sum => "sum_" + dataTypeLower,
-			AggregationFunction.Min => "min_" + dataTypeLower,
-			AggregationFunction.Max => "max_" + dataTypeLower,
+			AggregationFunction.Avg => "avg_" + sensorTypeLower,
+			AggregationFunction.Sum => "sum_" + sensorTypeLower,
+			AggregationFunction.Min => "min_" + sensorTypeLower,
+			AggregationFunction.Max => "max_" + sensorTypeLower,
 			AggregationFunction.Count => "sample_count",
 			_ => throw new ArgumentException($"Unsupported aggregation type: {function}"),
 		};
@@ -56,7 +56,7 @@ public class SensorUtils
 			aggregateColumnName += "_" + field.Value.ToString().ToLower();
 		}
 
-		if (dataType == DataType.Noise)
+		if (sensorType == SensorType.Noise)
 		{
 			if (function == AggregationFunction.Max)
 			{
