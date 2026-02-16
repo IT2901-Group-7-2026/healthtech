@@ -2,7 +2,10 @@
 	"title": "HealthTech | Operator Exposure Dashboard",
 	"description": "Monitor and manage exposure to dust, vibration, and noise.",
 	"layout": {
-		"overview": "Overview"
+		"overview": "Overview",
+		"home": "Home",
+		"team": "Team",
+		"statistics": "Statistics"
 	},
 	"overview": {
 		"title": "Overview of the {{view}}",
@@ -110,14 +113,36 @@
 	"noData": "No exposure data found for this day",
 	"points": "Points",
 	"dust_y_axis": "µg/m³",
-  "foremanDashboard": {
-    "failedToLoadTeamMembers": "Failed to load team members",
-    "noTeamMembersFound": "No team members found",
-    "teamTable": {
-      "username": "Username",
-      "email": "Email",
-      "status": "Status",
-      "jobDescription": "Job description"
-    }
-  }
+	"foremanDashboard": {
+		"failedToLoadTeamMembers": "Failed to load team members",
+		"noTeamMembersFound": "No team members found",
+		"teamTable": {
+			"username": "Username",
+			"email": "Email",
+			"status": "Status",
+			"jobDescription": "Job description"
+		},
+		"teamMembersCount": "{{count}} operator in team",
+		"teamMembersCount_one": "{{count}} operator in team",
+		"teamMembersCount_other": "{{count}} operators in team",
+		"overview": {
+			"title": "Foreman Overview",
+			"statCards": {
+				"total": "Total",
+				"viewDetails": "View details",
+				"inDanger": {
+					"description": "Operators exceeding threshold",
+					"label": "In danger"
+				},
+				"atRisk": {
+					"description": "Operators approaching exposure limit",
+					"label": "At risk"
+				},
+				"withinLimits": {
+					"description": "Operators within safe exposure range",
+					"label": "Within limits"
+				}
+			}
+		}
+	}
 }

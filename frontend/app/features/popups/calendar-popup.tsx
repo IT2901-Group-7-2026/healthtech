@@ -46,7 +46,9 @@ export function CalendarPopup({
 							>
 								{t(($) => $[sensor as Sensor])}
 							</span>
-							<span className="text-muted-foreground">{"->"}</span>
+							<span className="text-muted-foreground">
+								{"->"}
+							</span>
 							<div className={`text-${danger}`}>
 								{t(($) => $.popup[danger])}
 							</div>

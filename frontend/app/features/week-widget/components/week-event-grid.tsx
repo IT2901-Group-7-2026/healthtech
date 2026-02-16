@@ -38,15 +38,18 @@ export function WeekEventGrid({
 						event.startDate.getUTCHours() >= dayStartHour,
 				)
 				.map((event) => {
-					const start = event.startDate.getUTCHours() - dayStartHour + 1;
+					const start =
+						event.startDate.getUTCHours() - dayStartHour + 1;
 					const end = event.endDate.getUTCHours() - dayStartHour + 1;
 					const paddingTop =
-						((getMinutes(event.startDate) % minuteStep) / minuteStep) *
+						((getMinutes(event.startDate) % minuteStep) /
+							minuteStep) *
 						rowHeight;
 
 					const paddingBottom =
 						(rowHeight -
-							((getMinutes(event.endDate) % minuteStep) / minuteStep) *
+							((getMinutes(event.endDate) % minuteStep) /
+								minuteStep) *
 								rowHeight) %
 						rowHeight;
 
@@ -57,7 +60,8 @@ export function WeekEventGrid({
 							style={{
 								gridRowStart: start,
 								gridRowEnd: end,
-								gridColumnStart: getDay(event.startDate) - weekStartsOn + 2,
+								gridColumnStart:
+									getDay(event.startDate) - weekStartsOn + 2,
 								gridColumnEnd: "span 1",
 							}}
 						>

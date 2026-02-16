@@ -48,7 +48,11 @@ export function Summary({ exposureType, data }: SummaryProps) {
 			danger: t(($) => $.exposure_summary.redDayText),
 		},
 	};
-	const summaryData: SummaryType = getSummaryData({ view, exposureType, data });
+	const summaryData: SummaryType = getSummaryData({
+		view,
+		exposureType,
+		data,
+	});
 
 	const summaryLabels = {
 		exposureType: exposureType === "all" ? "Every sensor" : exposureType,
@@ -88,8 +92,15 @@ export function Summary({ exposureType, data }: SummaryProps) {
 					>
 						{summaryData.safeCount}
 					</span>
-					<span className={cn("ml-1 text-xs md:ml-2 md:text-sm", safeColor)}>
-						{isMobile ? defaultLabels.safe : summaryLabels.safeLabel}
+					<span
+						className={cn(
+							"ml-1 text-xs md:ml-2 md:text-sm",
+							safeColor,
+						)}
+					>
+						{isMobile
+							? defaultLabels.safe
+							: summaryLabels.safeLabel}
 					</span>
 				</div>
 				{/* Warning */}
@@ -105,8 +116,15 @@ export function Summary({ exposureType, data }: SummaryProps) {
 					>
 						{summaryData.warningCount}
 					</span>
-					<span className={cn("ml-1 text-xs md:ml-2 md:text-sm", warningColor)}>
-						{isMobile ? defaultLabels.warning : summaryLabels.warningLabel}
+					<span
+						className={cn(
+							"ml-1 text-xs md:ml-2 md:text-sm",
+							warningColor,
+						)}
+					>
+						{isMobile
+							? defaultLabels.warning
+							: summaryLabels.warningLabel}
 					</span>
 				</div>
 				{/* Danger */}
@@ -122,8 +140,15 @@ export function Summary({ exposureType, data }: SummaryProps) {
 					>
 						{summaryData.dangerCount}
 					</span>
-					<span className={cn("ml-1 text-xs md:ml-2 md:text-sm", dangerColor)}>
-						{isMobile ? defaultLabels.danger : summaryLabels.dangerLabel}
+					<span
+						className={cn(
+							"ml-1 text-xs md:ml-2 md:text-sm",
+							dangerColor,
+						)}
+					>
+						{isMobile
+							? defaultLabels.danger
+							: summaryLabels.dangerLabel}
 					</span>
 				</div>
 			</div>
@@ -183,7 +208,8 @@ const getSummaryForAll = (view: View, data: AllSensors): SummaryType => {
 		let allData = Object.entries(data)
 			.map(
 				([, sensorData]) =>
-					data && getSingleSummary(view, "all", sensorData.data ?? []),
+					data &&
+					getSingleSummary(view, "all", sensorData.data ?? []),
 			)
 			.reduce(
 				(acc: SummaryType, curr) => {
@@ -195,7 +221,8 @@ const getSummaryForAll = (view: View, data: AllSensors): SummaryType => {
 				},
 				{ safeCount: 0, dangerCount: 0, warningCount: 0 },
 			);
-		if (!allData) allData = { safeCount: 0, dangerCount: 0, warningCount: 0 };
+		if (!allData)
+			allData = { safeCount: 0, dangerCount: 0, warningCount: 0 };
 		return allData;
 	}
 

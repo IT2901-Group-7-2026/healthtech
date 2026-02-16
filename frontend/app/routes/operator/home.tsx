@@ -74,7 +74,9 @@ export default function OperatorHome() {
 	const isLoadingAny = Object.values(everySensorData).some(
 		(res) => res.isLoading,
 	);
-	const isErrorAny = Object.values(everySensorData).some((res) => res.isError);
+	const isErrorAny = Object.values(everySensorData).some(
+		(res) => res.isError,
+	);
 
 	return (
 		<div className="flex w-full flex-col items-center md:items-start">
@@ -90,11 +92,17 @@ export default function OperatorHome() {
 					>
 						{"Today"}
 					</Button>
-					<Button onClick={() => setDate(getPrevDay(date, view))} size={"icon"}>
+					<Button
+						onClick={() => setDate(getPrevDay(date, view))}
+						size={"icon"}
+					>
 						{"<"}
 					</Button>
 					<ViewSelect />
-					<Button onClick={() => setDate(getNextDay(date, view))} size={"icon"}>
+					<Button
+						onClick={() => setDate(getNextDay(date, view))}
+						size={"icon"}
+					>
 						{">"}
 					</Button>
 				</div>
@@ -118,7 +126,9 @@ export default function OperatorHome() {
 							) : view === "month" ? (
 								<CalendarWidget
 									selectedDay={date}
-									data={mapAllSensorDataToMonthLists(everySensorData ?? [])}
+									data={mapAllSensorDataToMonthLists(
+										everySensorData ?? [],
+									)}
 								/>
 							) : view === "week" ? (
 								<WeekWidget
@@ -127,30 +137,40 @@ export default function OperatorHome() {
 									dayEndHour={16}
 									weekStartsOn={1}
 									minuteStep={60}
-									events={mapAllWeekDataToEvents(everySensorData ?? [])}
+									events={mapAllWeekDataToEvents(
+										everySensorData ?? [],
+									)}
 								/>
 							) : !everySensorData ||
 								Object.values(everySensorData).every(
-									(sensor) => !sensor.data || sensor.data.length === 0,
+									(sensor) =>
+										!sensor.data ||
+										sensor.data.length === 0,
 								) ? (
 								<Card className="flex h-24 w-full items-center">
 									<CardTitle>
-										{date.toLocaleDateString(i18n.language, {
-											day: "numeric",
-											month: "long",
-											year: "numeric",
-										})}
+										{date.toLocaleDateString(
+											i18n.language,
+											{
+												day: "numeric",
+												month: "long",
+												year: "numeric",
+											},
+										)}
 									</CardTitle>
 									<p>{t(($) => $.noData)}</p>
 								</Card>
 							) : (
 								<DailyBarChart
 									data={everySensorData}
-									chartTitle={date.toLocaleDateString(i18n.language, {
-										day: "numeric",
-										month: "long",
-										year: "numeric",
-									})}
+									chartTitle={date.toLocaleDateString(
+										i18n.language,
+										{
+											day: "numeric",
+											month: "long",
+											year: "numeric",
+										},
+									)}
 								/>
 							)}
 						</section>

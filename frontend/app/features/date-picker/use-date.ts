@@ -11,7 +11,9 @@ export const useDate = (): ContextValue => {
 	const context = useContext(DateContext);
 
 	if (!context) {
-		throw new Error("useDateContext must be used within a DateContextProvider");
+		throw new Error(
+			"useDateContext must be used within a DateContextProvider",
+		);
 	}
 
 	return context;

@@ -44,14 +44,17 @@ export function CalendarWidget({ selectedDay, data }: CalendarProps) {
 	const warningDaysSet = new Set(
 		Object.values(data.warning).flat().map(dayKey),
 	);
-	const dangerDaysSet = new Set(Object.values(data.danger).flat().map(dayKey));
+	const dangerDaysSet = new Set(
+		Object.values(data.danger).flat().map(dayKey),
+	);
 
 	// Remove duplicates
 	warningDaysSet.forEach((d) => {
 		if (dangerDaysSet.has(d)) warningDaysSet.delete(d);
 	});
 	safeDaysSet.forEach((d) => {
-		if (dangerDaysSet.has(d) || warningDaysSet.has(d)) safeDaysSet.delete(d);
+		if (dangerDaysSet.has(d) || warningDaysSet.has(d))
+			safeDaysSet.delete(d);
 	});
 
 	const safeDays = Array.from(safeDaysSet).map((s) => new Date(s));
@@ -89,7 +92,11 @@ export function CalendarWidget({ selectedDay, data }: CalendarProps) {
 
 		(Object.keys(data) as Array<DangerLevel>).forEach((dangerKey) => {
 			Object.entries(data[dangerKey]).forEach(([sensor, dates]) => {
-				if (dates.some((d) => d.toDateString() === clickedDay.toDateString())) {
+				if (
+					dates.some(
+						(d) => d.toDateString() === clickedDay.toDateString(),
+					)
+				) {
 					//Override lower danger with the higher one
 					const prev = exposureData[sensor as Sensor];
 					if (
@@ -188,7 +195,11 @@ function CustomDay({
 		<button
 			type="button"
 			disabled={relevantClassname === "noData"}
-			className={cn("h-11/12 w-11/12 rounded-lg", relevantClassname, className)}
+			className={cn(
+				"h-11/12 w-11/12 rounded-lg",
+				relevantClassname,
+				className,
+			)}
 			{...buttonProps}
 		/>
 	);

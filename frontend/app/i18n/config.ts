@@ -14,8 +14,7 @@ export const resources = {
 	no: { translation: no },
 };
 
-i18n
-	.use(LanguageDetector)
+i18n.use(LanguageDetector)
 	// Add React bindings as a plugin.
 	.use(initReactI18next)
 	// Initialize the i18next instance.

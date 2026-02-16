@@ -89,7 +89,9 @@ export function DailyBarChart({
 							type="number"
 							domain={[0, domainMax]}
 							ticks={ticks}
-							tickFormatter={(value) => `${startHour + value / 10}:00`}
+							tickFormatter={(value) =>
+								`${startHour + value / 10}:00`
+							}
 						/>
 						<YAxis
 							dataKey="sensor"
@@ -97,7 +99,9 @@ export function DailyBarChart({
 							tickLine={false}
 							axisLine={false}
 							width={80}
-							tickFormatter={(value) => t(($) => $.overview[value as Sensor])}
+							tickFormatter={(value) =>
+								t(($) => $.overview[value as Sensor])
+							}
 						/>
 						{hourKeys.map((key) => (
 							<Bar
@@ -112,16 +116,29 @@ export function DailyBarChart({
 									const i = Number(key);
 
 									let color = chartConfig[key].color;
-									if (hourlyDangerLevels[sensor][i] === "danger") {
+									if (
+										hourlyDangerLevels[sensor][i] ===
+										"danger"
+									) {
 										color = "var(--danger)";
-									} else if (hourlyDangerLevels[sensor][i] === "warning") {
+									} else if (
+										hourlyDangerLevels[sensor][i] ===
+										"warning"
+									) {
 										color = "var(--warning)";
-									} else if (hourlyDangerLevels[sensor][i] === "safe") {
+									} else if (
+										hourlyDangerLevels[sensor][i] === "safe"
+									) {
 										color = "var(--safe)";
 									}
 									if (color === `var(--card)`) {
 										// Non-active cell, No data
-										return <Cell key={`cell-${index}-${key}`} fill={color} />;
+										return (
+											<Cell
+												key={`cell-${index}-${key}`}
+												fill={color}
+											/>
+										);
 									}
 									return (
 										// Active cell, has data, interactable

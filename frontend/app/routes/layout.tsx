@@ -32,6 +32,8 @@ import {
 	SelectValue,
 } from "@/ui/select";
 import { useQuery } from "@tanstack/react-query";
+import type { LucideIcon } from "lucide-react";
+import { House, User as UserIcon } from "lucide-react";
 import { type ReactNode, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { href, NavLink, Outlet, type To, useLocation } from "react-router";
@@ -64,7 +66,9 @@ function HomeLink() {
 			<div className="text-2xl">
 				<Logo />
 			</div>
-			<span className="hidden text-xl sm:inline-block">{"HealthTech"}</span>
+			<span className="hidden text-xl sm:inline-block">
+				{"HealthTech"}
+			</span>
 		</NavLink>
 	);
 }
@@ -72,20 +76,32 @@ function HomeLink() {
 function getLinks(
 	t: ReturnType<typeof useTranslation>["t"],
 	role: User["role"],
-): Array<{ to: To; label: string }> {
+): Array<{ to: To; label: string; icon?: LucideIcon }> {
 	switch (role) {
 		case "operator": {
 			return [
 				{ to: href("/"), label: t(($) => $.layout.overview) },
 				{ to: href("/operator/dust"), label: t(($) => $.dust) },
-				{ to: href("/operator/vibration"), label: t(($) => $.vibration) },
+				{
+					to: href("/operator/vibration"),
+					label: t(($) => $.vibration),
+				},
 				{ to: href("/operator/noise"), label: t(($) => $.noise) },
 			];
 		}
 
 		case "foreman": {
 			return [
-				{ to: href("/"), label: t(($) => $.layout.overview) }, //
+				{
+					to: href("/foreman"),
+					label: t(($) => $.layout.home),
+					icon: House,
+				},
+				{
+					to: href("/foreman/team"),
+					label: t(($) => $.layout.team),
+					icon: UserIcon,
+				},
 			];
 		}
 
@@ -144,7 +160,9 @@ export default function Layout() {
 						</button>
 						<Select
 							onValueChange={(value) => {
-								var selectedUser = users?.find((u) => u.id === value);
+								var selectedUser = users?.find(
+									(u) => u.id === value,
+								);
 								if (selectedUser) {
 									setUser(selectedUser);
 								}
@@ -153,18 +171,24 @@ export default function Layout() {
 						>
 							<SelectTrigger className="w-32 bg-background dark:bg-background">
 								<SelectValue
-									placeholder={t(($) => $.overview.userSelectPlaceholder)}
+									placeholder={t(
+										($) => $.overview.userSelectPlaceholder,
+									)}
 								/>
 							</SelectTrigger>
 							<SelectContent className="w-32">
 								{users?.map((u) => (
 									<SelectItem key={u.id} value={u.id}>
-										{u.username}
+										{`${u.username} (${u.role})`}
 									</SelectItem>
 								))}
 							</SelectContent>
 						</Select>
-						<Select onValueChange={(value) => i18n.changeLanguage(value)}>
+						<Select
+							onValueChange={(value) =>
+								i18n.changeLanguage(value)
+							}
+						>
 							<SelectTrigger className="w-32 bg-background dark:bg-background">
 								<SelectValue placeholder="Language" />
 							</SelectTrigger>
@@ -210,7 +234,11 @@ export default function Layout() {
 	);
 }
 
-function NavTabs({ routes }: { routes: Array<{ label: string; to: To }> }) {
+function NavTabs({
+	routes,
+}: {
+	routes: Array<{ label: string; to: To; icon?: LucideIcon }>;
+}) {
 	const { view } = useView();
 	const { date } = useDate();
 	const location = useLocation();
@@ -224,7 +252,7 @@ function NavTabs({ routes }: { routes: Array<{ label: string; to: To }> }) {
 	);
 
 	return (
-		<div className="flew-row relative mx-auto flex h-11 rounded-full bg-[var(--card)] px-2">
+		<div className="relative mx-auto flex h-11 flex-row rounded-full bg-[var(--card)] px-2">
 			<span
 				className="absolute top-0 bottom-0 z-10 flex overflow-hidden rounded-full py-1.5 transition-all duration-300"
 				style={{ left: pillLeft, width: pillWidth }}
@@ -240,7 +268,9 @@ function NavTabs({ routes }: { routes: Array<{ label: string; to: To }> }) {
 						}}
 						onClick={() =>
 							sensors.find(
-								(s) => route.to.toString().includes(s) && setSensor(s),
+								(s) =>
+									route.to.toString().includes(s) &&
+									setSensor(s),
 							)
 						}
 						key={route.to.toString()}
@@ -260,14 +290,10 @@ function NavTabs({ routes }: { routes: Array<{ label: string; to: To }> }) {
 						}
 						prefetch="intent"
 					>
-						{route.label}
-						{/* {i > 0 && (
-							<Icon
-								className={"ml-1"}
-								variant={route.to.toString().replace("/", "") as IconVariant}
-								size="small"
-							/>
-						)} */}
+						<span className="inline-flex items-center gap-2">
+							{route.icon && <route.icon />}
+							{route.label}
+						</span>
 					</NavLink>
 				);
 			})}
@@ -301,13 +327,17 @@ function MobileMenu({
 										<DrawerClose asChild>
 											<NavLink
 												to={{
-													pathname: route.to.toString(),
+													pathname:
+														route.to.toString(),
 													search: `?view=${view}&date=${date.toISOString().split("T")[0]}`,
 												}}
 												onClick={() =>
 													sensors.find(
 														(s) =>
-															route.to.toString().includes(s) && setSensor(s),
+															route.to
+																.toString()
+																.includes(s) &&
+															setSensor(s),
 													)
 												}
 												key={route.to.toString()}
@@ -320,7 +350,10 @@ function MobileMenu({
 														variant={
 															route.to
 																.toString()
-																.replace("/", "") as IconVariant
+																.replace(
+																	"/",
+																	"",
+																) as IconVariant
 														}
 														size="medium"
 														className="ml-2"
@@ -341,7 +374,11 @@ function MobileMenu({
 											<span className="text-lg text-primary">
 												{t(($) => $.notifications)}
 											</span>
-											<Icon variant="bell" size="medium" className="ml-2" />
+											<Icon
+												variant="bell"
+												size="medium"
+												className="ml-2"
+											/>
 										</button>
 									</DrawerClose>
 								</li>
@@ -392,7 +429,7 @@ const HamburgerIcon = ({
 		<title>{"Menu Icon"}</title>
 		<path
 			d="M4 12L20 12"
-			className="-translate-y-[7px] origin-center transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-x-0 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[315deg]"
+			className="origin-center -translate-y-[7px] transition-all duration-300 ease-[cubic-bezier(.5,.85,.25,1.1)] group-aria-expanded:translate-x-0 group-aria-expanded:translate-y-0 group-aria-expanded:rotate-[315deg]"
 		/>
 		<path
 			d="M4 12H20"
