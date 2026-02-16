@@ -108,6 +108,11 @@
 		"jobTitle": "Stillingsbetegnelse",
 		"jobDescription": "Stillingsbeskrivelse"
 	},
+	"atRiskTable": {
+		"title": "Risikosårbare arbeidere",
+		"detailText": "Se detaljer",
+		"noWorkers": "Ingen risikosårbare arbeidere"
+	},
 	"loadingData": "Laster inn data...",
 	"errorLoadingData": "Noe gikk galt under henting av sensordata.",
 	"noData": "Ingen eksponeringsdata funnet for denne dagen",

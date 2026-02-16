@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import { Link } from "react-router"
 import { cn } from "@/lib/utils"
 import { ArrowRightIcon } from "lucide-react";
+import { useTranslation } from "react-i18next"
 
 import {
   Card,
@@ -53,6 +54,8 @@ const getDangerColor = (level: number) => {
         return "bg-red-500"
         case 1:
         return "bg-yellow-500"
+
+        //default case should never procc
         default:
         return "bg-green-500"
     }
@@ -61,6 +64,8 @@ const getDangerColor = (level: number) => {
 const atRiskWorkers = subordinates.filter(
     (sub) => sub.status?.status === "warning" || sub.status?.status === "danger"
 )
+
+const { t } = useTranslation()
 
 return (
     <Link
@@ -78,7 +83,7 @@ return (
             {/* TITLE */}
             <CardHeader>
                 <CardTitle className="text-center">
-                    Workers at risk
+                    {t((x) => x.atRiskTable.title)}
                 </CardTitle>
             </CardHeader>
 
@@ -89,7 +94,7 @@ return (
                         {atRiskWorkers.length === 0 ? (
                             <TableRow>
                             <TableCell className="text-center text-zinc-500">
-                                No workers at risk
+                                {t((x) => x.atRiskTable.noWorkers)}
                             </TableCell>
                             </TableRow>
                         ) : (
@@ -114,7 +119,7 @@ return (
 
             {/* VIEW DETAILS */}
             <div className="mt-1 flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300">
-            <p>View details</p>
+            <p>{t((x) => x.atRiskTable.detailText)}</p>
             <ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </div>
         </Card>
