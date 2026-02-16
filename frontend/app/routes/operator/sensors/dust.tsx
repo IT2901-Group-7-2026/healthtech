@@ -18,6 +18,8 @@ import { thresholds } from "@/lib/thresholds";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useTranslation } from "react-i18next";
+import { useEffect} from "react";
+import { useNavigate } from "react-router";
 
 // biome-ignore lint: page components can be default exports
 export default function Dust() {
@@ -25,6 +27,15 @@ export default function Dust() {
 	const { date } = useDate();
 	const { t, i18n } = useTranslation();
 	const { user } = useUser();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (user.role !== "operator") {
+			navigate("/");
+			return;
+		}
+	}, [user, navigate]);
+
 
 	const dayQuery: SensorDataRequestDto = {
 		startTime: new Date(date.setUTCHours(8)),

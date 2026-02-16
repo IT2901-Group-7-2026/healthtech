@@ -60,6 +60,14 @@ export default function OperatorHome() {
 		}
 	}, [user, navigate]);
 
+	// Go to the foreman page if the user is logged in as a foreman
+	useEffect(() => {
+		if (user.role === "foreman") {
+			navigate("/foreman");
+			return;
+		}
+	}, [user, navigate]);
+
 	const everySensorData: AllSensors = Object.fromEntries(
 		sensors.map((sensor, index) => [
 			sensor,

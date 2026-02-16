@@ -8,10 +8,21 @@ import {
 import type { UserWithStatusDto } from "@/lib/dto";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useTranslation } from "react-i18next";
+import { useEffect} from "react";
+import { useNavigate } from "react-router";
 
 const TeamPage = () => {
 	const { t } = useTranslation();
 	const { user } = useUser();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (user.role !== "foreman") {
+			navigate("/");
+			return;
+		}
+	}, [user, navigate]);
+
 
 	const columns: Array<ColumnDef<UserWithStatusDto>> = [
 		{
