@@ -72,9 +72,9 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 
 		foreach (var userId in ids)
 		{
-			var noiseLevel = TryLevel(DataType.Noise, noiseByUser.GetValueOrDefault(userId));
-			var dustLevel = TryLevel(DataType.Dust, dustByUser.GetValueOrDefault(userId));
-			var vibLevel = TryLevel(DataType.Vibration, vibByUser.GetValueOrDefault(userId));
+			var noiseLevel = TryLevel(SensorType.Noise, noiseByUser.GetValueOrDefault(userId));
+			var dustLevel = TryLevel(SensorType.Dust, dustByUser.GetValueOrDefault(userId));
+			var vibLevel = TryLevel(SensorType.Vibration, vibByUser.GetValueOrDefault(userId));
 
 			var overall = WorstOf(noiseLevel, dustLevel, vibLevel);
 
@@ -94,7 +94,7 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 		return result;
 	}
 
-	private static DangerLevel? TryLevel(DataType type, double? value)
+	private static DangerLevel? TryLevel(SensorType type, double? value)
 	{
 		if (!value.HasValue)
 		{

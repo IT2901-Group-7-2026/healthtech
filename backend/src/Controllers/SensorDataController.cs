@@ -13,12 +13,12 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
 {
 	private readonly ISensorDataService _sensorDataService = sensorDataService;
 
-	[HttpPost("{dataType}/{userId}")]
-	[ServiceFilter(typeof(ValidateFieldForDataTypeFilter))]
+	[HttpPost("{sensorType}/{userId}")]
+	[ServiceFilter(typeof(ValidateFieldForSensorTypeFilter))]
 	public async Task<ActionResult<IEnumerable<SensorDataDto>>> GetAggregatedData(
 		[FromBody] SensorDataRequestDto request,
 		[FromRoute] Guid userId,
-		[FromRoute] DataType dataType
+		[FromRoute] SensorType sensorType
 	)
 	{
 		if (request.StartTime >= request.EndTime)
@@ -26,7 +26,7 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
 			return BadRequest("StartTime must be earlier than EndTime.");
 		}
 
-		var requestContext = new RequestContext(request, userId, dataType);
+		var requestContext = new RequestContext(request, userId, sensorType);
 		var response = await _sensorDataService.GetAggregatedDataAsync(requestContext);
 		return Ok(response);
 	}

@@ -7,12 +7,12 @@ public class RequestContext
 {
 	public SensorDataRequestDto Request { get; set; }
 	public Guid? UserId { get; set; }
-	public DataType DataType { get; set; }
+	public SensorType SensorType { get; set; }
 
-	public RequestContext(SensorDataRequestDto request, Guid userId, DataType dataType)
+	public RequestContext(SensorDataRequestDto request, Guid userId, SensorType sensorType)
 	{
 		Request = request;
 		UserId = userId;
-		DataType = dataType;
+		SensorType = sensorType;
 	}
 }
