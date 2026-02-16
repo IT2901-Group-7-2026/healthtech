@@ -17,8 +17,8 @@ import type { SensorDataRequestDto } from "@/lib/dto";
 import { thresholds } from "@/lib/thresholds";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useEffect} from "react";
 import { useNavigate } from "react-router";
 
 // biome-ignore lint: page components can be default exports
@@ -35,7 +35,6 @@ export default function Dust() {
 			return;
 		}
 	}, [user, navigate]);
-
 
 	const dayQuery: SensorDataRequestDto = {
 		startTime: new Date(date.setUTCHours(8)),

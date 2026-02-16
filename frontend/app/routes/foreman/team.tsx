@@ -7,8 +7,8 @@ import {
 } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import type { ColumnDef } from "@tanstack/react-table";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useEffect} from "react";
 import { useNavigate } from "react-router";
 
 const TeamPage = () => {
@@ -22,7 +22,6 @@ const TeamPage = () => {
 			return;
 		}
 	}, [user, navigate]);
-
 
 	const columns: Array<ColumnDef<UserWithStatusDto>> = [
 		{
