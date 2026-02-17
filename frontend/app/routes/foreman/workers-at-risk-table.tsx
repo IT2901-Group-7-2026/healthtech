@@ -29,7 +29,9 @@ export function AtRiskTable() {
 				);
 
 				if (!response.ok) {
-					throw new Error("Something went wrong when fetching subordinates");
+					throw new Error(
+						"Something went wrong when fetching subordinates",
+					);
 				}
 
 				const data = await response.json();
