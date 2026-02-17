@@ -1,3 +1,4 @@
+import type { User } from "@/lib/dto.js";
 import {
 	createContext,
 	type ReactNode,
@@ -5,7 +6,6 @@ import {
 	useEffect,
 	useState,
 } from "react";
-import type { User } from "@/lib/dto.js";
 
 const KARI_NORDMANN_ID = "87654321-8765-4321-8765-432187654321" as const;
 const STORAGE_KEY = "demo_user_id" as const;

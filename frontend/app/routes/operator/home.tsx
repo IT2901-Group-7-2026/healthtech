@@ -1,9 +1,5 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { useQueries } from "@tanstack/react-query";
-import { useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
 import { DailyBarChart } from "@/components/daily-bar-chart";
 import { DailyNotes } from "@/components/daily-notes";
 import { Summary } from "@/components/summary";
@@ -23,6 +19,10 @@ import { sensorQueryOptions } from "@/lib/api";
 import type { AllSensors } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/queries";
 import { getNextDay, getPrevDay } from "@/lib/utils";
+import { useQueries } from "@tanstack/react-query";
+import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 
 // biome-ignore lint: page components can be default exports
 export default function OperatorHome() {

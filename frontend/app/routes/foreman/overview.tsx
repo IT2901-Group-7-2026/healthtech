@@ -1,13 +1,13 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { MapPinIcon, UsersIcon } from "lucide-react";
-import { useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
 import { Card } from "@/components/ui/card";
 import { useUser } from "@/features/user-provider.js";
 import { useSubordinatesQuery } from "@/lib/api";
 import { createLocationName } from "@/lib/dto";
+import { MapPinIcon, UsersIcon } from "lucide-react";
+import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
 
