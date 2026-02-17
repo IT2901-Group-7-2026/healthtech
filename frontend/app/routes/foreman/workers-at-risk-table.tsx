@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { useUser } from "@/features/user/user-user";
+import { useUser } from "@/features/use-user";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { useEffect, useState } from "react";
