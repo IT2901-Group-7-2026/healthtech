@@ -5,19 +5,15 @@ namespace Backend.Utils;
 
 public static class ThresholdUtils
 {
-	/// <summary>
-	/// We calculate the danger level based on the max value for the queried time period, and compare it with sensor-specific max value thresholds.
-	/// Therefore, it's important that all sensor data queries include the max value to correctly determine the danger level.
-	/// </summary>
-	public static IEnumerable<(RawSensorData data, DangerLevel level)> CalculateDangerLevels(
-		DataType dataType,
+	public static IEnumerable<(RawSensorData data, DangerLevel dangerLevel)> CalculateDangerLevels(
+		SensorType sensorType,
 		IEnumerable<RawSensorData> rawSensorData
 	)
 	{
-		var result = new List<(RawSensorData data, DangerLevel level)>();
+		var result = new List<(RawSensorData data, DangerLevel dangerLevel)>();
 
 		// Vibration thresholds are calculated cumulatively over a day
-		if (dataType == DataType.Vibration)
+		if (sensorType == SensorType.Vibration)
 		{
 			var sortedData = rawSensorData.OrderBy(data => data.Time).ToList();
 			double cumulativeValue = 0;
@@ -31,45 +27,67 @@ public static class ThresholdUtils
 					currentDate = DateOnly.FromDateTime(data.Time);
 				}
 
-				cumulativeValue += data.Value;
+				cumulativeValue += data.SumValue;
 
-				result.Add((data, CalculateDangerLevel(dataType, cumulativeValue)));
+				result.Add((data, CalculateDangerLevel(sensorType, cumulativeValue, null)));
 			}
 
 			return result;
 		}
 
-		// For other sensor types, calculate danger levels based on individual max values
 		foreach (var data in rawSensorData)
 		{
-			result.Add((data, CalculateDangerLevel(dataType, data.MaxValue)));
+			// We only use max value for noise thresholds
+			double? maxValue = sensorType == SensorType.Noise ? data.MaxValue : null;
+
+			result.Add((data, CalculateDangerLevel(sensorType, data.AvgValue, maxValue)));
 		}
 
 		return result;
 	}
 
-	/// <summary>
-	/// Calculate danger level from a single value.
-	/// </summary>
-	/// <remarks>
-	/// Do NOT use this in a loop for query results. Use CalculateDangerLevels instead,
-	/// which handles vibration's cumulative logic correctly.
-	/// </remarks>
-	public static DangerLevel CalculateDangerLevel(DataType dataType, double maxValue)
+	public static DangerLevel CalculateDangerLevel(
+		SensorType sensorType,
+		double value,
+		double? maxValue
+	)
 	{
-		Threshold threshold = Threshold.GetThresholdForSensorType(dataType);
+		Threshold threshold = Threshold.GetThresholdForSensorType(sensorType);
 
 		DangerLevel dangerLevel = DangerLevel.Safe;
 
-		if (maxValue >= threshold.Danger)
+		// Noise has an additional peak danger level
+		if (
+			sensorType == SensorType.Noise
+			&& threshold.PeakDanger.HasValue
+			&& maxValue.HasValue
+			&& maxValue.Value >= threshold.PeakDanger.Value
+		)
 		{
 			dangerLevel = DangerLevel.Danger;
 		}
-		else if (maxValue >= threshold.Warning)
+		else if (value >= threshold.Danger)
+		{
+			dangerLevel = DangerLevel.Danger;
+		}
+		else if (value >= threshold.Warning)
 		{
 			dangerLevel = DangerLevel.Warning;
 		}
 
 		return dangerLevel;
+	}
+
+	public static DangerLevel GetHighestDangerLevel(params DangerLevel?[] levels)
+	{
+		var worst = DangerLevel.Safe;
+		foreach (var lvl in levels)
+		{
+			if (lvl.HasValue && lvl.Value > worst)
+			{
+				worst = lvl.Value;
+			}
+		}
+		return worst;
 	}
 }
