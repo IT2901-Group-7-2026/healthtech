@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { useUser } from "@/features/user/user-user";
+import { useUser } from "@/features/user-provider.js";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -29,9 +29,7 @@ export function AtRiskTable() {
 				);
 
 				if (!response.ok) {
-					throw new Error(
-						"Something went wrong when fetching subordinates",
-					);
+					throw new Error("Something went wrong when fetching subordinates");
 				}
 
 				const data = await response.json();
