@@ -18,7 +18,7 @@ import { useView } from "@/features/views/use-view";
 import { ViewSelect } from "@/features/views/view-select";
 import { mapAllWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
-import { languageToLocale } from "@/i18n/locale";
+import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { AllSensors } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/queries";
@@ -90,7 +90,7 @@ export default function OperatorHome() {
 						size={"icon"}
 						className="px-8"
 					>
-						{"Today"}
+						{t(($) => $.today)}
 					</Button>
 					<Button
 						onClick={() => setDate(getPrevDay(date, view))}
@@ -132,7 +132,7 @@ export default function OperatorHome() {
 								/>
 							) : view === "week" ? (
 								<WeekWidget
-									locale={languageToLocale[i18n.language]}
+									locale={getLocale(i18n.language)}
 									dayStartHour={8}
 									dayEndHour={16}
 									weekStartsOn={1}

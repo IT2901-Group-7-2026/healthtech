@@ -1,7 +1,7 @@
+import { type Day, getDay, getMinutes, isSameWeek } from "date-fns";
 import { DangerLevels } from "@/lib/danger-levels";
 import { cn } from "@/lib/utils";
-import { type Day, getDay, getMinutes, isSameWeek } from "date-fns";
-import type { Days, WeekEvent } from "../types";
+import type { TimeSlotSegments, WeekEvent } from "../types";
 
 export function WeekEventGrid({
 	days,
@@ -13,7 +13,7 @@ export function WeekEventGrid({
 	dayStartHour,
 	dayEndHour,
 }: {
-	days: Days;
+	days: TimeSlotSegments;
 	events?: Array<WeekEvent>;
 	weekStartsOn: Day;
 	minuteStep: number;

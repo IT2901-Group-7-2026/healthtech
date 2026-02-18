@@ -15,7 +15,7 @@ import { useUser } from "@/features/user-provider.js";
 import { parseAsView } from "@/features/views/utils";
 import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
-import { languageToLocale } from "@/i18n/locale";
+import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
 import { thresholds } from "@/lib/thresholds";
@@ -92,7 +92,7 @@ export default function Vibration() {
 					/>
 				) : view === "week" ? (
 					<WeekWidget
-						locale={languageToLocale[i18n.language]}
+						locale={getLocale(i18n.language)}
 						dayStartHour={8}
 						dayEndHour={16}
 						weekStartsOn={1}
