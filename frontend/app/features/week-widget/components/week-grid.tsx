@@ -1,14 +1,14 @@
-import { cn } from "@/lib/utils";
 import { getMinutes, getUnixTime } from "date-fns";
 import type { ReactNode } from "react";
-import type { Cell, Days } from "../types";
+import { cn } from "@/lib/utils";
+import type { Cell, TimeSlotSegments } from "../types";
 
 export function WeekGrid({
 	days,
 	rowHeight,
 	CellContent,
 }: {
-	days: Days;
+	days: TimeSlotSegments;
 	rowHeight: number;
 	CellContent?: (cell: Cell) => ReactNode;
 }) {

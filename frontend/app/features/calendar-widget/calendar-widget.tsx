@@ -1,11 +1,12 @@
 /** biome-ignore-all lint/correctness/noNestedComponentDefinitions: CustomDay is intentionally defined inside CalendarView for prop access. */
-import { Calendar } from "@/components/ui/calendar";
-import { Card } from "@/components/ui/card";
-import { languageToLocale } from "@/i18n/locale";
-import type { DangerLevel } from "@/lib/danger-levels";
-import { cn } from "@/lib/utils";
+
 import type { CalendarDay, Modifiers } from "react-day-picker";
 import { useTranslation } from "react-i18next";
+import { Calendar } from "@/components/ui/calendar";
+import { Card } from "@/components/ui/card";
+import { getLocale } from "@/i18n/locale";
+import type { DangerLevel } from "@/lib/danger-levels";
+import { cn } from "@/lib/utils";
 
 export type MonthData = Record<
 	DangerLevel,
@@ -18,12 +19,12 @@ type CalendarProps = {
 	data: MonthData;
 };
 
+import { useState } from "react";
 import { DialogDescription } from "@/components/ui/dialog";
 import {
 	CalendarPopup,
 	type CalendarPopupData,
 } from "@/features/popups/calendar-popup";
-import { useState } from "react";
 import { useDate } from "../date-picker/use-date";
 import { usePopup } from "../popups/use-popup";
 import type { Sensor } from "../sensor-picker/sensors";
@@ -116,7 +117,7 @@ export function CalendarWidget({ selectedDay, data }: CalendarProps) {
 		<>
 			<Card className="w-full">
 				<Calendar
-					locale={languageToLocale[i18n.language]}
+					locale={getLocale(i18n.language)}
 					month={selectedDay}
 					hideNavigation
 					showWeekNumber

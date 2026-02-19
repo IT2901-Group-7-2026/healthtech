@@ -47,8 +47,10 @@ public class UserStatusDto
 {
 	public Guid UserId { get; set; }
 	public DangerLevel Status { get; set; }
-	public DangerLevel? Noise { get; set; }
-	public DangerLevel? Dust { get; set; }
-	public DangerLevel? Vibration { get; set; }
+	public UserSensorStatusDto? Noise { get; set; }
+	public UserSensorStatusDto? Dust { get; set; }
+	public UserSensorStatusDto? Vibration { get; set; }
 	public DateTimeOffset CalculatedAt { get; set; }
 }
+
+public record UserSensorStatusDto(DangerLevel Level, double Value, double? PeakValue);

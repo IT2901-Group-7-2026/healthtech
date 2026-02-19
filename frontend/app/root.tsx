@@ -16,7 +16,10 @@ import { DateProvider } from "./features/date-picker/date-provider";
 import { SensorProvider } from "./features/sensor-picker/sensor-provider";
 import { ViewProvider } from "./features/views/view-provider";
 import "./i18n/config";
+import { setDefaultOptions } from "date-fns";
 import { UserProvider } from "./features/user-provider.js";
+
+setDefaultOptions({ weekStartsOn: 1 }); // Monday
 
 export const links: Route.LinksFunction = () => [
 	{ rel: "preconnect", href: "https://fonts.googleapis.com" },
