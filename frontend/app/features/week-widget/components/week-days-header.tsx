@@ -1,5 +1,5 @@
-import { getUnixTime } from "date-fns";
 import { cn } from "@/lib/utils";
+import { getUnixTime } from "date-fns";
 import type { TimeSlotSegments } from "../types";
 
 export function WeekDaysHeader({ days }: { days: TimeSlotSegments }) {

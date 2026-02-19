@@ -2,7 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useUser } from "@/features/user-provider.js";
 import { useSubordinatesQuery } from "@/lib/api";
-import { DANGER_LEVEL_SEVERITY, mapDangerLevelToColor, type DangerLevel } from "@/lib/danger-levels";
+import {
+	DANGER_LEVEL_SEVERITY,
+	mapDangerLevelToColor,
+} from "@/lib/danger-levels";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -12,13 +15,6 @@ export function AtRiskTable() {
 	const { t } = useTranslation();
 	const { user } = useUser();
 	const { data: subordinates = [] } = useSubordinatesQuery(user.id);
-
-	const getDangerColor = (level: DangerLevel) => {
-		if (level === "danger") return "bg-red-500";
-		if (level === "warning") return "bg-yellow-500";
-		// should never procc
-		return "bg-green-500";
-	};
 
 	const atRiskWorkers = subordinates.filter(
 		(sub) => DANGER_LEVEL_SEVERITY[sub.status.status] > 0,

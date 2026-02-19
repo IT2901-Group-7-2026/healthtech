@@ -1,8 +1,5 @@
 "use client";
 
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
-import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
@@ -10,6 +7,9 @@ import type { Sensor } from "@/features/sensor-picker/sensors";
 import { sensors } from "@/features/sensor-picker/sensors";
 import type { DangerLevel } from "@/lib/danger-levels";
 import type { AllSensors } from "@/lib/dto";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
+import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts";
 
 // the chart data is always the same, we only change the colors based on exposure data
 const generateChartData = (): Array<Record<string, Sensor>> =>

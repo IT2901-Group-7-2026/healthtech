@@ -1,10 +1,10 @@
+import { Card } from "@/components/ui/card";
+import { WeeklyPopup } from "@/features/popups/weekly-popup";
+import { useFormatDate } from "@/hooks/use-format-date.js";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import type { Day, Locale } from "date-fns";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card } from "@/components/ui/card";
-import { WeeklyPopup } from "@/features/popups/weekly-popup";
-import { useFormatDate } from "@/hooks/use-format-date.js";
 import { usePopup } from "../popups/use-popup";
 import { WeekDaysHeader } from "./components/week-days-header";
 import { WeekEventGrid } from "./components/week-event-grid";
