@@ -1,9 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import type { LucideIcon } from "lucide-react";
-import { House, User as UserIcon } from "lucide-react";
-import { type ReactNode, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { href, NavLink, Outlet, type To, useLocation } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
 	Drawer,
@@ -37,6 +31,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import type { LucideIcon } from "lucide-react";
+import { House, User as UserIcon } from "lucide-react";
+import { type ReactNode, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { href, NavLink, Outlet, type To, useLocation } from "react-router";
 
 const Logo = () => (
 	<svg

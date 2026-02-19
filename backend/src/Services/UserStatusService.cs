@@ -74,21 +74,14 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 
 		foreach (var userId in ids)
 		{
-			var noiseLevel = TryLevel(
-				SensorType.Noise,
-				noiseByUser.GetValueOrDefault(userId)?.Value,
-				noiseByUser.GetValueOrDefault(userId)?.MaxValue
-			);
-			var dustLevel = TryLevel(
-				SensorType.Dust,
-				dustByUser.GetValueOrDefault(userId)?.Value,
-				dustByUser.GetValueOrDefault(userId)?.MaxValue
-			);
-			var vibLevel = TryLevel(
-				SensorType.Vibration,
-				vibByUser.GetValueOrDefault(userId)?.Value,
-				vibByUser.GetValueOrDefault(userId)?.MaxValue
-			);
+			var noiseValue = noiseByUser.GetValueOrDefault(userId)?.Value;
+			var noisePeak = noiseByUser.GetValueOrDefault(userId)?.MaxValue;
+			var dustValue = dustByUser.GetValueOrDefault(userId)?.Value;
+			var vibValue = vibByUser.GetValueOrDefault(userId)?.Value;
+
+			var noiseLevel = TryLevel(SensorType.Noise, noiseValue, noisePeak);
+			var dustLevel = TryLevel(SensorType.Dust, dustValue, null);
+			var vibLevel = TryLevel(SensorType.Vibration, vibValue, null);
 
 			var overall = ThresholdUtils.GetHighestDangerLevel(noiseLevel, dustLevel, vibLevel);
 
@@ -97,9 +90,15 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 				{
 					UserId = userId,
 					Status = overall,
-					Noise = noiseLevel,
-					Dust = dustLevel,
-					Vibration = vibLevel,
+					Noise = noiseLevel.HasValue
+						? new UserSensorStatusDto(noiseLevel.Value, noiseValue ?? 0, noisePeak)
+						: null,
+					Dust = dustLevel.HasValue
+						? new UserSensorStatusDto(dustLevel.Value, dustValue ?? 0, null)
+						: null,
+					Vibration = vibLevel.HasValue
+						? new UserSensorStatusDto(vibLevel.Value, vibValue ?? 0, null)
+						: null,
 					CalculatedAt = now,
 				}
 			);

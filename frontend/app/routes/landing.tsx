@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
 import { useUser } from "@/features/user-provider.js";
 import { UserRole } from "@/lib/dto.js";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 import { ErrorBoundary } from "../root.js";
 
 // biome-ignore lint: page components can be default exports
