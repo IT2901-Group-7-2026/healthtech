@@ -1,13 +1,14 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
+import { Card } from "@/components/ui/card";
+import { UserStatusChart } from "@/components/users-status-chart";
+import { useUser } from "@/features/user-provider.js";
+import { useSubordinatesQuery } from "@/lib/api";
+import { createLocationName } from "@/lib/dto";
 import { MapPinIcon, UsersIcon } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { Card } from "@/components/ui/card";
-import { useUser } from "@/features/user-provider.js";
-import { useSubordinatesQuery } from "@/lib/api";
-import { createLocationName } from "@/lib/dto";
 import { StatCard } from "./stat-card";
 
 // biome-ignore lint: page components can be default exports
@@ -127,6 +128,9 @@ export default function ForemanOverview() {
 						})}
 					</div>
 				</Card>
+			</div>
+			<div>
+				<UserStatusChart />
 			</div>
 		</div>
 	);
