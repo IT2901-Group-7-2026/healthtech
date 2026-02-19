@@ -1,5 +1,3 @@
-import { t } from "i18next";
-import { NavLink } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -8,6 +6,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import { t } from "i18next";
+import { NavLink } from "react-router";
 import { sensors } from "../sensor-picker/sensors";
 import { useSensor } from "../sensor-picker/use-sensor";
 

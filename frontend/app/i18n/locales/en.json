@@ -108,6 +108,11 @@
 		"jobTitle": "Job title",
 		"jobDescription": "Job description"
 	},
+	"atRiskTable": {
+		"title": "Workers at Risk",
+		"detailText": "View details",
+		"noWorkers": "No workers at risk"
+	},
 	"loadingData": "Loading data...",
 	"errorLoadingData": "Something went wrong while fetching sensor data.",
 	"noData": "No exposure data found for this day",

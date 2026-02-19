@@ -10,6 +10,7 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { StatCard } from "./stat-card";
+import { AtRiskTable } from "./workers-at-risk-table";
 
 // biome-ignore lint: page components can be default exports
 export default function ForemanOverview() {
@@ -128,6 +129,7 @@ export default function ForemanOverview() {
 						})}
 					</div>
 				</Card>
+				<AtRiskTable />
 			</div>
 			<div>
 				<UserStatusChart />

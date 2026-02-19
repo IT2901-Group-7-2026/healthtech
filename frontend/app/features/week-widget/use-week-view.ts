@@ -1,3 +1,5 @@
+import { useDate } from "@/features/date-picker/use-date";
+import { getFormatOptions, useFormatDate } from "@/hooks/use-format-date.js";
 import { tz } from "@date-fns/tz";
 import type { Day, Locale } from "date-fns";
 import {
@@ -14,8 +16,6 @@ import {
 	startOfDay,
 	startOfWeek,
 } from "date-fns";
-import { useDate } from "@/features/date-picker/use-date";
-import { getFormatOptions, useFormatDate } from "@/hooks/use-format-date.js";
 
 const getViewTitle = (firstDay: Date, lastDay: Date, locale?: Locale) => {
 	const options = getFormatOptions(locale);
