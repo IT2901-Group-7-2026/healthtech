@@ -223,7 +223,7 @@ export function UserStatusChart() {
 										</div>
 										<div className="flex items-center justify-between gap-2">
 											<span className="text-muted-foreground">
-												Total
+												{"Total"}
 											</span>
 											<span className="font-medium font-mono text-foreground tabular-nums">
 												{`${total}%`}
