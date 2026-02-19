@@ -1,48 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useUser } from "@/features/user-provider.js";
+import { useSubordinatesQuery } from "@/lib/api";
+import { DANGER_LEVEL_SEVERITY, mapDangerLevelToColor, type DangerLevel } from "@/lib/danger-levels";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
-import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
-type DangerLevel = "safe" | "warning" | "danger";
-
-export type UserWithStatus = {
-	id: string;
-	username: string;
-	status: {
-		status: DangerLevel;
-	};
-};
-
 export function AtRiskTable() {
-	const [subordinates, setSubordinates] = useState<Array<UserWithStatus>>([]);
+	const { t } = useTranslation();
 	const { user } = useUser();
-
-	useEffect(() => {
-		const fetchSubordinates = async () => {
-			try {
-				const response = await fetch(
-					`http://localhost:5063/api/users/${user.id}/subordinates`,
-				);
-
-				if (!response.ok) {
-					throw new Error(
-						"Something went wrong when fetching subordinates",
-					);
-				}
-
-				const data = await response.json();
-				setSubordinates(data);
-			} catch (error) {
-				console.error(error);
-			}
-		};
-
-		fetchSubordinates();
-	}, [user]);
+	const { data: subordinates = [] } = useSubordinatesQuery(user.id);
 
 	const getDangerColor = (level: DangerLevel) => {
 		if (level === "danger") return "bg-red-500";
@@ -52,11 +21,8 @@ export function AtRiskTable() {
 	};
 
 	const atRiskWorkers = subordinates.filter(
-		(sub) =>
-			sub.status?.status === "warning" || sub.status?.status === "danger",
+		(sub) => DANGER_LEVEL_SEVERITY[sub.status.status] > 0,
 	);
-
-	const { t } = useTranslation();
 
 	return (
 		<Link
@@ -94,9 +60,7 @@ export function AtRiskTable() {
 										<TableCell>
 											<div className="flex items-center gap-5">
 												<div
-													className={`h-3 w-3 rounded-sm ${getDangerColor(
-														sub.status?.status ?? 0,
-													)}`}
+													className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(sub.status.status)}`}
 												/>
 												<span>{sub.username}</span>
 											</div>
@@ -107,7 +71,6 @@ export function AtRiskTable() {
 						</TableBody>
 					</Table>
 				</CardContent>
-
 				{/* VIEW DETAILS */}
 				<div className="mt-1 flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300">
 					<p>{t((x) => x.atRiskTable.detailText)}</p>
