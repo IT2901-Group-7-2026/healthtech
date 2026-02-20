@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
+import { UserStatusPieChart } from "@/components/users-status-pie-chart";
 
 // biome-ignore lint: page components can be default exports
 export default function ForemanOverview() {
@@ -65,14 +66,10 @@ export default function ForemanOverview() {
 				<div className="grid items-stretch gap-4 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
 					<StatCard
 						description={t(
-							($) =>
-								$.foremanDashboard.overview.statCards.inDanger
-									.description,
+							($) => $.foremanDashboard.overview.statCards.inDanger.description,
 						)}
 						label={t(
-							($) =>
-								$.foremanDashboard.overview.statCards.inDanger
-									.label,
+							($) => $.foremanDashboard.overview.statCards.inDanger.label,
 						)}
 						to="/"
 						totalValue={total}
@@ -82,15 +79,9 @@ export default function ForemanOverview() {
 					/>
 					<StatCard
 						description={t(
-							($) =>
-								$.foremanDashboard.overview.statCards.atRisk
-									.description,
+							($) => $.foremanDashboard.overview.statCards.atRisk.description,
 						)}
-						label={t(
-							($) =>
-								$.foremanDashboard.overview.statCards.atRisk
-									.label,
-						)}
+						label={t(($) => $.foremanDashboard.overview.statCards.atRisk.label)}
 						to="/"
 						totalValue={total}
 						value={countPerDangerLevel.warning}
@@ -100,13 +91,10 @@ export default function ForemanOverview() {
 					<StatCard
 						description={t(
 							($) =>
-								$.foremanDashboard.overview.statCards
-									.withinLimits.description,
+								$.foremanDashboard.overview.statCards.withinLimits.description,
 						)}
 						label={t(
-							($) =>
-								$.foremanDashboard.overview.statCards
-									.withinLimits.label,
+							($) => $.foremanDashboard.overview.statCards.withinLimits.label,
 						)}
 						to="/"
 						totalValue={total}
@@ -131,8 +119,37 @@ export default function ForemanOverview() {
 				</Card>
 				<AtRiskTable />
 			</div>
-			<div>
-				<UserStatusChart />
+			<div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+				<div>
+					<UserStatusPieChart
+						data={[
+							{ name: "Danger", value: 4 },
+							{ name: "Warning", value: 7 },
+							{ name: "Safe", value: 10 },
+						]}
+						label="dust"
+					/>
+				</div>
+				<div>
+					<UserStatusPieChart
+						data={[
+							{ name: "Danger", value: 5 },
+							{ name: "Warning", value: 8 },
+							{ name: "Safe", value: 3 },
+						]}
+						label="noise"
+					/>
+				</div>
+				<div>
+					<UserStatusPieChart
+						data={[
+							{ name: "Danger", value: 2 },
+							{ name: "Warning", value: 5 },
+							{ name: "Safe", value: 8 },
+						]}
+						label="vibration"
+					/>
+				</div>
 			</div>
 		</div>
 	);
