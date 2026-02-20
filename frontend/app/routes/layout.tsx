@@ -17,7 +17,6 @@ import { BellPopup } from "@/features/popups/bell-popup";
 import { usePopup } from "@/features/popups/use-popup";
 import { ProfileBadge } from "@/features/profile/profile-badge";
 import { sensors } from "@/features/sensor-picker/sensors";
-import { useSensor } from "@/features/sensor-picker/use-sensor";
 import { useUser } from "@/features/user/user-user";
 import { useView } from "@/features/views/use-view";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -66,9 +65,7 @@ function HomeLink() {
 			<div className="text-2xl">
 				<Logo />
 			</div>
-			<span className="hidden text-xl sm:inline-block">
-				{"HealthTech"}
-			</span>
+			<span className="hidden text-xl sm:inline-block">{"HealthTech"}</span>
 		</NavLink>
 	);
 }
@@ -81,12 +78,18 @@ function getLinks(
 		case "operator": {
 			return [
 				{ to: href("/"), label: t(($) => $.layout.overview) },
-				{ to: href("/operator/dust"), label: t(($) => $.dust) },
 				{
-					to: href("/operator/vibration"),
+					to: href("/operator/:sensorType", { sensorType: "dust" }),
+					label: t(($) => $.dust),
+				},
+				{
+					to: href("/operator/:sensorType", { sensorType: "vibration" }),
 					label: t(($) => $.vibration),
 				},
-				{ to: href("/operator/noise"), label: t(($) => $.noise) },
+				{
+					to: href("/operator/:sensorType", { sensorType: "noise" }),
+					label: t(($) => $.noise),
+				},
 			];
 		}
 
@@ -160,9 +163,7 @@ export default function Layout() {
 						</button>
 						<Select
 							onValueChange={(value) => {
-								var selectedUser = users?.find(
-									(u) => u.id === value,
-								);
+								var selectedUser = users?.find((u) => u.id === value);
 								if (selectedUser) {
 									setUser(selectedUser);
 								}
@@ -171,9 +172,7 @@ export default function Layout() {
 						>
 							<SelectTrigger className="w-32 bg-background dark:bg-background">
 								<SelectValue
-									placeholder={t(
-										($) => $.overview.userSelectPlaceholder,
-									)}
+									placeholder={t(($) => $.overview.userSelectPlaceholder)}
 								/>
 							</SelectTrigger>
 							<SelectContent className="w-32">
@@ -184,11 +183,7 @@ export default function Layout() {
 								))}
 							</SelectContent>
 						</Select>
-						<Select
-							onValueChange={(value) =>
-								i18n.changeLanguage(value)
-							}
-						>
+						<Select onValueChange={(value) => i18n.changeLanguage(value)}>
 							<SelectTrigger className="w-32 bg-background dark:bg-background">
 								<SelectValue placeholder="Language" />
 							</SelectTrigger>
@@ -242,7 +237,6 @@ function NavTabs({
 	const { view } = useView();
 	const { date } = useDate();
 	const location = useLocation();
-	const { setSensor } = useSensor();
 	const navLinkRefs = useRef<Array<HTMLElement>>([]); // Refs to the nav links
 	const [pillWidth, setPillWidth] = useState<number>();
 	const [pillLeft, setPillLeft] = useState<number>();
@@ -266,13 +260,7 @@ function NavTabs({
 							pathname: route.to.toString(),
 							search: `?view=${view}&date=${date.toISOString().split("T")[0]}`,
 						}}
-						onClick={() =>
-							sensors.find(
-								(s) =>
-									route.to.toString().includes(s) &&
-									setSensor(s),
-							)
-						}
+						onClick={() => sensors.find((s) => route.to.toString().includes(s))}
 						key={route.to.toString()}
 						ref={(el) => {
 							if (!el) return;
@@ -310,7 +298,6 @@ function MobileMenu({
 }) {
 	const { view } = useView();
 	const { date } = useDate();
-	const { setSensor } = useSensor();
 	const { visible, openPopup, closePopup } = usePopup();
 	const { t } = useTranslation();
 	return (
@@ -327,18 +314,11 @@ function MobileMenu({
 										<DrawerClose asChild>
 											<NavLink
 												to={{
-													pathname:
-														route.to.toString(),
+													pathname: route.to.toString(),
 													search: `?view=${view}&date=${date.toISOString().split("T")[0]}`,
 												}}
 												onClick={() =>
-													sensors.find(
-														(s) =>
-															route.to
-																.toString()
-																.includes(s) &&
-															setSensor(s),
-													)
+													sensors.find((s) => route.to.toString().includes(s))
 												}
 												key={route.to.toString()}
 												prefetch="intent"
@@ -350,10 +330,7 @@ function MobileMenu({
 														variant={
 															route.to
 																.toString()
-																.replace(
-																	"/",
-																	"",
-																) as IconVariant
+																.replace("/", "") as IconVariant
 														}
 														size="medium"
 														className="ml-2"
@@ -374,11 +351,7 @@ function MobileMenu({
 											<span className="text-lg text-primary">
 												{t(($) => $.notifications)}
 											</span>
-											<Icon
-												variant="bell"
-												size="medium"
-												className="ml-2"
-											/>
+											<Icon variant="bell" size="medium" className="ml-2" />
 										</button>
 									</DrawerClose>
 								</li>

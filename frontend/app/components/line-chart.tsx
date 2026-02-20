@@ -18,10 +18,11 @@ import {
 	ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
-import { useSensor } from "@/features/sensor-picker/use-sensor";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto } from "@/lib/dto";
 import { thresholds } from "@/lib/thresholds";
+import type { Sensor } from "@/features/sensor-picker/sensors";
+import { useParams } from "react-router";
 
 export const description = "A line chart";
 
@@ -41,6 +42,7 @@ export function ChartLineDefault({
 	unit,
 	lineType = "natural",
 	children,
+	sensor,
 }: {
 	chartData: Array<SensorDataResponseDto>;
 	chartTitle: string;
@@ -50,6 +52,7 @@ export function ChartLineDefault({
 	unit: string;
 	lineType?: string;
 	children: React.ReactNode;
+	sensor: Sensor;
 }) {
 	const { date: selectedDay } = useDate();
 
@@ -57,8 +60,9 @@ export function ChartLineDefault({
 
 	const id = useId();
 
-	const { sensor } = useSensor();
-	const { warning, danger } = thresholds[sensor];
+	const sensorType = useParams().sensorType as Sensor;
+
+	const { warning, danger } = thresholds[sensorType];
 
 	const maxData = [...chartData].sort((a, b) => b.value - a.value)[0];
 	const minData = [...chartData].sort((a, b) => a.value - b.value)[0];
@@ -137,14 +141,8 @@ export function ChartLineDefault({
 								{maxData.dangerLevel === "safe" ? (
 									<>
 										{/* Whole line is green */}
-										<stop
-											offset="0%"
-											stopColor="var(--safe)"
-										/>
-										<stop
-											offset="100%"
-											stopColor="var(--safe)"
-										/>
+										<stop offset="0%" stopColor="var(--safe)" />
+										<stop offset="100%" stopColor="var(--safe)" />
 									</>
 								) : maxData.dangerLevel === "warning" ? (
 									<>
@@ -153,15 +151,9 @@ export function ChartLineDefault({
 											offset={getOffset(warning)}
 											stopColor="var(--warning)"
 										/>
-										<stop
-											offset={getOffset(warning)}
-											stopColor="var(--safe)"
-										/>
+										<stop offset={getOffset(warning)} stopColor="var(--safe)" />
 
-										<stop
-											offset="100%"
-											stopColor="var(--safe)"
-										/>
+										<stop offset="100%" stopColor="var(--safe)" />
 									</>
 								) : (
 									maxData.dangerLevel === "danger" && (
@@ -183,10 +175,7 @@ export function ChartLineDefault({
 												offset={getOffset(warning)}
 												stopColor="var(--safe)"
 											/>
-											<stop
-												offset="100%"
-												stopColor="var(--safe)"
-											/>
+											<stop offset="100%" stopColor="var(--safe)" />
 										</>
 									)
 								)}
@@ -198,7 +187,9 @@ export function ChartLineDefault({
 							stroke={`url(#${id})`}
 							strokeWidth={2}
 							dot={false}
-							activeDot={<Dot />}
+							activeDot={
+								<Dot cx={0} cy={0} value={0} isActive={false} sensor={sensor} />
+							}
 						/>
 						{children}
 					</LineChart>
@@ -209,10 +200,15 @@ export function ChartLineDefault({
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: cannot find the correct type for props here.
-const Dot = (props: any) => {
-	const { cx, cy, value, isActive } = props;
+const Dot = (props: {
+	cx: number;
+	cy: number;
+	value: number;
+	isActive: boolean;
+	sensor: Sensor;
+}) => {
+	const { cx, cy, value, isActive, sensor } = props;
 
-	const { sensor } = useSensor();
 	const { warning, danger } = thresholds[sensor];
 
 	const fillColor =

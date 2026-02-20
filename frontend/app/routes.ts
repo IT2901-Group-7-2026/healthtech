@@ -8,12 +8,7 @@ export default [
 		route("/operator/", "routes/operator/home.tsx"),
 		route("/foreman/", "routes/foreman/overview.tsx"),
 		layout("routes/operator/sensors/sensor-layout.tsx", [
-			route("/operator/dust", "routes/operator/sensors/dust.tsx"),
-			route(
-				"/operator/vibration",
-				"routes/operator/sensors/vibration.tsx",
-			),
-			route("/operator/noise", "routes/operator/sensors/noise.tsx"),
+			route("/operator/:sensorType", "routes/operator/sensors/dust.tsx"),
 		]),
 		route("/foreman/team", "routes/foreman/team.tsx"),
 	]),

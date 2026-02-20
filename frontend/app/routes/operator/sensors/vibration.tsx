@@ -7,6 +7,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
+import type { Sensor } from "@/features/sensor-picker/sensors";
 import { useUser } from "@/features/user/user-user";
 import { parseAsView } from "@/features/views/utils";
 import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
@@ -20,6 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router";
 
 // biome-ignore lint: page components can be default exports
 export default function Vibration() {
@@ -28,6 +30,8 @@ export default function Vibration() {
 
 	const { date } = useDate();
 	const { user } = useUser();
+
+	const sensor = useParams().sensorType as Sensor;
 
 	const dayQuery: SensorDataRequestDto = {
 		startTime: new Date(date.setUTCHours(8)),
@@ -67,10 +71,7 @@ export default function Vibration() {
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex flex-col gap-4 md:w-1/4">
-				<Summary
-					exposureType={"vibration"}
-					data={makeCumulative(data)}
-				/>
+				<Summary exposureType={"vibration"} data={makeCumulative(data)} />
 				<DailyNotes />
 			</div>
 			<div className="flex flex-1 flex-col items-end gap-4">
@@ -85,10 +86,7 @@ export default function Vibration() {
 				) : view === "month" ? (
 					<CalendarWidget
 						selectedDay={date}
-						data={mapSensorDataToMonthLists(
-							data ?? [],
-							"vibration",
-						)}
+						data={mapSensorDataToMonthLists(data ?? [], "vibration")}
 					/>
 				) : view === "week" ? (
 					<WeekWidget
@@ -123,6 +121,7 @@ export default function Vibration() {
 						endHour={16}
 						maxY={450}
 						lineType="monotone"
+						sensor={sensor}
 					>
 						<ThresholdLine
 							y={thresholds.vibration.danger}

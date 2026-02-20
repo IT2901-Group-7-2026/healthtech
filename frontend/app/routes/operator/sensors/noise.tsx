@@ -7,6 +7,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
+import type { Sensor } from "@/features/sensor-picker/sensors";
 import { useUser } from "@/features/user/user-user";
 import { useView } from "@/features/views/use-view";
 import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
@@ -18,6 +19,7 @@ import { thresholds } from "@/lib/thresholds";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router";
 
 // biome-ignore lint: page components can be default exports
 export default function Noise() {
@@ -26,6 +28,8 @@ export default function Noise() {
 
 	const { date } = useDate();
 	const { user } = useUser();
+
+	const sensor = useParams().sensorType as Sensor;
 
 	const dayQuery: SensorDataRequestDto = {
 		startTime: new Date(date.setUTCHours(8)),
@@ -77,9 +81,7 @@ export default function Noise() {
 				) : view === "month" ? (
 					<CalendarWidget
 						selectedDay={date}
-						data={
-							mapSensorDataToMonthLists(data ?? [], "noise") ?? []
-						}
+						data={mapSensorDataToMonthLists(data ?? [], "noise") ?? []}
 					/>
 				) : view === "week" ? (
 					<WeekWidget
@@ -114,15 +116,10 @@ export default function Noise() {
 						endHour={16}
 						maxY={150}
 						lineType="monotone"
+						sensor={sensor}
 					>
-						<ThresholdLine
-							y={thresholds.noise.danger}
-							dangerLevel="danger"
-						/>
-						<ThresholdLine
-							y={thresholds.noise.warning}
-							dangerLevel="warning"
-						/>
+						<ThresholdLine y={thresholds.noise.danger} dangerLevel="danger" />
+						<ThresholdLine y={thresholds.noise.warning} dangerLevel="warning" />
 					</ChartLineDefault>
 				)}
 			</div>
