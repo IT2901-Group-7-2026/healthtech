@@ -2,12 +2,20 @@
 
 import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
-import { useUser } from "@/features/user-provider.js";
+import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
 import { createLocationName } from "@/lib/dto";
-import type { Sensor } from "@/lib/sensors";
+import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/ui/select";
 import { MapPinIcon, UsersIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useQueryState } from "nuqs";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { StatCard } from "./stat-card";
@@ -17,7 +25,7 @@ import { AtRiskTable } from "./workers-at-risk-table";
 export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
-	const [sensor] = useState<Sensor | null>("vibration");
+	const [sensor, setSensor] = useQueryState("vibration", parseAsSensor);
 
 	const { user } = useUser();
 
@@ -59,9 +67,30 @@ export default function ForemanOverview() {
 
 	return (
 		<div>
-			<h1 className="p-2 text-3xl">
-				{t(($) => $.foremanDashboard.overview.title)}
-			</h1>
+			<div className="mb-4 flex items-center justify-between">
+				<h1 className="p-2 text-3xl">
+					{t(($) => $.foremanDashboard.overview.title)}
+				</h1>
+				<Select
+					onValueChange={(value) => {
+						setSensor(value as Sensor);
+					}}
+					value={sensor ?? undefined}
+				>
+					<SelectTrigger className="w-32 bg-background dark:bg-background">
+						<SelectValue
+							placeholder={t(($) => $.sensorSelectPlaceholder)}
+						/>
+					</SelectTrigger>
+					<SelectContent className="w-32">
+						{sensors?.map((s) => (
+							<SelectItem key={s} value={s}>
+								{t(($) => $[s])}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+			</div>
 
 			<div className="grid w-full gap-6 lg:grid-cols-4">
 				<div className="grid items-stretch gap-4 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">

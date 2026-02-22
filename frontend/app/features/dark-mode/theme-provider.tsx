@@ -1,14 +1,5 @@
-import { createContext, type ReactNode, useEffect, useState } from "react";
-
-export type Theme = "dark" | "light" | "system";
-
-export const ThemeProviderContext = createContext<{
-	theme: Theme;
-	setTheme: (theme: Theme) => void;
-}>({
-	theme: "system",
-	setTheme: () => null,
-});
+import { type ReactNode, useEffect, useState } from "react";
+import { type Theme, ThemeProviderContext } from "./theme-context";
 
 export function ThemeProvider({
 	children,
@@ -45,10 +36,9 @@ export function ThemeProvider({
 
 	const value = {
 		theme,
-		// biome-ignore lint: its fine
-		setTheme: (theme: Theme) => {
-			localStorage.setItem(storageKey, theme);
-			setTheme(theme);
+		setTheme: (v: Theme) => {
+			localStorage.setItem(storageKey, v);
+			setTheme(v);
 		},
 	};
 
