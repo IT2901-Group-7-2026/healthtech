@@ -50,7 +50,6 @@ public class UserStatusDto
 	public UserSensorStatusDto? Noise { get; set; }
 	public UserSensorStatusDto? Dust { get; set; }
 	public UserSensorStatusDto? Vibration { get; set; }
-	public DateTimeOffset CalculatedAt { get; set; }
 }
 
 public record UserSensorStatusDto(DangerLevel Level, double Value, double? PeakValue);

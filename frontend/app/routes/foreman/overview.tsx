@@ -129,7 +129,7 @@ export default function ForemanOverview() {
 						})}
 					</div>
 				</Card>
-				<AtRiskTable />
+				<AtRiskTable users={subordinates ?? []} />
 			</div>
 			<div>
 				<UserStatusChart />

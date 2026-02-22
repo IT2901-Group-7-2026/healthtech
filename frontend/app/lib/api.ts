@@ -163,13 +163,25 @@ export const createNote = async ({
 	return NoteSchema.parseAsync(json);
 };
 
-export const useSubordinatesQuery = (userId: string) =>
+export const useSubordinatesQuery = (
+	userId: string,
+	startTime?: Date,
+	endTime?: Date,
+) =>
 	useQuery(
 		queryOptions({
-			queryKey: ["user.subordinates", userId],
+			queryKey: ["user.subordinates", userId, startTime, endTime],
 			queryFn: async () => {
+				const params = new URLSearchParams();
+				if (startTime) {
+					params.append("startTime", startTime.toISOString());
+				}
+				if (endTime) {
+					params.append("endTime", endTime.toISOString());
+				}
+
 				const response = await fetch(
-					`${baseURL}users/${userId}/subordinates`,
+					`${baseURL}users/${userId}/subordinates?${params.toString()}`,
 					{
 						method: "GET",
 						headers: {
