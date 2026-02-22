@@ -99,7 +99,14 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	return (
 		<Card className="w-192 py-0">
 			<CardContent className="px-2 sm:p-6">
-				<ChartContainer config={{}} className="aspect-auto h-[520px] w-full">
+				<ChartContainer
+					config={{}}
+					className={cn(
+						"aspect-auto h-[520px] w-full",
+						userOnClick &&
+							"[&_.recharts-bar-rectangle]:cursor-pointer",
+					)}
+				>
 					<BarChart
 						accessibilityLayer
 						layout="vertical"
@@ -120,7 +127,11 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 							tickFormatter={(v) => `${v}%`}
 							ticks={xTicks}
 							label={{
-								value: t(($) => $.foremanDashboard.userStatusChart.xAxisLabel),
+								value: t(
+									($) =>
+										$.foremanDashboard.userStatusChart
+											.xAxisLabel,
+								),
 								position: "insideBottom",
 								offset: -24,
 							}}
@@ -169,7 +180,9 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 
 								return (
 									<div className="grid min-w-[8rem] gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
-										<div className="font-medium">{label}</div>
+										<div className="font-medium">
+											{label}
+										</div>
 										<div className="flex items-center justify-between gap-2">
 											<span className="text-muted-foreground">
 												{t(($) => $.average)}
@@ -194,21 +207,18 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 							dataKey="safe"
 							stackId="risk"
 							fill="var(--safe)"
-							className={cn(userOnClick && "hover:cursor-pointer")}
 							onClick={barOnClick}
 						/>
 						<Bar
 							dataKey="warning"
 							stackId="risk"
 							fill="var(--warning)"
-							className={cn(userOnClick && "hover:cursor-pointer")}
 							onClick={barOnClick}
 						/>
 						<Bar
 							dataKey="danger"
 							stackId="risk"
 							fill="var(--danger)"
-							className={cn(userOnClick && "hover:cursor-pointer")}
 							onClick={barOnClick}
 						/>
 					</BarChart>
