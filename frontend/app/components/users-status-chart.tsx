@@ -26,7 +26,6 @@ interface Props {
 export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	const [t] = useTranslation();
 	const threshold = thresholds[sensor];
-	const showPeak = sensor === "noise";
 
 	const data = users.flatMap((user) => {
 		const sensorStatus = user.status[sensor];
@@ -37,9 +36,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 		const percent = Math.round((sensorStatus.value / threshold.danger) * 100);
 		// Only show peak if it's above the current value
 		const peakPercent =
-			showPeak &&
-			sensorStatus.peakValue &&
-			sensorStatus.peakValue > sensorStatus.value
+			sensorStatus.peakValue && sensorStatus.peakValue > sensorStatus.value
 				? Math.round((sensorStatus.peakValue / threshold.danger) * 100)
 				: null;
 
@@ -66,10 +63,6 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 
 	const warningThresholdLine = (threshold.warning / threshold.danger) * 100;
 	const dangerThresholdLine = 100;
-	const peakDangerThresholdLine =
-		showPeak && threshold.peakDanger != null
-			? (threshold.peakDanger / threshold.danger) * 100
-			: null;
 
 	const sortedData = [...data].sort((a, b) => b.percent - a.percent);
 
@@ -83,17 +76,9 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 		),
 		danger: Math.max(item.percent - dangerThresholdLine, 0),
 		userId: item.id,
-		peakMarker:
-			item.peakPercent != null
-				? Math.max(item.peakPercent - item.percent, 0)
-				: 0,
 	}));
 
-	const maxPercent = Math.max(
-		100,
-		...chartData.map((item) => item.percent),
-		...chartData.map((item) => item.peakPercent ?? 0),
-	);
+	const maxPercent = Math.max(100, ...chartData.map((item) => item.percent));
 	const xDomainPadding = 15;
 	const xDomainMax = maxPercent + xDomainPadding;
 
@@ -112,21 +97,9 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 		<Card className="w-192 py-0">
 			<CardContent className="px-2 sm:p-6">
 				<div className="mb-3 flex items-center gap-6 text-xs text-muted-foreground">
-					<LegendItem color="var(--safe)" label="Safe" />
-					<LegendItem color="var(--warning)" label="Warning" />
-					<LegendItem color="var(--danger)" label="Danger" />
-					{showPeak && (
-						<LegendItem
-							color="transparent"
-							label="Peak"
-							icon={
-								<div className="relative h-3 w-6">
-									<div className="absolute left-0 right-1 top-1/2 h-[2px] -translate-y-1/2 bg-[var(--danger)]" />
-									<div className="absolute right-0 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full border-2 border-[var(--danger)] bg-background" />
-								</div>
-							}
-						/>
-					)}
+					<LegendItem color="var(--safe)" label={t(($) => $.safe)} />
+					<LegendItem color="var(--warning)" label={t(($) => $.warning)} />
+					<LegendItem color="var(--danger)" label={t(($) => $.danger)} />
 				</div>
 				<ChartContainer config={{}} className="aspect-auto h-[520px] w-full">
 					<BarChart
@@ -167,7 +140,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 							strokeDasharray="6 4"
 							strokeWidth={2}
 							label={{
-								value: "Warning",
+								value: t(($) => $.warning),
 								position: "insideTopRight",
 								fill: "var(--warning)",
 							}}
@@ -178,24 +151,11 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 							strokeDasharray="6 4"
 							strokeWidth={2}
 							label={{
-								value: "Danger",
+								value: t(($) => $.danger),
 								position: "insideTopLeft",
 								fill: "var(--danger)",
 							}}
 						/>
-						{showPeak && peakDangerThresholdLine != null && (
-							<ReferenceLine
-								x={peakDangerThresholdLine}
-								stroke="var(--danger)"
-								strokeDasharray="6 4"
-								strokeWidth={2}
-								label={{
-									value: "Peak danger",
-									position: "insideTopLeft",
-									fill: "var(--danger)",
-								}}
-							/>
-						)}
 						<ChartTooltip
 							cursor={false}
 							content={({ active, payload, label }) => {
@@ -246,47 +206,6 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 							className={cn(userOnClick && "hover:cursor-pointer")}
 							onClick={barOnClick}
 						/>
-						<Bar
-							dataKey="peakMarker"
-							stackId="risk"
-							fill="transparent"
-							fillOpacity={0}
-							shape={({ x, y, width, height }) => {
-								if (!width || width <= 0) return null;
-
-								const yMid = y + height / 2;
-								const xStart = x;
-								const xEnd = x + width;
-
-								const stroke = "var(--danger)";
-								const r = Math.min(6, height * 0.22);
-
-								return (
-									<g>
-										<line
-											x1={xStart}
-											y1={yMid}
-											x2={xEnd - r}
-											y2={yMid}
-											stroke={stroke}
-											strokeWidth={2}
-											strokeLinecap="round"
-										/>
-
-										<circle
-											cx={xEnd}
-											cy={yMid}
-											r={r}
-											fill="transparent"
-											stroke={stroke}
-											strokeWidth={2}
-										/>
-									</g>
-								);
-							}}
-							className={cn(userOnClick && "hover:cursor-pointer")}
-							onClick={barOnClick}
-						/>
 					</BarChart>
 				</ChartContainer>
 			</CardContent>
@@ -294,21 +213,9 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	);
 }
 
-const LegendItem = ({
-	color,
-	label,
-	icon,
-}: {
-	color: string;
-	label: string;
-	icon?: React.ReactNode;
-}) => (
+const LegendItem = ({ color, label }: { color: string; label: string }) => (
 	<div className="flex items-center gap-2">
-		{icon ? (
-			icon
-		) : (
-			<div className="h-3 w-6 rounded-sm" style={{ backgroundColor: color }} />
-		)}
+		<div className="h-3 w-6 rounded-sm" style={{ backgroundColor: color }} />
 		<span>{label}</span>
 	</div>
 );
