@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
-import { UserStatusPieChart } from "@/components/users-status-pie-chart";
+import { PieChartCard } from "./pie-chart-card";
 
 // biome-ignore lint: page components can be default exports
 export default function ForemanOverview() {
@@ -120,36 +120,90 @@ export default function ForemanOverview() {
 				<AtRiskTable />
 			</div>
 			<div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-				<div>
-					<UserStatusPieChart
-						data={[
-							{ name: "Danger", value: 4 },
-							{ name: "Warning", value: 7 },
-							{ name: "Safe", value: 10 },
-						]}
-						label="dust"
-					/>
-				</div>
-				<div>
-					<UserStatusPieChart
-						data={[
-							{ name: "Danger", value: 5 },
-							{ name: "Warning", value: 8 },
-							{ name: "Safe", value: 3 },
-						]}
-						label="noise"
-					/>
-				</div>
-				<div>
-					<UserStatusPieChart
-						data={[
-							{ name: "Danger", value: 2 },
-							{ name: "Warning", value: 5 },
-							{ name: "Safe", value: 8 },
-						]}
-						label="vibration"
-					/>
-				</div>
+				<PieChartCard
+					data={{
+						safe: {
+							name: "Safe",
+							value: 0,
+							label: t(
+								($) => $.foremanDashboard.overview.statCards.withinLimits.label,
+							),
+						},
+						warning: {
+							name: "Warning",
+							value: 7,
+							label: t(
+								($) => $.foremanDashboard.overview.statCards.atRisk.label,
+							),
+						},
+						danger: {
+							name: "Danger",
+							value: 4,
+							label: t(
+								($) => $.foremanDashboard.overview.statCards.inDanger.label,
+							),
+						},
+					}}
+					label="dust"
+					viewDetailsText={cardViewDetailsText}
+					to="/"
+				/>
+				<PieChartCard
+					data={{
+						safe: {
+							name: "Safe",
+							value: 10,
+							label: t(
+								($) => $.foremanDashboard.overview.statCards.withinLimits.label,
+							),
+						},
+						warning: {
+							name: "Warning",
+							value: 7,
+							label: t(
+								($) => $.foremanDashboard.overview.statCards.atRisk.label,
+							),
+						},
+						danger: {
+							name: "Danger",
+							value: 4,
+							label: t(
+								($) => $.foremanDashboard.overview.statCards.inDanger.label,
+							),
+						},
+					}}
+					label="noise"
+					viewDetailsText={cardViewDetailsText}
+					to="/"
+				/>
+				<PieChartCard
+					data={{
+						safe: {
+							name: "Safe",
+							value: 10,
+							label: t(
+								($) => $.foremanDashboard.overview.statCards.withinLimits.label,
+							),
+						},
+						warning: {
+							name: "Warning",
+							value: 7,
+							label: t(
+								($) => $.foremanDashboard.overview.statCards.atRisk.label,
+							),
+						},
+						danger: {
+							name: "Danger",
+							value: 4,
+							label: t(
+								($) => $.foremanDashboard.overview.statCards.inDanger.label,
+							),
+						},
+					}}
+					label="vibration"
+					viewDetailsText={cardViewDetailsText}
+					to="/"
+				/>
 			</div>
 		</div>
 	);
