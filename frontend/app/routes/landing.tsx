@@ -1,4 +1,4 @@
-import { useUser } from "@/features/user-provider.js";
+import { useUser } from "@/features/user-context";
 import { UserRole } from "@/lib/dto.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";

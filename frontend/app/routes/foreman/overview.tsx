@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
-import { useUser } from "@/features/user-provider.js";
+import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
 import { createLocationName } from "@/lib/dto";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";

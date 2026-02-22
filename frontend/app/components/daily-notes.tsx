@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: <I prefer this over sending functions as props> */
 
 import { useDate } from "@/features/date-picker/use-date";
-import { useUser } from "@/features/user-provider.js";
+import { useUser } from "@/features/user-context";
 import { useView } from "@/features/views/use-view";
 import { createNote, notesQueryOptions, updateNote } from "@/lib/api";
 import type { Note } from "@/lib/dto";
