@@ -148,6 +148,9 @@
 					"label": "Innenfor grenseverdi"
 				}
 			}
+		},
+		"userStatusChart": {
+			"xAxisLabel": "Prosent av faregrense"
 		}
 	}
 }
