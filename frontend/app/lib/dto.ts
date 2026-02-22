@@ -109,7 +109,6 @@ export const UserStatusSchema = z.object({
 	noise: UserSensorStatusSchema.nullable(),
 	dust: UserSensorStatusSchema.nullable(),
 	vibration: UserSensorStatusSchema.nullable(),
-	calculatedAt: z.coerce.date(),
 });
 
 export type UserStatusDto = z.infer<typeof UserStatusSchema>;

@@ -32,13 +32,22 @@ public class UserController(IUserService _userService, IUserStatusService _userS
 	}
 
 	[HttpGet("{managerId}/subordinates")]
-	public async Task<ActionResult<IEnumerable<UserWithStatusDto>>> GetSubordinates(Guid managerId)
+	public async Task<ActionResult<IEnumerable<UserWithStatusDto>>> GetSubordinates(
+		Guid managerId,
+		[FromQuery] DateTime? startTime,
+		[FromQuery] DateTime? endTime
+	)
 	{
 		List<User> subordinates = await _userService.GetSubordinatesAsync(managerId);
 
-		// Calculate danger level for each subordinate for the past hour
-		IEnumerable<UserStatusDto> userStatuses = await _userStatusService.GetCurrentStatusForUsers(
-			subordinates.Select(u => u.Id)
+		// Default to current day if no time range is provided
+		var start = startTime ?? DateTime.UtcNow.Date;
+		var end = endTime ?? DateTime.UtcNow.Date.AddDays(1).AddTicks(-1);
+
+		IEnumerable<UserStatusDto> userStatuses = await _userStatusService.GetStatusForUsersInRange(
+			subordinates.Select(u => u.Id),
+			start,
+			end
 		);
 
 		List<UserWithStatusDto> dtos = subordinates
