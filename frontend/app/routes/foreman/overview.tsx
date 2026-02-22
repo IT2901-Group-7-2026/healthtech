@@ -120,21 +120,8 @@ export default function ForemanOverview() {
 			</div>
 			<div>
 				<UserStatusChart
-					users={
-						//TODO: Temporary dummy data
-						subordinates?.map((u) => ({
-							...u,
-							status: {
-								...u.status,
-								dust: {
-									level: "warning",
-									value: 25,
-									peakValue: 38,
-								},
-							},
-						})) ?? []
-					}
-					sensor={"dust"}
+					users={subordinates ?? []}
+					sensor={"noise"}
 					userOnClick={(userId) => {
 						//TODO: Filter on selected user
 					}}

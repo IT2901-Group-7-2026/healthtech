@@ -150,7 +150,8 @@
 			}
 		},
 		"userStatusChart": {
-			"xAxisLabel": "Percentage of exposure limit"
+			"xAxisLabel": "Percentage of exposure limit",
+			"noData": "No data available"
 		}
 	}
 }
