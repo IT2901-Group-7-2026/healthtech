@@ -121,7 +121,7 @@ export default function ForemanOverview() {
 			<div>
 				<UserStatusChart
 					users={subordinates ?? []}
-					sensor={"noise"}
+					sensor={"dust"}
 					userOnClick={(userId) => {
 						//TODO: Filter on selected user
 					}}

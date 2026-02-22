@@ -75,6 +75,9 @@
 	"warning": "Advarsel",
 	"danger": "Fare",
 
+	"peak": "Topp",
+	"average": "Gjennomsnitt",
+
 	"light": "Lys",
 	"dark": "Mørk",
 	"system": "System",

@@ -75,6 +75,9 @@
 	"warning": "Warning",
 	"danger": "Danger",
 
+	"peak": "Peak",
+	"average": "Average",
+
 	"light": "Light",
 	"dark": "Dark",
 	"system": "System",
