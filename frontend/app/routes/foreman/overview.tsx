@@ -16,6 +16,7 @@ import { AtRiskTable } from "./workers-at-risk-table";
 export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
+	const [sensor] = useState<Sensor | null>("vibration");
 
 	const { user } = useUser();
 
@@ -118,15 +119,14 @@ export default function ForemanOverview() {
 				</Card>
 				<AtRiskTable />
 			</div>
-			<div>
+			{sensor && (
 				<UserStatusChart
 					users={subordinates ?? []}
-					sensor={"dust"}
-					userOnClick={(userId) => {
-						//TODO: Filter on selected user
-					}}
+					sensor={sensor}
+					// biome-ignore lint/correctness/noUnusedFunctionParameters: TODO: Filter on user
+					userOnClick={(userId) => {}}
 				/>
-			</div>
+			)}
 		</div>
 	);
 }

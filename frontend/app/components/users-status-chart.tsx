@@ -18,7 +18,7 @@ import {
 } from "recharts";
 
 interface Props {
-	users: UserWithStatusDto[];
+	users: Array<UserWithStatusDto>;
 	sensor: Sensor;
 	userOnClick?: (userId: string) => void;
 }
@@ -33,10 +33,13 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 			return [];
 		}
 
-		const percent = Math.round((sensorStatus.value / threshold.danger) * 100);
+		const percent = Math.round(
+			(sensorStatus.value / threshold.danger) * 100,
+		);
 		// Only show peak if it's above the current value
 		const peakPercent =
-			sensorStatus.peakValue && sensorStatus.peakValue > sensorStatus.value
+			sensorStatus.peakValue &&
+			sensorStatus.peakValue > sensorStatus.value
 				? Math.round((sensorStatus.peakValue / threshold.danger) * 100)
 				: null;
 
@@ -54,7 +57,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	if (data.length === 0) {
 		return (
 			<Card className="w-192">
-				<CardContent className="flex h-48 items-center justify-center text-sm text-muted-foreground">
+				<CardContent className="flex h-48 items-center justify-center text-muted-foreground text-sm">
 					{t(($) => $.foremanDashboard.userStatusChart.noData)}
 				</CardContent>
 			</Card>
@@ -82,8 +85,8 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	const xDomainPadding = 15;
 	const xDomainMax = maxPercent + xDomainPadding;
 
-	const barOnClick: BarProps["onClick"] = (data) => {
-		const row = data.payload;
+	const barOnClick: BarProps["onClick"] = (barData) => {
+		const row = barData.payload;
 		userOnClick?.(row.id);
 	};
 
@@ -103,6 +106,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 						data={chartData}
 						margin={{
 							bottom: 32,
+							top: 24,
 						}}
 						maxBarSize={48}
 					>
@@ -137,6 +141,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 							label={{
 								value: t(($) => $.warning),
 								position: "insideTopRight",
+								dy: -16,
 								fill: "var(--warning)",
 							}}
 						/>
@@ -148,6 +153,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 							label={{
 								value: t(($) => $.danger),
 								position: "insideTopLeft",
+								dy: -16,
 								fill: "var(--danger)",
 							}}
 						/>
@@ -165,7 +171,9 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 									<div className="grid min-w-[8rem] gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
 										<div className="font-medium">{label}</div>
 										<div className="flex items-center justify-between gap-2">
-											<span className="text-muted-foreground">{t(($) => $.average)}</span>
+											<span className="text-muted-foreground">
+												{t(($) => $.average)}
+											</span>
 											<span className="font-medium font-mono text-foreground tabular-nums">
 												{`${avg}%`}
 											</span>
