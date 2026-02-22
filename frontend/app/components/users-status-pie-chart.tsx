@@ -40,7 +40,13 @@ const pieLabel = ({
 	outerRadius,
 	value,
 }: PieLabelRenderProps) => {
-	if (cx == null || cy == null || innerRadius == null || outerRadius == null) {
+	if (
+		cx == null ||
+		cy == null ||
+		innerRadius == null ||
+		outerRadius == null ||
+		value === 0
+	) {
 		return null;
 	}
 	const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
@@ -72,34 +78,45 @@ const pieShape = (props: PieSectorShapeProps) => {
 	return <Sector {...props} fill={color} />;
 };
 
-interface UserStatusData {
-	name: string;
-	value: number;
+export interface UserStatusData {
+	safe: { name: string; value: number; label: string };
+	warning: { name: string; value: number; label: string };
+	danger: { name: string; value: number; label: string };
 }
 
-interface UserStatusPieChartProps {
-	data: UserStatusData[];
-	label: string;
-}
-
-export function UserStatusPieChart({ data, label }: UserStatusPieChartProps) {
+export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
 	return (
-		<Card>
-			<CardContent className="flex flex-col items-center gap-4">
-				<h3 className="text-lg font-semibold capitalize"> {label} </h3>
-				<ChartContainer config={chartConfig} className="w-full">
-					<PieChart>
-						<Pie
-							dataKey={"value"}
-							data={data}
-							label={pieLabel}
-							labelLine={false}
-							shape={pieShape}
-						/>
-						<ChartTooltip />
-					</PieChart>
-				</ChartContainer>
-			</CardContent>
-		</Card>
+		<ChartContainer config={chartConfig} className="h-40 w-full">
+			<PieChart>
+				<Pie
+					dataKey={"value"}
+					data={[safe, warning, danger]}
+					label={pieLabel}
+					labelLine={false}
+					shape={pieShape}
+				/>
+				<ChartTooltip
+					content={({ active, payload }) => {
+						if (!(active && payload?.length)) {
+							return null;
+						}
+
+						const label = payload[0].name;
+						const value = payload[0].value;
+
+						return (
+							<div className="grid min-w-[8rem] gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
+								<div className="flex items-center justify-between gap-2">
+									<span className="text-muted-foreground">{label}</span>
+									<span className="font-medium font-mono text-foreground tabular-nums">
+										{value}
+									</span>
+								</div>
+							</div>
+						);
+					}}
+				/>
+			</PieChart>
+		</ChartContainer>
 	);
 }
