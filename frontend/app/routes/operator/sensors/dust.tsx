@@ -31,7 +31,7 @@ export default function Dust() {
 		endTime: new Date(date.setUTCHours(16)),
 		granularity: "minute",
 		function: "max",
-		field: "pm1_stel",
+		field: "pm1_twa",
 	};
 
 	const weekQuery: SensorDataRequestDto = {
@@ -39,7 +39,7 @@ export default function Dust() {
 		endTime: endOfWeek(date, { weekStartsOn: 1 }),
 		granularity: "hour",
 		function: "max",
-		field: "pm1_stel",
+		field: "pm1_twa",
 	};
 
 	const monthQuery: SensorDataRequestDto = {
@@ -47,7 +47,7 @@ export default function Dust() {
 		endTime: endOfMonth(date),
 		granularity: "day",
 		function: "max",
-		field: "pm1_stel",
+		field: "pm1_twa",
 	};
 
 	const query =
