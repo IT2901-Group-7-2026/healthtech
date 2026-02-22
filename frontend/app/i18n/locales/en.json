@@ -75,6 +75,9 @@
 	"warning": "Warning",
 	"danger": "Danger",
 
+	"peak": "Peak",
+	"average": "Average",
+
 	"light": "Light",
 	"dark": "Dark",
 	"system": "System",
@@ -148,6 +151,10 @@
 					"label": "Within limits"
 				}
 			}
+		},
+		"userStatusChart": {
+			"xAxisLabel": "Percentage of exposure limit",
+			"noData": "No data available"
 		}
 	}
 }

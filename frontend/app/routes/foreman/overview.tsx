@@ -5,8 +5,9 @@ import { UserStatusChart } from "@/components/users-status-chart";
 import { useUser } from "@/features/user-provider.js";
 import { useSubordinatesQuery } from "@/lib/api";
 import { createLocationName } from "@/lib/dto";
+import type { Sensor } from "@/lib/sensors";
 import { MapPinIcon, UsersIcon } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { StatCard } from "./stat-card";
@@ -16,6 +17,7 @@ import { AtRiskTable } from "./workers-at-risk-table";
 export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
+	const [sensor] = useState<Sensor | null>("vibration");
 
 	const { user } = useUser();
 
@@ -131,9 +133,14 @@ export default function ForemanOverview() {
 				</Card>
 				<AtRiskTable users={subordinates ?? []} />
 			</div>
-			<div>
-				<UserStatusChart />
-			</div>
+			{sensor && (
+				<UserStatusChart
+					users={subordinates ?? []}
+					sensor={sensor}
+					// biome-ignore lint/correctness/noUnusedFunctionParameters: TODO: Filter on user
+					userOnClick={(userId) => {}}
+				/>
+			)}
 		</div>
 	);
 }
