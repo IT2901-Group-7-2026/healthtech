@@ -96,11 +96,6 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	return (
 		<Card className="w-192 py-0">
 			<CardContent className="px-2 sm:p-6">
-				<div className="mb-3 flex items-center gap-6 text-xs text-muted-foreground">
-					<LegendItem color="var(--safe)" label={t(($) => $.safe)} />
-					<LegendItem color="var(--warning)" label={t(($) => $.warning)} />
-					<LegendItem color="var(--danger)" label={t(($) => $.danger)} />
-				</div>
 				<ChartContainer config={{}} className="aspect-auto h-[520px] w-full">
 					<BarChart
 						accessibilityLayer
