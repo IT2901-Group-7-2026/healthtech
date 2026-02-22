@@ -86,6 +86,8 @@
 	"vibration": "Vibration",
 	"noise": "Noise",
 
+	"sensorSelectPlaceholder": "Sensor",
+
 	"views": "Views",
 	"day": "Day",
 	"week": "Week",

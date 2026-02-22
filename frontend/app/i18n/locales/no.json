@@ -86,6 +86,8 @@
 	"vibration": "Vibrasjon",
 	"noise": "Støy",
 
+	"sensorSelectPlaceholder": "Sensor",
+
 	"views": "Visning",
 	"day": "Dag",
 	"week": "Uke",
