@@ -18,8 +18,11 @@ import { usePopup } from "@/features/popups/use-popup";
 import { ProfileBadge } from "@/features/profile/profile-badge";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useSensor } from "@/features/sensor-picker/use-sensor";
-import { useUser } from "@/features/user-context";
-import { KARI_NORDMANN_ID, OLA_NORDMANN_ID } from "@/features/user-provider";
+import {
+	KARI_NORDMANN_ID,
+	OLA_NORDMANN_ID,
+	useUser,
+} from "@/features/user-context";
 import { useView } from "@/features/views/use-view";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usersQueryOptions } from "@/lib/api";
@@ -127,7 +130,7 @@ export default function Layout() {
 	const { data: users } = useQuery(usersQueryOptions());
 
 	// Sort Ola and Kari to the top, as they are the main demo users
-	const priorityUserIds: string[] = [OLA_NORDMANN_ID, KARI_NORDMANN_ID];
+	const priorityUserIds: Array<string> = [OLA_NORDMANN_ID, KARI_NORDMANN_ID];
 
 	const sortedUsers = [...(users ?? [])].sort((a, b) => {
 		const aPriority = priorityUserIds.indexOf(a.id);

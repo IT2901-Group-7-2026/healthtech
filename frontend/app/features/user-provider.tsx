@@ -1,9 +1,7 @@
 import type { User } from "@/lib/dto.js";
 import { type ReactNode, useEffect, useState } from "react";
-import { UserContext } from "./user-context";
+import { KARI_NORDMANN_ID, UserContext } from "./user-context";
 
-export const OLA_NORDMANN_ID = "12345678-1234-5678-1234-567812345678" as const;
-export const KARI_NORDMANN_ID = "87654321-8765-4321-8765-432187654321" as const;
 const STORAGE_KEY = "demo_user_id" as const;
 
 const KARI_NORDMANN: User = {

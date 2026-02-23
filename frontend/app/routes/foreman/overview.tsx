@@ -92,7 +92,7 @@ export default function ForemanOverview() {
 								{t(($) => $[s])}
 							</SelectItem>
 						))}
-						<SelectItem value="__none">None</SelectItem>
+						<SelectItem value="__none">{"None"}</SelectItem>
 					</SelectContent>
 				</Select>
 			</div>
