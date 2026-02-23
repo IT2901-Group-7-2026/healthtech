@@ -1,4 +1,4 @@
-FROM node:20-alpine AS development-dependencies-env
+FROM node:24-alpine AS development-dependencies-env
 
 # Install pnpm globally
 RUN corepack enable
@@ -8,14 +8,14 @@ COPY . /app
 
 RUN pnpm install
 
-FROM node:20-alpine AS production-dependencies-env
+FROM node:24-alpine AS production-dependencies-env
 RUN corepack enable
 
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --prod --frozen-lockfile
 
-FROM node:20-alpine AS build-env
+FROM node:24-alpine AS build-env
 RUN corepack enable
 
 WORKDIR /app
@@ -27,7 +27,7 @@ ENV VITE_API_URL=$VITE_API_URL
 
 RUN pnpm run build
 
-FROM node:20-alpine
+FROM node:24-alpine
 RUN corepack enable
 
 WORKDIR /app
