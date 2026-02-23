@@ -25,17 +25,9 @@ import { AtRiskTable } from "./workers-at-risk-table";
 // biome-ignore lint: page components can be default exports
 export default function ForemanOverview() {
 	const { t } = useTranslation();
-	const navigate = useNavigate();
 	const [sensor, setSensor] = useQueryState("vibration", parseAsSensor);
 
 	const { user } = useUser();
-
-	useEffect(() => {
-		if (user.role !== "foreman") {
-			navigate("/");
-			return;
-		}
-	}, [user, navigate]);
 
 	const { data: subordinates } = useSubordinatesQuery(user.id);
 
@@ -74,7 +66,11 @@ export default function ForemanOverview() {
 				</h1>
 				<Select
 					onValueChange={(value) => {
-						setSensor(value as Sensor);
+						if (value === "__none") {
+							setSensor(null);
+						} else {
+							setSensor(value as Sensor);
+						}
 					}}
 					value={sensor ?? undefined}
 				>
@@ -89,6 +85,7 @@ export default function ForemanOverview() {
 								{t(($) => $[s])}
 							</SelectItem>
 						))}
+						<SelectItem value="__none">{"None"}</SelectItem>
 					</SelectContent>
 				</Select>
 			</div>

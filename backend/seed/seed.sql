@@ -113,7 +113,14 @@ VALUES
 -- UserManagers
 INSERT INTO "UserManagers" ("ManagersId", "SubordinatesId")
 VALUES
-    (:'OLA_ID', :'KARI_ID'); -- Ola is the manager of Kari
+    (:'OLA_ID', :'KARI_ID'),
+    (:'OLA_ID', :'PER_ID'),
+    (:'OLA_ID', :'TROND_ID'),
+    (:'OLA_ID', :'GJERTRUD_ID'),
+    (:'OLA_ID', :'KLARA_ID'),
+    (:'OLA_ID', :'BIRGIR_ID'),
+    (:'OLA_ID', :'TORLEIF_ID'),
+    (:'OLA_ID', :'BJØRNULF_ID');
 
 
 -- Randomized multiplier and jitter values for each user and sensor for fixtures

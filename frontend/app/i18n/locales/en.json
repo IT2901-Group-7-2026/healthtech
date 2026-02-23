@@ -1,162 +1,162 @@
 {
-	"title": "HealthTech | Operator Exposure Dashboard",
-	"description": "Monitor and manage exposure to dust, vibration, and noise.",
-	"layout": {
-		"overview": "Overview",
-		"home": "Home",
-		"team": "Team",
-		"statistics": "Statistics"
-	},
-	"overview": {
-		"title": "Overview of the {{view}}",
-		"day": "day",
-		"week": "week",
-		"month": "month",
-		"dust": "Dust",
-		"vibration": "Vibration",
-		"noise": "Noise",
-		"userSelectPlaceholder": "User"
-	},
-	"dustExposure": {
-		"title": "Dust Exposure"
-	},
-	"vibrationExposure": {
-		"title": "Vibration Exposure"
-	},
-	"noiseExposure": {
-		"title": "Noise Exposure"
-	},
-	"exposure_summary": {
-		"title": "Exposure Summary",
-		"greenHourText": "Hours with safe amount of exposure",
-		"greenDayText": "Days with safe amount of exposure",
-		"orangeHourText": "Hours close to exposure limit",
-		"orangeDayText": "Days close to exposure limit",
-		"redHourText": "Hours above exposure limit",
-		"redDayText": "Days above exposure limit",
-		"dust": "Dust",
-		"vibration": "Vibration",
-		"noise": "Noise",
-		"allSensors": "All sensors",
-		"all": "Every sensor"
-	},
-	"line_chart": {
-		"danger": "Exposure Limit",
-		"warning": "Action Limit",
-		"safe": "Safely within exposure limit"
-	},
-	"monthly_view": {
-		"safe": "Safe day on",
-		"warning": "Warnings issued on",
-		"danger": "Danger: Exposure limits exceeded on"
-	},
-	"daily_notes": {
-		"dayTitle": "Daily Notes",
-		"daySubtitle": "Note for {{day}}:",
-		"writeHere": "Write here...",
-		"edit": "Edit",
-		"save": "Save",
-		"notesFromThis": "Notes from this ",
-		"day": "day",
-		"week": "week",
-		"month": "month"
-	},
-	"buttons": {
-		"confirm": "Ok",
-		"close": "Close"
-	},
-	"english": "English",
-	"norwegian": "Norwegian",
+  "title": "HealthTech | Operator Exposure Dashboard",
+  "description": "Monitor and manage exposure to dust, vibration, and noise.",
+  "layout": {
+    "overview": "Overview",
+    "home": "Home",
+    "team": "Team",
+    "statistics": "Statistics"
+  },
+  "overview": {
+    "title": "Overview of the {{view}}",
+    "day": "day",
+    "week": "week",
+    "month": "month",
+    "dust": "Dust",
+    "vibration": "Vibration",
+    "noise": "Noise",
+    "userSelectPlaceholder": "User"
+  },
+  "dustExposure": {
+    "title": "Dust exposure"
+  },
+  "vibrationExposure": {
+    "title": "Vibration exposure"
+  },
+  "noiseExposure": {
+    "title": "Noise exposure"
+  },
+  "exposure_summary": {
+    "title": "Exposure summary",
+    "greenHourText": "Hours with safe amount of exposure",
+    "greenDayText": "Days with safe amount of exposure",
+    "orangeHourText": "Hours close to exposure limit",
+    "orangeDayText": "Days close to exposure limit",
+    "redHourText": "Hours above exposure limit",
+    "redDayText": "Days above exposure limit",
+    "dust": "Dust",
+    "vibration": "Vibration",
+    "noise": "Noise",
+    "allSensors": "All sensors",
+    "all": "Every sensor"
+  },
+  "line_chart": {
+    "danger": "Exposure Limit",
+    "warning": "Action Limit",
+    "safe": "Safely within exposure limit"
+  },
+  "monthly_view": {
+    "safe": "Safe day on",
+    "warning": "Warnings issued on",
+    "danger": "Danger: Exposure limits exceeded on"
+  },
+  "daily_notes": {
+    "dayTitle": "Daily notes",
+    "daySubtitle": "Note for {{day}}:",
+    "writeHere": "Write here...",
+    "edit": "Edit",
+    "save": "Save",
+    "notesFromThis": "Notes from this ",
+    "day": "day",
+    "week": "week",
+    "month": "month"
+  },
+  "buttons": {
+    "confirm": "Ok",
+    "close": "Close"
+  },
+  "english": "English",
+  "norwegian": "Norwegian",
 
-	"time": "Time",
-	"today": "Today",
+  "time": "Time",
+  "today": "Today",
 
-	"safe": "Safe",
-	"warning": "Warning",
-	"danger": "Danger",
+  "safe": "Safe",
+  "warning": "Warning",
+  "danger": "Danger",
 
-	"peak": "Peak",
-	"average": "Average",
+  "peak": "Peak",
+  "average": "Average",
 
-	"light": "Light",
-	"dark": "Dark",
-	"system": "System",
+  "light": "Light",
+  "dark": "Dark",
+  "system": "System",
 
-	"dust": "Dust",
-	"vibration": "Vibration",
-	"noise": "Noise",
+  "dust": "Dust",
+  "vibration": "Vibration",
+  "noise": "Noise",
 
-	"sensorSelectPlaceholder": "Sensor",
+  "sensorSelectPlaceholder": "Sensor",
 
-	"views": "Views",
-	"day": "Day",
-	"week": "Week",
-	"month": "Month",
-	"notifications": "Notifications",
-	"popup": {
-		"toDay": "See details",
-		"notesTitle": "Note for this day:",
-		"exposureTitle": "Exposure:",
-		"safe": "No exposure limit was exceeded",
-		"warning": "An exposure limit was almost exceeded",
-		"danger": "An exposure limit was exceeded",
-		"openDaily": "See details for information about type of exposure",
-		"eventTitle": "{{day}}, from {{start}} to {{end}}",
-		"notifTitle": "Notification received {{date}}"
-	},
-	"profile": {
-		"title": "Profile",
-		"location": "Location",
-		"name": "Name",
-		"prefLanguage": "Preferred language",
-		"secReg": "Current security regulations",
-		"jobTitle": "Job title",
-		"jobDescription": "Job description"
-	},
-	"atRiskTable": {
-		"title": "Workers at Risk",
-		"detailText": "View details",
-		"noWorkers": "No workers at risk"
-	},
-	"loadingData": "Loading data...",
-	"errorLoadingData": "Something went wrong while fetching sensor data.",
-	"noData": "No exposure data found for this day",
-	"points": "Points",
-	"dust_y_axis": "µg/m³",
-	"foremanDashboard": {
-		"failedToLoadTeamMembers": "Failed to load team members",
-		"noTeamMembersFound": "No team members found",
-		"teamTable": {
-			"username": "Username",
-			"email": "Email",
-			"status": "Status",
-			"jobDescription": "Job description"
-		},
-		"teamMembersCount": "{{count}} operator in team",
-		"teamMembersCount_one": "{{count}} operator in team",
-		"teamMembersCount_other": "{{count}} operators in team",
-		"overview": {
-			"title": "Foreman Overview",
-			"statCards": {
-				"total": "Total",
-				"viewDetails": "View details",
-				"inDanger": {
-					"description": "Operators exceeding threshold",
-					"label": "In danger"
-				},
-				"atRisk": {
-					"description": "Operators approaching exposure limit",
-					"label": "At risk"
-				},
-				"withinLimits": {
-					"description": "Operators within safe exposure range",
-					"label": "Within limits"
-				}
-			}
-		},
-		"userStatusChart": {
-			"xAxisLabel": "Percentage of exposure limit",
-			"noData": "No data available"
-		}
-	}
+  "views": "Views",
+  "day": "Day",
+  "week": "Week",
+  "month": "Month",
+  "notifications": "Notifications",
+  "popup": {
+    "toDay": "See details",
+    "notesTitle": "Note for this day:",
+    "exposureTitle": "Exposure:",
+    "safe": "No exposure limit was exceeded",
+    "warning": "An exposure limit was almost exceeded",
+    "danger": "An exposure limit was exceeded",
+    "openDaily": "See details for information about type of exposure",
+    "eventTitle": "{{day}}, from {{start}} to {{end}}",
+    "notifTitle": "Notification received {{date}}"
+  },
+  "profile": {
+    "title": "Profile",
+    "location": "Location",
+    "name": "Name",
+    "prefLanguage": "Preferred language",
+    "secReg": "Current security regulations",
+    "jobTitle": "Job title",
+    "jobDescription": "Job description"
+  },
+  "atRiskTable": {
+    "title": "Workers at risk",
+    "detailText": "View details",
+    "noWorkers": "No workers at risk"
+  },
+  "loadingData": "Loading data...",
+  "errorLoadingData": "Something went wrong while fetching sensor data.",
+  "noData": "No exposure data found for this day",
+  "points": "Points",
+  "dust_y_axis": "µg/m³",
+  "foremanDashboard": {
+    "failedToLoadTeamMembers": "Failed to load team members",
+    "noTeamMembersFound": "No team members found",
+    "teamTable": {
+      "username": "Username",
+      "email": "Email",
+      "status": "Status",
+      "jobDescription": "Job description"
+    },
+    "teamMembersCount": "{{count}} operator in team",
+    "teamMembersCount_one": "{{count}} operator in team",
+    "teamMembersCount_other": "{{count}} operators in team",
+    "overview": {
+      "title": "Foreman overview",
+      "statCards": {
+        "total": "Total",
+        "viewDetails": "View details",
+        "inDanger": {
+          "description": "Operators exceeding threshold",
+          "label": "In danger"
+        },
+        "atRisk": {
+          "description": "Operators approaching exposure limit",
+          "label": "At risk"
+        },
+        "withinLimits": {
+          "description": "Operators within safe exposure range",
+          "label": "Within limits"
+        }
+      }
+    },
+    "userStatusChart": {
+      "xAxisLabel": "Percentage of exposure limit",
+      "noData": "No data available"
+    }
+  }
 }
