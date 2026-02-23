@@ -17,7 +17,7 @@ import { MapPinIcon, UsersIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate, useSearchParams } from "react-router";
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
 
@@ -26,20 +26,15 @@ export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const [sensor, setSensor] = useQueryState("vibration", parseAsSensor);
+	const queryParameters = useLocation().search
+    console.log(queryParameters);
 
 	const { user } = useUser();
-
-	useEffect(() => {
-		if (user.role !== "foreman") {
-			navigate("/");
-			return;
-		}
-	}, [user, navigate]);
 
 	// Required, otherwise the shadowing behind "Home" and "Teams" in the navbar does not display properly
 	useEffect(() => {
 		if (user.role === "foreman") {
-			navigate("/foreman");
+			navigate("/foreman" + queryParameters);
 			return;
 		}
 	}, [user, navigate]);
