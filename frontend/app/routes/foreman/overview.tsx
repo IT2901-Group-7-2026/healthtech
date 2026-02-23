@@ -37,8 +37,10 @@ export default function ForemanOverview() {
 		}
 	}, [user, navigate]);
 
-	const { data: subordinates } = useSubordinatesQuery(user.id);
-	console.log("sub", subordinates);
+	const { data: subordinates } = useSubordinatesQuery(
+		user.id,
+		new Date(1, 1, 2025),
+	);
 	const countPerDangerLevel = useMemo(() => {
 		const result: Record<
 			Sensor | "total",
@@ -64,7 +66,6 @@ export default function ForemanOverview() {
 				if (!sensorStatus) {
 					continue;
 				}
-				console.log(sensorStatus.level);
 
 				if (sensorStatus.level === "danger") {
 					result[sensorKey].danger++;
@@ -76,7 +77,6 @@ export default function ForemanOverview() {
 			}
 		}
 
-		console.log("countPerDangerLevel updated:", result);
 		return result;
 	}, [subordinates]);
 
@@ -186,9 +186,9 @@ export default function ForemanOverview() {
 			)}
 			<div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 				{sensors.map((sensor) => {
-					return countPerDangerLevel[sensor].safe &&
-						countPerDangerLevel[sensor].warning &&
-						countPerDangerLevel[sensor].danger ? (
+					return countPerDangerLevel[sensor].safe !== 0 ||
+						countPerDangerLevel[sensor].warning !== 0 ||
+						countPerDangerLevel[sensor].danger !== 0 ? (
 						<PieChartCard
 							data={{
 								safe: {
