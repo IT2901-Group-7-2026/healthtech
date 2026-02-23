@@ -12,6 +12,7 @@ import { useNavigate } from "react-router";
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
 import { PieChartCard } from "./pie-chart-card";
+import { sensors, type Sensor } from "@/lib/sensors";
 
 // biome-ignore lint: page components can be default exports
 export default function ForemanOverview() {
@@ -28,23 +29,46 @@ export default function ForemanOverview() {
 	}, [user, navigate]);
 
 	const { data: subordinates } = useSubordinatesQuery(user.id);
-
+	console.log("sub", subordinates);
 	const countPerDangerLevel = useMemo(() => {
-		let danger = 0;
-		let warning = 0;
-		let safe = 0;
+		const result: Record<
+			Sensor | "total",
+			{ danger: number; warning: number; safe: number }
+		> = {
+			dust: { danger: 0, warning: 0, safe: 0 },
+			noise: { danger: 0, warning: 0, safe: 0 },
+			vibration: { danger: 0, warning: 0, safe: 0 },
+			total: { danger: 0, warning: 0, safe: 0 },
+		};
 
-		for (const s of subordinates ?? []) {
-			if (s.status.status === "danger") {
-				danger++;
-			} else if (s.status.status === "warning") {
-				warning++;
+		for (const subordinate of subordinates ?? []) {
+			if (subordinate.status.status === "danger") {
+				result["total"].danger++;
+			} else if (subordinate.status.status === "warning") {
+				result["total"].warning++;
 			} else {
-				safe++;
+				result["total"].safe++;
+			}
+			for (const sensorKey of sensors) {
+				const sensorStatus = subordinate.status[sensorKey];
+
+				if (!sensorStatus) {
+					continue;
+				}
+				console.log(sensorStatus.level);
+
+				if (sensorStatus.level === "danger") {
+					result[sensorKey].danger++;
+				} else if (sensorStatus.level === "warning") {
+					result[sensorKey].warning++;
+				} else {
+					result[sensorKey].safe++;
+				}
 			}
 		}
 
-		return { danger, warning, safe };
+		console.log("countPerDangerLevel updated:", result);
+		return result;
 	}, [subordinates]);
 
 	const total = subordinates?.length ?? 0;
@@ -73,7 +97,7 @@ export default function ForemanOverview() {
 						)}
 						to="/"
 						totalValue={total}
-						value={countPerDangerLevel.danger}
+						value={countPerDangerLevel["total"].danger}
 						totalText={cardTotalText}
 						viewDetailsText={cardViewDetailsText}
 					/>
@@ -84,7 +108,7 @@ export default function ForemanOverview() {
 						label={t(($) => $.foremanDashboard.overview.statCards.atRisk.label)}
 						to="/"
 						totalValue={total}
-						value={countPerDangerLevel.warning}
+						value={countPerDangerLevel["total"].warning}
 						totalText={cardTotalText}
 						viewDetailsText={cardViewDetailsText}
 					/>
@@ -98,7 +122,7 @@ export default function ForemanOverview() {
 						)}
 						to="/"
 						totalValue={total}
-						value={countPerDangerLevel.safe}
+						value={countPerDangerLevel["total"].safe}
 						totalText={cardTotalText}
 						viewDetailsText={cardViewDetailsText}
 					/>
@@ -120,90 +144,42 @@ export default function ForemanOverview() {
 				<AtRiskTable />
 			</div>
 			<div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-				<PieChartCard
-					data={{
-						safe: {
-							name: "Safe",
-							value: 0,
-							label: t(
-								($) => $.foremanDashboard.overview.statCards.withinLimits.label,
-							),
-						},
-						warning: {
-							name: "Warning",
-							value: 7,
-							label: t(
-								($) => $.foremanDashboard.overview.statCards.atRisk.label,
-							),
-						},
-						danger: {
-							name: "Danger",
-							value: 4,
-							label: t(
-								($) => $.foremanDashboard.overview.statCards.inDanger.label,
-							),
-						},
-					}}
-					label="dust"
-					viewDetailsText={cardViewDetailsText}
-					to="/"
-				/>
-				<PieChartCard
-					data={{
-						safe: {
-							name: "Safe",
-							value: 10,
-							label: t(
-								($) => $.foremanDashboard.overview.statCards.withinLimits.label,
-							),
-						},
-						warning: {
-							name: "Warning",
-							value: 7,
-							label: t(
-								($) => $.foremanDashboard.overview.statCards.atRisk.label,
-							),
-						},
-						danger: {
-							name: "Danger",
-							value: 4,
-							label: t(
-								($) => $.foremanDashboard.overview.statCards.inDanger.label,
-							),
-						},
-					}}
-					label="noise"
-					viewDetailsText={cardViewDetailsText}
-					to="/"
-				/>
-				<PieChartCard
-					data={{
-						safe: {
-							name: "Safe",
-							value: 10,
-							label: t(
-								($) => $.foremanDashboard.overview.statCards.withinLimits.label,
-							),
-						},
-						warning: {
-							name: "Warning",
-							value: 7,
-							label: t(
-								($) => $.foremanDashboard.overview.statCards.atRisk.label,
-							),
-						},
-						danger: {
-							name: "Danger",
-							value: 4,
-							label: t(
-								($) => $.foremanDashboard.overview.statCards.inDanger.label,
-							),
-						},
-					}}
-					label="vibration"
-					viewDetailsText={cardViewDetailsText}
-					to="/"
-				/>
+				{sensors.map((sensor) => {
+					return countPerDangerLevel[sensor].safe &&
+						countPerDangerLevel[sensor].warning &&
+						countPerDangerLevel[sensor].danger ? (
+						<PieChartCard
+							data={{
+								safe: {
+									name: "Safe",
+									value: countPerDangerLevel[sensor].safe,
+									label: t(
+										($) =>
+											$.foremanDashboard.overview.statCards.withinLimits.label,
+									),
+								},
+								warning: {
+									name: "Warning",
+									value: countPerDangerLevel[sensor].warning,
+									label: t(
+										($) => $.foremanDashboard.overview.statCards.atRisk.label,
+									),
+								},
+								danger: {
+									name: "Danger",
+									value: countPerDangerLevel[sensor].danger,
+									label: t(
+										($) => $.foremanDashboard.overview.statCards.inDanger.label,
+									),
+								},
+							}}
+							label={sensor}
+							viewDetailsText={cardViewDetailsText}
+							to="/"
+							key={sensor}
+						/>
+					) : null;
+				})}
 			</div>
 		</div>
 	);
