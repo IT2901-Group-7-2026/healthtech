@@ -73,7 +73,11 @@ export default function ForemanOverview() {
 				</h1>
 				<Select
 					onValueChange={(value) => {
-						setSensor(value as Sensor);
+						if (value === "__none") {
+							setSensor(null);
+						} else {
+							setSensor(value as Sensor);
+						}
 					}}
 					value={sensor ?? undefined}
 				>
@@ -88,6 +92,7 @@ export default function ForemanOverview() {
 								{t(($) => $[s])}
 							</SelectItem>
 						))}
+						<SelectItem value="__none">None</SelectItem>
 					</SelectContent>
 				</Select>
 			</div>
