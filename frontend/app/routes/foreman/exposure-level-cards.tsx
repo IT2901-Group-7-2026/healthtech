@@ -16,8 +16,16 @@ export function ExposureRiskCards() {
 	const { user } = useUser();
 	const { data: subordinates = [] } = useSubordinatesQuery(user.id);
 
+	const inDangerWorkers = subordinates.filter(
+		(sub) => DANGER_LEVEL_SEVERITY[sub.status.status] === 2,
+	);
+
 	const atRiskWorkers = subordinates.filter(
-		(sub) => DANGER_LEVEL_SEVERITY[sub.status.status] > 0,
+		(sub) => DANGER_LEVEL_SEVERITY[sub.status.status] === 1,
+	);
+
+	const withinLimitsWorkers = subordinates.filter(
+		(sub) => DANGER_LEVEL_SEVERITY[sub.status.status] === 0,
 	);
 
 	return (
@@ -41,7 +49,7 @@ export function ExposureRiskCards() {
 							className="text-center"
 							style={{color: "red"}}
 						>
-							{t((x) => x.foremanDashboard.overview.statCards.inDanger.label)}
+							{t((x) => x.foremanDashboard.overview.statCards.inDanger.label)} {"("} {inDangerWorkers.length} {")"}
 						</CardTitle>
 					</CardHeader>
 
@@ -49,14 +57,14 @@ export function ExposureRiskCards() {
 					<CardContent>
 						<Table>
 							<TableBody>
-								{atRiskWorkers.length === 0 ? (
+								{inDangerWorkers.length === 0 ? (
 									<TableRow>
 										<TableCell className="text-center text-zinc-500">
 											{t((x) => x.foremanDashboard.overview.statCards.inDanger.noOperators)}
 										</TableCell>
 									</TableRow>
 								) : (
-									atRiskWorkers.map((sub) => (
+									inDangerWorkers.map((sub) => (
 										<TableRow key={sub.id}>
 											<TableCell>
 												<div className="flex items-center gap-5">
@@ -98,7 +106,7 @@ export function ExposureRiskCards() {
 							className="text-center"
 							style={{color: "orange"}}
 						>
-							{t((x) => x.foremanDashboard.overview.statCards.atRisk.label)}
+							{t((x) => x.foremanDashboard.overview.statCards.atRisk.label)} {"("} {atRiskWorkers.length} {")"}
 						</CardTitle>
 					</CardHeader>
 
@@ -155,7 +163,7 @@ export function ExposureRiskCards() {
 							className="text-center"
 							style={{color: "green"}}
 						>
-							{t((x) => x.foremanDashboard.overview.statCards.withinLimits.label)}
+							{t((x) => x.foremanDashboard.overview.statCards.withinLimits.label)} {"("} {withinLimitsWorkers.length} {")"}
 						</CardTitle>
 					</CardHeader>
 
@@ -163,14 +171,14 @@ export function ExposureRiskCards() {
 					<CardContent>
 						<Table>
 							<TableBody>
-								{atRiskWorkers.length === 0 ? (
+								{withinLimitsWorkers.length === 0 ? (
 									<TableRow>
 										<TableCell className="text-center text-zinc-500">
 											{t((x) => x.foremanDashboard.overview.statCards.withinLimits.noOperators)}
 										</TableCell>
 									</TableRow>
 								) : (
-									atRiskWorkers.map((sub) => (
+									withinLimitsWorkers.map((sub) => (
 										<TableRow key={sub.id}>
 											<TableCell>
 												<div className="flex items-center gap-5">
