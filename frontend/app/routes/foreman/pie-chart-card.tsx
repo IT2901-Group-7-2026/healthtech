@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import {
 	UserStatusPieChart,
@@ -42,16 +41,16 @@ export const PieChartCard = ({
 				{label}
 			</h2>
 
-			<div className="flex flex-col gap-2 text-xs w-1/3">
-				<div className="flex flex-row gap-2 justify-between">
+			<div className="flex w-1/3 flex-col gap-2 text-xs">
+				<div className="flex flex-row justify-between gap-2">
 					<p className="dark:text-zinc-400">{data.danger.label}</p>{" "}
 					<p>{data.danger.value}</p>
 				</div>
-				<div className="flex flex-row gap-2 justify-between">
+				<div className="flex flex-row justify-between gap-2">
 					<p className="dark:text-zinc-400">{data.warning.label}</p>{" "}
 					<p>{data.warning.value}</p>
 				</div>
-				<div className="flex flex-row gap-2 justify-between">
+				<div className="flex flex-row justify-between gap-2">
 					<p className="dark:text-zinc-400">{data.safe.label}</p>{" "}
 					<p>{data.safe.value}</p>
 				</div>
