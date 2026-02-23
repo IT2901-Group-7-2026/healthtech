@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 import { getUnixTime } from "date-fns";
-import type { Days } from "../types";
+import type { TimeSlotSegments } from "../types";
 
-export function WeekDaysHeader({ days }: { days: Days }) {
+export function WeekDaysHeader({ days }: { days: TimeSlotSegments }) {
 	return (
 		<div className="sticky top-0 z-30 flex-none">
 			<div className="grid grid-cols-8 text-sm leading-6">

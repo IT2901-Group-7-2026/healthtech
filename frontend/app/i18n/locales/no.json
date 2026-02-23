@@ -75,6 +75,9 @@
 	"warning": "Advarsel",
 	"danger": "Fare",
 
+	"peak": "Topp",
+	"average": "Gjennomsnitt",
+
 	"light": "Lys",
 	"dark": "Mørk",
 	"system": "System",
@@ -82,6 +85,8 @@
 	"dust": "Støv",
 	"vibration": "Vibrasjon",
 	"noise": "Støy",
+
+	"sensorSelectPlaceholder": "Sensor",
 
 	"views": "Visning",
 	"day": "Dag",
@@ -107,6 +112,11 @@
 		"secReg": "Gjeldende sikkerhetsreguleringer",
 		"jobTitle": "Stillingsbetegnelse",
 		"jobDescription": "Stillingsbeskrivelse"
+	},
+	"atRiskTable": {
+		"title": "Risikosårbare arbeidere",
+		"detailText": "Se detaljer",
+		"noWorkers": "Ingen risikosårbare arbeidere"
 	},
 	"loadingData": "Laster inn data...",
 	"errorLoadingData": "Noe gikk galt under henting av sensordata.",
@@ -143,6 +153,10 @@
 					"label": "Innenfor grenseverdi"
 				}
 			}
+		},
+		"userStatusChart": {
+			"xAxisLabel": "Prosent av faregrense",
+			"noData": "Ingen data tilgjengelig"
 		}
 	}
 }

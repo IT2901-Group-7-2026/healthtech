@@ -54,7 +54,7 @@ export function BasePopup({
 									pathname: pathname ? pathname : "",
 									search: navOverride
 										? navOverride
-										: `?view=Day&date=${relevantDate.toLocaleDateString("en-CA")}`,
+										: `?view=Day&date=${relevantDate.toISOString().split("T")[0]}`,
 								}}
 								onClick={() =>
 									sensors.find(

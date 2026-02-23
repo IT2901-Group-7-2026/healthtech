@@ -7,15 +7,21 @@ namespace Backend.Services;
 
 public interface IUserStatusService
 {
-	Task<IEnumerable<UserStatusDto>> GetCurrentStatusForUsers(IEnumerable<Guid> userIds);
+	Task<IEnumerable<UserStatusDto>> GetStatusForUsersInRange(
+		IEnumerable<Guid> userIds,
+		DateTime startTime,
+		DateTime endTime
+	);
 }
 
-public record UserAggRow(Guid UserId, double? Value);
+public record UserAggRow(Guid UserId, double? Value, double? MaxValue);
 
 public class UserStatusService(AppDbContext _context) : IUserStatusService
 {
-	public async Task<IEnumerable<UserStatusDto>> GetCurrentStatusForUsers(
-		IEnumerable<Guid> userIds
+	public async Task<IEnumerable<UserStatusDto>> GetStatusForUsersInRange(
+		IEnumerable<Guid> userIds,
+		DateTime startTime,
+		DateTime endTime
 	)
 	{
 		var ids = userIds.Distinct().ToArray();
@@ -29,9 +35,11 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 		var noiseRows = await _context
 			.Database.SqlQuery<UserAggRow>(
 				$"""
-				SELECT "user_id" as "UserId", MAX(max_noise) as "Value"
-				FROM noise_data_daily
-				WHERE bucket = {today}
+				SELECT "user_id" as "UserId",
+				MAX(max_noise_lcpk) as MaxValue,
+				AVG(avg_noise_laeq) as Value
+				FROM noise_data_minutely
+				WHERE bucket between {startTime} and {endTime}
 				  AND "user_id" = ANY({ids})
 				GROUP BY "user_id"
 				"""
@@ -41,9 +49,9 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 		var dustRows = await _context
 			.Database.SqlQuery<UserAggRow>(
 				$"""
-				SELECT "user_id" as "UserId", MAX(max_dust_Pm1_stel) as "Value"
-				FROM dust_data_daily
-				WHERE bucket = {today}
+				SELECT "user_id" as "UserId", MAX(max_dust_Pm1_twa) as Value, null as MaxValue
+				FROM dust_data_minutely
+				WHERE bucket between {startTime} and {endTime}
 				  AND "user_id" = ANY({ids})
 				GROUP BY "user_id"
 				"""
@@ -53,40 +61,48 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 		var vibrationRows = await _context
 			.Database.SqlQuery<UserAggRow>(
 				$"""
-				SELECT "user_id" as "UserId", SUM(sum_vibration) as "Value"
-				FROM vibration_data_daily
-				WHERE bucket = {today}
+				SELECT "user_id" as "UserId", SUM(sum_vibration) as Value, null as MaxValue
+				FROM vibration_data_minutely
+				WHERE bucket between {startTime} and {endTime}
 				  AND "user_id" = ANY({ids})
 				GROUP BY "user_id"
 				"""
 			)
 			.ToListAsync();
 
-		var noiseByUser = noiseRows.ToDictionary(x => x.UserId, x => x.Value);
-		var dustByUser = dustRows.ToDictionary(x => x.UserId, x => x.Value);
-		var vibByUser = vibrationRows.ToDictionary(x => x.UserId, x => x.Value);
-
-		var now = DateTimeOffset.UtcNow;
+		var noiseByUser = noiseRows.ToDictionary(x => x.UserId, x => new { x.Value, x.MaxValue });
+		var dustByUser = dustRows.ToDictionary(x => x.UserId, x => new { x.Value, x.MaxValue });
+		var vibByUser = vibrationRows.ToDictionary(x => x.UserId, x => new { x.Value, x.MaxValue });
 
 		var result = new List<UserStatusDto>(ids.Length);
 
 		foreach (var userId in ids)
 		{
-			var noiseLevel = TryLevel(DataType.Noise, noiseByUser.GetValueOrDefault(userId));
-			var dustLevel = TryLevel(DataType.Dust, dustByUser.GetValueOrDefault(userId));
-			var vibLevel = TryLevel(DataType.Vibration, vibByUser.GetValueOrDefault(userId));
+			var noiseValue = noiseByUser.GetValueOrDefault(userId)?.Value;
+			var noisePeak = noiseByUser.GetValueOrDefault(userId)?.MaxValue;
+			var dustValue = dustByUser.GetValueOrDefault(userId)?.Value;
+			var vibValue = vibByUser.GetValueOrDefault(userId)?.Value;
 
-			var overall = WorstOf(noiseLevel, dustLevel, vibLevel);
+			var noiseLevel = TryLevel(SensorType.Noise, noiseValue, noisePeak);
+			var dustLevel = TryLevel(SensorType.Dust, dustValue, null);
+			var vibLevel = TryLevel(SensorType.Vibration, vibValue, null);
+
+			var overall = ThresholdUtils.GetHighestDangerLevel(noiseLevel, dustLevel, vibLevel);
 
 			result.Add(
 				new UserStatusDto
 				{
 					UserId = userId,
 					Status = overall,
-					Noise = noiseLevel,
-					Dust = dustLevel,
-					Vibration = vibLevel,
-					CalculatedAt = now,
+					Noise = noiseLevel.HasValue
+						? new UserSensorStatusDto(noiseLevel.Value, noiseValue ?? 0, noisePeak)
+						: null,
+					Dust = dustLevel.HasValue
+						? new UserSensorStatusDto(dustLevel.Value, dustValue ?? 0, null)
+						: null,
+					Vibration = vibLevel.HasValue
+						? new UserSensorStatusDto(vibLevel.Value, vibValue ?? 0, null)
+						: null,
 				}
 			);
 		}
@@ -94,26 +110,13 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 		return result;
 	}
 
-	private static DangerLevel? TryLevel(DataType type, double? value)
+	private static DangerLevel? TryLevel(SensorType type, double? value, double? maxValue = null)
 	{
 		if (!value.HasValue)
 		{
 			return null;
 		}
 
-		return ThresholdUtils.CalculateDangerLevel(type, value.Value);
-	}
-
-	private static DangerLevel WorstOf(params DangerLevel?[] levels)
-	{
-		var worst = DangerLevel.Safe;
-		foreach (var lvl in levels)
-		{
-			if (lvl.HasValue && lvl.Value > worst)
-			{
-				worst = lvl.Value;
-			}
-		}
-		return worst;
+		return ThresholdUtils.CalculateDangerLevel(type, value.Value, maxValue);
 	}
 }

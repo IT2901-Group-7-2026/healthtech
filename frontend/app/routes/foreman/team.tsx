@@ -1,5 +1,5 @@
 import { DataTable } from "@/components/ui/data-table";
-import { useUser } from "@/features/user/user-user";
+import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
 import {
 	mapDangerLevelToColor,

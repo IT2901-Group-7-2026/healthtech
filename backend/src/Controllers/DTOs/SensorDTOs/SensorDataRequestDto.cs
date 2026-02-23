@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using SensorDataType = Backend.Models.DataType;
+using SensorType = Backend.Models.SensorType;
 
 namespace Backend.DTOs;
 
@@ -22,22 +22,34 @@ public enum AggregationFunction
 
 public enum Field
 {
-	[DataTypeField(SensorDataType.Dust)]
+	[SensorTypeField(SensorType.Dust)]
 	Pm1_stel,
 
-	[DataTypeField(SensorDataType.Dust)]
+	[SensorTypeField(SensorType.Dust)]
 	Pm25_stel,
 
-	[DataTypeField(SensorDataType.Dust)]
+	[SensorTypeField(SensorType.Dust)]
 	Pm4_stel,
 
-	[DataTypeField(SensorDataType.Dust)]
+	[SensorTypeField(SensorType.Dust)]
 	Pm10_stel,
+
+	[SensorTypeField(SensorType.Dust)]
+	Pm1_twa,
+
+	[SensorTypeField(SensorType.Dust)]
+	Pm25_twa,
+
+	[SensorTypeField(SensorType.Dust)]
+	Pm4_twa,
+
+	[SensorTypeField(SensorType.Dust)]
+	Pm10_twa,
 }
 
-public class DataTypeFieldAttribute(SensorDataType dataType) : Attribute
+public class SensorTypeFieldAttribute(SensorType sensorType) : Attribute
 {
-	public SensorDataType DataType { get; } = dataType;
+	public SensorType SensorType { get; } = sensorType;
 }
 
 public record SensorDataRequestDto(

@@ -146,7 +146,7 @@ export function DailyBarChart({
 											onClick={() =>
 												navigate({
 													pathname: entry.sensor,
-													search: `?view=Day&date=${date.toLocaleDateString("en-CA")}`, //TODO: Why en-CA?
+													search: `?view=Day&date=${date.toISOString().split("T")[0]}`,
 												})
 											}
 											key={`cell-${index}-${key}`}

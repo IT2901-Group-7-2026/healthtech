@@ -7,11 +7,11 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
-import { useUser } from "@/features/user/user-user";
+import { useUser } from "@/features/user-context";
 import { parseAsView } from "@/features/views/utils";
 import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
-import { languageToLocale } from "@/i18n/locale";
+import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
 import { thresholds } from "@/lib/thresholds";
@@ -102,7 +102,7 @@ export default function Vibration() {
 					/>
 				) : view === "week" ? (
 					<WeekWidget
-						locale={languageToLocale[i18n.language]}
+						locale={getLocale(i18n.language)}
 						dayStartHour={8}
 						dayEndHour={16}
 						weekStartsOn={1}

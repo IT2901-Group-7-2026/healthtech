@@ -23,8 +23,6 @@ import {
 } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
 
-export const description = "A line chart";
-
 const chartConfig = {
 	desktop: {
 		label: "Desktop",

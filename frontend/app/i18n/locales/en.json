@@ -75,6 +75,9 @@
 	"warning": "Warning",
 	"danger": "Danger",
 
+	"peak": "Peak",
+	"average": "Average",
+
 	"light": "Light",
 	"dark": "Dark",
 	"system": "System",
@@ -82,6 +85,8 @@
 	"dust": "Dust",
 	"vibration": "Vibration",
 	"noise": "Noise",
+
+	"sensorSelectPlaceholder": "Sensor",
 
 	"views": "Views",
 	"day": "Day",
@@ -107,6 +112,11 @@
 		"secReg": "Current security regulations",
 		"jobTitle": "Job title",
 		"jobDescription": "Job description"
+	},
+	"atRiskTable": {
+		"title": "Workers at Risk",
+		"detailText": "View details",
+		"noWorkers": "No workers at risk"
 	},
 	"loadingData": "Loading data...",
 	"errorLoadingData": "Something went wrong while fetching sensor data.",
@@ -143,6 +153,10 @@
 					"label": "Within limits"
 				}
 			}
+		},
+		"userStatusChart": {
+			"xAxisLabel": "Percentage of exposure limit",
+			"noData": "No data available"
 		}
 	}
 }
