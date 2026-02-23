@@ -16,5 +16,14 @@ export default [
 			route("/operator/noise", "routes/operator/sensors/noise.tsx"),
 		]),
 		route("/foreman/team", "routes/foreman/team.tsx"),
+		layout("routes/foreman/stats/layout.tsx", [
+			route("/foreman/stats", "routes/foreman/stats/page.tsx"),
+			route("/foreman/stats/dust", "routes/foreman/stats/dust.tsx"),
+			route("/foreman/stats/noise", "routes/foreman/stats/noise.tsx"),
+			route(
+				"/foreman/stats/vibration",
+				"routes/foreman/stats/vibration.tsx",
+			),
+		]),
 	]),
 ] satisfies RouteConfig;

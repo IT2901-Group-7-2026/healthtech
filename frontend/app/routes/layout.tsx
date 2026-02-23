@@ -33,7 +33,11 @@ import {
 } from "@/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import type { LucideIcon } from "lucide-react";
-import { House, User as UserIcon } from "lucide-react";
+import {
+	ChartLine as ChartLineIcon,
+	House as HouseIcon,
+	User as UserIcon,
+} from "lucide-react";
 import { type ReactNode, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { href, NavLink, Outlet, type To, useLocation } from "react-router";
@@ -99,7 +103,12 @@ function getLinks(
 				{
 					to: href("/foreman"),
 					label: t(($) => $.layout.home),
-					icon: House,
+					icon: HouseIcon,
+				},
+				{
+					to: href("/foreman/stats"),
+					label: t(($) => $.layout.statistics),
+					icon: ChartLineIcon,
 				},
 				{
 					to: href("/foreman/team"),
@@ -297,7 +306,7 @@ function NavTabs({
 						prefetch="intent"
 					>
 						<span className="inline-flex items-center gap-2">
-							{route.icon && <route.icon />}
+							{route.icon && <route.icon size={16} />}
 							{route.label}
 						</span>
 					</NavLink>
