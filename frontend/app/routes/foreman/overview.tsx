@@ -57,7 +57,9 @@ export default function ForemanOverview() {
 			for (const sensorType of sensors) {
 				if (subordinate.status[sensorType]?.level === "danger") {
 					result[sensorType].danger++;
-				} else if (subordinate.status[sensorType]?.level === "warning") {
+				} else if (
+					subordinate.status[sensorType]?.level === "warning"
+				) {
 					result[sensorType].warning++;
 				} else {
 					result[sensorType].safe++;
@@ -111,7 +113,9 @@ export default function ForemanOverview() {
 					value={sensor ?? undefined}
 				>
 					<SelectTrigger className="w-32 bg-background dark:bg-background">
-						<SelectValue placeholder={t(($) => $.sensorSelectPlaceholder)} />
+						<SelectValue 
+							placeholder={t(($) => $.sensorSelectPlaceholder)}
+						/>
 					</SelectTrigger>
 					<SelectContent className="w-32">
 						{sensors?.map((s) => (
@@ -149,10 +153,13 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.inDanger.description,
+										$.foremanDashboard.overview.statCards
+											.inDanger.description,
 								)}
 								label={t(
-									($) => $.foremanDashboard.overview.statCards.inDanger.label,
+									($) => 
+										$.foremanDashboard.overview.statCards
+											.inDanger.label,
 								)}
 								to="/"
 								totalValue={total}
@@ -163,10 +170,13 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.atRisk.description,
+										$.foremanDashboard.overview.statCards
+											.atRisk.description,
 								)}
 								label={t(
-									($) => $.foremanDashboard.overview.statCards.atRisk.label,
+									($) =>
+										$.foremanDashboard.overview.statCards
+										.atRisk.label,
 								)}
 								to="/"
 								totalValue={total}
@@ -177,12 +187,13 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.withinLimits
-											.description,
+										$.foremanDashboard.overview.statCards
+											.withinLimits.description,
 								)}
 								label={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.withinLimits.label,
+										$.foremanDashboard.overview.statCards
+											.withinLimits.label,
 								)}
 								to="/"
 								totalValue={total}
@@ -212,28 +223,35 @@ export default function ForemanOverview() {
 										data={{
 											safe: {
 												name: "Safe",
-												value: countPerDangerLevel[s].safe,
+												value: countPerDangerLevel[s]
+													.safe,
 												label: t(
 													($) =>
-														$.foremanDashboard.overview.statCards.withinLimits
-															.label,
+														$.foremanDashboard
+															.overview.statCards
+															.withinLimits.label,
 												),
 											},
 											warning: {
 												name: "Warning",
-												value: countPerDangerLevel[s].warning,
+												value: countPerDangerLevel[s]
+													.warning,
 												label: t(
 													($) =>
-														$.foremanDashboard.overview.statCards.atRisk.label,
+														$.foremanDashboard
+															.overview.statCards
+															.atRisk.label,
 												),
 											},
 											danger: {
 												name: "Danger",
-												value: countPerDangerLevel[s].danger,
+												value: countPerDangerLevel[s]
+													.danger,
 												label: t(
 													($) =>
-														$.foremanDashboard.overview.statCards.inDanger
-															.label,
+														$.foremanDashboard
+															.overview.statCards
+															.inDanger.label,
 												),
 											},
 										}}
