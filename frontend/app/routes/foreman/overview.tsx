@@ -5,7 +5,7 @@ import { useQueryState } from "nuqs";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes.js";
-import { Card } from "@/components/ui/card.js";
+import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
@@ -169,8 +169,10 @@ export default function ForemanOverview() {
 
 					{sensor && (
 						<UserStatusChart
-							sensor={sensor}
 							users={subordinates ?? []}
+							sensor={sensor}
+							// biome-ignore lint/correctness/noUnusedFunctionParameters: TODO: Filter on user
+							userOnClick={(userId) => {}}
 						/>
 					)}
 				</div>
