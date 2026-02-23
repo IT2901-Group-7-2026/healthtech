@@ -157,6 +157,12 @@
 		"userStatusChart": {
 			"xAxisLabel": "Prosent av faregrense",
 			"noData": "Ingen data tilgjengelig"
+		},
+		"stats": {
+			"all": "Alle",
+			"dust": "Støv",
+			"vibration": "Vibrasjon",
+			"noise": "Støy"
 		}
 	}
 }

@@ -157,6 +157,12 @@
 		"userStatusChart": {
 			"xAxisLabel": "Percentage of exposure limit",
 			"noData": "No data available"
+		},
+		"stats": {
+			"all": "All",
+			"dust": "Dust",
+			"vibration": "Vibration",
+			"noise": "Noise"
 		}
 	}
 }
