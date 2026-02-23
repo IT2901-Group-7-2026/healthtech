@@ -38,9 +38,16 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import type { LucideIcon } from "lucide-react";
 import { House, User as UserIcon } from "lucide-react";
-import { type ReactNode, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { href, NavLink, Outlet, type To, useLocation } from "react-router";
+import {
+	href,
+	NavLink,
+	Outlet,
+	type To,
+	useLocation,
+	useNavigate,
+} from "react-router";
 
 const Logo = () => (
 	<svg
@@ -88,7 +95,7 @@ function getLinks(
 
 		case "operator": {
 			return [
-				{ to: href("/"), label: t(($) => $.layout.overview) },
+				{ to: href("/operator"), label: t(($) => $.layout.overview) },
 				{ to: href("/operator/dust"), label: t(($) => $.dust) },
 				{
 					to: href("/operator/vibration"),
@@ -152,6 +159,28 @@ export default function Layout() {
 	});
 
 	const links = getLinks(t, user?.role ?? null);
+
+	const location = useLocation();
+	const navigate = useNavigate();
+	// Redirect users to the appropriate base route if they try to access a route that doesn't match their role
+	useEffect(() => {
+		if (!user?.role) {
+			return;
+		}
+
+		const pathname = location.pathname;
+
+		const isOperatorRoute = pathname.startsWith("/operator");
+		const isForemanRoute = pathname.startsWith("/foreman");
+
+		if (user.role === "operator" && isForemanRoute) {
+			navigate("/operator", { replace: true });
+		}
+
+		if (user.role === "foreman" && isOperatorRoute) {
+			navigate("/foreman", { replace: true });
+		}
+	}, [user?.role, location.pathname, navigate]);
 
 	return (
 		<SidebarProvider defaultOpen={false}>
