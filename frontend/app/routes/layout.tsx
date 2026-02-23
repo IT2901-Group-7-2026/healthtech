@@ -84,7 +84,7 @@ function getLinks(
 
 		case "operator": {
 			return [
-				{ to: href("/"), label: t(($) => $.layout.overview) },
+				{ to: href("/operator"), label: t(($) => $.layout.overview) },
 				{ to: href("/operator/dust"), label: t(($) => $.dust) },
 				{
 					to: href("/operator/vibration"),
