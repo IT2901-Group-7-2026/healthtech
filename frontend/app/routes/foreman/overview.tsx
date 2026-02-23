@@ -2,15 +2,14 @@
 
 import { MapPinIcon, UsersIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
 import { DailyNotes } from "@/components/daily-notes.js";
 import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
-import { createLocationName } from "@/lib/dto";
+import { createLocationName } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
 import {
 	Select,
@@ -22,7 +21,7 @@ import {
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
 
-// biome-ignore lint: page components can be default exports
+// biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const [sensor, setSensor] = useQueryState("vibration", parseAsSensor);

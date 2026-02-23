@@ -1,4 +1,16 @@
 "use client";
+import { useId } from "react";
+import { useTranslation } from "react-i18next";
+import {
+	type ActiveDotProps,
+	CartesianGrid,
+	Line,
+	LineChart,
+	ReferenceLine,
+	XAxis,
+	YAxis,
+} from "recharts";
+import type { CurveType } from "recharts/types/shape/Curve";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
 	type ChartConfig,
@@ -11,17 +23,6 @@ import { useSensor } from "@/features/sensor-picker/use-sensor";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto } from "@/lib/dto";
 import { thresholds } from "@/lib/thresholds";
-import { useId } from "react";
-import { useTranslation } from "react-i18next";
-import {
-	CartesianGrid,
-	Line,
-	LineChart,
-	ReferenceLine,
-	XAxis,
-	YAxis,
-} from "recharts";
-import type { CurveType } from "recharts/types/shape/Curve";
 
 const chartConfig = {
 	desktop: {
@@ -196,7 +197,13 @@ export function ChartLineDefault({
 							stroke={`url(#${id})`}
 							strokeWidth={2}
 							dot={false}
-							activeDot={<Dot />}
+							activeDot={(props) => (
+								<Dot
+									{...props}
+									warning={warning}
+									danger={danger}
+								/>
+							)}
 						/>
 						{children}
 					</LineChart>
@@ -206,21 +213,20 @@ export function ChartLineDefault({
 	);
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: cannot find the correct type for props here.
-const Dot = (props: any) => {
-	const { cx, cy, value, isActive } = props;
+type DotProps = ActiveDotProps & { warning: number; danger: number };
 
-	const { sensor } = useSensor();
-	const { warning, danger } = thresholds[sensor];
+const Dot = ({ cx, cy, value, warning, danger }: DotProps) => {
+	let fillColor: string;
 
-	const fillColor =
-		value < warning
-			? "var(--safe)"
-			: value < danger
-				? "var(--warning)"
-				: "var(--danger)";
+	if (value >= danger) {
+		fillColor = "var(--danger)";
+	} else if (value >= warning) {
+		fillColor = "var(--warning)";
+	} else {
+		fillColor = "var(--safe)";
+	}
 
-	return <circle cx={cx} cy={cy} r={isActive ? 6 : 3} fill={fillColor} />;
+	return <circle cx={cx} cy={cy} r={6} fill={fillColor} />;
 };
 
 export function ThresholdLine({
