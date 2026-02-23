@@ -1,5 +1,11 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
+import { MapPinIcon, UsersIcon } from "lucide-react";
+import { useQueryState } from "nuqs";
+import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
+import { DailyNotes } from "@/components/daily-notes.js";
 import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { useUser } from "@/features/user-context";
@@ -13,10 +19,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
-import { MapPinIcon, UsersIcon } from "lucide-react";
-import { useQueryState } from "nuqs";
-import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
 
@@ -88,84 +90,94 @@ export default function ForemanOverview() {
 				</Select>
 			</div>
 
-			<div className="grid w-full gap-6 lg:grid-cols-4">
-				<div className="grid items-stretch gap-4 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
-					<StatCard
-						description={t(
-							($) =>
-								$.foremanDashboard.overview.statCards.inDanger
-									.description,
-						)}
-						label={t(
-							($) =>
-								$.foremanDashboard.overview.statCards.inDanger
-									.label,
-						)}
-						to="/"
-						totalValue={total}
-						value={countPerDangerLevel.danger}
-						totalText={cardTotalText}
-						viewDetailsText={cardViewDetailsText}
-					/>
-					<StatCard
-						description={t(
-							($) =>
-								$.foremanDashboard.overview.statCards.atRisk
-									.description,
-						)}
-						label={t(
-							($) =>
-								$.foremanDashboard.overview.statCards.atRisk
-									.label,
-						)}
-						to="/"
-						totalValue={total}
-						value={countPerDangerLevel.warning}
-						totalText={cardTotalText}
-						viewDetailsText={cardViewDetailsText}
-					/>
-					<StatCard
-						description={t(
-							($) =>
-								$.foremanDashboard.overview.statCards
-									.withinLimits.description,
-						)}
-						label={t(
-							($) =>
-								$.foremanDashboard.overview.statCards
-									.withinLimits.label,
-						)}
-						to="/"
-						totalValue={total}
-						value={countPerDangerLevel.safe}
-						totalText={cardTotalText}
-						viewDetailsText={cardViewDetailsText}
-					/>
+			<div className="flex w-full flex-row gap-8">
+				<div className="flex flex-col gap-4 md:w-1/4">
+					<Card className="flex h-fit flex-col gap-4 p-4">
+						<div className="flex items-center gap-2">
+							<MapPinIcon />
+							{createLocationName(user.location)}
+						</div>
+
+						<div className="flex items-center gap-2">
+							<UsersIcon />
+							{t(($) => $.foremanDashboard.teamMembersCount, {
+								count: total,
+							})}
+						</div>
+					</Card>
+
+					<DailyNotes />
 				</div>
 
-				<Card className="flex h-fit flex-col gap-4 p-4">
-					<div className="flex items-center gap-2">
-						<MapPinIcon />
-						{createLocationName(user.location)}
+				<div className="flex grow flex-col gap-4">
+					<div className="grid gap-6 lg:grid-cols-3">
+						<div className="grid items-stretch gap-4 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
+							<StatCard
+								description={t(
+									($) =>
+										$.foremanDashboard.overview.statCards
+											.inDanger.description,
+								)}
+								label={t(
+									($) =>
+										$.foremanDashboard.overview.statCards
+											.inDanger.label,
+								)}
+								to="/"
+								totalValue={total}
+								value={countPerDangerLevel.danger}
+								totalText={cardTotalText}
+								viewDetailsText={cardViewDetailsText}
+							/>
+							<StatCard
+								description={t(
+									($) =>
+										$.foremanDashboard.overview.statCards
+											.atRisk.description,
+								)}
+								label={t(
+									($) =>
+										$.foremanDashboard.overview.statCards
+											.atRisk.label,
+								)}
+								to="/"
+								totalValue={total}
+								value={countPerDangerLevel.warning}
+								totalText={cardTotalText}
+								viewDetailsText={cardViewDetailsText}
+							/>
+							<StatCard
+								description={t(
+									($) =>
+										$.foremanDashboard.overview.statCards
+											.withinLimits.description,
+								)}
+								label={t(
+									($) =>
+										$.foremanDashboard.overview.statCards
+											.withinLimits.label,
+								)}
+								to="/"
+								totalValue={total}
+								value={countPerDangerLevel.safe}
+								totalText={cardTotalText}
+								viewDetailsText={cardViewDetailsText}
+							/>
+						</div>
 					</div>
 
-					<div className="flex items-center gap-2">
-						<UsersIcon />
-						{t(($) => $.foremanDashboard.teamMembersCount, {
-							count: total,
-						})}
-					</div>
-				</Card>
-				<AtRiskTable users={subordinates ?? []} />
+					<AtRiskTable users={subordinates ?? []} />
+
+					{sensor && (
+						<UserStatusChart
+							users={subordinates ?? []}
+							sensor={sensor}
+							// biome-ignore lint/correctness/noUnusedFunctionParameters: TODO: Filter on user
+							userOnClick={(userId) => {}}
+						/>
+					)}
+				</div>
 			</div>
-			{sensor && (
-				<UserStatusChart
-					users={subordinates ?? []}
-					sensor={sensor}
-					// biome-ignore lint/correctness/noUnusedFunctionParameters: TODO: Filter on user
-					userOnClick={(userId) => {}}
-				/>
-			)}
 		</div>
 	);
 }
