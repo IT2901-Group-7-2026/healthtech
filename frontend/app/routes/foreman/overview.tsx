@@ -113,7 +113,7 @@ export default function ForemanOverview() {
 					value={sensor ?? undefined}
 				>
 					<SelectTrigger className="w-32 bg-background dark:bg-background">
-						<SelectValue 
+						<SelectValue
 							placeholder={t(($) => $.sensorSelectPlaceholder)}
 						/>
 					</SelectTrigger>
@@ -157,7 +157,7 @@ export default function ForemanOverview() {
 											.inDanger.description,
 								)}
 								label={t(
-									($) => 
+									($) =>
 										$.foremanDashboard.overview.statCards
 											.inDanger.label,
 								)}
@@ -176,7 +176,7 @@ export default function ForemanOverview() {
 								label={t(
 									($) =>
 										$.foremanDashboard.overview.statCards
-										.atRisk.label,
+											.atRisk.label,
 								)}
 								to="/"
 								totalValue={total}
