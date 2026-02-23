@@ -32,59 +32,57 @@ export default function ForemanOverview() {
 		user.id,
 		new Date(1, 1, 2025),
 	);
-	const initializeResult = useCallback(
-		() => ({
+
+	type Subordinate = NonNullable<
+		ReturnType<typeof useSubordinatesQuery>["data"]
+	>[number];
+
+	const addSubordinateDangerLevel = useCallback(
+		(
+			result: Record<
+				Sensor | "total",
+				{ danger: number; warning: number; safe: number }
+			>,
+			subordinate: Subordinate,
+		) => {
+			if (subordinate.status.status === "danger") {
+				result.total.danger++;
+			} else if (subordinate.status.status === "warning") {
+				result.total.warning++;
+			} else {
+				result.total.safe++;
+			}
+
+			for (const sensorType of sensors) {
+				if (subordinate.status[sensorType]?.level === "danger") {
+					result[sensorType].danger++;
+				} else if (subordinate.status[sensorType]?.level === "warning") {
+					result[sensorType].warning++;
+				} else {
+					result[sensorType].safe++;
+				}
+			}
+		},
+		[],
+	);
+
+	const countPerDangerLevel = useMemo(() => {
+		const result: Record<
+			Sensor | "total",
+			{ danger: number; warning: number; safe: number }
+		> = {
 			dust: { danger: 0, warning: 0, safe: 0 },
 			noise: { danger: 0, warning: 0, safe: 0 },
 			vibration: { danger: 0, warning: 0, safe: 0 },
 			total: { danger: 0, warning: 0, safe: 0 },
-		}),
-		[],
-	);
+		};
 
-	const incrementSensorCount = useCallback(
-		(
-			result: Record<
-				Sensor | "total",
-				{ danger: number; warning: number; safe: number }
-			>,
-			sensorKey: Sensor,
-			level: "danger" | "warning" | "safe",
-		) => {
-			result[sensorKey][level]++;
-		},
-		[],
-	);
-
-	const countSubordinateStatus = useCallback(
-		(
-			s: Sensor,
-			result: Record<
-				Sensor | "total",
-				{ danger: number; warning: number; safe: number }
-			>,
-			subordinatesList: typeof subordinates,
-		) => {
-			for (const subordinate of subordinatesList ?? []) {
-				const sensorStatus = subordinate.status[s];
-
-				if (!sensorStatus) {
-					continue;
-				}
-
-				incrementSensorCount(result, s, sensorStatus.level);
-			}
-		},
-		[incrementSensorCount],
-	);
-
-	const countPerDangerLevel = useMemo(() => {
-		const result = initializeResult();
-		for (const s of sensors) {
-			countSubordinateStatus(s, result, subordinates);
+		for (const subordinate of subordinates ?? []) {
+			addSubordinateDangerLevel(result, subordinate);
 		}
+
 		return result;
-	}, [subordinates, initializeResult, countSubordinateStatus]);
+	}, [subordinates, addSubordinateDangerLevel]);
 
 	const total = subordinates?.length ?? 0;
 
@@ -191,7 +189,7 @@ export default function ForemanOverview() {
 				/>
 			)}
 			<div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-				{sensors.map((s) =>
+				{sensors.map((s: Sensor) =>
 					countPerDangerLevel[s].safe !== 0 ||
 					countPerDangerLevel[s].warning !== 0 ||
 					countPerDangerLevel[s].danger !== 0 ? (
