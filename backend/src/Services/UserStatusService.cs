@@ -7,15 +7,21 @@ namespace Backend.Services;
 
 public interface IUserStatusService
 {
-	Task<IEnumerable<UserStatusDto>> GetCurrentStatusForUsers(IEnumerable<Guid> userIds);
+	Task<IEnumerable<UserStatusDto>> GetStatusForUsersInRange(
+		IEnumerable<Guid> userIds,
+		DateTime startTime,
+		DateTime endTime
+	);
 }
 
 public record UserAggRow(Guid UserId, double? Value, double? MaxValue);
 
 public class UserStatusService(AppDbContext _context) : IUserStatusService
 {
-	public async Task<IEnumerable<UserStatusDto>> GetCurrentStatusForUsers(
-		IEnumerable<Guid> userIds
+	public async Task<IEnumerable<UserStatusDto>> GetStatusForUsersInRange(
+		IEnumerable<Guid> userIds,
+		DateTime startTime,
+		DateTime endTime
 	)
 	{
 		var ids = userIds.Distinct().ToArray();
@@ -32,8 +38,8 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 				SELECT "user_id" as "UserId",
 				MAX(max_noise_lcpk) as MaxValue,
 				AVG(avg_noise_laeq) as Value
-				FROM noise_data_daily
-				WHERE bucket = {today}
+				FROM noise_data_minutely
+				WHERE bucket between {startTime} and {endTime}
 				  AND "user_id" = ANY({ids})
 				GROUP BY "user_id"
 				"""
@@ -44,8 +50,8 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 			.Database.SqlQuery<UserAggRow>(
 				$"""
 				SELECT "user_id" as "UserId", MAX(max_dust_Pm1_twa) as Value, null as MaxValue
-				FROM dust_data_daily
-				WHERE bucket = {today}
+				FROM dust_data_minutely
+				WHERE bucket between {startTime} and {endTime}
 				  AND "user_id" = ANY({ids})
 				GROUP BY "user_id"
 				"""
@@ -56,8 +62,8 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 			.Database.SqlQuery<UserAggRow>(
 				$"""
 				SELECT "user_id" as "UserId", SUM(sum_vibration) as Value, null as MaxValue
-				FROM vibration_data_daily
-				WHERE bucket = {today}
+				FROM vibration_data_minutely
+				WHERE bucket between {startTime} and {endTime}
 				  AND "user_id" = ANY({ids})
 				GROUP BY "user_id"
 				"""
@@ -67,8 +73,6 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 		var noiseByUser = noiseRows.ToDictionary(x => x.UserId, x => new { x.Value, x.MaxValue });
 		var dustByUser = dustRows.ToDictionary(x => x.UserId, x => new { x.Value, x.MaxValue });
 		var vibByUser = vibrationRows.ToDictionary(x => x.UserId, x => new { x.Value, x.MaxValue });
-
-		var now = DateTimeOffset.UtcNow;
 
 		var result = new List<UserStatusDto>(ids.Length);
 
@@ -99,7 +103,6 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 					Vibration = vibLevel.HasValue
 						? new UserSensorStatusDto(vibLevel.Value, vibValue ?? 0, null)
 						: null,
-					CalculatedAt = now,
 				}
 			);
 		}

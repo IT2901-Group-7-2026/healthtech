@@ -75,6 +75,9 @@
 	"warning": "Warning",
 	"danger": "Danger",
 
+	"peak": "Peak",
+	"average": "Average",
+
 	"light": "Light",
 	"dark": "Dark",
 	"system": "System",
@@ -82,6 +85,8 @@
 	"dust": "Dust",
 	"vibration": "Vibration",
 	"noise": "Noise",
+
+	"sensorSelectPlaceholder": "Sensor",
 
 	"views": "Views",
 	"day": "Day",
@@ -148,6 +153,10 @@
 					"label": "Within limits"
 				}
 			}
+		},
+		"userStatusChart": {
+			"xAxisLabel": "Percentage of exposure limit",
+			"noData": "No data available"
 		}
 	}
 }

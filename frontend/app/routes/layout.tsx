@@ -18,7 +18,11 @@ import { usePopup } from "@/features/popups/use-popup";
 import { ProfileBadge } from "@/features/profile/profile-badge";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useSensor } from "@/features/sensor-picker/use-sensor";
-import { useUser } from "@/features/user-provider.js";
+import {
+	KARI_NORDMANN_ID,
+	OLA_NORDMANN_ID,
+	useUser,
+} from "@/features/user-context";
 import { useView } from "@/features/views/use-view";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usersQueryOptions } from "@/lib/api";
@@ -125,6 +129,28 @@ export default function Layout() {
 	const { user, setUser } = useUser();
 	const { data: users } = useQuery(usersQueryOptions());
 
+	// Sort Ola and Kari to the top, as they are the main demo users
+	const priorityUserIds: Array<string> = [OLA_NORDMANN_ID, KARI_NORDMANN_ID];
+
+	const sortedUsers = [...(users ?? [])].sort((a, b) => {
+		const aPriority = priorityUserIds.indexOf(a.id);
+		const bPriority = priorityUserIds.indexOf(b.id);
+
+		if (aPriority === -1 && bPriority === -1) {
+			return a.username.localeCompare(b.username);
+		}
+
+		if (aPriority === -1) {
+			return 1;
+		}
+
+		if (bPriority === -1) {
+			return -1;
+		}
+
+		return aPriority - bPriority;
+	});
+
 	const links = getLinks(t, user?.role ?? null);
 
 	return (
@@ -173,17 +199,19 @@ export default function Layout() {
 							}}
 							value={user?.id}
 						>
-							<SelectTrigger className="w-32 bg-background dark:bg-background">
+							<SelectTrigger className="w-48 bg-background dark:bg-background">
 								<SelectValue
 									placeholder={t(
 										($) => $.overview.userSelectPlaceholder,
 									)}
 								/>
 							</SelectTrigger>
-							<SelectContent className="w-32">
-								{users?.map((u) => (
+							<SelectContent className="w-48">
+								{sortedUsers.map((u) => (
 									<SelectItem key={u.id} value={u.id}>
-										{`${u.username} (${u.role})`}
+										{u.role === "operator"
+											? `${u.username}`
+											: `${u.username} (${u.role})`}
 									</SelectItem>
 								))}
 							</SelectContent>

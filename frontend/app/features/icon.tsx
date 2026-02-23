@@ -7,7 +7,7 @@ import noiseIconDark from "/icons/noiseIcon_dark.png";
 import noiseIcon from "/icons/noiseIcon_light.png";
 import vibrationIconDark from "/icons/vibrationIcon_dark.png";
 import vibrationIcon from "/icons/vibrationIcon_light.png";
-import type { Theme } from "./dark-mode/theme-provider";
+import type { Theme } from "./dark-mode/theme-context";
 import { useTheme } from "./dark-mode/use-theme";
 
 export type IconVariant = "dust" | "noise" | "vibration" | "bell";

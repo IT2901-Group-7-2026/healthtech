@@ -5,5 +5,6 @@ public record RawSensorData(
 	double Value,
 	double AvgValue,
 	double MaxValue,
-	double SumValue
+	double SumValue,
+	Guid UserId
 );

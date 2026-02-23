@@ -2,22 +2,31 @@
 
 import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
-import { useUser } from "@/features/user-provider.js";
+import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
 import { createLocationName } from "@/lib/dto";
+import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/ui/select";
 import { MapPinIcon, UsersIcon } from "lucide-react";
+import { useQueryState } from "nuqs";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
 import { PieChartCard } from "./pie-chart-card";
-import { sensors, type Sensor } from "@/lib/sensors";
 
 // biome-ignore lint: page components can be default exports
 export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
+	const [sensor, setSensor] = useQueryState("vibration", parseAsSensor);
 
 	const { user } = useUser();
 
@@ -82,9 +91,33 @@ export default function ForemanOverview() {
 
 	return (
 		<div>
-			<h1 className="p-2 text-3xl">
-				{t(($) => $.foremanDashboard.overview.title)}
-			</h1>
+			<div className="mb-4 flex items-center justify-between">
+				<h1 className="p-2 text-3xl">
+					{t(($) => $.foremanDashboard.overview.title)}
+				</h1>
+				<Select
+					onValueChange={(value) => {
+						if (value === "__none") {
+							setSensor(null);
+						} else {
+							setSensor(value as Sensor);
+						}
+					}}
+					value={sensor ?? undefined}
+				>
+					<SelectTrigger className="w-32 bg-background dark:bg-background">
+						<SelectValue placeholder={t(($) => $.sensorSelectPlaceholder)} />
+					</SelectTrigger>
+					<SelectContent className="w-32">
+						{sensors?.map((s) => (
+							<SelectItem key={s} value={s}>
+								{t(($) => $[s])}
+							</SelectItem>
+						))}
+						<SelectItem value="__none">{"None"}</SelectItem>
+					</SelectContent>
+				</Select>
+			</div>
 
 			<div className="grid w-full gap-6 lg:grid-cols-4">
 				<div className="grid items-stretch gap-4 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
@@ -141,8 +174,16 @@ export default function ForemanOverview() {
 						})}
 					</div>
 				</Card>
-				<AtRiskTable />
+				<AtRiskTable users={subordinates ?? []} />
 			</div>
+			{sensor && (
+				<UserStatusChart
+					users={subordinates ?? []}
+					sensor={sensor}
+					// biome-ignore lint/correctness/noUnusedFunctionParameters: TODO: Filter on user
+					userOnClick={(userId) => {}}
+				/>
+			)}
 			<div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 				{sensors.map((sensor) => {
 					return countPerDangerLevel[sensor].safe &&
