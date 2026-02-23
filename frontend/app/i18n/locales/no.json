@@ -113,6 +113,18 @@
 		"detailText": "Se detaljer",
 		"noWorkers": "Ingen risikosårbare arbeidere"
 	},
+	"dangerCard": {
+		"title": "I fare",
+		"noOperators": "Ingen operatør i fare"
+	},
+	"atRiskCard": {
+		"title": "I faresonen",
+		"noOperators": "Ingen operatør i faresonen"
+	},
+	"withinLimitsCard": {
+		"title": "Innenfor grenser",
+		"noOperators": "Ingen operatør innenfor grensene"
+	},
 	"loadingData": "Laster inn data...",
 	"errorLoadingData": "Noe gikk galt under henting av sensordata.",
 	"noData": "Ingen eksponeringsdata funnet for denne dagen",
@@ -137,15 +149,18 @@
 				"viewDetails": "Se detaljer",
 				"inDanger": {
 					"description": "Operatører som har overskredet grenseverdien",
-					"label": "Over grenseverdi"
+					"label": "Over grenseverdi",
+					"noOperators": "Ingen i fare"
 				},
 				"atRisk": {
 					"description": "Operatører som nærmer seg grenseverdien",
-					"label": "Nær grenseverdi"
+					"label": "Nær grenseverdi",
+					"noOperators": "Ingen i faresonen"
 				},
 				"withinLimits": {
 					"description": "Operatører innenfor trygge grenseverdier",
-					"label": "Innenfor grenseverdi"
+					"label": "Innenfor grenseverdi",
+					"noOperators": "Ingen innenfor grenseverdi"
 				}
 			}
 		}
