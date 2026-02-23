@@ -2,7 +2,7 @@
 
 import { MapPinIcon, UsersIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes.js";
 import { Card } from "@/components/ui/card";
@@ -18,10 +18,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
-import { MapPinIcon, UsersIcon } from "lucide-react";
-import { useQueryState } from "nuqs";
-import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
 import { PieChartCard } from "./pie-chart-card";
@@ -160,7 +156,7 @@ export default function ForemanOverview() {
 								)}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.danger}
+								value={countPerDangerLevel.total.danger}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
@@ -174,7 +170,7 @@ export default function ForemanOverview() {
 								)}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.warning}
+								value={countPerDangerLevel.total.warning}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
@@ -190,7 +186,7 @@ export default function ForemanOverview() {
 								)}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.safe}
+								value={countPerDangerLevel.total.safe}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
@@ -199,53 +195,58 @@ export default function ForemanOverview() {
 
 					<AtRiskTable users={subordinates ?? []} />
 
-					{sensor && (
+					{sensor ? (
 						<UserStatusChart
 							users={subordinates ?? []}
 							sensor={sensor}
 							// biome-ignore lint/correctness/noUnusedFunctionParameters: TODO: Filter on user
 							userOnClick={(userId) => {}}
 						/>
+					) : (
+						<div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+							{sensors.map((s: Sensor) =>
+								countPerDangerLevel[s].safe !== 0 ||
+								countPerDangerLevel[s].warning !== 0 ||
+								countPerDangerLevel[s].danger !== 0 ? (
+									<PieChartCard
+										data={{
+											safe: {
+												name: "Safe",
+												value: countPerDangerLevel[s].safe,
+												label: t(
+													($) =>
+														$.foremanDashboard.overview.statCards.withinLimits
+															.label,
+												),
+											},
+											warning: {
+												name: "Warning",
+												value: countPerDangerLevel[s].warning,
+												label: t(
+													($) =>
+														$.foremanDashboard.overview.statCards.atRisk.label,
+												),
+											},
+											danger: {
+												name: "Danger",
+												value: countPerDangerLevel[s].danger,
+												label: t(
+													($) =>
+														$.foremanDashboard.overview.statCards.inDanger
+															.label,
+												),
+											},
+										}}
+										label={s}
+										viewDetailsText={cardViewDetailsText}
+										to="/"
+										key={s}
+									/>
+								) : null,
+							)}
+						</div>
 					)}
 				</div>
-			</div>
-			<div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-				{sensors.map((s: Sensor) =>
-					countPerDangerLevel[s].safe !== 0 ||
-					countPerDangerLevel[s].warning !== 0 ||
-					countPerDangerLevel[s].danger !== 0 ? (
-						<PieChartCard
-							data={{
-								safe: {
-									name: "Safe",
-									value: countPerDangerLevel[s].safe,
-									label: t(
-										($) =>
-											$.foremanDashboard.overview.statCards.withinLimits.label,
-									),
-								},
-								warning: {
-									name: "Warning",
-									value: countPerDangerLevel[s].warning,
-									label: t(
-										($) => $.foremanDashboard.overview.statCards.atRisk.label,
-									),
-								},
-								danger: {
-									name: "Danger",
-									value: countPerDangerLevel[s].danger,
-									label: t(
-										($) => $.foremanDashboard.overview.statCards.inDanger.label,
-									),
-								},
-							}}
-							label={s}
-							viewDetailsText={cardViewDetailsText}
-							to="/"
-							key={s}
-						/>
-					) : null,
-				)}
 			</div>
 		</div>
 	);
