@@ -5,7 +5,11 @@ import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes";
-import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
+import {
+	ChartLineDefault,
+	ThresholdLine,
+	computeYAxisRange,
+} from "@/components/line-chart";
 import { Summary } from "@/components/summary";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
@@ -64,13 +68,12 @@ export default function Vibration() {
 		}),
 	);
 
+	const { minY, maxY } = computeYAxisRange(makeCumulative(data) ?? []);
+
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex flex-col gap-4 md:w-1/4">
-				<Summary
-					exposureType={"vibration"}
-					data={makeCumulative(data)}
-				/>
+				<Summary exposureType={"vibration"} data={makeCumulative(data)} />
 				<DailyNotes />
 			</div>
 			<div className="flex flex-1 flex-col items-end gap-4">
@@ -85,10 +88,7 @@ export default function Vibration() {
 				) : view === "month" ? (
 					<CalendarWidget
 						selectedDay={date}
-						data={mapSensorDataToMonthLists(
-							data ?? [],
-							"vibration",
-						)}
+						data={mapSensorDataToMonthLists(data ?? [], "vibration")}
 					/>
 				) : view === "week" ? (
 					<WeekWidget
@@ -121,7 +121,8 @@ export default function Vibration() {
 						unit={t(($) => $.points)}
 						startHour={8}
 						endHour={16}
-						maxY={450}
+						maxY={maxY}
+						minY={minY}
 						lineType="monotone"
 					>
 						<ThresholdLine

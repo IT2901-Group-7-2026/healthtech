@@ -36,6 +36,7 @@ export function ChartLineDefault({
 	startHour,
 	endHour,
 	maxY,
+	minY,
 	unit,
 	lineType = "natural",
 	children,
@@ -45,6 +46,7 @@ export function ChartLineDefault({
 	startHour: number;
 	endHour: number;
 	maxY: number;
+	minY: number;
 	unit: string;
 	lineType?: string;
 	children: React.ReactNode;
@@ -113,7 +115,7 @@ export function ChartLineDefault({
 							dataKey="value"
 							tickLine={false}
 							axisLine={false}
-							domain={[0, maxY]}
+							domain={[minY, maxY]}
 							label={{
 								value: unit,
 								position: "inside",
@@ -135,14 +137,8 @@ export function ChartLineDefault({
 								{maxData.dangerLevel === "safe" ? (
 									<>
 										{/* Whole line is green */}
-										<stop
-											offset="0%"
-											stopColor="var(--safe)"
-										/>
-										<stop
-											offset="100%"
-											stopColor="var(--safe)"
-										/>
+										<stop offset="0%" stopColor="var(--safe)" />
+										<stop offset="100%" stopColor="var(--safe)" />
 									</>
 								) : maxData.dangerLevel === "warning" ? (
 									<>
@@ -151,15 +147,9 @@ export function ChartLineDefault({
 											offset={getOffset(warning)}
 											stopColor="var(--warning)"
 										/>
-										<stop
-											offset={getOffset(warning)}
-											stopColor="var(--safe)"
-										/>
+										<stop offset={getOffset(warning)} stopColor="var(--safe)" />
 
-										<stop
-											offset="100%"
-											stopColor="var(--safe)"
-										/>
+										<stop offset="100%" stopColor="var(--safe)" />
 									</>
 								) : (
 									maxData.dangerLevel === "danger" && (
@@ -181,10 +171,7 @@ export function ChartLineDefault({
 												offset={getOffset(warning)}
 												stopColor="var(--safe)"
 											/>
-											<stop
-												offset="100%"
-												stopColor="var(--safe)"
-											/>
+											<stop offset="100%" stopColor="var(--safe)" />
 										</>
 									)
 								)}
@@ -249,4 +236,34 @@ export function ThresholdLine({
 			}}
 		/>
 	);
+}
+
+export function computeYAxisRange(
+	data: Array<SensorDataResponseDto>,
+	options?: {
+		topPadding?: number;
+		bottomPadding?: number;
+		step?: number;
+		clampToZero?: boolean;
+	},
+) {
+	const {
+		topPadding = 5,
+		bottomPadding = 10,
+		step = 10,
+		clampToZero = true,
+	} = options ?? {};
+
+	if (!data || data.length === 0) {
+		return { minY: 0, maxY: step };
+	}
+
+	const max = data.reduce((m, c) => (c.value > m ? c.value : m), data[0].value);
+	const min = data.reduce((m, c) => (c.value < m ? c.value : m), data[0].value);
+
+	const maxY = Math.ceil(max / step) * step + topPadding;
+	const rawMin = Math.floor((min - bottomPadding) / step) * step;
+	const minY = clampToZero ? Math.max(0, rawMin) : rawMin;
+
+	return { minY, maxY };
 }
