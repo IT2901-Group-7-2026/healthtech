@@ -1,3 +1,9 @@
+-- Optional flag to only seed recent data (last month, this month, next month)
+\if :{?RECENT_ONLY}
+\else
+  \set RECENT_ONLY 0
+\endif
+
 -- Makes sure the random values are the same every time we run the script
 SELECT setseed(0.424242);
 
@@ -130,9 +136,10 @@ SELECT
   (0.30 + random() * (1.50 - 0.30)),
   -- Dust
   (0.05 + random() * (0.30 - 0.05)),
+  (0.02 + random() * (0.12 - 0.02)),
   -- Vibration
   (0.60 + random() * (2.20 - 0.60)),
-    (0.10 + random() * (0.80 - 0.10))
+  (0.10 + random() * (0.80 - 0.10))
 
 -- We don't include Kari in the randomization, as she should have the original values from the CSVs
 FROM (VALUES
@@ -148,7 +155,7 @@ FROM (VALUES
 
 -- NOISE DATA
 
-TRUNCATE TABLE "NoiseData" CASCADE RESTART IDENTITY;
+TRUNCATE TABLE "NoiseData" RESTART IDENTITY CASCADE;
 
 -- Create temporary table matching ALL CSV columns
 CREATE TEMP TABLE temp_noise_data (
@@ -170,26 +177,49 @@ CREATE TEMP TABLE temp_noise_data (
 -- Import to temp table
 COPY temp_noise_data FROM '/seed/NoiseData.csv' DELIMITER ',' CSV HEADER;
 
+WITH bounds AS (
+    SELECT max(Time) AS max_t FROM temp_noise_data
+)
 INSERT INTO "NoiseData" ("Id", "Time", "LCPK", "LAEQ", "UserId")
-SELECT gen_random_uuid(), Time, LCPK, LAEQ, :'KARI_ID'
-FROM temp_noise_data;
+SELECT gen_random_uuid(), n.Time, n.LCPK, n.LAEQ, :'KARI_ID'
+FROM temp_noise_data n
+CROSS JOIN bounds b
+WHERE (
+  :'RECENT_ONLY'::int = 0
+  OR (
+    n.Time >= (date_trunc('month', b.max_t) - interval '1 month')
+    AND n.Time <  (date_trunc('month', b.max_t) + interval '2 months')
+  )
+);
 
+WITH bounds AS (
+    SELECT max(Time) AS max_t FROM temp_noise_data
+)
 INSERT INTO "NoiseData" ("Id", "Time", "LCPK", "LAEQ", "UserId")
 SELECT
   gen_random_uuid(),
   n.Time,
-  (n.LCPK * p.mult_noise) + (random() * (2*p.jit_noise) - p.jit_noise),
-  (n.LAEQ * p.mult_noise) + (random() * (2*p.jit_noise) - p.jit_noise),
+  (n.LCPK * p.mult_noise) + (r.j * (2*p.jit_noise) - p.jit_noise),
+  (n.LAEQ * p.mult_noise) + (r.j * (2*p.jit_noise) - p.jit_noise),
   p.user_id
 FROM temp_noise_data n
-CROSS JOIN seed_user_profile p;
+CROSS JOIN seed_user_profile p
+CROSS JOIN bounds b
+CROSS JOIN LATERAL (SELECT random() AS j) r
+WHERE (
+  :'RECENT_ONLY'::int = 0
+  OR (
+    n.Time >= (date_trunc('month', b.max_t) - interval '1 month')
+    AND n.Time <  (date_trunc('month', b.max_t) + interval '2 months')
+  )
+);
 
 DROP TABLE temp_noise_data;
 
 -- VIBRATION DATA
 
 -- Empty the table before seeding
-TRUNCATE TABLE "VibrationData" CASCADE RESTART IDENTITY;
+TRUNCATE TABLE "VibrationData" RESTART IDENTITY CASCADE;
 
 -- Create temporary table matching ALL CSV columns
 CREATE TEMP TABLE temp_vibration_data (
@@ -231,16 +261,30 @@ CREATE TEMP TABLE temp_vibration_data (
 COPY temp_vibration_data FROM '/seed/VibrationData.csv' DELIMITER ',' CSV HEADER;
 
 -- Insert data into VibrationData table with date format conversion
+WITH bounds AS (
+    SELECT max(ConnectedOn) AS max_t FROM temp_vibration_data
+)
 INSERT INTO "VibrationData" ("Id", "ConnectedOn", "Exposure", "DisconnectedOn", "UserId")
 SELECT 
     gen_random_uuid(),
-    ConnectedOn,
-    "Tag Exposure Points",
-    DisconnectedOn,
+  v.ConnectedOn,
+  v."Tag Exposure Points",
+  v.DisconnectedOn,
     :'KARI_ID'
-FROM temp_vibration_data
-WHERE ConnectedOn IS NOT NULL AND DisconnectedOn IS NOT NULL;
+FROM temp_vibration_data v
+CROSS JOIN bounds b
+WHERE v.ConnectedOn IS NOT NULL AND v.DisconnectedOn IS NOT NULL
+AND (
+  :'RECENT_ONLY'::int = 0
+  OR (
+    v.ConnectedOn >= (date_trunc('month', b.max_t) - interval '1 month')
+    AND v.ConnectedOn    <  (date_trunc('month', b.max_t) + interval '2 months')
+  )
+);
 
+WITH bounds AS (
+    SELECT max(ConnectedOn) AS max_t FROM temp_vibration_data
+)
 INSERT INTO "VibrationData" ("Id", "ConnectedOn", "Exposure", "DisconnectedOn", "UserId")
 SELECT
   gen_random_uuid(),
@@ -250,14 +294,22 @@ SELECT
   p.user_id
 FROM temp_vibration_data v
 CROSS JOIN seed_user_profile p
-WHERE v.ConnectedOn IS NOT NULL AND v.DisconnectedOn IS NOT NULL;
+CROSS JOIN bounds b
+WHERE v.ConnectedOn IS NOT NULL AND v.DisconnectedOn IS NOT NULL
+AND (
+  :'RECENT_ONLY'::int = 0
+  OR (
+    v.ConnectedOn >= (date_trunc('month', b.max_t) - interval '1 month')
+    AND v.ConnectedOn    <  (date_trunc('month', b.max_t) + interval '2 months')
+  )
+);
 
 DROP TABLE temp_vibration_data;
 
 -- DUST DATA
 
 -- Empty the table before seeding
-TRUNCATE TABLE "DustData" CASCADE RESTART IDENTITY;
+TRUNCATE TABLE "DustData" RESTART IDENTITY CASCADE;
 
 -- Create temporary table matching ALL CSV columns
 CREATE TEMP TABLE temp_dust_data (
@@ -281,45 +333,63 @@ CREATE TEMP TABLE temp_dust_data (
 -- Import to temp table
 COPY temp_dust_data FROM '/seed/DustData.csv' DELIMITER ',' CSV HEADER;
 
+WITH bounds AS (
+    SELECT max(Timestamp::TIMESTAMP WITH TIME ZONE) AS max_t FROM temp_dust_data
+)
 INSERT INTO "DustData" ("Id", "Time", "PM1S", "PM25S", "PM4S", "PM10S", "PM1T", "PM25T", "PM4T", "PM10T", "UserId")
 SELECT 
     gen_random_uuid(),
-    Timestamp::TIMESTAMP WITH TIME ZONE,
-    "PM 1 STEL",
-    "PM 2.5 STEL",
-    "PM 4.25 STEL",
-    "PM 10.0 STEL",
-    "PM 1 TWA",
-    "PM 2.5 TWA",
-    "PM 4.25 TWA",
-    "PM 10.0 TWA",
+  d.Timestamp::TIMESTAMP WITH TIME ZONE,
+  d."PM 1 STEL",
+  d."PM 2.5 STEL",
+  d."PM 4.25 STEL",
+  d."PM 10.0 STEL",
+  d."PM 1 TWA",
+  d."PM 2.5 TWA",
+  d."PM 4.25 TWA",
+  d."PM 10.0 TWA",
     :'KARI_ID'
-FROM temp_dust_data
-WHERE Timestamp IS NOT NULL;
+FROM temp_dust_data d
+CROSS JOIN bounds b
+WHERE d.Timestamp IS NOT NULL
+AND (
+  :'RECENT_ONLY'::int = 0
+  OR (
+    d.Timestamp::TIMESTAMP WITH TIME ZONE >= (date_trunc('month', b.max_t) - interval '1 month')
+    AND d.Timestamp::TIMESTAMP WITH TIME ZONE <  (date_trunc('month', b.max_t) + interval '2 months')
+  )
+);
 
-
+WITH bounds AS (
+    SELECT max(Timestamp::TIMESTAMP WITH TIME ZONE) AS max_t FROM temp_dust_data
+)
 INSERT INTO "DustData" (
   "Id","Time","PM1S","PM25S","PM4S","PM10S","PM1T","PM25T","PM4T","PM10T","UserId"
 )
 SELECT
   gen_random_uuid(),
   d.Timestamp::timestamptz,
-
-  (d."PM 1 STEL"   * p.mult_dust) + (random() * (2*p.jit_dust) - p.jit_dust),
-  (d."PM 2.5 STEL" * p.mult_dust) + (random() * (2*p.jit_dust) - p.jit_dust),
-  (d."PM 4.25 STEL"* p.mult_dust) + (random() * (2*p.jit_dust) - p.jit_dust),
-  (d."PM 10.0 STEL"* p.mult_dust) + (random() * (2*p.jit_dust) - p.jit_dust),
-
-  (d."PM 1 TWA"    * p.mult_dust) + (random() * (2*p.jit_dust) - p.jit_dust),
-  (d."PM 2.5 TWA"  * p.mult_dust) + (random() * (2*p.jit_dust) - p.jit_dust),
-  (d."PM 4.25 TWA" * p.mult_dust) + (random() * (2*p.jit_dust) - p.jit_dust),
-  (d."PM 10.0 TWA" * p.mult_dust) + (random() * (2*p.jit_dust) - p.jit_dust),
-
+  (d."PM 1 STEL"   * p.mult_dust) + (r.j * (2*p.jit_dust) - p.jit_dust),
+  (d."PM 2.5 STEL" * p.mult_dust) + (r.j * (2*p.jit_dust) - p.jit_dust),
+  (d."PM 4.25 STEL"* p.mult_dust) + (r.j * (2*p.jit_dust) - p.jit_dust),
+  (d."PM 10.0 STEL"* p.mult_dust) + (r.j * (2*p.jit_dust) - p.jit_dust),
+  (d."PM 1 TWA"    * p.mult_dust) + (r.j * (2*p.jit_dust) - p.jit_dust),
+  (d."PM 2.5 TWA"  * p.mult_dust) + (r.j * (2*p.jit_dust) - p.jit_dust),
+  (d."PM 4.25 TWA" * p.mult_dust) + (r.j * (2*p.jit_dust) - p.jit_dust),
+  (d."PM 10.0 TWA" * p.mult_dust) + (r.j * (2*p.jit_dust) - p.jit_dust),
   p.user_id
 FROM temp_dust_data d
 CROSS JOIN seed_user_profile p
-WHERE d.Timestamp IS NOT NULL;
-
+CROSS JOIN LATERAL (SELECT random() AS j) r
+CROSS JOIN bounds b
+WHERE d.Timestamp IS NOT NULL
+AND (
+  :'RECENT_ONLY'::int = 0
+  OR (
+    d.Timestamp::TIMESTAMP WITH TIME ZONE >= (date_trunc('month', b.max_t) - interval '1 month')
+    AND d.Timestamp::TIMESTAMP WITH TIME ZONE <  (date_trunc('month', b.max_t) + interval '2 months')
+  )
+);
 
 DROP TABLE temp_dust_data;
 
