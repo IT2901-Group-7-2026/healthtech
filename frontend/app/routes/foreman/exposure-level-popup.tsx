@@ -1,12 +1,12 @@
-import { t } from "i18next";
-import { ArrowRightIcon } from "lucide-react";
-import { Link } from "react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BasePopup } from "@/features/popups/base-popup";
 import { useUser } from "@/features/user/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
 import { type DangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
+import { t } from "i18next";
+import { ArrowRightIcon } from "lucide-react";
+import { Link } from "react-router";
 
 export function AtRiskPopup({
 	status,

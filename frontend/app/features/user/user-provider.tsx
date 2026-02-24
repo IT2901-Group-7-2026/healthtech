@@ -1,5 +1,5 @@
-import { type ReactNode, useEffect, useState } from "react";
 import type { User } from "@/lib/dto.js";
+import { type ReactNode, useEffect, useState } from "react";
 import { KARI_NORDMANN_ID, UserContext } from "./user-context";
 
 const STORAGE_KEY = "demo_user_id" as const;

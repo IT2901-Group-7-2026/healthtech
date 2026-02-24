@@ -16,7 +16,7 @@ import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
-import { makeCumulative } from "@/lib/utils";
+import { computeYAxisRange, makeCumulative } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useQueryState } from "nuqs";
@@ -67,6 +67,8 @@ export default function Vibration() {
 			userId: user.id,
 		}),
 	);
+
+	const { minY, maxY } = computeYAxisRange(makeCumulative(data) ?? []);
 
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
@@ -125,7 +127,8 @@ export default function Vibration() {
 						unit={t(($) => $.points)}
 						startHour={8}
 						endHour={16}
-						maxY={450}
+						maxY={maxY}
+						minY={minY}
 						lineType="monotone"
 						sensor={sensor}
 					>

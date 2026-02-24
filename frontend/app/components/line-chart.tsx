@@ -37,6 +37,7 @@ interface LineChartProps {
 	startHour: number;
 	endHour: number;
 	maxY: number;
+	minY: number;
 	unit: string;
 	lineType?: string;
 	children: React.ReactNode;
@@ -49,6 +50,7 @@ export function ChartLineDefault({
 	startHour,
 	endHour,
 	maxY,
+	minY,
 	unit,
 	lineType = "natural",
 	children,
@@ -117,7 +119,7 @@ export function ChartLineDefault({
 							dataKey="value"
 							tickLine={false}
 							axisLine={false}
-							domain={[0, maxY]}
+							domain={[minY, maxY]}
 							label={{
 								value: unit,
 								position: "inside",

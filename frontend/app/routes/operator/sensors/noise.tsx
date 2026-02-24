@@ -16,6 +16,7 @@ import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
+import { computeYAxisRange } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -62,6 +63,9 @@ export default function Noise() {
 			userId: user.id,
 		}),
 	);
+
+	// Tighten vertical padding for noise charts so graph fills more of the card
+	const { minY, maxY } = computeYAxisRange(data ?? []);
 
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
@@ -116,7 +120,8 @@ export default function Noise() {
 						unit="db (TWA)"
 						startHour={8}
 						endHour={16}
-						maxY={150}
+						maxY={maxY}
+						minY={minY}
 						lineType="monotone"
 						sensor={sensor}
 					>
