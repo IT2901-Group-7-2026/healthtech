@@ -1,13 +1,11 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { MapPinIcon, UsersIcon } from "lucide-react";
-import { useQueryState } from "nuqs";
-import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes.js";
 import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
+import type { DangerLevel } from "@/lib/danger-levels";
 import { createLocationName } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
 import {
@@ -17,10 +15,12 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
+import { MapPinIcon, UsersIcon } from "lucide-react";
+import { useQueryState } from "nuqs";
 import { useMemo, useState } from "react";
-import { StatCard } from "./stat-card";
+import { useTranslation } from "react-i18next";
 import { AtRiskPopup } from "./exposure-level-popup";
-import type { DangerLevel } from "@/lib/danger-levels";
+import { StatCard } from "./stat-card";
 
 // biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function ForemanOverview() {
@@ -29,20 +29,20 @@ export default function ForemanOverview() {
 
 	const { user } = useUser();
 
-	const [selectedStatus, setSelectedStatus] =
-  useState<DangerLevel | null>(null);
+	const [selectedStatus, setSelectedStatus] = useState<DangerLevel | null>(
+		null,
+	);
 
-	const [popupStatus, setPopupStatus] =
-  useState<DangerLevel | null>(null);
+	const [popupStatus, setPopupStatus] = useState<DangerLevel | null>(null);
 
-  const openForStatus = (status: DangerLevel) => {
-  setPopupStatus(status);
-  setSelectedStatus(status);
-};
+	const openForStatus = (status: DangerLevel) => {
+		setPopupStatus(status);
+		setSelectedStatus(status);
+	};
 
-const closePopup = () => {
-  setSelectedStatus(null);
-};
+	const closePopup = () => {
+		setSelectedStatus(null);
+	};
 
 	const { data: subordinates } = useSubordinatesQuery(user.id);
 
@@ -182,7 +182,6 @@ const closePopup = () => {
 							/>
 						</div>
 					</div>
-
 				</div>
 
 				<AtRiskPopup

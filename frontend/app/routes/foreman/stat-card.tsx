@@ -23,42 +23,36 @@ export const StatCard = ({
 	description,
 	totalText,
 	viewDetailsText,
-	onClick
-}: StatCardProps) => {
+	onClick,
+}: StatCardProps) => (
+	<button type="button" onClick={onClick} className="w-full text-left">
+		<Card
+			className={cn(
+				"group flex h-full flex-col justify-between gap-2 border border-white/10 bg-white/5 p-4 transition-colors hover:ring-1",
+				"hover:border-zinc-300 hover:shadow-md hover:shadow-zinc-200/60 hover:ring-zinc-200 active:bg-zinc-50 active:shadow-sm",
+				"dark:active:bg-white/15 dark:hover:border-white/60 dark:hover:bg-white/10 dark:hover:ring-zinc-400",
+				className,
+			)}
+		>
+			<div className="flex items-center justify-between gap-2">
+				<h2 className="text-xs uppercase tracking-widest dark:text-zinc-400">
+					{label}
+				</h2>
 
-	return (
-		<div onClick={() => {
-        onClick?.();
-      }}>
-			<Card
-				className={cn(
-					"group flex h-full flex-col justify-between gap-2 border border-white/10 bg-white/5 p-4 transition-colors hover:ring-1",
-					"hover:border-zinc-300 hover:shadow-md hover:shadow-zinc-200/60 hover:ring-zinc-200 active:bg-zinc-50 active:shadow-sm",
-					"dark:active:bg-white/15 dark:hover:border-white/60 dark:hover:bg-white/10 dark:hover:ring-zinc-400",
-					className,
-				)}
-			>
-				<div className="flex items-center justify-between gap-2">
-					<h2 className="text-xs uppercase tracking-widest dark:text-zinc-400">
-						{label}
-					</h2>
+				<Badge variant="outline" className="rounded-lg">
+					{totalValue} {totalText}
+				</Badge>
+			</div>
 
-					<Badge variant="outline" className="rounded-lg">
-						{totalValue} {totalText}
-					</Badge>
-				</div>
+			<p className="w-fit font-bold text-3xl leading-tight">{value}</p>
 
-				<p className="w-fit font-bold text-3xl leading-tight">{value}</p>
-
-				<p className="text-xs text-zinc-500 dark:text-zinc-400">
-					{description}
-				</p>
-				<div className="mt-1 flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300">
-					<p>{viewDetailsText}</p>
-					<ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-				</div>
-			</Card>
-		</div>
-	
-	);
-}
+			<p className="text-xs text-zinc-500 dark:text-zinc-400">
+				{description}
+			</p>
+			<div className="mt-1 flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300">
+				<p>{viewDetailsText}</p>
+				<ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+			</div>
+		</Card>
+	</button>
+);
