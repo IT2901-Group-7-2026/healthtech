@@ -66,10 +66,7 @@ export default function Dust() {
 		}),
 	);
 
-	const { minY, maxY } = computeYAxisRange(data ?? [], {
-		topPadding: 0,
-		bottomPadding: 0,
-	});
+	const { minY, maxY } = computeYAxisRange(data ?? []);
 
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
