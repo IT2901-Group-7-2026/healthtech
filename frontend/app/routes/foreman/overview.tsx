@@ -1,15 +1,12 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { MapPinIcon, UsersIcon } from "lucide-react";
-import { useQueryState } from "nuqs";
-import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes.js";
 import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
-import { createLocationName } from "@/lib/dto.js";
+import type { DangerLevel } from "@/lib/danger-levels";
+import { createLocationName, type UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
 import {
 	Select,
@@ -18,6 +15,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
+import { MapPinIcon, UsersIcon } from "lucide-react";
+import { useQueryState } from "nuqs";
+import { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { PieChartCard } from "./pie-chart-card";
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
 import { ExposureRiskCard } from "@/components/exposure-level-card";
@@ -30,24 +32,40 @@ export default function ForemanOverview() {
 	const { user } = useUser();
 
 	const { data: subordinates } = useSubordinatesQuery(user.id);
+	const addSubordinateDangerLevel = useCallback(
+		(
+			result: Record<Sensor | "total", Record<DangerLevel, number>>,
+			subordinate: UserWithStatusDto,
+		) => {
+			result.total[subordinate.status.status]++;
+
+			for (const sensorType of sensors) {
+				const level = subordinate.status[sensorType]?.level;
+
+				// Missing sensor data is treated as safe
+				result[sensorType][level ?? "safe"]++;
+			}
+		},
+		[],
+	);
 
 	const countPerDangerLevel = useMemo(() => {
-		let danger = 0;
-		let warning = 0;
-		let safe = 0;
+		const result: Record<
+			Sensor | "total",
+			{ danger: number; warning: number; safe: number }
+		> = {
+			dust: { danger: 0, warning: 0, safe: 0 },
+			noise: { danger: 0, warning: 0, safe: 0 },
+			vibration: { danger: 0, warning: 0, safe: 0 },
+			total: { danger: 0, warning: 0, safe: 0 },
+		};
 
-		for (const s of subordinates ?? []) {
-			if (s.status.status === "danger") {
-				danger++;
-			} else if (s.status.status === "warning") {
-				warning++;
-			} else {
-				safe++;
-			}
+		for (const subordinate of subordinates ?? []) {
+			addSubordinateDangerLevel(result, subordinate);
 		}
 
-		return { danger, warning, safe };
-	}, [subordinates]);
+		return result;
+	}, [subordinates, addSubordinateDangerLevel]);
 
 	const total = subordinates?.length ?? 0;
 
@@ -125,7 +143,7 @@ export default function ForemanOverview() {
 								)}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.danger}
+								value={countPerDangerLevel.total.danger}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
@@ -142,7 +160,7 @@ export default function ForemanOverview() {
 								)}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.warning}
+								value={countPerDangerLevel.total.warning}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
@@ -159,7 +177,7 @@ export default function ForemanOverview() {
 								)}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.safe}
+								value={countPerDangerLevel.total.safe}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
@@ -184,13 +202,63 @@ export default function ForemanOverview() {
 
 					<AtRiskTable users={subordinates ?? []} />
 
-					{sensor && (
+					{sensor ? (
 						<UserStatusChart
 							users={subordinates ?? []}
 							sensor={sensor}
 							// biome-ignore lint/correctness/noUnusedFunctionParameters: TODO: Filter on user
 							userOnClick={(userId) => {}}
 						/>
+					) : (
+						<div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+							{sensors.map((s: Sensor) =>
+								countPerDangerLevel[s].safe !== 0 ||
+								countPerDangerLevel[s].warning !== 0 ||
+								countPerDangerLevel[s].danger !== 0 ? (
+									<PieChartCard
+										data={{
+											safe: {
+												name: "Safe",
+												value: countPerDangerLevel[s]
+													.safe,
+												label: t(
+													($) =>
+														$.foremanDashboard
+															.overview.statCards
+															.withinLimits.label,
+												),
+											},
+											warning: {
+												name: "Warning",
+												value: countPerDangerLevel[s]
+													.warning,
+												label: t(
+													($) =>
+														$.foremanDashboard
+															.overview.statCards
+															.atRisk.label,
+												),
+											},
+											danger: {
+												name: "Danger",
+												value: countPerDangerLevel[s]
+													.danger,
+												label: t(
+													($) =>
+														$.foremanDashboard
+															.overview.statCards
+															.inDanger.label,
+												),
+											},
+										}}
+										label={s}
+										viewDetailsText={cardViewDetailsText}
+										to="/"
+										key={s}
+									/>
+								) : null,
+							)}
+						</div>
 					)}
 				</div>
 			</div>
