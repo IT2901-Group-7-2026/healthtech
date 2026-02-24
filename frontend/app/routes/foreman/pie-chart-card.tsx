@@ -45,30 +45,32 @@ export const PieChartCard = ({
 			<h2 className="text-xs uppercase tracking-widest dark:text-zinc-400">
 				{label}
 			</h2>
-			<div className="flex flex-col gap-2 text-xs">
-				{DangerLevelSchema.options
-					.sort((a, b) => DANGER_LEVEL_SEVERITY[b] - DANGER_LEVEL_SEVERITY[a])
-					.map((level) => {
-						return (
-							<div
-								className="grid grid-cols-[auto_1fr_auto] items-center gap-2"
-								key={level}
-							>
+			<div className="flex flex-row gap-2 items-center">
+				<div className="flex flex-col gap-2 text-xs w-1/2">
+					{DangerLevelSchema.options
+						.sort((a, b) => DANGER_LEVEL_SEVERITY[b] - DANGER_LEVEL_SEVERITY[a])
+						.map((level) => {
+							return (
 								<div
-									className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(level)}`}
-								/>
-								<p className="dark:text-zinc-400">{data[level].label}</p>{" "}
-								<p>{data[level].value}</p>
-							</div>
-						);
-					})}
-			</div>
+									className="grid grid-cols-[auto_1fr_auto] items-center gap-2"
+									key={level}
+								>
+									<div
+										className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(level)}`}
+									/>
+									<p className="dark:text-zinc-400">{data[level].label}</p>{" "}
+									<p>{data[level].value}</p>
+								</div>
+							);
+						})}
+				</div>
 
-			<UserStatusPieChart
-				safe={data.safe}
-				warning={data.warning}
-				danger={data.danger}
-			/>
+				<UserStatusPieChart
+					safe={data.safe}
+					warning={data.warning}
+					danger={data.danger}
+				/>
+			</div>
 			<div className="mt-1 flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300">
 				<p>{viewDetailsText}</p>
 				<ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
