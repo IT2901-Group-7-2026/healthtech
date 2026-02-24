@@ -19,11 +19,11 @@ import { MapPinIcon, UsersIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { ActionCard } from "./action-card";
 import { AtRiskPopup } from "./exposure-level-popup";
 import { PieChartCard } from "./pie-chart-card";
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
-import { ActionCard } from "./action-card";
 
 // biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function ForemanOverview() {
@@ -108,7 +108,9 @@ export default function ForemanOverview() {
 					value={sensor ?? undefined}
 				>
 					<SelectTrigger className="w-32 bg-background dark:bg-background">
-						<SelectValue placeholder={t(($) => $.sensorSelectPlaceholder)} />
+						<SelectValue
+							placeholder={t(($) => $.sensorSelectPlaceholder)}
+						/>
 					</SelectTrigger>
 					<SelectContent className="w-32">
 						{sensors?.map((s) => (
@@ -141,17 +143,19 @@ export default function ForemanOverview() {
 				</div>
 
 				<div className="flex grow flex-col gap-4">
-					{/*TODO: Implement real data*/}
-					<ActionCard dangerLevel={"danger"} />
+					<ActionCard dangerLevel="danger" />
 					<div className="grid gap-6 lg:grid-cols-3">
 						<div className="grid items-stretch gap-4 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.inDanger.description,
+										$.foremanDashboard.overview.statCards
+											.inDanger.description,
 								)}
 								label={t(
-									($) => $.foremanDashboard.overview.statCards.inDanger.label,
+									($) =>
+										$.foremanDashboard.overview.statCards
+											.inDanger.label,
 								)}
 								onClick={() => openForStatus("danger")}
 								to="/"
@@ -163,10 +167,13 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.atRisk.description,
+										$.foremanDashboard.overview.statCards
+											.atRisk.description,
 								)}
 								label={t(
-									($) => $.foremanDashboard.overview.statCards.atRisk.label,
+									($) =>
+										$.foremanDashboard.overview.statCards
+											.atRisk.label,
 								)}
 								onClick={() => openForStatus("warning")}
 								to="/"
@@ -178,12 +185,13 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.withinLimits
-											.description,
+										$.foremanDashboard.overview.statCards
+											.withinLimits.description,
 								)}
 								label={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.withinLimits.label,
+										$.foremanDashboard.overview.statCards
+											.withinLimits.label,
 								)}
 								onClick={() => openForStatus("safe")}
 								to="/"
@@ -213,28 +221,35 @@ export default function ForemanOverview() {
 										data={{
 											safe: {
 												name: "Safe",
-												value: countPerDangerLevel[s].safe,
+												value: countPerDangerLevel[s]
+													.safe,
 												label: t(
 													($) =>
-														$.foremanDashboard.overview.statCards.withinLimits
-															.label,
+														$.foremanDashboard
+															.overview.statCards
+															.withinLimits.label,
 												),
 											},
 											warning: {
 												name: "Warning",
-												value: countPerDangerLevel[s].warning,
+												value: countPerDangerLevel[s]
+													.warning,
 												label: t(
 													($) =>
-														$.foremanDashboard.overview.statCards.atRisk.label,
+														$.foremanDashboard
+															.overview.statCards
+															.atRisk.label,
 												),
 											},
 											danger: {
 												name: "Danger",
-												value: countPerDangerLevel[s].danger,
+												value: countPerDangerLevel[s]
+													.danger,
 												label: t(
 													($) =>
-														$.foremanDashboard.overview.statCards.inDanger
-															.label,
+														$.foremanDashboard
+															.overview.statCards
+															.inDanger.label,
 												),
 											},
 										}}

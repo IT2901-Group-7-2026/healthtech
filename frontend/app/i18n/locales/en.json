@@ -160,6 +160,11 @@
         }
       }
     },
+    "actionCard": {
+      "safe": "All good!",
+      "warning": "Action suggested",
+      "danger": "You need to do an action!"
+    },
     "userStatusChart": {
       "xAxisLabel": "Percentage of exposure limit",
       "noData": "No data available"
