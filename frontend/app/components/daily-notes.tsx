@@ -1,14 +1,14 @@
 /** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: <I prefer this over sending functions as props> */
 
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { isSameDay, isSameMonth, isSameWeek } from "date-fns";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDate } from "@/features/date-picker/use-date";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { createNote, notesQueryOptions, updateNote } from "@/lib/api";
 import type { Note } from "@/lib/dto";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { isSameDay, isSameMonth, isSameWeek } from "date-fns";
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Textarea } from "./ui/textarea";
@@ -70,8 +70,7 @@ export const DailyNotes = ({
 
 	useEffect(() => {
 		if (data) {
-			const foundNote =
-				data.find((note) => isSameDay(note.time, date)) ?? null;
+			const foundNote = data.find((note) => isSameDay(note.time, date)) ?? null;
 			setTodayNote(foundNote);
 			setShowTextArea(!foundNote);
 		}
@@ -97,9 +96,7 @@ export const DailyNotes = ({
 		return (
 			<Card className="max-h-96 w-full overflow-y-auto">
 				<CardHeader>
-					<h2 className="text-xl">
-						{t(($) => $.daily_notes.dayTitle)}
-					</h2>
+					<h2 className="text-xl">{t(($) => $.daily_notes.dayTitle)}</h2>
 					<p>
 						{t(($) => $.daily_notes.daySubtitle, {
 							day: date.toLocaleDateString(locale, {
@@ -122,12 +119,7 @@ export const DailyNotes = ({
 							}
 						/>
 					) : (
-						<p>
-							{
-								data?.find((note) => isSameDay(note.time, date))
-									?.note
-							}
-						</p>
+						<p>{data?.find((note) => isSameDay(note.time, date))?.note}</p>
 					)}
 				</CardContent>
 				<CardFooter className="justify-end gap-2">
@@ -161,21 +153,14 @@ export const DailyNotes = ({
 											weekStartsOn: 1,
 										}),
 									)
-									.sort(
-										(n1, n2) =>
-											n1.time.getTime() -
-											n2.time.getTime(),
-									)
+									.sort((n1, n2) => n1.time.getTime() - n2.time.getTime())
 									.map((note) => (
 										<li key={note.time.toDateString()}>
 											<strong>
-												{note.time.toLocaleDateString(
-													locale,
-													{
-														day: "numeric",
-														month: "long",
-													},
-												)}
+												{note.time.toLocaleDateString(locale, {
+													day: "numeric",
+													month: "long",
+												})}
 												{": "}
 											</strong>
 											{note.note}
@@ -203,20 +188,14 @@ export const DailyNotes = ({
 					{data
 						? data
 								.filter((note) => isSameMonth(date, note.time))
-								.sort(
-									(n1, n2) =>
-										n1.time.getTime() - n2.time.getTime(),
-								)
+								.sort((n1, n2) => n1.time.getTime() - n2.time.getTime())
 								.map((note) => (
 									<li key={note.time.getTime()}>
 										<strong>
-											{note.time.toLocaleDateString(
-												locale,
-												{
-													day: "numeric",
-													month: "long",
-												},
-											)}
+											{note.time.toLocaleDateString(locale, {
+												day: "numeric",
+												month: "long",
+											})}
 											{": "}
 										</strong>
 										{note.note}

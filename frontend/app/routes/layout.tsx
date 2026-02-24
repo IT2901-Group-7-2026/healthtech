@@ -1,3 +1,15 @@
+import { useQuery } from "@tanstack/react-query";
+import { Bell, House, type LucideIcon, User as UserIcon } from "lucide-react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+	href,
+	NavLink,
+	Outlet,
+	type To,
+	useLocation,
+	useNavigate,
+} from "react-router";
 import { Button } from "@/components/ui/button";
 import {
 	Drawer,
@@ -30,19 +42,6 @@ import type { TranslateFn } from "@/i18n/config.js";
 import { usersQueryOptions } from "@/lib/api";
 import type { User } from "@/lib/dto.js";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import type { LucideIcon } from "lucide-react";
-import { Bell, House, User as UserIcon } from "lucide-react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import {
-	href,
-	NavLink,
-	Outlet,
-	type To,
-	useLocation,
-	useNavigate,
-} from "react-router";
 
 const Logo = () => (
 	<svg
@@ -72,9 +71,7 @@ function HomeLink() {
 			<div className="text-2xl">
 				<Logo />
 			</div>
-			<span className="hidden text-xl sm:inline-block">
-				{"HealthTech"}
-			</span>
+			<span className="hidden text-xl sm:inline-block">{"HealthTech"}</span>
 		</NavLink>
 	);
 }
@@ -224,11 +221,7 @@ export default function Layout() {
 
 						<ThemeSwitch />
 
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={openNotificationPopup}
-						>
+						<Button variant="ghost" size="icon" onClick={openNotificationPopup}>
 							<Bell className="size-[1.2rem]" />
 						</Button>
 
@@ -361,11 +354,7 @@ function MobileMenu({
 					{route.label}
 					{i > 0 && (
 						<Icon
-							variant={
-								route.to
-									.toString()
-									.replace("/", "") as IconVariant
-							}
+							variant={route.to.toString().replace("/", "") as IconVariant}
 							size="medium"
 							className="ml-2"
 						/>
@@ -396,11 +385,7 @@ function MobileMenu({
 											<span className="text-lg text-primary">
 												{t(($) => $.notifications)}
 											</span>
-											<Icon
-												variant="bell"
-												size="small"
-												className="ml-2"
-											/>
+											<Icon variant="bell" size="small" className="ml-2" />
 										</button>
 									</DrawerClose>
 								</li>
