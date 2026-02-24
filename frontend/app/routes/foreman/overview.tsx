@@ -29,10 +29,7 @@ export default function ForemanOverview() {
 
 	const { user } = useUser();
 
-	const { data: subordinates } = useSubordinatesQuery(
-		user.id,
-		new Date(1, 1, 2025),
-	);
+	const { data: subordinates } = useSubordinatesQuery(user.id);
 
 	type Subordinate = NonNullable<
 		ReturnType<typeof useSubordinatesQuery>["data"]
