@@ -1,16 +1,4 @@
 "use client";
-import { useId } from "react";
-import { useTranslation } from "react-i18next";
-import {
-	type ActiveDotProps,
-	CartesianGrid,
-	Line,
-	LineChart,
-	ReferenceLine,
-	XAxis,
-	YAxis,
-} from "recharts";
-import type { CurveType } from "recharts/types/shape/Curve";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
 	type ChartConfig,
@@ -23,6 +11,18 @@ import { useSensor } from "@/features/sensor-picker/use-sensor";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto } from "@/lib/dto";
 import { thresholds } from "@/lib/thresholds";
+import { useId } from "react";
+import { useTranslation } from "react-i18next";
+import {
+	type ActiveDotProps,
+	CartesianGrid,
+	Line,
+	LineChart,
+	ReferenceLine,
+	XAxis,
+	YAxis,
+} from "recharts";
+import type { CurveType } from "recharts/types/shape/Curve";
 
 const chartConfig = {
 	desktop: {
