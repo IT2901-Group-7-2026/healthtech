@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BasePopup } from "@/features/popups/base-popup";
-import { useUser } from "@/features/user-provider";
+import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
 import {
   DANGER_LEVEL_SEVERITY,

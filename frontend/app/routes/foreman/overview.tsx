@@ -2,7 +2,6 @@
 
 import { MapPinIcon, UsersIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
-import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes.js";
 import { Card } from "@/components/ui/card";
@@ -18,14 +17,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
-import { MapPinIcon, UsersIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
+import { useMemo, useState } from "react";
 import { StatCard } from "./stat-card";
-import { AtRiskTable } from "./workers-at-risk-table";
-import { AtRiskTable } from "./workers-at-risk-table";
-import { usePopup } from "@/features/popups/use-popup";
 import { AtRiskPopup } from "./exposure-level-popup";
 import type { DangerLevel } from "@/lib/danger-levels";
 
@@ -35,13 +28,6 @@ export default function ForemanOverview() {
 	const [sensor, setSensor] = useQueryState("vibration", parseAsSensor);
 
 	const { user } = useUser();
-
-	useEffect(() => {
-		if (user.role !== "foreman") {
-			navigate("/");
-			return;
-		}
-	}, [user, navigate]);
 
 	const [selectedStatus, setSelectedStatus] =
   useState<DangerLevel | null>(null);
@@ -169,7 +155,7 @@ const closePopup = () => {
 										$.foremanDashboard.overview.statCards
 											.atRisk.label,
 								)}
-								onClick={() => openForStatus("danger")}
+								onClick={() => openForStatus("warning")}
 								to="/"
 								totalValue={total}
 								value={countPerDangerLevel.warning}
@@ -187,7 +173,7 @@ const closePopup = () => {
 										$.foremanDashboard.overview.statCards
 											.withinLimits.label,
 								)}
-								onClick={() => openForStatus("danger")}
+								onClick={() => openForStatus("safe")}
 								to="/"
 								totalValue={total}
 								value={countPerDangerLevel.safe}
@@ -197,18 +183,8 @@ const closePopup = () => {
 						</div>
 					</div>
 
-					<AtRiskTable users={subordinates ?? []} />
-
-					{sensor && (
-						<UserStatusChart
-							users={subordinates ?? []}
-							sensor={sensor}
-							// biome-ignore lint/correctness/noUnusedFunctionParameters: TODO: Filter on user
-							userOnClick={(userId) => {}}
-						/>
-					)}
 				</div>
-				<AtRiskTable />
+
 				<AtRiskPopup
 					open={selectedStatus !== null}
 					onClose={closePopup}
