@@ -219,7 +219,7 @@ export default function ForemanOverview() {
 								dangerLevel={"safe"}/>)}
 						</div>
 					</div>
-					<AtRiskTable users={subordinates ?? []} />
+					{/* <AtRiskTable users={subordinates ?? []} /> */}
 
 					{sensor ? (
 						<UserStatusChart
