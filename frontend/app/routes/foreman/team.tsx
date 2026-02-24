@@ -1,5 +1,3 @@
-import type { ColumnDef } from "@tanstack/react-table";
-import { useTranslation } from "react-i18next";
 import { DataTable } from "@/components/ui/data-table";
 import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
@@ -8,6 +6,8 @@ import {
 	mapDangerLevelToLabel,
 } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
+import type { ColumnDef } from "@tanstack/react-table";
+import { useTranslation } from "react-i18next";
 
 // biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function TeamPage() {

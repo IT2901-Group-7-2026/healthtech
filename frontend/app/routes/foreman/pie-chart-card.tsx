@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import {
-	UserStatusPieChart,
 	type UserStatusData,
+	UserStatusPieChart,
 } from "@/components/users-status-pie-chart";
 import {
 	DANGER_LEVEL_SEVERITY,
@@ -45,24 +45,28 @@ export const PieChartCard = ({
 			<h2 className="text-xs uppercase tracking-widest dark:text-zinc-400">
 				{label}
 			</h2>
-			<div className="flex flex-row gap-2 items-center">
-				<div className="flex flex-col gap-2 text-xs w-1/2">
+			<div className="flex flex-row items-center gap-2">
+				<div className="flex w-1/2 flex-col gap-2 text-xs">
 					{DangerLevelSchema.options
-						.sort((a, b) => DANGER_LEVEL_SEVERITY[b] - DANGER_LEVEL_SEVERITY[a])
-						.map((level) => {
-							return (
+						.sort(
+							(a, b) =>
+								DANGER_LEVEL_SEVERITY[b] -
+								DANGER_LEVEL_SEVERITY[a],
+						)
+						.map((level) => (
+							<div
+								className="grid grid-cols-[auto_1fr_auto] items-center gap-2"
+								key={level}
+							>
 								<div
-									className="grid grid-cols-[auto_1fr_auto] items-center gap-2"
-									key={level}
-								>
-									<div
-										className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(level)}`}
-									/>
-									<p className="dark:text-zinc-400">{data[level].label}</p>{" "}
-									<p>{data[level].value}</p>
-								</div>
-							);
-						})}
+									className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(level)}`}
+								/>
+								<p className="dark:text-zinc-400">
+									{data[level].label}
+								</p>{" "}
+								<p>{data[level].value}</p>
+							</div>
+						))}
 				</div>
 
 				<UserStatusPieChart
