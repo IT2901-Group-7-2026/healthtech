@@ -9,7 +9,6 @@ import type { UserWithStatusDto } from "@/lib/dto";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useTranslation } from "react-i18next";
 
-// biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function TeamPage() {
 	const { t } = useTranslation();
 	const { user } = useUser();

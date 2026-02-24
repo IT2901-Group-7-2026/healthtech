@@ -78,7 +78,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 const queryClient = new QueryClient();
 
-// biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function App() {
 	return (
 		<QueryClientProvider client={queryClient}>

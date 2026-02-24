@@ -22,7 +22,6 @@ import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
 
-// biome-ignore lint/style/noDefaultExport: react router needs default export
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function Vibration() {
 	const [view] = useQueryState("view", parseAsView.withDefault("day"));

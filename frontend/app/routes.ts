@@ -1,7 +1,6 @@
 import type { RouteConfig } from "@react-router/dev/routes";
 import { index, layout, route } from "@react-router/dev/routes";
 
-// biome-ignore lint/style/noDefaultExport: react router needs default export
 export default [
 	layout("routes/layout.tsx", [
 		index("routes/landing.tsx"),

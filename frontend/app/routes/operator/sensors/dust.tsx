@@ -21,7 +21,6 @@ import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useTranslation } from "react-i18next";
 
-// biome-ignore lint/style/noDefaultExport: react router needs default export
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function Dust() {
 	const { view } = useView();
