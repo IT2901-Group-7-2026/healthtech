@@ -169,5 +169,14 @@
       "xAxisLabel": "Percentage of exposure limit",
       "noData": "No data available"
     }
+  },
+  "user": {
+    "role": {
+      "operator": "Operator",
+      "foreman": "Foreman"
+    }
+  },
+  "demo": {
+    "currentRole": "Current role:"
   }
 }

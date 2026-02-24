@@ -3,7 +3,7 @@
 import { DailyNotes } from "@/components/daily-notes.js";
 import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
-import { useUser } from "@/features/user-context";
+import { useUser } from "@/features/user/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
 import type { DangerLevel } from "@/lib/danger-levels";
 import { createLocationName, type UserWithStatusDto } from "@/lib/dto.js";

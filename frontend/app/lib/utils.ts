@@ -1,4 +1,3 @@
-import type { View } from "@/features/views/views";
 import { type ClassValue, clsx } from "clsx";
 import {
 	addDays,
@@ -10,7 +9,9 @@ import {
 	subWeeks,
 } from "date-fns";
 import { twMerge } from "tailwind-merge";
-import type { SensorDataResponseDto } from "./dto";
+import type { View } from "@/features/views/views";
+import type { TranslateFn } from "@/i18n/config.js";
+import type { SensorDataResponseDto, User } from "./dto";
 
 export function cn(...inputs: Array<ClassValue>) {
 	return twMerge(clsx(inputs));
@@ -71,4 +72,15 @@ export const makeCumulative = (
 		sum += point.value;
 		return { time: point.time, value: sum, dangerLevel: point.dangerLevel };
 	});
+};
+
+export const userRoleToString = (role: User["role"], t: TranslateFn) => {
+	switch (role) {
+		case "operator":
+			return t(($) => $.user.role.operator);
+		case "foreman":
+			return t(($) => $.user.role.foreman);
+		default:
+			return role;
+	}
 };
