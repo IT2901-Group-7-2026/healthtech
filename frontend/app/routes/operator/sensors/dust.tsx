@@ -1,8 +1,5 @@
 /** biome-ignore-all lint/suspicious/noAlert: We use alert for testing, but will be changed later */
 
-import { useQuery } from "@tanstack/react-query";
-import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
-import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes";
 import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
 import { Summary } from "@/components/summary";
@@ -17,7 +14,11 @@ import { WeekWidget } from "@/features/week-widget/week-widget";
 import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
+import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
+import { useQuery } from "@tanstack/react-query";
+import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 // biome-ignore lint/style/noDefaultExport: react router needs default export
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
@@ -26,6 +27,8 @@ export default function Dust() {
 	const { date } = useDate();
 	const { t, i18n } = useTranslation();
 	const { user } = useUser();
+
+	const sensor: Sensor = "dust";
 
 	const dayQuery: SensorDataRequestDto = {
 		startTime: new Date(date.setUTCHours(8)),
@@ -117,6 +120,7 @@ export default function Dust() {
 						endHour={16}
 						maxY={100}
 						lineType="monotone"
+						sensor={sensor}
 					>
 						<ThresholdLine
 							y={thresholds.dust.danger}

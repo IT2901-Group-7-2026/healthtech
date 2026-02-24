@@ -14,7 +14,6 @@ import { ThemeProvider } from "@/features/dark-mode/theme-provider";
 import type { Route } from "./+types/root";
 import "./app.css";
 import { DateProvider } from "./features/date-picker/date-provider";
-import { SensorProvider } from "./features/sensor-picker/sensor-provider";
 import { UserProvider } from "./features/user/user-provider.js";
 import { ViewProvider } from "./features/views/view-provider";
 import "./i18n/config";
@@ -88,14 +87,10 @@ export default function App() {
 					<UserProvider>
 						<DateProvider>
 							<ViewProvider>
-								<SensorProvider>
-									{import.meta.env.DEV && (
-										<ReactQueryDevtools
-											initialIsOpen={false}
-										/>
-									)}
-									<Outlet />
-								</SensorProvider>
+								{import.meta.env.DEV && (
+									<ReactQueryDevtools initialIsOpen={false} />
+								)}
+								<Outlet />
 							</ViewProvider>
 						</DateProvider>
 					</UserProvider>

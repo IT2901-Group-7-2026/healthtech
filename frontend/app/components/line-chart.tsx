@@ -1,4 +1,16 @@
 "use client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	type ChartConfig,
+	ChartContainer,
+	ChartTooltip,
+	ChartTooltipContent,
+} from "@/components/ui/chart";
+import { useDate } from "@/features/date-picker/use-date";
+import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
+import type { SensorDataResponseDto } from "@/lib/dto";
+import type { Sensor } from "@/lib/sensors";
+import { thresholds } from "@/lib/thresholds";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -11,18 +23,6 @@ import {
 	YAxis,
 } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-	type ChartConfig,
-	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
-} from "@/components/ui/chart";
-import { useDate } from "@/features/date-picker/use-date";
-import { useSensor } from "@/features/sensor-picker/use-sensor";
-import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
-import type { SensorDataResponseDto } from "@/lib/dto";
-import { thresholds } from "@/lib/thresholds";
 
 const chartConfig = {
 	desktop: {
@@ -30,6 +30,18 @@ const chartConfig = {
 		color: "var(--chart-1)",
 	},
 } satisfies ChartConfig;
+
+interface LineChartProps {
+	chartData: Array<SensorDataResponseDto>;
+	chartTitle: string;
+	startHour: number;
+	endHour: number;
+	maxY: number;
+	unit: string;
+	lineType?: string;
+	children: React.ReactNode;
+	sensor: Sensor;
+}
 
 export function ChartLineDefault({
 	chartData,
@@ -40,23 +52,14 @@ export function ChartLineDefault({
 	unit,
 	lineType = "natural",
 	children,
-}: {
-	chartData: Array<SensorDataResponseDto>;
-	chartTitle: string;
-	startHour: number;
-	endHour: number;
-	maxY: number;
-	unit: string;
-	lineType?: string;
-	children: React.ReactNode;
-}) {
+	sensor,
+}: LineChartProps) {
 	const { date: selectedDay } = useDate();
 
 	const { t } = useTranslation();
 
 	const id = useId();
 
-	const { sensor } = useSensor();
 	const { warning, danger } = thresholds[sensor];
 
 	const maxData = [...chartData].sort((a, b) => b.value - a.value)[0];

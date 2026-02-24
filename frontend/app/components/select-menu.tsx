@@ -1,4 +1,3 @@
-import type { TranslateFn } from "@/i18n/config.js";
 import {
 	Select,
 	SelectContent,
@@ -8,10 +7,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
+import type { TranslatedString } from "../../app/@types/i18n";
 
 type OptionGroup<T extends string> = {
-	label?: TranslateFn;
-	valueLabel?: TranslateFn;
+	label?: TranslatedString;
+	valueLabel?: TranslatedString;
 	key: string;
 	items: Array<T>;
 };

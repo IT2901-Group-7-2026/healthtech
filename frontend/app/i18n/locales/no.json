@@ -118,6 +118,12 @@
     "detailText": "Se detaljer",
     "noWorkers": "Ingen risikosårbare arbeidere"
   },
+  "exposureLevel": {
+    "in_danger": "Arbeidere over grenseverdier",
+    "warning": "Arbeidere nær grenseverdier",
+    "safe": "Arbeidere innenfor grenseverdier",
+    "no_in_danger": "Ingen arbeidere i denne kategorien"
+  },
   "loadingData": "Laster inn data...",
   "errorLoadingData": "Noe gikk galt under henting av sensordata.",
   "noData": "Ingen eksponeringsdata funnet for denne dagen",
@@ -136,7 +142,7 @@
     "teamMembersCount_one": "{{count}} operatør i teamet",
     "teamMembersCount_other": "{{count}} operatører i teamet",
     "overview": {
-      "title": "Foreman oversikt",
+      "title": "Foreman Oversikt",
       "statCards": {
         "total": "Totalt",
         "viewDetails": "Se detaljer",
@@ -153,6 +159,11 @@
           "label": "Innenfor grenseverdi"
         }
       }
+    },
+    "actionCard": {
+      "safe": "Alt er bra!",
+      "warning": "Tiltak anbefales",
+      "danger": "Du må utføre et tiltak!"
     },
     "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",

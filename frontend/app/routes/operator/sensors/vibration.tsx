@@ -1,9 +1,5 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { useQuery } from "@tanstack/react-query";
-import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
-import { useQueryState } from "nuqs";
-import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes";
 import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
 import { Summary } from "@/components/summary";
@@ -18,8 +14,13 @@ import { WeekWidget } from "@/features/week-widget/week-widget";
 import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
+import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
 import { makeCumulative } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
+import { useQueryState } from "nuqs";
+import { useTranslation } from "react-i18next";
 
 // biome-ignore lint/style/noDefaultExport: react router needs default export
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
@@ -29,6 +30,8 @@ export default function Vibration() {
 
 	const { date } = useDate();
 	const { user } = useUser();
+
+	const sensor: Sensor = "vibration";
 
 	const dayQuery: SensorDataRequestDto = {
 		startTime: new Date(date.setUTCHours(8)),
@@ -124,6 +127,7 @@ export default function Vibration() {
 						endHour={16}
 						maxY={450}
 						lineType="monotone"
+						sensor={sensor}
 					>
 						<ThresholdLine
 							y={thresholds.vibration.danger}
