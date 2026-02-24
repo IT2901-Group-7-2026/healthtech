@@ -143,12 +143,12 @@
         "inDanger": {
           "description": "Operatører som har overskredet grenseverdien",
           "label": "Over grenseverdi",
-          "noOperators": "Ingen som har overskredet grenseverdien"
+          "noOperators": "Ingen over grenseverdien"
         },
         "atRisk": {
           "description": "Operatører som nærmer seg grenseverdien",
           "label": "Nær grenseverdi",
-          "noOperators": "Ingen som nærmer grenseverdien"
+          "noOperators": "Ingen nærmer grenseverdien"
         },
         "withinLimits": {
           "description": "Operatører innenfor trygge grenseverdier",

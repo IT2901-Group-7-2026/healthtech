@@ -163,6 +163,8 @@ export default function ForemanOverview() {
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
+							{/* TODO: move to right page after*/}
+							<ExposureRiskCards users={subordinates ?? []}/>
 						</div>
 					</div>
 
@@ -176,7 +178,6 @@ export default function ForemanOverview() {
 							userOnClick={(userId) => {}}
 						/>
 					)}
-					<ExposureRiskCards />
 				</div>
 			</div>
 		</div>

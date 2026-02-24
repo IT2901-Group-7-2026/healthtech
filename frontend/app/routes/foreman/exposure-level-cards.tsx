@@ -1,31 +1,32 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { useUser } from "@/features/user-context";
-import { useSubordinatesQuery } from "@/lib/api";
 import {
 	DANGER_LEVEL_SEVERITY,
 	mapDangerLevelToColor,
 } from "@/lib/danger-levels";
+import type { UserWithStatusDto } from "@/lib/dto";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
-export function ExposureRiskCards() {
+interface Props {
+	users: Array<UserWithStatusDto>;
+}
+
+export function ExposureRiskCards({users} : Props) {
 	const { t } = useTranslation();
-	const { user } = useUser();
-	const { data: subordinates = [] } = useSubordinatesQuery(user.id);
 
-	const inDangerWorkers = subordinates.filter(
-		(sub) => DANGER_LEVEL_SEVERITY[sub.status.status] === 2,
+	const inDangerWorkers = users.filter(
+		(user) => DANGER_LEVEL_SEVERITY[user.status.status] === 2,
 	);
 
-	const atRiskWorkers = subordinates.filter(
-		(sub) => DANGER_LEVEL_SEVERITY[sub.status.status] === 1,
+	const atRiskWorkers = users.filter(
+		(user) => DANGER_LEVEL_SEVERITY[user.status.status] === 1,
 	);
 
-	const withinLimitsWorkers = subordinates.filter(
-		(sub) => DANGER_LEVEL_SEVERITY[sub.status.status] === 0,
+	const withinLimitsWorkers = users.filter(
+		(user) => DANGER_LEVEL_SEVERITY[user.status.status] === 0,
 	);
 
 	return (
