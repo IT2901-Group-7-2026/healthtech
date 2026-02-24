@@ -5,6 +5,7 @@ import type { WeekEvent } from "./types";
 
 export const mapWeekDataToEvents = (
 	data: Array<SensorDataResponseDto>,
+	usePeakData?: boolean,
 ): Array<WeekEvent> =>
 	data.map((item) => {
 		const startDate = new Date(item.time);
@@ -13,7 +14,8 @@ export const mapWeekDataToEvents = (
 		return {
 			startDate: startDate,
 			endDate: endDate,
-			dangerLevel: item.dangerLevel,
+			// biome-ignore lint/style/noNonNullAssertion: If usePeakData is true and peakDangerLevel is null, there is a bug somewhere else
+			dangerLevel: usePeakData ? item.peakDangerLevel! : item.dangerLevel,
 		};
 	});
 
@@ -21,7 +23,10 @@ export const mapAllWeekDataToEvents = (
 	everySensorData: AllSensors,
 ): Array<WeekEvent> => {
 	const dustEvents = mapWeekDataToEvents(everySensorData.dust.data ?? []);
-	const noiseEvents = mapWeekDataToEvents(everySensorData.noise.data ?? []);
+	const noiseEvents = mapWeekDataToEvents(
+		everySensorData.noise.data ?? [],
+		true,
+	);
 	const vibrationEvents = mapWeekDataToEvents(
 		everySensorData.vibration.data ?? [],
 	);

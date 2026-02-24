@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import { WeeklyPopup } from "@/features/popups/weekly-popup";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import type { NoiseViewMode } from "app/routes/operator/sensors/noise";
 import type { Day, Locale } from "date-fns";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -24,6 +25,7 @@ export function WeekWidget({
 	isDisabledDay,
 	isDisabledWeek,
 	events,
+	viewMode,
 }: {
 	minuteStep?: number;
 	weekStartsOn?: Day;
@@ -36,6 +38,7 @@ export function WeekWidget({
 	isDisabledWeek?: (startDayOfWeek: Date) => boolean;
 	events?: Array<WeekEvent>;
 	onCellClick?: (cell: Cell) => void;
+	viewMode?: NoiseViewMode;
 }) {
 	const { timeSlotSegments, selectNextWeek, selectPreviousWeek, viewTitle } =
 		useWeekView({
@@ -117,6 +120,7 @@ export function WeekWidget({
 			{/* interaction popup window */}
 			{popupData.event && (
 				<WeeklyPopup
+					viewMode={viewMode}
 					title={eventTitle(popupData.event)}
 					event={popupData.event}
 					open={visible}
