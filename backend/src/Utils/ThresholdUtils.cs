@@ -61,13 +61,16 @@ public static class ThresholdUtils
 		DangerLevel dangerLevel = DangerLevel.Safe;
 		DangerLevel? peakDangerLevel = null;
 
-		if (
-			threshold.PeakDanger.HasValue
-			&& maxValue.HasValue
-			&& maxValue.Value >= threshold.PeakDanger.Value
-		)
+		if (threshold.PeakDanger.HasValue && maxValue.HasValue)
 		{
-			peakDangerLevel = DangerLevel.Danger;
+			if (maxValue.Value >= threshold.PeakDanger.Value)
+			{
+				peakDangerLevel = DangerLevel.Danger;
+			}
+			else
+			{
+				peakDangerLevel = DangerLevel.Safe;
+			}
 		}
 
 		if (value >= threshold.Danger)
