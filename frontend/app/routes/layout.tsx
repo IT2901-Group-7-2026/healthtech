@@ -16,8 +16,6 @@ import { Icon, type IconVariant } from "@/features/icon";
 import { BellPopup } from "@/features/popups/bell-popup";
 import { usePopup } from "@/features/popups/use-popup";
 import { ProfileBadge } from "@/features/profile/profile-badge";
-import { sensors } from "@/features/sensor-picker/sensors";
-import { useSensor } from "@/features/sensor-picker/use-sensor";
 import {
 	KARI_NORDMANN_ID,
 	OLA_NORDMANN_ID,
@@ -305,7 +303,7 @@ function NavTabs({
 	const { view } = useView();
 	const { date } = useDate();
 	const location = useLocation();
-	const { setSensor } = useSensor();
+
 	const navLinkRefs = useRef<Array<HTMLElement>>([]); // Refs to the nav links
 	const [pillWidth, setPillWidth] = useState<number>();
 	const [pillLeft, setPillLeft] = useState<number>();
@@ -329,13 +327,6 @@ function NavTabs({
 							pathname: route.to.toString(),
 							search: `?view=${view}&date=${date.toISOString().split("T")[0]}`,
 						}}
-						onClick={() =>
-							sensors.find(
-								(s) =>
-									route.to.toString().includes(s) &&
-									setSensor(s),
-							)
-						}
 						key={route.to.toString()}
 						ref={(el) => {
 							if (!el) return;
@@ -373,7 +364,7 @@ function MobileMenu({
 }) {
 	const { view } = useView();
 	const { date } = useDate();
-	const { setSensor } = useSensor();
+
 	const { visible, openPopup, closePopup } = usePopup();
 	const { t } = useTranslation();
 
@@ -385,12 +376,6 @@ function MobileMenu({
 						pathname: route.to.toString(),
 						search: `?view=${view}&date=${date.toISOString().split("T")[0]}`,
 					}}
-					onClick={() =>
-						sensors.find(
-							(s) =>
-								route.to.toString().includes(s) && setSensor(s),
-						)
-					}
 					key={route.to.toString()}
 					prefetch="intent"
 					className="text-lg text-primary"

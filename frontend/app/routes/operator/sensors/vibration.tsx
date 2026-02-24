@@ -14,6 +14,7 @@ import { WeekWidget } from "@/features/week-widget/week-widget";
 import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
+import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
 import { makeCumulative } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -29,6 +30,8 @@ export default function Vibration() {
 
 	const { date } = useDate();
 	const { user } = useUser();
+
+	const sensor: Sensor = "vibration";
 
 	const dayQuery: SensorDataRequestDto = {
 		startTime: new Date(date.setUTCHours(8)),
@@ -124,6 +127,7 @@ export default function Vibration() {
 						endHour={16}
 						maxY={450}
 						lineType="monotone"
+						sensor={sensor}
 					>
 						<ThresholdLine
 							y={thresholds.vibration.danger}
