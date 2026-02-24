@@ -1,3 +1,7 @@
+import { useEffect } from "react";
+import {
+	useNavigate,
+} from "react-router";
 import { Button } from "@/components/ui/button";
 import {
 	Drawer,
@@ -18,7 +22,11 @@ import { usePopup } from "@/features/popups/use-popup";
 import { ProfileBadge } from "@/features/profile/profile-badge";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useSensor } from "@/features/sensor-picker/use-sensor";
-import { useUser } from "@/features/user-provider.js";
+import {
+	KARI_NORDMANN_ID,
+	OLA_NORDMANN_ID,
+	useUser,
+} from "@/features/user-context";
 import { useView } from "@/features/views/use-view";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { usersQueryOptions } from "@/lib/api";
@@ -84,7 +92,7 @@ function getLinks(
 
 		case "operator": {
 			return [
-				{ to: href("/"), label: t(($) => $.layout.overview) },
+				{ to: href("/operator"), label: t(($) => $.layout.overview) },
 				{ to: href("/operator/dust"), label: t(($) => $.dust) },
 				{
 					to: href("/operator/vibration"),
@@ -115,7 +123,7 @@ function getLinks(
 	}
 }
 
-// biome-ignore lint: page components can be default exports
+// biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function Layout() {
 	const isMobile = useIsMobile();
 
@@ -125,7 +133,51 @@ export default function Layout() {
 	const { user, setUser } = useUser();
 	const { data: users } = useQuery(usersQueryOptions());
 
+	// Sort Ola and Kari to the top, as they are the main demo users
+	const priorityUserIds: Array<string> = [OLA_NORDMANN_ID, KARI_NORDMANN_ID];
+
+	const sortedUsers = [...(users ?? [])].sort((a, b) => {
+		const aPriority = priorityUserIds.indexOf(a.id);
+		const bPriority = priorityUserIds.indexOf(b.id);
+
+		if (aPriority === -1 && bPriority === -1) {
+			return a.username.localeCompare(b.username);
+		}
+
+		if (aPriority === -1) {
+			return 1;
+		}
+
+		if (bPriority === -1) {
+			return -1;
+		}
+
+		return aPriority - bPriority;
+	});
+
 	const links = getLinks(t, user?.role ?? null);
+
+	const location = useLocation();
+	const navigate = useNavigate();
+	// Redirect users to the appropriate base route if they try to access a route that doesn't match their role
+	useEffect(() => {
+		if (!user?.role) {
+			return;
+		}
+
+		const pathname = location.pathname;
+
+		const isOperatorRoute = pathname.startsWith("/operator");
+		const isForemanRoute = pathname.startsWith("/foreman");
+
+		if (user.role === "operator" && isForemanRoute) {
+			navigate("/operator", { replace: true });
+		}
+
+		if (user.role === "foreman" && isOperatorRoute) {
+			navigate("/foreman", { replace: true });
+		}
+	}, [user?.role, location.pathname, navigate]);
 
 	return (
 		<SidebarProvider defaultOpen={false}>
@@ -173,17 +225,19 @@ export default function Layout() {
 							}}
 							value={user?.id}
 						>
-							<SelectTrigger className="w-32 bg-background dark:bg-background">
+							<SelectTrigger className="w-48 bg-background dark:bg-background">
 								<SelectValue
 									placeholder={t(
 										($) => $.overview.userSelectPlaceholder,
 									)}
 								/>
 							</SelectTrigger>
-							<SelectContent className="w-32">
-								{users?.map((u) => (
+							<SelectContent className="w-48">
+								{sortedUsers.map((u) => (
 									<SelectItem key={u.id} value={u.id}>
-										{`${u.username} (${u.role})`}
+										{u.role === "operator"
+											? `${u.username}`
+											: `${u.username} (${u.role})`}
 									</SelectItem>
 								))}
 							</SelectContent>

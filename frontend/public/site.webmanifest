@@ -1,19 +1,19 @@
 {
-	"name": "HealthTech",
-	"short_name": "HealthTech",
-	"icons": [
-		{
-			"src": "/android-chrome-192x192.png",
-			"sizes": "192x192",
-			"type": "image/png"
-		},
-		{
-			"src": "/android-chrome-512x512.png",
-			"sizes": "512x512",
-			"type": "image/png"
-		}
-	],
-	"theme_color": "#ffffff",
-	"background_color": "#569cd6",
-	"display": "standalone"
+  "name": "HealthTech",
+  "short_name": "HealthTech",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#ffffff",
+  "background_color": "#569cd6",
+  "display": "standalone"
 }

@@ -7,11 +7,11 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
-import { useUser } from "@/features/user-provider.js";
+import { useUser } from "@/features/user-context";
 import { useView } from "@/features/views/use-view";
 import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
-import { languageToLocale } from "@/i18n/locale";
+import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
 import { thresholds } from "@/lib/thresholds";
@@ -19,7 +19,8 @@ import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useTranslation } from "react-i18next";
 
-// biome-ignore lint: page components can be default exports
+// biome-ignore lint/style/noDefaultExport: react router needs default export
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function Noise() {
 	const { view } = useView();
 	const { t, i18n } = useTranslation();
@@ -83,7 +84,7 @@ export default function Noise() {
 					/>
 				) : view === "week" ? (
 					<WeekWidget
-						locale={languageToLocale[i18n.language]}
+						locale={getLocale(i18n.language)}
 						dayStartHour={8}
 						dayEndHour={16}
 						weekStartsOn={1}

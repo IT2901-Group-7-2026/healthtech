@@ -143,9 +143,6 @@ function ChartTooltipContent<TValue extends number | string | Array<number | str
   }) {
   const { config } = useChart()
 
-  console.log("Tooltip payload:", payload)
-  console.log("Tooltip label:", label)
-
   const tooltipLabel = React.useMemo(() => {
     if (hideLabel || !payload?.length) {
       return null

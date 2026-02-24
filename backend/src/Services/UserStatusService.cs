@@ -7,15 +7,21 @@ namespace Backend.Services;
 
 public interface IUserStatusService
 {
-	Task<IEnumerable<UserStatusDto>> GetCurrentStatusForUsers(IEnumerable<Guid> userIds);
+	Task<IEnumerable<UserStatusDto>> GetStatusForUsersInRange(
+		IEnumerable<Guid> userIds,
+		DateTime startTime,
+		DateTime endTime
+	);
 }
 
 public record UserAggRow(Guid UserId, double? Value, double? MaxValue);
 
 public class UserStatusService(AppDbContext _context) : IUserStatusService
 {
-	public async Task<IEnumerable<UserStatusDto>> GetCurrentStatusForUsers(
-		IEnumerable<Guid> userIds
+	public async Task<IEnumerable<UserStatusDto>> GetStatusForUsersInRange(
+		IEnumerable<Guid> userIds,
+		DateTime startTime,
+		DateTime endTime
 	)
 	{
 		var ids = userIds.Distinct().ToArray();
@@ -32,8 +38,8 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 				SELECT "user_id" as "UserId",
 				MAX(max_noise_lcpk) as MaxValue,
 				AVG(avg_noise_laeq) as Value
-				FROM noise_data_daily
-				WHERE bucket = {today}
+				FROM noise_data_minutely
+				WHERE bucket between {startTime} and {endTime}
 				  AND "user_id" = ANY({ids})
 				GROUP BY "user_id"
 				"""
@@ -44,8 +50,8 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 			.Database.SqlQuery<UserAggRow>(
 				$"""
 				SELECT "user_id" as "UserId", MAX(max_dust_Pm1_twa) as Value, null as MaxValue
-				FROM dust_data_daily
-				WHERE bucket = {today}
+				FROM dust_data_minutely
+				WHERE bucket between {startTime} and {endTime}
 				  AND "user_id" = ANY({ids})
 				GROUP BY "user_id"
 				"""
@@ -56,8 +62,8 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 			.Database.SqlQuery<UserAggRow>(
 				$"""
 				SELECT "user_id" as "UserId", SUM(sum_vibration) as Value, null as MaxValue
-				FROM vibration_data_daily
-				WHERE bucket = {today}
+				FROM vibration_data_minutely
+				WHERE bucket between {startTime} and {endTime}
 				  AND "user_id" = ANY({ids})
 				GROUP BY "user_id"
 				"""
@@ -68,27 +74,18 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 		var dustByUser = dustRows.ToDictionary(x => x.UserId, x => new { x.Value, x.MaxValue });
 		var vibByUser = vibrationRows.ToDictionary(x => x.UserId, x => new { x.Value, x.MaxValue });
 
-		var now = DateTimeOffset.UtcNow;
-
 		var result = new List<UserStatusDto>(ids.Length);
 
 		foreach (var userId in ids)
 		{
-			var noiseLevel = TryLevel(
-				SensorType.Noise,
-				noiseByUser.GetValueOrDefault(userId)?.Value,
-				noiseByUser.GetValueOrDefault(userId)?.MaxValue
-			);
-			var dustLevel = TryLevel(
-				SensorType.Dust,
-				dustByUser.GetValueOrDefault(userId)?.Value,
-				dustByUser.GetValueOrDefault(userId)?.MaxValue
-			);
-			var vibLevel = TryLevel(
-				SensorType.Vibration,
-				vibByUser.GetValueOrDefault(userId)?.Value,
-				vibByUser.GetValueOrDefault(userId)?.MaxValue
-			);
+			var noiseValue = noiseByUser.GetValueOrDefault(userId)?.Value;
+			var noisePeak = noiseByUser.GetValueOrDefault(userId)?.MaxValue;
+			var dustValue = dustByUser.GetValueOrDefault(userId)?.Value;
+			var vibValue = vibByUser.GetValueOrDefault(userId)?.Value;
+
+			var noiseLevel = TryLevel(SensorType.Noise, noiseValue, noisePeak);
+			var dustLevel = TryLevel(SensorType.Dust, dustValue, null);
+			var vibLevel = TryLevel(SensorType.Vibration, vibValue, null);
 
 			var overall = ThresholdUtils.GetHighestDangerLevel(noiseLevel, dustLevel, vibLevel);
 
@@ -97,10 +94,15 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 				{
 					UserId = userId,
 					Status = overall,
-					Noise = noiseLevel,
-					Dust = dustLevel,
-					Vibration = vibLevel,
-					CalculatedAt = now,
+					Noise = noiseLevel.HasValue
+						? new UserSensorStatusDto(noiseLevel.Value, noiseValue ?? 0, noisePeak)
+						: null,
+					Dust = dustLevel.HasValue
+						? new UserSensorStatusDto(dustLevel.Value, dustValue ?? 0, null)
+						: null,
+					Vibration = vibLevel.HasValue
+						? new UserSensorStatusDto(vibLevel.Value, vibValue ?? 0, null)
+						: null,
 				}
 			);
 		}

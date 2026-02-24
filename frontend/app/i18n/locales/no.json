@@ -1,88 +1,164 @@
 {
-	"title": "HealthTech | Operatør Eksponeringsdashboard",
-	"description": "Overvåk og administrer eksponering for støv, vibrasjon og støy.",
-	"layout": {
-		"overview": "Oversikt",
-		"home": "Hjem",
-		"team": "Team",
-		"statistics": "Statistikk"
-	},
-	"overview": {
-		"title": "Oversikt over {{view}}",
-		"day": "dag",
-		"week": "uke",
-		"month": "måned",
-		"dust": "Støv",
-		"vibration": "Vibrasjon",
-		"noise": "Støy",
-		"userSelectPlaceholder": "Bruker"
-	},
-	"dustExposure": {
-		"title": "Støveksponering"
-	},
-	"vibrationExposure": {
-		"title": "Vibrasjonseksponering"
-	},
-	"noiseExposure": {
-		"title": "Støyeksponering"
-	},
-	"exposure_summary": {
-		"title": "Eksponeringer",
-		"greenHourText": "Timer med trygg mengde eksponering",
-		"greenDayText": "Dager med trygg mengde eksponering",
-		"orangeHourText": "Timer nær eksponeringsgrensen",
-		"orangeDayText": "Dager nær eksponeringsgrensen",
-		"redHourText": "Timer over eksponeringsgrensen",
-		"redDayText": "Dager over eksponeringsgrensen",
-		"dust": "Støv",
-		"vibration": "Vibrasjon",
-		"noise": "Støy",
-		"allSensors": "Alle sensorer",
-		"all": "Hver sensor"
-	},
-	"line_chart": {
-		"danger": "Grenseverdi",
-		"warning": "Tiltaksverdi",
-		"safe": "Trygt innenfor eksponeringsgrensen"
-	},
-	"monthly_view": {
-		"safe": "Trygg dag den",
-		"warning": "Advarsler utstedt den",
-		"danger": "Fare: Eksponeringsgrenser overskredet den"
-	},
-	"daily_notes": {
-		"dayTitle": "Dagens notater",
-		"daySubtitle": "Notat for {{day}}:",
-		"writeHere": "Skriv her...",
-		"edit": "Rediger",
-		"save": "Lagre",
-		"notesFromThis": "Notater fra denne ",
-		"day": "dagen",
-		"week": "uken",
-		"month": "måneden"
-	},
-	"buttons": {
-		"confirm": "Ok",
-		"close": "Lukk"
-	},
-	"english": "Engelsk",
-	"norwegian": "Norsk",
+  "title": "HealthTech | Operatør Eksponeringsdashboard",
+  "description": "Overvåk og administrer eksponering for støv, vibrasjon og støy.",
+  "layout": {
+    "overview": "Oversikt",
+    "home": "Hjem",
+    "team": "Team",
+    "statistics": "Statistikk"
+  },
+  "overview": {
+    "title": "Oversikt over {{view}}",
+    "day": "dag",
+    "week": "uke",
+    "month": "måned",
+    "dust": "Støv",
+    "vibration": "Vibrasjon",
+    "noise": "Støy",
+    "userSelectPlaceholder": "Bruker"
+  },
+  "dustExposure": {
+    "title": "Støveksponering"
+  },
+  "vibrationExposure": {
+    "title": "Vibrasjonseksponering"
+  },
+  "noiseExposure": {
+    "title": "Støyeksponering"
+  },
+  "exposure_summary": {
+    "title": "Eksponeringer",
+    "greenHourText": "Timer med trygg mengde eksponering",
+    "greenDayText": "Dager med trygg mengde eksponering",
+    "orangeHourText": "Timer nær eksponeringsgrensen",
+    "orangeDayText": "Dager nær eksponeringsgrensen",
+    "redHourText": "Timer over eksponeringsgrensen",
+    "redDayText": "Dager over eksponeringsgrensen",
+    "dust": "Støv",
+    "vibration": "Vibrasjon",
+    "noise": "Støy",
+    "allSensors": "Alle sensorer",
+    "all": "Hver sensor"
+  },
+  "line_chart": {
+    "danger": "Grenseverdi",
+    "warning": "Tiltaksverdi",
+    "safe": "Trygt innenfor eksponeringsgrensen"
+  },
+  "monthly_view": {
+    "safe": "Trygg dag den",
+    "warning": "Advarsler utstedt den",
+    "danger": "Fare: Eksponeringsgrenser overskredet den"
+  },
+  "daily_notes": {
+    "dayTitle": "Dagens notater",
+    "daySubtitle": "Notat for {{day}}:",
+    "writeHere": "Skriv her...",
+    "edit": "Rediger",
+    "save": "Lagre",
+    "notesFromThis": "Notater fra denne ",
+    "day": "dagen",
+    "week": "uken",
+    "month": "måneden"
+  },
+  "buttons": {
+    "confirm": "Ok",
+    "close": "Lukk"
+  },
+  "english": "Engelsk",
+  "norwegian": "Norsk",
 
-	"time": "Tid",
-	"today": "I dag",
+  "time": "Tid",
+  "today": "I dag",
 
-	"safe": "Trygg",
-	"warning": "Advarsel",
-	"danger": "Fare",
+  "safe": "Trygg",
+  "warning": "Advarsel",
+  "danger": "Fare",
 
-	"light": "Lys",
-	"dark": "Mørk",
-	"system": "System",
+  "peak": "Topp",
+  "average": "Gjennomsnitt",
 
-	"dust": "Støv",
-	"vibration": "Vibrasjon",
-	"noise": "Støy",
+  "light": "Lys",
+  "dark": "Mørk",
+  "system": "System",
 
+  "dust": "Støv",
+  "vibration": "Vibrasjon",
+  "noise": "Støy",
+
+  "sensorSelectPlaceholder": "Sensor",
+
+  "views": "Visning",
+  "day": "Dag",
+  "week": "Uke",
+  "month": "Måned",
+  "notifications": "Notifikasjoner",
+  "popup": {
+    "toDay": "Se detaljer",
+    "notesTitle": "Notater denne dagen:",
+    "exposureTitle": "Eksponering:",
+    "safe": "Ingen eksponeringsgrense brutt",
+    "warning": "En eksponeringsgrense var nær å bli brutt",
+    "danger": "Eksponeringsgrense ble brutt",
+    "openDaily": "Se detaljer for informasjon om eksponeringstype",
+    "eventTitle": "{{day}}, fra {{start}} til {{end}}",
+    "notifTitle": "Notifikasjon mottatt {{date}}"
+  },
+  "profile": {
+    "title": "Profil",
+    "location": "Lokasjon",
+    "name": "Navn",
+    "prefLanguage": "Foretrukket språk",
+    "secReg": "Gjeldende sikkerhetsreguleringer",
+    "jobTitle": "Stillingsbetegnelse",
+    "jobDescription": "Stillingsbeskrivelse"
+  },
+  "atRiskTable": {
+    "title": "Risikosårbare arbeidere",
+    "detailText": "Se detaljer",
+    "noWorkers": "Ingen risikosårbare arbeidere"
+  },
+  "loadingData": "Laster inn data...",
+  "errorLoadingData": "Noe gikk galt under henting av sensordata.",
+  "noData": "Ingen eksponeringsdata funnet for denne dagen",
+  "points": "Poeng",
+  "dust_y_axis": "µg/m³",
+  "foremanDashboard": {
+    "failedToLoadTeamMembers": "Kunne ikke laste teammedlemmer",
+    "noTeamMembersFound": "Ingen teammedlemmer funnet",
+    "teamTable": {
+      "username": "Brukernavn",
+      "email": "E-post",
+      "status": "Status",
+      "jobDescription": "Stillingsbeskrivelse"
+    },
+    "teamMembersCount": "{{count}} operatør i teamet",
+    "teamMembersCount_one": "{{count}} operatør i teamet",
+    "teamMembersCount_other": "{{count}} operatører i teamet",
+    "overview": {
+      "title": "Foreman oversikt",
+      "statCards": {
+        "total": "Totalt",
+        "viewDetails": "Se detaljer",
+        "inDanger": {
+          "description": "Operatører som har overskredet grenseverdien",
+          "label": "Over grenseverdi"
+        },
+        "atRisk": {
+          "description": "Operatører som nærmer seg grenseverdien",
+          "label": "Nær grenseverdi"
+        },
+        "withinLimits": {
+          "description": "Operatører innenfor trygge grenseverdier",
+          "label": "Innenfor grenseverdi"
+        }
+      }
+    },
+    "userStatusChart": {
+      "xAxisLabel": "Prosent av faregrense",
+      "noData": "Ingen data tilgjengelig"
+    }
+  }
 	"views": "Visning",
 	"day": "Dag",
 	"week": "Uke",

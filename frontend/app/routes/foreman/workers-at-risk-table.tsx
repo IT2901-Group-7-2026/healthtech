@@ -1,27 +1,24 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { useUser } from "@/features/user-provider.js";
-import { useSubordinatesQuery } from "@/lib/api";
-import { DANGER_LEVEL_SEVERITY, mapDangerLevelToColor, type DangerLevel } from "@/lib/danger-levels";
+import {
+	DANGER_LEVEL_SEVERITY,
+	mapDangerLevelToColor,
+} from "@/lib/danger-levels";
+import type { UserWithStatusDto } from "@/lib/dto";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
-export function AtRiskTable() {
+interface Props {
+	users: Array<UserWithStatusDto>;
+}
+
+export function AtRiskTable({ users }: Props) {
 	const { t } = useTranslation();
-	const { user } = useUser();
-	const { data: subordinates = [] } = useSubordinatesQuery(user.id);
 
-	const getDangerColor = (level: DangerLevel) => {
-		if (level === "danger") return "bg-red-500";
-		if (level === "warning") return "bg-yellow-500";
-		// should never procc
-		return "bg-green-500";
-	};
-
-	const atRiskWorkers = subordinates.filter(
-		(sub) => DANGER_LEVEL_SEVERITY[sub.status.status] > 0,
+	const atRiskWorkers = users.filter(
+		(user) => DANGER_LEVEL_SEVERITY[user.status.status] > 0,
 	);
 
 	return (
@@ -37,14 +34,12 @@ export function AtRiskTable() {
 					"dark:active:bg-white/15 dark:hover:border-white/60 dark:hover:bg-white/10 dark:hover:ring-zinc-400",
 				)}
 			>
-				{/* TITLE */}
 				<CardHeader>
 					<CardTitle className="text-center">
 						{t((x) => x.atRiskTable.title)}
 					</CardTitle>
 				</CardHeader>
 
-				{/* TABLE */}
 				<CardContent>
 					<Table>
 						<TableBody>
@@ -71,7 +66,6 @@ export function AtRiskTable() {
 						</TableBody>
 					</Table>
 				</CardContent>
-				{/* VIEW DETAILS */}
 				<div className="mt-1 flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300">
 					<p>{t((x) => x.atRiskTable.detailText)}</p>
 					<ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

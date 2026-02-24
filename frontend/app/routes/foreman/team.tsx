@@ -1,5 +1,5 @@
 import { DataTable } from "@/components/ui/data-table";
-import { useUser } from "@/features/user-provider.js";
+import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
 import {
 	mapDangerLevelToColor,
@@ -9,7 +9,8 @@ import type { UserWithStatusDto } from "@/lib/dto";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useTranslation } from "react-i18next";
 
-const TeamPage = () => {
+// biome-ignore lint/style/noDefaultExport: react router needs default export
+export default function TeamPage() {
 	const { t } = useTranslation();
 	const { user } = useUser();
 
@@ -67,7 +68,4 @@ const TeamPage = () => {
 	}
 
 	return <DataTable columns={columns} data={subordinates} />;
-};
-
-// biome-ignore lint/style/noDefaultExport: page components can be default exports
-export default TeamPage;
+}
