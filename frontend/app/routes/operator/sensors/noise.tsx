@@ -14,6 +14,7 @@ import { WeekWidget } from "@/features/week-widget/week-widget";
 import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
+import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
@@ -27,6 +28,8 @@ export default function Noise() {
 
 	const { date } = useDate();
 	const { user } = useUser();
+
+	const sensor: Sensor = "noise";
 
 	const dayQuery: SensorDataRequestDto = {
 		startTime: new Date(date.setUTCHours(8)),
@@ -115,6 +118,7 @@ export default function Noise() {
 						endHour={16}
 						maxY={150}
 						lineType="monotone"
+						sensor={sensor}
 					>
 						<ThresholdLine
 							y={thresholds.noise.danger}

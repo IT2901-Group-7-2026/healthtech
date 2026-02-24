@@ -14,6 +14,7 @@ import { WeekWidget } from "@/features/week-widget/week-widget";
 import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
+import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
@@ -26,6 +27,8 @@ export default function Dust() {
 	const { date } = useDate();
 	const { t, i18n } = useTranslation();
 	const { user } = useUser();
+
+	const sensor: Sensor = "dust";
 
 	const dayQuery: SensorDataRequestDto = {
 		startTime: new Date(date.setUTCHours(8)),
@@ -117,6 +120,7 @@ export default function Dust() {
 						endHour={16}
 						maxY={100}
 						lineType="monotone"
+						sensor={sensor}
 					>
 						<ThresholdLine
 							y={thresholds.dust.danger}
