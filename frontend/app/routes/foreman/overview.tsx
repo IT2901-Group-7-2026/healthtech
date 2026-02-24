@@ -20,7 +20,7 @@ import {
 } from "@/ui/select";
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
-import { ExposureRiskCards } from "./exposure-level-cards";
+import { ExposureRiskCard } from "@/components/exposure-level-card";
 
 // biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function ForemanOverview() {
@@ -164,9 +164,21 @@ export default function ForemanOverview() {
 								viewDetailsText={cardViewDetailsText}
 							/>
 							{/* TODO: move to right page after*/}
-							{sensor && (<ExposureRiskCards 
+							{/* Operators in danger for the chosen exposure */}
+							{sensor && (<ExposureRiskCard 
 								users={subordinates ?? []}
-								sensor={sensor}/>)}
+								sensor={sensor}
+								dangerLevel={"danger"}/>)}
+							{/* Operators that are under warning for the chosen exposure */}
+							{sensor && (<ExposureRiskCard 
+								users={subordinates ?? []}
+								sensor={sensor}
+								dangerLevel={"warning"}/>)}
+							{/* Operators that are safe for the chosen exposure */}
+							{sensor && (<ExposureRiskCard 
+								users={subordinates ?? []}
+								sensor={sensor}
+								dangerLevel={"safe"}/>)}
 						</div>
 					</div>
 
