@@ -3,11 +3,7 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BasePopup } from "@/features/popups/base-popup";
 import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
-import {
-	DANGER_LEVEL_SEVERITY,
-	type DangerLevel,
-	mapDangerLevelToColor,
-} from "@/lib/danger-levels";
+import { type DangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
 import { t } from "i18next";
 import { ArrowRightIcon } from "lucide-react";
 import { Link } from "react-router";
@@ -25,6 +21,31 @@ export function AtRiskPopup({
 	const { user } = useUser();
 	const { data: subordinates = [] } = useSubordinatesQuery(user.id);
 
+	const getExposureBadges = (
+		worker: (typeof subordinates)[number],
+		popupStatus: DangerLevel,
+	) => {
+		const exposures = [
+			{ key: "noise", data: worker.status.noise },
+			{ key: "dust", data: worker.status.dust },
+			{ key: "vibration", data: worker.status.vibration },
+		];
+
+		return exposures.filter(({ data }) => {
+			if (!data) return false;
+
+			if (popupStatus === "danger") {
+				return data.level === "danger";
+			}
+
+			if (popupStatus === "warning") {
+				return data.level === "warning" || data.level === "danger";
+			}
+
+			return false;
+		});
+	};
+
 	const exposureTitle =
 		status === "danger"
 			? t((x) => x.exposureLevel.in_danger)
@@ -34,9 +55,7 @@ export function AtRiskPopup({
 
 	const workers =
 		status === "safe"
-			? subordinates.filter(
-					(sub) => DANGER_LEVEL_SEVERITY[sub.status.status] === 0,
-				)
+			? subordinates.filter((sub) => sub.status.status === "safe")
 			: subordinates.filter((sub) => sub.status.status === status);
 
 	return (
@@ -58,28 +77,44 @@ export function AtRiskPopup({
 								</TableRow>
 							) : (
 								workers.map((worker) => (
-									<Link
-										//TODO: change routing to the subs individual page
-										key={worker.id}
-										to={`/foreman/team/`}
-										className="h-full w-full flex-1 basis-4 rounded-2xl"
-									>
-										<TableRow>
-											<TableCell>
+									<TableRow key={worker.id}>
+										<TableCell>
+											<Link
+												//TODO: change routing to the subs individual page
+												to={`/foreman/team/`}
+												className="flex w-full items-center justify-between"
+											>
 												<div className="flex items-center gap-5">
 													<div
 														className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(
 															worker.status
-																.status,
+																.status as DangerLevel,
 														)}`}
 													/>
 													<span>
 														{worker.username}
 													</span>
 												</div>
-											</TableCell>
-										</TableRow>
-									</Link>
+
+												<div className="flex gap-2">
+													{getExposureBadges(
+														worker,
+														status,
+													).map(({ key, data }) => (
+														<span
+															key={key}
+															className={`rounded-md px-2 py-0.5 font-medium text-white text-xs bg-${mapDangerLevelToColor(
+																data?.level ??
+																	"safe",
+															)}`}
+														>
+															{key}
+														</span>
+													))}
+												</div>
+											</Link>
+										</TableCell>
+									</TableRow>
 								))
 							)}
 						</TableBody>

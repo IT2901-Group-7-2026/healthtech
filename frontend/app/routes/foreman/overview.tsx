@@ -2,7 +2,6 @@
 
 import { DailyNotes } from "@/components/daily-notes.js";
 import { Card } from "@/components/ui/card";
-import { UserStatusChart } from "@/components/users-status-chart";
 import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
 import type { DangerLevel } from "@/lib/danger-levels";
@@ -188,7 +187,7 @@ export default function ForemanOverview() {
 					open={selectedStatus !== null}
 					onClose={closePopup}
 					title="Workers"
-					status={popupStatus!}
+					status={popupStatus ?? "danger"}
 				/>
 			</div>
 		</div>

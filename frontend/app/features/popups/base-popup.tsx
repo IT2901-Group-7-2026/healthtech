@@ -33,7 +33,7 @@ export function BasePopup({
 	const { setSensor } = useSensor();
 	return (
 		<Dialog open={open} onOpenChange={onClose}>
-			<DialogContent className="max-w-md">
+			<DialogContent className="w-full max-w-6xl">
 				<DialogHeader>
 					<DialogTitle className="font-bold text-xl">
 						{title}

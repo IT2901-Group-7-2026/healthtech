@@ -104,61 +104,61 @@
     "eventTitle": "{{day}}, from {{start}} to {{end}}",
     "notifTitle": "Notification received {{date}}"
   },
-	"profile": {
-		"title": "Profile",
-		"location": "Location",
-		"name": "Name",
-		"prefLanguage": "Preferred language",
-		"secReg": "Current security regulations",
-		"jobTitle": "Job title",
-		"jobDescription": "Job description"
-	},
-	"atRiskTable": {
-		"title": "Workers at Risk",
-		"detailText": "View details",
-		"noWorkers": "No workers at risk"
-	},
-	"exposureLevel": {
-		"in_danger": "Workers In Danger",
-		"warning": "Workers at Risk",
-		"safe": "Workers Within Limits",
-		"no_in_danger": "No workers in this category"
-	},
-	"loadingData": "Loading data...",
-	"errorLoadingData": "Something went wrong while fetching sensor data.",
-	"noData": "No exposure data found for this day",
-	"points": "Points",
-	"dust_y_axis": "µg/m³",
-	"foremanDashboard": {
-		"failedToLoadTeamMembers": "Failed to load team members",
-		"noTeamMembersFound": "No team members found",
-		"teamTable": {
-			"username": "Username",
-			"email": "Email",
-			"status": "Status",
-			"jobDescription": "Job description"
-		},
-		"teamMembersCount": "{{count}} operator in team",
-		"teamMembersCount_one": "{{count}} operator in team",
-		"teamMembersCount_other": "{{count}} operators in team",
-		"overview": {
-			"title": "Foreman Overview",
-			"statCards": {
-				"total": "Total",
-				"viewDetails": "View details",
-				"inDanger": {
-					"description": "Operators exceeding threshold",
-					"label": "In danger"
-				},
-				"atRisk": {
-					"description": "Operators approaching exposure limit",
-					"label": "At risk"
-				},
-				"withinLimits": {
-					"description": "Operators within safe exposure range",
-					"label": "Within limits"
-				}
-			}
-		}
-	}
+  "profile": {
+    "title": "Profile",
+    "location": "Location",
+    "name": "Name",
+    "prefLanguage": "Preferred language",
+    "secReg": "Current security regulations",
+    "jobTitle": "Job title",
+    "jobDescription": "Job description"
+  },
+  "atRiskTable": {
+    "title": "Workers at Risk",
+    "detailText": "View details",
+    "noWorkers": "No workers at risk"
+  },
+  "exposureLevel": {
+    "in_danger": "Workers In Danger",
+    "warning": "Workers at Risk",
+    "safe": "Workers Within Limits",
+    "no_in_danger": "No workers in this category"
+  },
+  "loadingData": "Loading data...",
+  "errorLoadingData": "Something went wrong while fetching sensor data.",
+  "noData": "No exposure data found for this day",
+  "points": "Points",
+  "dust_y_axis": "µg/m³",
+  "foremanDashboard": {
+    "failedToLoadTeamMembers": "Failed to load team members",
+    "noTeamMembersFound": "No team members found",
+    "teamTable": {
+      "username": "Username",
+      "email": "Email",
+      "status": "Status",
+      "jobDescription": "Job description"
+    },
+    "teamMembersCount": "{{count}} operator in team",
+    "teamMembersCount_one": "{{count}} operator in team",
+    "teamMembersCount_other": "{{count}} operators in team",
+    "overview": {
+      "title": "Foreman Overview",
+      "statCards": {
+        "total": "Total",
+        "viewDetails": "View details",
+        "inDanger": {
+          "description": "Operators exceeding threshold",
+          "label": "In danger"
+        },
+        "atRisk": {
+          "description": "Operators approaching exposure limit",
+          "label": "At risk"
+        },
+        "withinLimits": {
+          "description": "Operators within safe exposure range",
+          "label": "Within limits"
+        }
+      }
+    }
+  }
 }
