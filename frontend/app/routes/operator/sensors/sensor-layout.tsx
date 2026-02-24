@@ -1,7 +1,6 @@
 import { useDate } from "@/features/date-picker/use-date";
 import { Icon } from "@/features/icon";
 import type { Sensor } from "@/features/sensor-picker/sensors";
-import { useSensor } from "@/features/sensor-picker/use-sensor";
 import { useView } from "@/features/views/use-view";
 import { ViewPicker } from "@/features/views/view-picker";
 import { getNextDay, getPrevDay } from "@/lib/utils";
@@ -20,10 +19,9 @@ function Title({ sensor }: { sensor: Sensor }) {
 	);
 }
 
-export default function SensorLayout() {
+export default function SensorLayout({ sensor }: { sensor: Sensor }) {
 	const { date, setDate } = useDate();
 	const { view } = useView();
-	const { sensor } = useSensor();
 
 	return (
 		<section className="flex w-full flex-col">

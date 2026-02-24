@@ -114,9 +114,15 @@
     "jobDescription": "Job description"
   },
   "atRiskTable": {
-    "title": "Workers at risk",
+    "title": "Workers at Risk",
     "detailText": "View details",
     "noWorkers": "No workers at risk"
+  },
+  "exposureLevel": {
+    "in_danger": "Workers In Danger",
+    "warning": "Workers at Risk",
+    "safe": "Workers Within Limits",
+    "no_in_danger": "No workers in this category"
   },
   "loadingData": "Loading data...",
   "errorLoadingData": "Something went wrong while fetching sensor data.",
@@ -136,7 +142,7 @@
     "teamMembersCount_one": "{{count}} operator in team",
     "teamMembersCount_other": "{{count}} operators in team",
     "overview": {
-      "title": "Foreman overview",
+      "title": "Foreman Overview",
       "statCards": {
         "total": "Total",
         "viewDetails": "View details",
@@ -154,9 +160,23 @@
         }
       }
     },
+    "actionCard": {
+      "safe": "All good!",
+      "warning": "Action suggested",
+      "danger": "You need to do an action!"
+    },
     "userStatusChart": {
       "xAxisLabel": "Percentage of exposure limit",
       "noData": "No data available"
     }
+  },
+  "user": {
+    "role": {
+      "operator": "Operator",
+      "foreman": "Foreman"
+    }
+  },
+  "demo": {
+    "currentRole": "Current role:"
   }
 }

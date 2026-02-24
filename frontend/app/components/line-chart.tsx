@@ -7,9 +7,9 @@ import {
 	ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
-import { useSensor } from "@/features/sensor-picker/use-sensor";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto } from "@/lib/dto";
+import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -31,32 +31,37 @@ const chartConfig = {
 	},
 } satisfies ChartConfig;
 
+interface LineChartProps {
+	chartData: Array<SensorDataResponseDto>;
+	chartTitle: string;
+	startHour: number;
+	endHour: number;
+	maxY: number;
+	minY: number;
+	unit: string;
+	lineType?: string;
+	children: React.ReactNode;
+	sensor: Sensor;
+}
+
 export function ChartLineDefault({
 	chartData,
 	chartTitle,
 	startHour,
 	endHour,
 	maxY,
+	minY,
 	unit,
 	lineType = "natural",
 	children,
-}: {
-	chartData: Array<SensorDataResponseDto>;
-	chartTitle: string;
-	startHour: number;
-	endHour: number;
-	maxY: number;
-	unit: string;
-	lineType?: string;
-	children: React.ReactNode;
-}) {
+	sensor,
+}: LineChartProps) {
 	const { date: selectedDay } = useDate();
 
 	const { t } = useTranslation();
 
 	const id = useId();
 
-	const { sensor } = useSensor();
 	const { warning, danger } = thresholds[sensor];
 
 	const maxData = [...chartData].sort((a, b) => b.value - a.value)[0];
@@ -114,7 +119,7 @@ export function ChartLineDefault({
 							dataKey="value"
 							tickLine={false}
 							axisLine={false}
-							domain={[0, maxY]}
+							domain={[minY, maxY]}
 							label={{
 								value: unit,
 								position: "inside",

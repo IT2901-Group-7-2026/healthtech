@@ -36,3 +36,5 @@ i18n.use(LanguageDetector)
 	});
 
 export const i18nInstance = i18n;
+export type I18n = typeof i18nInstance;
+export type TranslateFn = typeof i18n.t;

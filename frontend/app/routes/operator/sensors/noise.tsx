@@ -7,14 +7,16 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
-import { useUser } from "@/features/user-context";
+import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
+import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
+import { computeYAxisRange } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -26,6 +28,8 @@ export default function Noise() {
 
 	const { date } = useDate();
 	const { user } = useUser();
+
+	const sensor: Sensor = "noise";
 
 	const dayQuery: SensorDataRequestDto = {
 		startTime: new Date(date.setUTCHours(8)),
@@ -58,6 +62,9 @@ export default function Noise() {
 			userId: user.id,
 		}),
 	);
+
+	// Tighten vertical padding for noise charts so graph fills more of the card
+	const { minY, maxY } = computeYAxisRange(data ?? []);
 
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
@@ -112,8 +119,10 @@ export default function Noise() {
 						unit="db (TWA)"
 						startHour={8}
 						endHour={16}
-						maxY={150}
+						maxY={maxY}
+						minY={minY}
 						lineType="monotone"
+						sensor={sensor}
 					>
 						<ThresholdLine
 							y={thresholds.noise.danger}
