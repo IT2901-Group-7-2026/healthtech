@@ -176,6 +176,7 @@ export default function ForemanOverview() {
 							userOnClick={(userId) => {}}
 						/>
 					)}
+					<ExposureRiskCards />
 				</div>
 			</div>
 		</div>

@@ -142,15 +142,18 @@
         "viewDetails": "View details",
         "inDanger": {
           "description": "Operators exceeding threshold",
-          "label": "In danger"
+          "label": "In danger",
+          "noOperators": "No operators exceeding thresholds"
         },
         "atRisk": {
           "description": "Operators approaching exposure limit",
-          "label": "At risk"
+          "label": "At risk",
+          "noOperators": "No operators approaching exposure limit"
         },
         "withinLimits": {
           "description": "Operators within safe exposure range",
-          "label": "Within limits"
+          "label": "Within limits",
+          "noOperators": "No operators within safe exposure range"
         }
       }
     },

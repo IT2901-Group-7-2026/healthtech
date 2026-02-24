@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { useUser } from "@/features/user-provider.js";
+import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
 import {
 	DANGER_LEVEL_SEVERITY,
