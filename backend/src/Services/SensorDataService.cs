@@ -1,5 +1,6 @@
 using Backend.Data;
 using Backend.DTOs;
+using Backend.Models;
 using Backend.Records;
 using Backend.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -90,6 +91,7 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
 		{
 			Time = item.data.Time,
 			Value = item.data.Value,
+			PeakValue = sensorType == SensorType.Noise ? item.data.MaxValue : null,
 			DangerLevel = item.dangerLevels.dangerLevel,
 			PeakDangerLevel = item.dangerLevels.peakDangerLevel,
 		});

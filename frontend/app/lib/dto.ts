@@ -31,6 +31,7 @@ export type SensorDataRequestDto = {
 export const SensorDataResponseDtoSchema = z.object({
 	time: z.coerce.date(),
 	value: z.number(),
+	peakValue: z.number().nullable(),
 	dangerLevel: DangerLevelSchema,
 	peakDangerLevel: DangerLevelSchema.nullable(),
 });
