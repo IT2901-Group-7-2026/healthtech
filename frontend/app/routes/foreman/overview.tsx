@@ -55,7 +55,7 @@ export default function ForemanOverview() {
 			result.total[subordinate.status.status]++;
 
 			for (const sensorType of sensors) {
-				const level = subordinate.status[sensorType]?.level;
+				const level = subordinate.status[sensorType]?.dangerLevel;
 
 				// Missing sensor data is treated as safe
 				result[sensorType][level ?? "safe"]++;

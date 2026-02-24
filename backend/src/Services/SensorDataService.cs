@@ -90,7 +90,8 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
 		{
 			Time = item.data.Time,
 			Value = item.data.Value,
-			DangerLevel = item.dangerLevel,
+			DangerLevel = item.dangerLevels.dangerLevel,
+			PeakDangerLevel = item.dangerLevels.peakDangerLevel,
 		});
 
 		return result;

@@ -32,6 +32,7 @@ export const SensorDataResponseDtoSchema = z.object({
 	time: z.coerce.date(),
 	value: z.number(),
 	dangerLevel: DangerLevelSchema,
+	peakDangerLevel: DangerLevelSchema.nullable(),
 });
 
 export type SensorDataResponseDto = z.infer<typeof SensorDataResponseDtoSchema>;
@@ -96,7 +97,8 @@ export const UserSchema = z.object({
 export type User = z.infer<typeof UserSchema>;
 
 export const UserSensorStatusSchema = z.object({
-	level: DangerLevelSchema,
+	dangerLevel: DangerLevelSchema,
+	peakDangerLevel: DangerLevelSchema.nullable(),
 	value: z.number(),
 	peakValue: z.number().nullable(),
 });
