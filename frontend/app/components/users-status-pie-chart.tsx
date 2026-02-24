@@ -69,10 +69,11 @@ export interface UserStatusData {
 export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
 	return (
 		<ChartContainer config={chartConfig} className="h-40 w-full">
-			<PieChart>
 				<Pie
-					dataKey="value"
+					dataKey={"value"}
+					isAnimationActive={false}
 					data={[safe, warning, danger]}
+					label={pieLabel}
 					labelLine={false}
 					shape={pieShape}
 				>
