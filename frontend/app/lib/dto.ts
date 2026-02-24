@@ -95,13 +95,20 @@ export const UserSchema = z.object({
 
 export type User = z.infer<typeof UserSchema>;
 
+export const UserSensorStatusSchema = z.object({
+	level: DangerLevelSchema,
+	value: z.number(),
+	peakValue: z.number().nullable(),
+});
+
+export type UserSensorStatusDto = z.infer<typeof UserSensorStatusSchema>;
+
 export const UserStatusSchema = z.object({
 	userId: z.string(),
 	status: DangerLevelSchema,
-	noise: DangerLevelSchema.nullable(),
-	dust: DangerLevelSchema.nullable(),
-	vibration: DangerLevelSchema.nullable(),
-	calculatedAt: z.coerce.date(),
+	noise: UserSensorStatusSchema.nullable(),
+	dust: UserSensorStatusSchema.nullable(),
+	vibration: UserSensorStatusSchema.nullable(),
 });
 
 export type UserStatusDto = z.infer<typeof UserStatusSchema>;

@@ -1,13 +1,7 @@
-import {
-	createContext,
-	type ReactNode,
-	useContext,
-	useEffect,
-	useState,
-} from "react";
 import type { User } from "@/lib/dto.js";
+import { type ReactNode, useEffect, useState } from "react";
+import { KARI_NORDMANN_ID, UserContext } from "./user-context";
 
-const KARI_NORDMANN_ID = "87654321-8765-4321-8765-432187654321" as const;
 const STORAGE_KEY = "demo_user_id" as const;
 
 const KARI_NORDMANN: User = {
@@ -28,14 +22,6 @@ const KARI_NORDMANN: User = {
 		building: null,
 	},
 };
-
-type UserContextType = {
-	user: User;
-	isLoading: boolean;
-	setUser: (user: User) => void;
-};
-
-const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
 	const [user, setUserState] = useState<User>(KARI_NORDMANN);
@@ -67,14 +53,4 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 			{children}
 		</UserContext.Provider>
 	);
-};
-
-export const useUser = () => {
-	const context = useContext(UserContext);
-
-	if (context === undefined) {
-		throw new Error("useUser must be used within a UserProvider");
-	}
-
-	return context;
 };

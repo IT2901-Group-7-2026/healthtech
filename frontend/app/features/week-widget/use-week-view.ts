@@ -1,10 +1,14 @@
 import { useDate } from "@/features/date-picker/use-date";
+import { getFormatOptions, useFormatDate } from "@/hooks/use-format-date.js";
+import { tz } from "@date-fns/tz";
 import type { Day, Locale } from "date-fns";
 import {
 	addDays,
+	addWeeks,
 	eachDayOfInterval,
 	eachMinuteOfInterval,
 	format,
+	getWeek,
 	isSameMonth,
 	isSameYear,
 	isToday,
@@ -13,113 +17,139 @@ import {
 	startOfWeek,
 } from "date-fns";
 
+const getViewTitle = (firstDay: Date, lastDay: Date, locale?: Locale) => {
+	const options = getFormatOptions(locale);
+
+	if (isSameMonth(firstDay, lastDay)) {
+		return format(firstDay, "MMMM yyyy", options);
+	}
+
+	if (isSameYear(firstDay, lastDay)) {
+		const firstDayFormat = format(firstDay, "MMM", options);
+		const lastDayFormat = format(lastDay, "MMM", options);
+		const year = format(firstDay, "yyyy", options);
+
+		return `${firstDayFormat} - ${lastDayFormat} ${year}`;
+	}
+
+	const firstDayFormat = format(firstDay, "MMM yyyy", options);
+	const lastDayFormat = format(lastDay, "MMM yyyy", options);
+
+	return `${firstDayFormat} - ${lastDayFormat}`;
+};
+
+interface WeekViewOptions {
+	minuteStep?: number;
+	dayStartHour?: number;
+	dayEndHour?: number;
+	weekStartsOn?: Day;
+	locale?: Locale;
+	isDisabledCell?: (date: Date) => boolean;
+	isDisabledDay?: (date: Date) => boolean;
+	isDisabledWeek?: (startDayOfWeek: Date) => boolean;
+}
+
 export function useWeekView({
 	minuteStep = 30,
 	weekStartsOn = 1,
 	dayStartHour,
 	dayEndHour,
 	locale,
-	disabledCell,
-	disabledDay,
-	disabledWeek,
-}:
-	| {
-			minuteStep?: number;
-			dayStartHour?: number;
-			dayEndHour?: number;
-			weekStartsOn?: Day;
-			locale?: Locale;
-			disabledCell?: (date: Date) => boolean;
-			disabledDay?: (date: Date) => boolean;
-			disabledWeek?: (startDayOfWeek: Date) => boolean;
-	  }
-	| undefined = {}) {
+	isDisabledCell,
+	isDisabledDay,
+	isDisabledWeek,
+}: WeekViewOptions = {}) {
 	const { date: selectedDay, setDate: setSelectedDay } = useDate();
+	const formatDate = useFormatDate();
 
-	const nextWeek = () => {
-		const _nextWeek = addDays(selectedDay, 7);
-		if (disabledWeek?.(_nextWeek)) return;
-		setSelectedDay(_nextWeek);
+	const selectNextWeek = () => {
+		const nextWeek = addWeeks(selectedDay, 1);
+
+		if (isDisabledWeek?.(nextWeek)) {
+			return;
+		}
+
+		setSelectedDay(nextWeek);
 	};
 
-	const previousWeek = () => {
-		const _previousWeek = addDays(selectedDay, -7);
-		if (disabledWeek?.(_previousWeek)) return;
-		setSelectedDay(_previousWeek);
+	const selectPreviousWeek = () => {
+		const previousWeek = addWeeks(selectedDay, -1);
+
+		if (isDisabledWeek?.(previousWeek)) {
+			return;
+		}
+
+		setSelectedDay(previousWeek);
 	};
 
-	const goToToday = () => {
-		setSelectedDay(startOfWeek(startOfDay(new Date()), { weekStartsOn }));
+	const selectCurrentWeek = () => {
+		const today = startOfDay(new Date());
+		const startOfCurrentWeek = startOfWeek(today, { weekStartsOn });
+
+		setSelectedDay(startOfCurrentWeek);
 	};
 
-	const days = eachDayOfInterval({
-		start: startOfWeek(selectedDay, { weekStartsOn: 1 }),
-		end: addDays(startOfWeek(selectedDay, { weekStartsOn: 1 }), 6),
-	}).map((day) => ({
-		date: day,
-		isToday: isToday(day),
-		name: format(day, "EEEE", { locale }),
-		shortName: format(day, "EEE", { locale }),
-		dayOfMonth: format(day, "d", { locale }),
-		dayOfMonthWithZero: format(day, "dd", { locale }),
-		dayOfMonthWithSuffix: format(day, "do", { locale }),
-		disabled: disabledDay ? disabledDay(day) : false,
-		cells: eachMinuteOfInterval(
-			{
-				start: set(day, {
-					hours: dayStartHour,
-					minutes: 0,
-					seconds: 0,
-					milliseconds: 0,
-				}),
-				end: set(day, {
-					hours: dayEndHour,
-					minutes: 0,
-					seconds: 0,
-					milliseconds: 0,
-				}),
-			},
-			{
-				step: minuteStep,
-			},
-		).map((hour) => ({
-			date: hour,
-			hour: format(hour, "HH", { locale }),
-			minute: format(hour, "mm", { locale }),
-			hourAndMinute: format(hour, "HH:mm", { locale }),
-			disabled: disabledCell ? disabledCell(hour) : false,
-		})),
-	}));
+	const daysInWeek = eachDayOfInterval({
+		start: startOfWeek(selectedDay),
+		end: addDays(startOfWeek(selectedDay), 6),
+	});
 
-	const isAllSameYear = isSameYear(days[0].date, days[days.length - 1].date);
-	const isAllSameMonth = isSameMonth(
-		days[0].date,
-		days[days.length - 1].date,
-	);
+	const timeSlotSegments = daysInWeek.map((day) => {
+		const start = set(day, {
+			hours: dayStartHour,
+			minutes: 0,
+			seconds: 0,
+			milliseconds: 0,
+		});
 
-	let viewTitle = "";
-	if (isAllSameMonth)
-		viewTitle = format(days[0].date, "MMMM yyyy", { locale });
-	else if (isAllSameYear)
-		viewTitle = `${format(days[0].date, "MMM", { locale })} - ${format(
-			days[days.length - 1].date,
-			"MMM",
-			{ locale },
-		)} ${format(days[0].date, "yyyy", { locale })}`;
-	else
-		viewTitle = `${format(days[0].date, "MMM yyyy", { locale })} - ${format(
-			days[days.length - 1].date,
-			"MMM yyyy",
-			{ locale },
-		)}`;
+		const end = set(day, {
+			hours: dayEndHour,
+			minutes: 0,
+			seconds: 0,
+			milliseconds: 0,
+		});
 
-	const weekNumber = format(days[0].date, "w", { locale });
+		const dateSteps = eachMinuteOfInterval(
+			{ start, end },
+			{ step: minuteStep },
+		);
+
+		const cells = dateSteps.map((date) => ({
+			date: date,
+			hour: formatDate(date, "HH"),
+			minute: formatDate(date, "mm"),
+			hourAndMinute: formatDate(date, "HH:mm"),
+			disabled: isDisabledCell ? isDisabledCell(date) : false,
+		}));
+
+		return {
+			date: day,
+			isToday: isToday(day),
+			name: formatDate(day, "EEEE"),
+			shortName: formatDate(day, "EEE"),
+			dayOfMonth: formatDate(day, "d"),
+			dayOfMonthWithZero: formatDate(day, "dd"),
+			dayOfMonthWithSuffix: formatDate(day, "do"),
+			disabled: isDisabledDay ? isDisabledDay(day) : false,
+			cells,
+		};
+	});
+
+	const firstDay = timeSlotSegments.at(0)?.date;
+	const lastDay = timeSlotSegments.at(-1)?.date;
+
+	if (!(firstDay && lastDay)) {
+		throw new Error("Failed to calculate week view");
+	}
+
+	const viewTitle = getViewTitle(firstDay, lastDay, locale);
+	const weekNumber = getWeek(firstDay, { in: tz("Europe/Oslo") });
 
 	return {
-		nextWeek,
-		previousWeek,
-		goToToday,
-		days,
+		selectNextWeek,
+		selectPreviousWeek,
+		selectCurrentWeek,
+		timeSlotSegments,
 		weekNumber,
 		viewTitle,
 		dayStartHour,

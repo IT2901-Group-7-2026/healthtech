@@ -1,4 +1,5 @@
 import type { View } from "@/features/views/views";
+import type { TranslateFn } from "@/i18n/config.js";
 import { type ClassValue, clsx } from "clsx";
 import {
 	addDays,
@@ -10,7 +11,7 @@ import {
 	subWeeks,
 } from "date-fns";
 import { twMerge } from "tailwind-merge";
-import type { SensorDataResponseDto } from "./dto";
+import type { SensorDataResponseDto, User } from "./dto";
 
 export function cn(...inputs: Array<ClassValue>) {
 	return twMerge(clsx(inputs));
@@ -94,8 +95,14 @@ export function computeYAxisRange(
 		return { minY: 0, maxY: step };
 	}
 
-	const max = data.reduce((m, c) => (c.value > m ? c.value : m), data[0].value);
-	const min = data.reduce((m, c) => (c.value < m ? c.value : m), data[0].value);
+	const max = data.reduce(
+		(m, c) => (c.value > m ? c.value : m),
+		data[0].value,
+	);
+	const min = data.reduce(
+		(m, c) => (c.value < m ? c.value : m),
+		data[0].value,
+	);
 
 	const maxY = Math.ceil(max / step) * step + topPadding;
 	const minY = Math.floor((min - bottomPadding) / step) * step;
@@ -103,3 +110,14 @@ export function computeYAxisRange(
 
 	return { minY: clampedMinY, maxY };
 }
+
+export const userRoleToString = (role: User["role"], t: TranslateFn) => {
+	switch (role) {
+		case "operator":
+			return t(($) => $.user.role.operator);
+		case "foreman":
+			return t(($) => $.user.role.foreman);
+		default:
+			return role;
+	}
+};

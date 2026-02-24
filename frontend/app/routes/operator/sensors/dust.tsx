@@ -1,41 +1,42 @@
 /** biome-ignore-all lint/suspicious/noAlert: We use alert for testing, but will be changed later */
 
-import { useQuery } from "@tanstack/react-query";
-import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
-import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes";
-import {
-	ChartLineDefault,
-	ThresholdLine,
-} from "@/components/line-chart";
+import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
 import { Summary } from "@/components/summary";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
-import { useUser } from "@/features/user-provider.js";
+import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
-import { languageToLocale } from "@/i18n/locale";
+import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
+import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
 import { computeYAxisRange } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
+import { useTranslation } from "react-i18next";
 
-// biome-ignore lint: page components can be default exports
+// biome-ignore lint/style/noDefaultExport: react router needs default export
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function Dust() {
 	const { view } = useView();
 	const { date } = useDate();
 	const { t, i18n } = useTranslation();
 	const { user } = useUser();
 
+	const sensor: Sensor = "dust";
+
 	const dayQuery: SensorDataRequestDto = {
 		startTime: new Date(date.setUTCHours(8)),
 		endTime: new Date(date.setUTCHours(16)),
 		granularity: "minute",
 		function: "max",
-		field: "pm1_stel",
+		field: "pm1_twa",
 	};
 
 	const weekQuery: SensorDataRequestDto = {
@@ -43,7 +44,7 @@ export default function Dust() {
 		endTime: endOfWeek(date, { weekStartsOn: 1 }),
 		granularity: "hour",
 		function: "max",
-		field: "pm1_stel",
+		field: "pm1_twa",
 	};
 
 	const monthQuery: SensorDataRequestDto = {
@@ -51,7 +52,7 @@ export default function Dust() {
 		endTime: endOfMonth(date),
 		granularity: "day",
 		function: "max",
-		field: "pm1_stel",
+		field: "pm1_twa",
 	};
 
 	const query =
@@ -89,11 +90,13 @@ export default function Dust() {
 				) : view === "month" ? (
 					<CalendarWidget
 						selectedDay={date}
-						data={mapSensorDataToMonthLists(data ?? [], "dust") ?? []}
+						data={
+							mapSensorDataToMonthLists(data ?? [], "dust") ?? []
+						}
 					/>
 				) : view === "week" ? (
 					<WeekWidget
-						locale={languageToLocale[i18n.language]}
+						locale={getLocale(i18n.language)}
 						dayStartHour={8}
 						dayEndHour={16}
 						weekStartsOn={1}
@@ -125,9 +128,16 @@ export default function Dust() {
 						maxY={maxY}
 						minY={minY}
 						lineType="monotone"
+						sensor={sensor}
 					>
-						<ThresholdLine y={thresholds.dust.danger} dangerLevel="danger" />
-						<ThresholdLine y={thresholds.dust.warning} dangerLevel="warning" />
+						<ThresholdLine
+							y={thresholds.dust.danger}
+							dangerLevel="danger"
+						/>
+						<ThresholdLine
+							y={thresholds.dust.warning}
+							dangerLevel="warning"
+						/>
 					</ChartLineDefault>
 				)}
 			</div>

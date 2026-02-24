@@ -66,17 +66,22 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
 		var sql =
 			$@"
             SELECT 
-                bucket as Time,
-                {aggregateColumnName} as Value,
-                {avgColumnName} as AvgValue,
-                {maxColumnName} as MaxValue,
-				{sumColumnName} as SumValue
-            FROM {materializedViewName}
-            WHERE bucket >= {{0}} AND bucket <= {{1}}
-            ORDER BY bucket";
+                bucket as ""Time"",
+                {aggregateColumnName} as ""Value"",
+                {avgColumnName} as ""AvgValue"",
+                {maxColumnName} as ""MaxValue"",
+				{sumColumnName} as ""SumValue"",
+				user_id as ""UserId""
+            FROM {materializedViewName}";
 
 		var rawSensorData = await _context
-			.Database.SqlQueryRaw<RawSensorData>(sql, startTime, endTime)
+			.Database.SqlQueryRaw<RawSensorData>(sql)
+			.AsQueryable()
+			.Where(data =>
+				data.Time >= startTime
+				&& data.Time <= endTime
+				&& (requestContext.UserId == null || data.UserId == requestContext.UserId)
+			)
 			.ToListAsync();
 
 		var dataWithDangerLevels = ThresholdUtils.CalculateDangerLevels(sensorType, rawSensorData);

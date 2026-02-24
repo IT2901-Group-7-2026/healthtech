@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { WeeklyPopup } from "@/features/popups/weekly-popup";
+import { useFormatDate } from "@/hooks/use-format-date.js";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import type { Day, Locale } from "date-fns";
 import { useState } from "react";
@@ -19,9 +20,9 @@ export function WeekWidget({
 	dayEndHour = 16,
 	locale,
 	rowHeight = 56,
-	disabledCell,
-	disabledDay,
-	disabledWeek,
+	isDisabledCell,
+	isDisabledDay,
+	isDisabledWeek,
 	events,
 }: {
 	minuteStep?: number;
@@ -30,29 +31,32 @@ export function WeekWidget({
 	dayEndHour?: number;
 	locale?: Locale;
 	rowHeight?: number;
-	disabledCell?: (date: Date) => boolean;
-	disabledDay?: (date: Date) => boolean;
-	disabledWeek?: (startDayOfWeek: Date) => boolean;
+	isDisabledCell?: (date: Date) => boolean;
+	isDisabledDay?: (date: Date) => boolean;
+	isDisabledWeek?: (startDayOfWeek: Date) => boolean;
 	events?: Array<WeekEvent>;
 	onCellClick?: (cell: Cell) => void;
 }) {
-	const { days, nextWeek, previousWeek, viewTitle } = useWeekView({
-		minuteStep,
-		weekStartsOn,
-		dayStartHour,
-		dayEndHour,
-		locale,
-		disabledCell,
-		disabledDay,
-		disabledWeek,
-	});
+	const { timeSlotSegments, selectNextWeek, selectPreviousWeek, viewTitle } =
+		useWeekView({
+			minuteStep,
+			weekStartsOn,
+			dayStartHour,
+			dayEndHour,
+			locale,
+			isDisabledCell,
+			isDisabledDay,
+			isDisabledWeek,
+		});
 
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const { visible, closePopup, openPopup } = usePopup();
 
 	const [popupData, setPopupData] = useState<{
 		event: WeekEvent | null;
 	}>({ event: null });
+
+	const formatDate = useFormatDate();
 
 	function handleEventClick(event: WeekEvent): void {
 		setPopupData({ event: event });
@@ -60,25 +64,15 @@ export function WeekWidget({
 	}
 
 	const eventTitle = (event: WeekEvent) => {
-		const actualDay = event.startDate.toLocaleDateString(i18n.language, {
-			day: "numeric",
-			month: "long",
-		});
-		const timeConfig: Intl.DateTimeFormatOptions = {
-			hour: "2-digit",
-			minute: "2-digit",
-		};
-		const start = event.startDate.toLocaleTimeString(
-			i18n.language,
-			timeConfig,
-		);
-		const end = event.endDate.toLocaleTimeString(i18n.language, timeConfig);
-		const translatedTitle = t(($) => $.popup.eventTitle, {
+		const actualDay = formatDate(event.startDate, "d MMMM");
+		const start = formatDate(event.startDate, "p");
+		const end = formatDate(event.endDate, "p");
+
+		return t(($) => $.popup.eventTitle, {
 			day: actualDay,
 			start: start,
 			end: end,
 		});
-		return translatedTitle;
 	};
 
 	return (
@@ -87,23 +81,23 @@ export function WeekWidget({
 				<div className="flex flex-col overflow-hidden px-1">
 					<WeekHeader
 						title={viewTitle}
-						onNext={nextWeek}
-						onPrev={previousWeek}
+						onNext={selectNextWeek}
+						onPrev={selectPreviousWeek}
 					/>
 					<div className="flex flex-1 select-none flex-col overflow-hidden">
 						<div className="isolate flex flex-1 flex-col overflow-auto">
 							<div className="flex min-w-[500px] flex-none flex-col">
-								<WeekDaysHeader days={days} />
+								<WeekDaysHeader days={timeSlotSegments} />
 								<div className="grid grid-cols-1 grid-rows-1">
 									<div className="col-start-1 row-start-1">
 										<WeekGrid
-											days={days}
+											days={timeSlotSegments}
 											rowHeight={rowHeight}
 										/>
 									</div>
 									<div className="col-start-1 row-start-1">
 										<WeekEventGrid
-											days={days}
+											days={timeSlotSegments}
 											events={events}
 											handleEventClick={handleEventClick}
 											weekStartsOn={weekStartsOn}

@@ -7,13 +7,14 @@ import {
 	ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
-import { useSensor } from "@/features/sensor-picker/use-sensor";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto } from "@/lib/dto";
+import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import {
+	type ActiveDotProps,
 	CartesianGrid,
 	Line,
 	LineChart,
@@ -30,6 +31,19 @@ const chartConfig = {
 	},
 } satisfies ChartConfig;
 
+interface LineChartProps {
+	chartData: Array<SensorDataResponseDto>;
+	chartTitle: string;
+	startHour: number;
+	endHour: number;
+	maxY: number;
+	minY: number;
+	unit: string;
+	lineType?: string;
+	children: React.ReactNode;
+	sensor: Sensor;
+}
+
 export function ChartLineDefault({
 	chartData,
 	chartTitle,
@@ -40,24 +54,14 @@ export function ChartLineDefault({
 	unit,
 	lineType = "natural",
 	children,
-}: {
-	chartData: Array<SensorDataResponseDto>;
-	chartTitle: string;
-	startHour: number;
-	endHour: number;
-	maxY: number;
-	minY: number;
-	unit: string;
-	lineType?: string;
-	children: React.ReactNode;
-}) {
+	sensor,
+}: LineChartProps) {
 	const { date: selectedDay } = useDate();
 
 	const { t } = useTranslation();
 
 	const id = useId();
 
-	const { sensor } = useSensor();
 	const { warning, danger } = thresholds[sensor];
 
 	const maxData = [...chartData].sort((a, b) => b.value - a.value)[0];
@@ -137,8 +141,14 @@ export function ChartLineDefault({
 								{maxData.dangerLevel === "safe" ? (
 									<>
 										{/* Whole line is green */}
-										<stop offset="0%" stopColor="var(--safe)" />
-										<stop offset="100%" stopColor="var(--safe)" />
+										<stop
+											offset="0%"
+											stopColor="var(--safe)"
+										/>
+										<stop
+											offset="100%"
+											stopColor="var(--safe)"
+										/>
 									</>
 								) : maxData.dangerLevel === "warning" ? (
 									<>
@@ -147,9 +157,15 @@ export function ChartLineDefault({
 											offset={getOffset(warning)}
 											stopColor="var(--warning)"
 										/>
-										<stop offset={getOffset(warning)} stopColor="var(--safe)" />
+										<stop
+											offset={getOffset(warning)}
+											stopColor="var(--safe)"
+										/>
 
-										<stop offset="100%" stopColor="var(--safe)" />
+										<stop
+											offset="100%"
+											stopColor="var(--safe)"
+										/>
 									</>
 								) : (
 									maxData.dangerLevel === "danger" && (
@@ -171,7 +187,10 @@ export function ChartLineDefault({
 												offset={getOffset(warning)}
 												stopColor="var(--safe)"
 											/>
-											<stop offset="100%" stopColor="var(--safe)" />
+											<stop
+												offset="100%"
+												stopColor="var(--safe)"
+											/>
 										</>
 									)
 								)}
@@ -183,7 +202,13 @@ export function ChartLineDefault({
 							stroke={`url(#${id})`}
 							strokeWidth={2}
 							dot={false}
-							activeDot={<Dot />}
+							activeDot={(props) => (
+								<Dot
+									{...props}
+									warning={warning}
+									danger={danger}
+								/>
+							)}
 						/>
 						{children}
 					</LineChart>
@@ -193,21 +218,20 @@ export function ChartLineDefault({
 	);
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: cannot find the correct type for props here.
-const Dot = (props: any) => {
-	const { cx, cy, value, isActive } = props;
+type DotProps = ActiveDotProps & { warning: number; danger: number };
 
-	const { sensor } = useSensor();
-	const { warning, danger } = thresholds[sensor];
+const Dot = ({ cx, cy, value, warning, danger }: DotProps) => {
+	let fillColor: string;
 
-	const fillColor =
-		value < warning
-			? "var(--safe)"
-			: value < danger
-				? "var(--warning)"
-				: "var(--danger)";
+	if (value >= danger) {
+		fillColor = "var(--danger)";
+	} else if (value >= warning) {
+		fillColor = "var(--warning)";
+	} else {
+		fillColor = "var(--safe)";
+	}
 
-	return <circle cx={cx} cy={cy} r={isActive ? 6 : 3} fill={fillColor} />;
+	return <circle cx={cx} cy={cy} r={6} fill={fillColor} />;
 };
 
 export function ThresholdLine({
@@ -237,5 +261,3 @@ export function ThresholdLine({
 		/>
 	);
 }
-
-

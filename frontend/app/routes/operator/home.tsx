@@ -1,9 +1,5 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { useQueries } from "@tanstack/react-query";
-import { useEffect, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
 import { DailyBarChart } from "@/components/daily-bar-chart";
 import { DailyNotes } from "@/components/daily-notes";
 import { Summary } from "@/components/summary";
@@ -13,21 +9,24 @@ import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { mapAllSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
 import { sensors } from "@/features/sensor-picker/sensors";
-import { useUser } from "@/features/user-provider.js";
+import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { ViewSelect } from "@/features/views/view-select";
 import { mapAllWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
-import { languageToLocale } from "@/i18n/locale";
+import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { AllSensors } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/queries";
 import { getNextDay, getPrevDay } from "@/lib/utils";
+import { useQueries } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
-// biome-ignore lint: page components can be default exports
+// biome-ignore lint/style/noDefaultExport: react router needs default export
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function OperatorHome() {
 	const { t, i18n } = useTranslation();
-	const navigate = useNavigate();
 
 	const { view } = useView();
 	const translatedView = t(($) => $.overview[view]);
@@ -52,13 +51,6 @@ export default function OperatorHome() {
 			sensorQueryOptions({ sensor, query, userId: user.id }),
 		),
 	});
-
-	useEffect(() => {
-		if (user.role !== "operator") {
-			navigate("/");
-			return;
-		}
-	}, [user, navigate]);
 
 	const everySensorData: AllSensors = Object.fromEntries(
 		sensors.map((sensor, index) => [
@@ -90,7 +82,7 @@ export default function OperatorHome() {
 						size={"icon"}
 						className="px-8"
 					>
-						{"Today"}
+						{t(($) => $.today)}
 					</Button>
 					<Button
 						onClick={() => setDate(getPrevDay(date, view))}
@@ -132,7 +124,7 @@ export default function OperatorHome() {
 								/>
 							) : view === "week" ? (
 								<WeekWidget
-									locale={languageToLocale[i18n.language]}
+									locale={getLocale(i18n.language)}
 									dayStartHour={8}
 									dayEndHour={16}
 									weekStartsOn={1}
