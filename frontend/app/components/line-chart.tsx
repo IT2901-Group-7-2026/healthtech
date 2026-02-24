@@ -238,32 +238,4 @@ export function ThresholdLine({
 	);
 }
 
-export function computeYAxisRange(
-	data: Array<SensorDataResponseDto>,
-	options?: {
-		topPadding?: number;
-		bottomPadding?: number;
-		step?: number;
-		clampToZero?: boolean;
-	},
-) {
-	const {
-		topPadding = 5,
-		bottomPadding = 10,
-		step = 10,
-		clampToZero = true,
-	} = options ?? {};
 
-	if (!data || data.length === 0) {
-		return { minY: 0, maxY: step };
-	}
-
-	const max = data.reduce((m, c) => (c.value > m ? c.value : m), data[0].value);
-	const min = data.reduce((m, c) => (c.value < m ? c.value : m), data[0].value);
-
-	const maxY = Math.ceil(max / step) * step + topPadding;
-	const rawMin = Math.floor((min - bottomPadding) / step) * step;
-	const minY = clampToZero ? Math.max(0, rawMin) : rawMin;
-
-	return { minY, maxY };
-}

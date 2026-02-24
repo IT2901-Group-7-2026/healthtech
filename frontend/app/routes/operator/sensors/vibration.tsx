@@ -8,7 +8,6 @@ import { DailyNotes } from "@/components/daily-notes";
 import {
 	ChartLineDefault,
 	ThresholdLine,
-	computeYAxisRange,
 } from "@/components/line-chart";
 import { Summary } from "@/components/summary";
 import { Card, CardTitle } from "@/components/ui/card";
@@ -23,7 +22,7 @@ import { languageToLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
 import { thresholds } from "@/lib/thresholds";
-import { makeCumulative } from "@/lib/utils";
+import { computeYAxisRange, makeCumulative } from "@/lib/utils";
 
 // biome-ignore lint: page components can be default exports
 export default function Vibration() {

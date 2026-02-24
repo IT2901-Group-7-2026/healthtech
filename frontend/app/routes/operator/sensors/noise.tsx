@@ -7,7 +7,7 @@ import { DailyNotes } from "@/components/daily-notes";
 import {
 	ChartLineDefault,
 	ThresholdLine,
-	computeYAxisRange,
+	
 } from "@/components/line-chart";
 import { Summary } from "@/components/summary";
 import { Card, CardTitle } from "@/components/ui/card";
@@ -22,6 +22,7 @@ import { languageToLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
 import { thresholds } from "@/lib/thresholds";
+import { computeYAxisRange } from "@/lib/utils";
 
 // biome-ignore lint: page components can be default exports
 export default function Noise() {
@@ -67,7 +68,6 @@ export default function Noise() {
 	const { minY, maxY } = computeYAxisRange(data ?? [], {
 		topPadding: 0,
 		bottomPadding: 0,
-		step: 1,
 	});
 
 	return (
