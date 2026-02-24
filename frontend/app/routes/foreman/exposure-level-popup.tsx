@@ -27,10 +27,10 @@ export function AtRiskPopup({
 
   const exposureTitle =
   status === "danger"
-    ? "Workers in Danger"
+    ? t((x) => x.exposureLevel.in_danger)
     : status === "warning"
-    ? "Workers at Risk"
-    : "Workers Within Limits";
+    ? t((x) => x.exposureLevel.warning)
+    : t((x) => x.exposureLevel.safe);
 	
   const workers =
     status === "safe"
@@ -57,7 +57,7 @@ export function AtRiskPopup({
 						{workers.length === 0 ? (
 							<TableRow>
 								<TableCell className="text-center text-zinc-500">
-									No workers in this category
+									{t((x) => x.exposureLevel.no_in_danger)}
 								</TableCell>
 							</TableRow>
 						) : (

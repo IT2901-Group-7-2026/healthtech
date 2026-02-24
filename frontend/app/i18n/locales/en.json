@@ -113,6 +113,12 @@
 		"detailText": "View details",
 		"noWorkers": "No workers at risk"
 	},
+	"exposureLevel": {
+		"in_danger": "Workers In Danger",
+		"warning": "Workers at Risk",
+		"safe": "Workers Within Limits",
+		"no_in_danger": "No workers in this category"
+	},
 	"loadingData": "Loading data...",
 	"errorLoadingData": "Something went wrong while fetching sensor data.",
 	"noData": "No exposure data found for this day",

@@ -113,6 +113,12 @@
 		"detailText": "Se detaljer",
 		"noWorkers": "Ingen risikosårbare arbeidere"
 	},
+	"exposureLevel": {
+		"in_danger": "Arbeidere over grenseverdier",
+		"warning": "Arbeidere nær grenseverdier",
+		"safe": "Arbeidere innenfor grenseverdier",
+		"no_in_danger": "Ingen arbeidere i denne kategorien"
+	},
 	"loadingData": "Laster inn data...",
 	"errorLoadingData": "Noe gikk galt under henting av sensordata.",
 	"noData": "Ingen eksponeringsdata funnet for denne dagen",

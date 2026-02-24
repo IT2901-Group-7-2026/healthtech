@@ -35,12 +35,12 @@ export default function ForemanOverview() {
   useState<DangerLevel | null>(null);
 
   const openForStatus = (status: DangerLevel) => {
-  setPopupStatus(status);     // lock content
-  setSelectedStatus(status);  // open popup
+  setPopupStatus(status);
+  setSelectedStatus(status);
 };
 
 const closePopup = () => {
-  setSelectedStatus(null);    // triggers fade-out
+  setSelectedStatus(null);
 };
 
 	const { data: subordinates } = useSubordinatesQuery(user.id);
