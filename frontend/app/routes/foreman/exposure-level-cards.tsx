@@ -27,8 +27,7 @@ export function ExposureRiskCards({users, sensor} : Props) {
 	);
 
 	const withinLimitsWorkers = users.filter(
-		(user) => user.status[sensor]?.level === "safe",
-		//(user) => console.log(user.status)
+		(user) => (user.status[sensor]?.level ?? "safe") === "safe",
 	);
 
 	return (
@@ -72,7 +71,7 @@ export function ExposureRiskCards({users, sensor} : Props) {
 											<TableCell>
 												<div className="flex items-center gap-5">
 													<div
-														className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(sub.status.status)}`}
+														className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor((sub.status[sensor]?.level ?? "safe"))}`}
 													/>
 													<span>{sub.username}</span>
 												</div>
@@ -129,7 +128,7 @@ export function ExposureRiskCards({users, sensor} : Props) {
 											<TableCell>
 												<div className="flex items-center gap-5">
 													<div
-														className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(sub.status.status)}`}
+														className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor((sub.status[sensor]?.level ?? "safe"))}`}
 													/>
 													<span>{sub.username}</span>
 												</div>
@@ -186,7 +185,7 @@ export function ExposureRiskCards({users, sensor} : Props) {
 											<TableCell>
 												<div className="flex items-center gap-5">
 													<div
-														className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(sub.status.status)}`}
+														className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor((sub.status[sensor]?.level ?? "safe"))}`}
 													/>
 													<span>{sub.username}</span>
 												</div>
