@@ -7,8 +7,6 @@ import {
 	Sector,
 } from "recharts";
 
-const RADIAN = Math.PI / 180;
-
 const pieShape = (props: PieSectorShapeProps) => {
 	const colorMap: Record<string, string> = {
 		Danger: "var(--danger)",
