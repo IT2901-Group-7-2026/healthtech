@@ -158,5 +158,14 @@
       "xAxisLabel": "Prosent av faregrense",
       "noData": "Ingen data tilgjengelig"
     }
+  },
+  "user": {
+    "role": {
+      "operator": "Operatør",
+      "foreman": "Forman"
+    }
+  },
+  "demo": {
+    "currentRole": "Nåværende rolle:"
   }
 }

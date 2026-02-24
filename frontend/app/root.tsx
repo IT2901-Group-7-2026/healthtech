@@ -15,7 +15,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { DateProvider } from "./features/date-picker/date-provider";
 import { SensorProvider } from "./features/sensor-picker/sensor-provider";
-import { UserProvider } from "./features/user-provider.js";
+import { UserProvider } from "./features/user/user-provider.js";
 import { ViewProvider } from "./features/views/view-provider";
 import "./i18n/config";
 

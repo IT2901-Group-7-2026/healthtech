@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes.js";
 import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
-import { useUser } from "@/features/user-context";
+import { useUser } from "@/features/user/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
 import { createLocationName } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";

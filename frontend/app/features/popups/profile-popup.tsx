@@ -1,25 +1,25 @@
 import { useTranslation } from "react-i18next";
+import type { User } from "@/lib/dto.js";
+import { userRoleToString } from "@/lib/utils.js";
 import { BasePopup } from "./base-popup";
 
-export function ProfilePopup({
-	name,
-	location,
-	avatarSrc,
-	open,
-	onClose,
-	children,
-	jobTitle,
-	jobDescription,
-}: {
-	name: string;
-	location: string;
-	avatarSrc?: string;
+interface ProfilePopupProps {
+	user: User;
+	avatarSrc: string;
 	open: boolean;
 	onClose: () => void;
+	users?: Array<User>;
+	setUser?: (user: User) => void;
 	children?: React.ReactNode;
-	jobTitle?: string;
-	jobDescription?: string;
-}) {
+}
+
+export function ProfilePopup({
+	user,
+	open,
+	onClose,
+	avatarSrc,
+	children,
+}: ProfilePopupProps) {
 	const { t } = useTranslation();
 	const title = t(($) => $.profile.title);
 
@@ -33,6 +33,7 @@ export function ProfilePopup({
 			onClose={onClose}
 		>
 			{children}
+
 			<div className="flex flex-col gap-6 md:px-6 md:pb-2">
 				<div className="flex flex-row items-center gap-4">
 					<div>
@@ -41,7 +42,7 @@ export function ProfilePopup({
 								src={avatarSrc}
 								height={100}
 								width={100}
-								alt={name}
+								alt={user.username}
 								className="h-full w-full rounded-full object-cover"
 							/>
 						) : (
@@ -53,19 +54,19 @@ export function ProfilePopup({
 							<p className="label text-muted-foreground">
 								{t(($) => $.profile.name)}
 							</p>
-							<h2>{name}</h2>
+							<h2>{user.username}</h2>
 						</div>
 						<div className="flex flex-row gap-3">
 							<p className="label text-muted-foreground">
 								{t(($) => $.profile.location)}
 							</p>
-							<h3>{location}</h3>
+							<h3>{user.location.site}</h3>
 						</div>
 						<div className="flex flex-row gap-3">
 							<p className="label text-muted-foreground">
 								{t(($) => $.profile.jobTitle)}
 							</p>
-							<h3>{jobTitle}</h3>
+							<h3>{userRoleToString(user.role, t)}</h3>
 						</div>
 					</div>
 				</div>
@@ -86,7 +87,7 @@ export function ProfilePopup({
 						{t(($) => $.profile.jobDescription)}
 					</p>
 					<div className="w-full rounded-lg bg-card-highlight p-2">
-						<p>{jobDescription}</p>
+						<p>{user.jobDescription}</p>
 					</div>
 				</div>
 			</div>

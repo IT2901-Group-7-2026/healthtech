@@ -1,7 +1,7 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { useTranslation } from "react-i18next";
 import { DataTable } from "@/components/ui/data-table";
-import { useUser } from "@/features/user-context";
+import { useUser } from "@/features/user/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
 import {
 	mapDangerLevelToColor,
