@@ -71,12 +71,27 @@ export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
 		<ChartContainer config={chartConfig} className="h-40 w-full">
 			<PieChart>
 				<Pie
-					dataKey={"value"}
+					dataKey="value"
 					data={[safe, warning, danger]}
-					label={pieLabel}
 					labelLine={false}
 					shape={pieShape}
-				/>
+				>
+					<LabelList
+						dataKey="value"
+						position="inside"
+						formatter={(label) => {
+							// Hide zero-value labels
+							if (typeof label === "number" && label === 0) {
+								return null;
+							}
+
+							return label;
+						}}
+						fill="white"
+						fontSize={14}
+						fontWeight={700}
+					/>
+				</Pie>
 				<ChartTooltip
 					content={({ active, payload }) => {
 						if (!(active && payload?.length)) {
