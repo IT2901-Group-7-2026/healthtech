@@ -30,37 +30,18 @@ export default function ForemanOverview() {
 	const { user } = useUser();
 
 	const { data: subordinates } = useSubordinatesQuery(user.id);
-
-	type Subordinate = NonNullable<
-		ReturnType<typeof useSubordinatesQuery>["data"]
-	>[number];
-
 	const addSubordinateDangerLevel = useCallback(
 		(
-			result: Record<
-				Sensor | "total",
-				{ danger: number; warning: number; safe: number }
-			>,
-			subordinate: Subordinate,
+			result: Record<Sensor | "total", Record<DangerLevel, number>>,
+			subordinate: UserWithStatusDto,
 		) => {
-			if (subordinate.status.status === "danger") {
-				result.total.danger++;
-			} else if (subordinate.status.status === "warning") {
-				result.total.warning++;
-			} else {
-				result.total.safe++;
-			}
+			result.total[subordinate.status.status]++;
 
 			for (const sensorType of sensors) {
-				if (subordinate.status[sensorType]?.level === "danger") {
-					result[sensorType].danger++;
-				} else if (
-					subordinate.status[sensorType]?.level === "warning"
-				) {
-					result[sensorType].warning++;
-				} else {
-					result[sensorType].safe++;
-				}
+				const level = subordinate.status[sensorType]?.level;
+
+				// Missing sensor data is treated as safe
+				result[sensorType][level ?? "safe"]++;
 			}
 		},
 		[],
