@@ -11,23 +11,6 @@ import {
 	Sector,
 } from "recharts";
 
-const chartConfig = {
-	percent: {
-		label: "Percent", //TODO: i18n
-	},
-	safe: {
-		label: "Safe", //TODO: i18n
-		color: "var(--safe)",
-	},
-	warning: {
-		label: "Warning", //TODO: i18n
-		color: "var(--warning)",
-	},
-	danger: {
-		label: "Danger", //TODO: i18n
-		color: "var(--danger)",
-	},
-} satisfies ChartConfig;
 
 const RADIAN = Math.PI / 180;
 
