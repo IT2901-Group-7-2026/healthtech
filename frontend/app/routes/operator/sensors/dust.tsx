@@ -69,7 +69,6 @@ export default function Dust() {
 	const { minY, maxY } = computeYAxisRange(data ?? [], {
 		topPadding: 0,
 		bottomPadding: 0,
-		step: 1,
 	});
 
 	return (
@@ -90,9 +89,7 @@ export default function Dust() {
 				) : view === "month" ? (
 					<CalendarWidget
 						selectedDay={date}
-						data={
-							mapSensorDataToMonthLists(data ?? [], "dust") ?? []
-						}
+						data={mapSensorDataToMonthLists(data ?? [], "dust") ?? []}
 					/>
 				) : view === "week" ? (
 					<WeekWidget
@@ -130,14 +127,8 @@ export default function Dust() {
 						lineType="monotone"
 						sensor={sensor}
 					>
-						<ThresholdLine
-							y={thresholds.dust.danger}
-							dangerLevel="danger"
-						/>
-						<ThresholdLine
-							y={thresholds.dust.warning}
-							dangerLevel="warning"
-						/>
+						<ThresholdLine y={thresholds.dust.danger} dangerLevel="danger" />
+						<ThresholdLine y={thresholds.dust.warning} dangerLevel="warning" />
 					</ChartLineDefault>
 				)}
 			</div>
