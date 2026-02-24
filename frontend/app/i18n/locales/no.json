@@ -160,7 +160,7 @@
         }
       }
     },
-	"userStatusChart": {
+    "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",
       "noData": "Ingen data tilgjengelig"
     }

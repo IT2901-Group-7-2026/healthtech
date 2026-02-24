@@ -2,6 +2,7 @@
 
 import { DailyNotes } from "@/components/daily-notes.js";
 import { Card } from "@/components/ui/card";
+import { UserStatusChart } from "@/components/users-status-chart";
 import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
 import type { DangerLevel } from "@/lib/danger-levels";
@@ -14,15 +15,13 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
-import { useCallback } from "react";
-import { PieChartCard } from "./pie-chart-card";
 import { MapPinIcon, UsersIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AtRiskPopup } from "./exposure-level-popup";
+import { PieChartCard } from "./pie-chart-card";
 import { StatCard } from "./stat-card";
-import { UserStatusChart } from "@/components/users-status-chart";
 
 // biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function ForemanOverview() {
