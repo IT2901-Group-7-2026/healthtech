@@ -1,9 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { Sensor } from "@/features/sensor-picker/sensors";
-import {
-	mapDangerLevelToColor
-} from "@/lib/danger-levels";
+import { mapDangerLevelToColor } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
@@ -13,10 +11,10 @@ import { Link } from "react-router";
 interface Props {
 	users: Array<UserWithStatusDto>;
 	sensor: Sensor;
-	dangerLevel: String;
+	dangerLevel: string;
 }
 
-export function ExposureRiskCard({users, sensor, dangerLevel} : Props) {
+export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 	const { t } = useTranslation();
 
 	const operators = users.filter(
@@ -25,18 +23,16 @@ export function ExposureRiskCard({users, sensor, dangerLevel} : Props) {
 
 	// Translate dangerLevel to the correct .json key, used for translations and title colour
 	let dangerLabel: "inDanger" | "atRisk" | "withinLimits";
-	let colour: "red" | "orange" | "green"
+	let colour: "red" | "orange" | "green";
 	if (dangerLevel === "danger") {
-		dangerLabel = "inDanger"
-		colour = "red"
-	}
-	else if (dangerLevel === "warning") {
-		dangerLabel = "atRisk"
-		colour = "orange"
-	}
-	else {
-		dangerLabel = "withinLimits"
-		colour = "green"
+		dangerLabel = "inDanger";
+		colour = "red";
+	} else if (dangerLevel === "warning") {
+		dangerLabel = "atRisk";
+		colour = "orange";
+	} else {
+		dangerLabel = "withinLimits";
+		colour = "green";
 	}
 
 	return (
@@ -54,11 +50,17 @@ export function ExposureRiskCard({users, sensor, dangerLevel} : Props) {
 			>
 				{/* TITLE */}
 				<CardHeader>
-					<CardTitle 
+					<CardTitle
 						className="text-center"
-						style={{color: colour}}
+						style={{ color: colour }}
 					>
-						{t((x) => x.foremanDashboard.overview.statCards[dangerLabel].label)} {"("} {operators.length} {")"}
+						{t(
+							(x) =>
+								x.foremanDashboard.overview.statCards[
+									dangerLabel
+								].label,
+						)}{" "}
+						{"("} {operators.length} {")"}
 					</CardTitle>
 				</CardHeader>
 
@@ -69,7 +71,12 @@ export function ExposureRiskCard({users, sensor, dangerLevel} : Props) {
 							{operators.length === 0 ? (
 								<TableRow>
 									<TableCell className="text-center text-zinc-500">
-										{t((x) => x.foremanDashboard.overview.statCards[dangerLabel].noOperators)}
+										{t(
+											(x) =>
+												x.foremanDashboard.overview
+													.statCards[dangerLabel]
+													.noOperators,
+										)}
 									</TableCell>
 								</TableRow>
 							) : (
@@ -78,7 +85,7 @@ export function ExposureRiskCard({users, sensor, dangerLevel} : Props) {
 										<TableCell>
 											<div className="flex items-center gap-5">
 												<div
-													className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor((sub.status[sensor]?.level ?? "safe"))}`}
+													className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(sub.status[sensor]?.level ?? "safe")}`}
 												/>
 												<span>{sub.username}</span>
 											</div>
@@ -91,10 +98,16 @@ export function ExposureRiskCard({users, sensor, dangerLevel} : Props) {
 				</CardContent>
 				{/* VIEW DETAILS */}
 				<div className="mt-1 flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300">
-					<p>{t((x) => x.foremanDashboard.overview.statCards.viewDetails)}</p>
+					<p>
+						{t(
+							(x) =>
+								x.foremanDashboard.overview.statCards
+									.viewDetails,
+						)}
+					</p>
 					<ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
 				</div>
 			</Card>
 		</Link>
-);
+	);
 }

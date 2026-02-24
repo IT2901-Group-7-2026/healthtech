@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
 import { DailyNotes } from "@/components/daily-notes.js";
+import { ExposureRiskCard } from "@/components/exposure-level-card";
 import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { useUser } from "@/features/user-context";
@@ -23,7 +24,6 @@ import { ActionCard } from "./action-card";
 import { AtRiskPopup } from "./exposure-level-popup";
 import { PieChartCard } from "./pie-chart-card";
 import { StatCard } from "./stat-card";
-import { ExposureRiskCard } from "@/components/exposure-level-card";
 import { AtRiskTable } from "./workers-at-risk-table";
 
 // biome-ignore lint/style/noDefaultExport: react router needs default export
@@ -203,20 +203,29 @@ export default function ForemanOverview() {
 							/>
 							{/* TODO: move to right page after*/}
 							{/* Operators in danger for the chosen exposure */}
-							{sensor && (<ExposureRiskCard 
-								users={subordinates ?? []}
-								sensor={sensor}
-								dangerLevel={"danger"}/>)}
+							{sensor && (
+								<ExposureRiskCard
+									users={subordinates ?? []}
+									sensor={sensor}
+									dangerLevel={"danger"}
+								/>
+							)}
 							{/* Operators that are under warning for the chosen exposure */}
-							{sensor && (<ExposureRiskCard 
-								users={subordinates ?? []}
-								sensor={sensor}
-								dangerLevel={"warning"}/>)}
+							{sensor && (
+								<ExposureRiskCard
+									users={subordinates ?? []}
+									sensor={sensor}
+									dangerLevel={"warning"}
+								/>
+							)}
 							{/* Operators that are safe for the chosen exposure */}
-							{sensor && (<ExposureRiskCard 
-								users={subordinates ?? []}
-								sensor={sensor}
-								dangerLevel={"safe"}/>)}
+							{sensor && (
+								<ExposureRiskCard
+									users={subordinates ?? []}
+									sensor={sensor}
+									dangerLevel={"safe"}
+								/>
+							)}
 						</div>
 					</div>
 					{/* <AtRiskTable users={subordinates ?? []} /> */}
