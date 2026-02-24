@@ -3,6 +3,11 @@ import {
 	UserStatusPieChart,
 	type UserStatusData,
 } from "@/components/users-status-pie-chart";
+import {
+	DANGER_LEVEL_SEVERITY,
+	DangerLevelSchema,
+	mapDangerLevelToColor,
+} from "@/lib/danger-levels";
 import { cn } from "@/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { Link } from "react-router";
@@ -40,20 +45,23 @@ export const PieChartCard = ({
 			<h2 className="text-xs uppercase tracking-widest dark:text-zinc-400">
 				{label}
 			</h2>
-
-			<div className="flex w-1/3 flex-col gap-2 text-xs">
-				<div className="flex flex-row justify-between gap-2">
-					<p className="dark:text-zinc-400">{data.danger.label}</p>{" "}
-					<p>{data.danger.value}</p>
-				</div>
-				<div className="flex flex-row justify-between gap-2">
-					<p className="dark:text-zinc-400">{data.warning.label}</p>{" "}
-					<p>{data.warning.value}</p>
-				</div>
-				<div className="flex flex-row justify-between gap-2">
-					<p className="dark:text-zinc-400">{data.safe.label}</p>{" "}
-					<p>{data.safe.value}</p>
-				</div>
+			<div className="flex flex-col gap-2 text-xs">
+				{DangerLevelSchema.options
+					.sort((a, b) => DANGER_LEVEL_SEVERITY[b] - DANGER_LEVEL_SEVERITY[a])
+					.map((level) => {
+						return (
+							<div
+								className="grid grid-cols-[auto_1fr_auto] items-center gap-2"
+								key={level}
+							>
+								<div
+									className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(level)}`}
+								/>
+								<p className="dark:text-zinc-400">{data[level].label}</p>{" "}
+								<p>{data[level].value}</p>
+							</div>
+						);
+					})}
 			</div>
 
 			<UserStatusPieChart

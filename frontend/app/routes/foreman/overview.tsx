@@ -9,7 +9,7 @@ import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { useUser } from "@/features/user-context";
 import { useSubordinatesQuery } from "@/lib/api";
-import { createLocationName } from "@/lib/dto.js";
+import { createLocationName, type UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
 import {
 	Select,
@@ -21,6 +21,7 @@ import {
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
 import { PieChartCard } from "./pie-chart-card";
+import type { DangerLevel } from "@/lib/danger-levels";
 
 // biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function ForemanOverview() {
@@ -91,9 +92,7 @@ export default function ForemanOverview() {
 					value={sensor ?? undefined}
 				>
 					<SelectTrigger className="w-32 bg-background dark:bg-background">
-						<SelectValue
-							placeholder={t(($) => $.sensorSelectPlaceholder)}
-						/>
+						<SelectValue placeholder={t(($) => $.sensorSelectPlaceholder)} />
 					</SelectTrigger>
 					<SelectContent className="w-32">
 						{sensors?.map((s) => (
@@ -131,13 +130,10 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards
-											.inDanger.description,
+										$.foremanDashboard.overview.statCards.inDanger.description,
 								)}
 								label={t(
-									($) =>
-										$.foremanDashboard.overview.statCards
-											.inDanger.label,
+									($) => $.foremanDashboard.overview.statCards.inDanger.label,
 								)}
 								to="/"
 								totalValue={total}
@@ -148,13 +144,10 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards
-											.atRisk.description,
+										$.foremanDashboard.overview.statCards.atRisk.description,
 								)}
 								label={t(
-									($) =>
-										$.foremanDashboard.overview.statCards
-											.atRisk.label,
+									($) => $.foremanDashboard.overview.statCards.atRisk.label,
 								)}
 								to="/"
 								totalValue={total}
@@ -165,13 +158,12 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards
-											.withinLimits.description,
+										$.foremanDashboard.overview.statCards.withinLimits
+											.description,
 								)}
 								label={t(
 									($) =>
-										$.foremanDashboard.overview.statCards
-											.withinLimits.label,
+										$.foremanDashboard.overview.statCards.withinLimits.label,
 								)}
 								to="/"
 								totalValue={total}
@@ -201,35 +193,28 @@ export default function ForemanOverview() {
 										data={{
 											safe: {
 												name: "Safe",
-												value: countPerDangerLevel[s]
-													.safe,
+												value: countPerDangerLevel[s].safe,
 												label: t(
 													($) =>
-														$.foremanDashboard
-															.overview.statCards
-															.withinLimits.label,
+														$.foremanDashboard.overview.statCards.withinLimits
+															.label,
 												),
 											},
 											warning: {
 												name: "Warning",
-												value: countPerDangerLevel[s]
-													.warning,
+												value: countPerDangerLevel[s].warning,
 												label: t(
 													($) =>
-														$.foremanDashboard
-															.overview.statCards
-															.atRisk.label,
+														$.foremanDashboard.overview.statCards.atRisk.label,
 												),
 											},
 											danger: {
 												name: "Danger",
-												value: countPerDangerLevel[s]
-													.danger,
+												value: countPerDangerLevel[s].danger,
 												label: t(
 													($) =>
-														$.foremanDashboard
-															.overview.statCards
-															.inDanger.label,
+														$.foremanDashboard.overview.statCards.inDanger
+															.label,
 												),
 											},
 										}}
