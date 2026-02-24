@@ -163,6 +163,11 @@
         }
       }
     },
+    "actionCard": {
+      "safe": "Alt er bra!",
+      "warning": "Tiltak anbefales",
+      "danger": "Du må utføre et tiltak!"
+    },
     "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",
       "noData": "Ingen data tilgjengelig"

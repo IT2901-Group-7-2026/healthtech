@@ -19,10 +19,12 @@ import { MapPinIcon, UsersIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { ActionCard } from "./action-card";
 import { AtRiskPopup } from "./exposure-level-popup";
 import { PieChartCard } from "./pie-chart-card";
 import { StatCard } from "./stat-card";
 import { ExposureRiskCard } from "@/components/exposure-level-card";
+import { AtRiskTable } from "./workers-at-risk-table";
 
 // biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function ForemanOverview() {
@@ -142,6 +144,7 @@ export default function ForemanOverview() {
 				</div>
 
 				<div className="flex grow flex-col gap-4">
+					<ActionCard dangerLevel="danger" />
 					<div className="grid gap-6 lg:grid-cols-3">
 						<div className="grid items-stretch gap-4 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
 							<StatCard
@@ -216,6 +219,7 @@ export default function ForemanOverview() {
 								dangerLevel={"safe"}/>)}
 						</div>
 					</div>
+					<AtRiskTable users={subordinates ?? []} />
 
 					{sensor ? (
 						<UserStatusChart
