@@ -17,8 +17,9 @@ import {
 } from "@/ui/select";
 import { MapPinIcon, UsersIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { AtRiskPopup } from "./exposure-level-popup";
 import { PieChartCard } from "./pie-chart-card";
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
@@ -30,6 +31,21 @@ export default function ForemanOverview() {
 	const [sensor, setSensor] = useQueryState("vibration", parseAsSensor);
 
 	const { user } = useUser();
+
+	const [selectedStatus, setSelectedStatus] = useState<DangerLevel | null>(
+		null,
+	);
+
+	const [popupStatus, setPopupStatus] = useState<DangerLevel | null>(null);
+
+	const openForStatus = (status: DangerLevel) => {
+		setPopupStatus(status);
+		setSelectedStatus(status);
+	};
+
+	const closePopup = () => {
+		setSelectedStatus(null);
+	};
 
 	const { data: subordinates } = useSubordinatesQuery(user.id);
 	const addSubordinateDangerLevel = useCallback(
@@ -73,7 +89,6 @@ export default function ForemanOverview() {
 	const cardViewDetailsText = t(
 		($) => $.foremanDashboard.overview.statCards.viewDetails,
 	);
-
 	//TODO: Update card links to point to stats page
 
 	return (
@@ -138,6 +153,7 @@ export default function ForemanOverview() {
 								label={t(
 									($) => $.foremanDashboard.overview.statCards.inDanger.label,
 								)}
+								onClick={() => openForStatus("danger")}
 								to="/"
 								totalValue={total}
 								value={countPerDangerLevel.total.danger}
@@ -152,6 +168,7 @@ export default function ForemanOverview() {
 								label={t(
 									($) => $.foremanDashboard.overview.statCards.atRisk.label,
 								)}
+								onClick={() => openForStatus("warning")}
 								to="/"
 								totalValue={total}
 								value={countPerDangerLevel.total.warning}
@@ -168,6 +185,7 @@ export default function ForemanOverview() {
 									($) =>
 										$.foremanDashboard.overview.statCards.withinLimits.label,
 								)}
+								onClick={() => openForStatus("safe")}
 								to="/"
 								totalValue={total}
 								value={countPerDangerLevel.total.safe}
@@ -177,6 +195,7 @@ export default function ForemanOverview() {
 						</div>
 					</div>
 					<AtRiskTable users={subordinates ?? []} />
+
 					{sensor ? (
 						<UserStatusChart
 							users={subordinates ?? []}
@@ -229,6 +248,13 @@ export default function ForemanOverview() {
 						</div>
 					)}
 				</div>
+
+				<AtRiskPopup
+					open={selectedStatus !== null}
+					onClose={closePopup}
+					title="Workers"
+					status={popupStatus ?? "danger"}
+				/>
 			</div>
 		</div>
 	);
