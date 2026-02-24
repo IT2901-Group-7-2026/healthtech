@@ -23,7 +23,6 @@ import { useQueries } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-// biome-ignore lint/style/noDefaultExport: react router needs default export
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function OperatorHome() {
 	const { t, i18n } = useTranslation();

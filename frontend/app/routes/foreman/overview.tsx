@@ -23,7 +23,6 @@ import { PieChartCard } from "./pie-chart-card";
 import { StatCard } from "./stat-card";
 import { AtRiskTable } from "./workers-at-risk-table";
 
-// biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const [sensor, setSensor] = useQueryState("vibration", parseAsSensor);

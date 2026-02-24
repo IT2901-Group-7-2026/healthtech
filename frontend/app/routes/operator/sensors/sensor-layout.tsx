@@ -20,7 +20,6 @@ function Title({ sensor }: { sensor: Sensor }) {
 	);
 }
 
-// biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function SensorLayout() {
 	const { date, setDate } = useDate();
 	const { view } = useView();
