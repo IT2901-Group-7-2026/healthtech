@@ -5,15 +5,24 @@ import type { MonthData } from "./calendar-widget";
 export const mapSensorDataToMonthLists = (
 	data: Array<SensorDataResponseDto>,
 	relevantSensor: Sensor,
+	usePeakData?: boolean,
 ): MonthData => {
 	const safeDates: Array<Date> = data
-		.filter((d) => d.dangerLevel === "safe")
+		.filter(
+			(d) => (usePeakData ? d.peakDangerLevel : d.dangerLevel) === "safe",
+		)
 		.map((d) => new Date(d.time));
 	const warningDates: Array<Date> = data
-		.filter((d) => d.dangerLevel === "warning")
+		.filter(
+			(d) =>
+				(usePeakData ? d.peakDangerLevel : d.dangerLevel) === "warning",
+		)
 		.map((d) => new Date(d.time));
 	const dangerDates: Array<Date> = data
-		.filter((d) => d.dangerLevel === "danger")
+		.filter(
+			(d) =>
+				(usePeakData ? d.peakDangerLevel : d.dangerLevel) === "danger",
+		)
 		.map((d) => new Date(d.time));
 
 	return {
@@ -33,6 +42,7 @@ export const mapAllSensorDataToMonthLists = (
 	const noiseData = mapSensorDataToMonthLists(
 		everySensorData.noise.data ?? [],
 		"noise",
+		true,
 	);
 	const vibrationData = mapSensorDataToMonthLists(
 		everySensorData.vibration.data ?? [],

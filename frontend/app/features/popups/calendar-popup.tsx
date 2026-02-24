@@ -2,6 +2,7 @@ import { BasePopup } from "@/features/popups/base-popup";
 import type { DangerLevel } from "@/lib/danger-levels";
 import type { Sensor } from "@/lib/sensors";
 import { cn } from "@/lib/utils";
+import type { NoiseViewMode } from "app/routes/operator/sensors/noise";
 import { t } from "i18next";
 import { DailyNotes } from "../../components/daily-notes";
 import { Card } from "../../components/ui/card";
@@ -9,6 +10,7 @@ import { Card } from "../../components/ui/card";
 type CalendarPopupProps = {
 	title: string;
 	selectedDate: Date;
+	selectedViewMode?: NoiseViewMode;
 	exposureData?: CalendarPopupData | null;
 	open: boolean;
 	onClose: () => void;
@@ -21,6 +23,7 @@ export function CalendarPopup({
 	exposureData,
 	title,
 	selectedDate,
+	selectedViewMode,
 	open,
 	onClose,
 	children,
@@ -29,6 +32,7 @@ export function CalendarPopup({
 		<BasePopup
 			title={title}
 			relevantDate={selectedDate}
+			relevantViewMode={selectedViewMode}
 			open={open}
 			onClose={onClose}
 		>

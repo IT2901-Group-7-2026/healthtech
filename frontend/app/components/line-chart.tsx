@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
-import type { SensorDataResponseDto } from "@/lib/dto";
+import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
 import { useId } from "react";
@@ -42,6 +42,7 @@ interface LineChartProps {
 	lineType?: string;
 	children: React.ReactNode;
 	sensor: Sensor;
+	usePeakData?: boolean;
 }
 
 export function ChartLineDefault({
@@ -55,6 +56,7 @@ export function ChartLineDefault({
 	lineType = "natural",
 	children,
 	sensor,
+	usePeakData = false,
 }: LineChartProps) {
 	const { date: selectedDay } = useDate();
 
@@ -62,18 +64,22 @@ export function ChartLineDefault({
 
 	const id = useId();
 
-	const { warning, danger } = thresholds[sensor];
+	const { warning, danger, peakDanger } = thresholds[sensor];
+	const dangerThreshold = usePeakData ? (peakDanger ?? danger) : danger;
 
-	const maxData = [...chartData].sort((a, b) => b.value - a.value)[0];
-	const minData = [...chartData].sort((a, b) => a.value - b.value)[0];
+	const getValue = (data: SensorDataResponseDto) =>
+		usePeakData ? (data.peakValue ?? data.value) : data.value;
+
+	const maxData = [...chartData].sort((a, b) => getValue(b) - getValue(a))[0];
+	const minData = [...chartData].sort((a, b) => getValue(a) - getValue(b))[0];
 
 	// Used to position color-changes in the graph so the line changes color at threshold boundaries.
 	const getOffset = (y: number) =>
-		`${((maxData.value - y) / (maxData.value - minData.value)) * 100}%`;
+		`${((getValue(maxData) - y) / (getValue(maxData) - getValue(minData))) * 100}%`;
 
 	const transformedData = chartData.map((item) => ({
 		time: item.time.getTime(),
-		value: item.value,
+		value: getValue(item),
 	}));
 
 	const ticks = Array.from({ length: endHour - startHour + 1 }, (_, i) => {
@@ -84,6 +90,8 @@ export function ChartLineDefault({
 
 	const formatTime = (time: number) =>
 		new Date(time).getUTCHours().toString().padStart(2, "0");
+
+	const maxDataDangerLevel = getDangerLevel(maxData, usePeakData);
 
 	return (
 		<Card className="w-full">
@@ -138,7 +146,7 @@ export function ChartLineDefault({
 
 						<defs>
 							<linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-								{maxData.dangerLevel === "safe" ? (
+								{maxDataDangerLevel === "safe" ? (
 									<>
 										{/* Whole line is green */}
 										<stop
@@ -150,7 +158,7 @@ export function ChartLineDefault({
 											stopColor="var(--safe)"
 										/>
 									</>
-								) : maxData.dangerLevel === "warning" ? (
+								) : maxDataDangerLevel === "warning" ? (
 									<>
 										{/* Green and yellow line*/}
 										<stop
@@ -168,15 +176,17 @@ export function ChartLineDefault({
 										/>
 									</>
 								) : (
-									maxData.dangerLevel === "danger" && (
+									maxDataDangerLevel === "danger" && (
 										<>
 											{/* green, yellow and red line */}
 											<stop
-												offset={getOffset(danger)}
+												offset={getOffset(
+													dangerThreshold,
+												)}
 												stopColor="var(--danger)"
 											/>
 											<stop
-												offset={getOffset(danger)}
+												offset={getOffset(warning)}
 												stopColor="var(--warning)"
 											/>
 											<stop
@@ -260,4 +270,16 @@ export function ThresholdLine({
 			}}
 		/>
 	);
+}
+
+function getDangerLevel(
+	data: UserSensorStatusDto,
+	usePeakData: boolean,
+): DangerLevel {
+	if (usePeakData) {
+		// biome-ignore lint/style/noNonNullAssertion: If usePeakData is true and peakDangerLevel is null, there is a bug somewhere else
+		return data.peakDangerLevel!;
+	}
+
+	return data.dangerLevel;
 }

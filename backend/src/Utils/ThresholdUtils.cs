@@ -5,12 +5,16 @@ namespace Backend.Utils;
 
 public static class ThresholdUtils
 {
-	public static IEnumerable<(RawSensorData data, DangerLevel dangerLevel)> CalculateDangerLevels(
-		SensorType sensorType,
-		IEnumerable<RawSensorData> rawSensorData
-	)
+	public static IEnumerable<(
+		RawSensorData data,
+		(DangerLevel dangerLevel, DangerLevel? peakDangerLevel) dangerLevels
+	)> CalculateDangerLevels(SensorType sensorType, IEnumerable<RawSensorData> rawSensorData)
 	{
-		var result = new List<(RawSensorData data, DangerLevel dangerLevel)>();
+		var result =
+			new List<(
+				RawSensorData data,
+				(DangerLevel dangerLevel, DangerLevel? peakDangerLevel) dangerLevels
+			)>();
 
 		// Vibration thresholds are calculated cumulatively over a day
 		if (sensorType == SensorType.Vibration)
@@ -46,7 +50,7 @@ public static class ThresholdUtils
 		return result;
 	}
 
-	public static DangerLevel CalculateDangerLevel(
+	public static (DangerLevel dangerLevel, DangerLevel? peakDangerLevel) CalculateDangerLevel(
 		SensorType sensorType,
 		double value,
 		double? maxValue
@@ -55,18 +59,21 @@ public static class ThresholdUtils
 		Threshold threshold = Threshold.GetThresholdForSensorType(sensorType);
 
 		DangerLevel dangerLevel = DangerLevel.Safe;
+		DangerLevel? peakDangerLevel = null;
 
-		// Noise has an additional peak danger level
-		if (
-			sensorType == SensorType.Noise
-			&& threshold.PeakDanger.HasValue
-			&& maxValue.HasValue
-			&& maxValue.Value >= threshold.PeakDanger.Value
-		)
+		if (threshold.PeakDanger.HasValue && maxValue.HasValue)
 		{
-			dangerLevel = DangerLevel.Danger;
+			if (maxValue.Value >= threshold.PeakDanger.Value)
+			{
+				peakDangerLevel = DangerLevel.Danger;
+			}
+			else
+			{
+				peakDangerLevel = DangerLevel.Safe;
+			}
 		}
-		else if (value >= threshold.Danger)
+
+		if (value >= threshold.Danger)
 		{
 			dangerLevel = DangerLevel.Danger;
 		}
@@ -75,7 +82,7 @@ public static class ThresholdUtils
 			dangerLevel = DangerLevel.Warning;
 		}
 
-		return dangerLevel;
+		return (dangerLevel, peakDangerLevel);
 	}
 
 	public static DangerLevel GetHighestDangerLevel(params DangerLevel?[] levels)

@@ -16,6 +16,7 @@ export type MonthData = Record<
 type CalendarProps = {
 	selectedDay: Date;
 	exposureType?: Sensor;
+	selectedViewMode?: NoiseViewMode;
 	data: MonthData;
 };
 
@@ -24,12 +25,17 @@ import {
 	CalendarPopup,
 	type CalendarPopupData,
 } from "@/features/popups/calendar-popup";
+import type { NoiseViewMode } from "app/routes/operator/sensors/noise";
 import { useState } from "react";
 import { useDate } from "../date-picker/use-date";
 import { usePopup } from "../popups/use-popup";
 import type { Sensor } from "../sensor-picker/sensors";
 
-export function CalendarWidget({ selectedDay, data }: CalendarProps) {
+export function CalendarWidget({
+	selectedDay,
+	data,
+	selectedViewMode,
+}: CalendarProps) {
 	const { t, i18n } = useTranslation();
 	const { visible, openPopup, closePopup } = usePopup();
 	const { setDate } = useDate();
@@ -153,6 +159,7 @@ export function CalendarWidget({ selectedDay, data }: CalendarProps) {
 						year: "numeric",
 					})}
 					selectedDate={popupData.day}
+					selectedViewMode={selectedViewMode}
 					open={visible}
 					onClose={closePopup}
 					exposureData={popupData.exposures}
