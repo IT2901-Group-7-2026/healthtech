@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import type { Sensor } from "@/features/sensor-picker/sensors";
 import {
-	DANGER_LEVEL_SEVERITY,
-	mapDangerLevelToColor,
+	mapDangerLevelToColor
 } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import { cn } from "@/lib/utils";
@@ -12,21 +12,23 @@ import { Link } from "react-router";
 
 interface Props {
 	users: Array<UserWithStatusDto>;
+	sensor: Sensor;
 }
 
-export function ExposureRiskCards({users} : Props) {
+export function ExposureRiskCards({users, sensor} : Props) {
 	const { t } = useTranslation();
 
 	const inDangerWorkers = users.filter(
-		(user) => user.status.status === "danger",
+		(user) => user.status[sensor]?.level === "danger",
 	);
 
 	const atRiskWorkers = users.filter(
-		(user) => user.status.status === "warning",
+		(user) => user.status[sensor]?.level === "warning",
 	);
 
 	const withinLimitsWorkers = users.filter(
-		(user) => user.status.status === "safe",
+		(user) => user.status[sensor]?.level === "safe",
+		//(user) => console.log(user.status)
 	);
 
 	return (

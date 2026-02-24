@@ -164,7 +164,9 @@ export default function ForemanOverview() {
 								viewDetailsText={cardViewDetailsText}
 							/>
 							{/* TODO: move to right page after*/}
-							<ExposureRiskCards users={subordinates ?? []}/>
+							{sensor && (<ExposureRiskCards 
+								users={subordinates ?? []}
+								sensor={sensor}/>)}
 						</div>
 					</div>
 
