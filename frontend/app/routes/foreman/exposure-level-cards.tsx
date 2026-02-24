@@ -18,15 +18,15 @@ export function ExposureRiskCards({users} : Props) {
 	const { t } = useTranslation();
 
 	const inDangerWorkers = users.filter(
-		(user) => DANGER_LEVEL_SEVERITY[user.status.status] === 2,
+		(user) => user.status.status === "danger",
 	);
 
 	const atRiskWorkers = users.filter(
-		(user) => DANGER_LEVEL_SEVERITY[user.status.status] === 1,
+		(user) => user.status.status === "warning",
 	);
 
 	const withinLimitsWorkers = users.filter(
-		(user) => DANGER_LEVEL_SEVERITY[user.status.status] === 0,
+		(user) => user.status.status === "safe",
 	);
 
 	return (
