@@ -1,10 +1,10 @@
-import { useUser } from "@/features/user-provider.js";
-import { UserRole } from "@/lib/dto.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { useUser } from "@/features/user-context";
+import { UserRole } from "@/lib/dto.js";
 import { ErrorBoundary } from "../root.js";
 
-// biome-ignore lint: page components can be default exports
+// biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function Page() {
 	const { user } = useUser();
 	const navigate = useNavigate();

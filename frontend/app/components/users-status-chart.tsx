@@ -1,169 +1,121 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import {
-	type ChartConfig,
-	ChartContainer,
-	ChartTooltip,
-} from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import type { Sensor } from "@/features/sensor-picker/sensors";
+import type { UserWithStatusDto } from "@/lib/dto";
+import { thresholds } from "@/lib/thresholds";
+import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 import {
 	Bar,
 	BarChart,
+	type BarProps,
 	CartesianGrid,
 	ReferenceLine,
 	XAxis,
 	YAxis,
 } from "recharts";
 
-const rawChartData = [
-	{
-		name: "Bjarne",
-		percent: 12,
-		status: "safe",
-	},
-	{
-		name: "Ada",
-		percent: 45,
-		status: "warning",
-	},
-	{
-		name: "Grace",
-		percent: 78,
-		status: "danger",
-	},
-	{
-		name: "Alan",
-		percent: 34,
-		status: "warning",
-	},
-	{
-		name: "Margaret",
-		percent: 110,
-		status: "safe",
-	},
-	{
-		name: "Linus",
-		percent: 28,
-		status: "safe",
-	},
-	{
-		name: "Katherine",
-		percent: 63,
-		status: "warning",
-	},
-	{
-		name: "Tim",
-		percent: 87,
-		status: "danger",
-	},
-	{
-		name: "Hedy",
-		percent: 41,
-		status: "warning",
-	},
-	{
-		name: "Dennis",
-		percent: 19,
-		status: "safe",
-	},
-	{
-		name: "James",
-		percent: 74,
-		status: "warning",
-	},
-	{
-		name: "Barbara",
-		percent: 95,
-		status: "danger",
-	},
-	{
-		name: "Donald",
-		percent: 52,
-		status: "warning",
-	},
-	{
-		name: "Ken",
-		percent: 33,
-		status: "safe",
-	},
-	{
-		name: "Frances",
-		percent: 81,
-		status: "danger",
-	},
-	{
-		name: "Edsger",
-		percent: 67,
-		status: "warning",
-	},
-	{
-		name: "Guido",
-		percent: 22,
-		status: "safe",
-	},
-	{
-		name: "Anders",
-		percent: 58,
-		status: "warning",
-	},
-	{
-		name: "Brendan",
-		percent: 99,
-		status: "danger",
-	},
-	{
-		name: "John",
-		percent: 46,
-		status: "warning",
-	},
-];
+interface Props {
+	users: Array<UserWithStatusDto>;
+	sensor: Sensor;
+	userOnClick?: (userId: string) => void;
+}
 
-const chartConfig = {
-	percent: {
-		label: "Percent", //TODO: i18n
-	},
-	safe: {
-		label: "Safe", //TODO: i18n
-		color: "var(--safe)",
-	},
-	warning: {
-		label: "Warning", //TODO: i18n
-		color: "var(--warning)",
-	},
-	danger: {
-		label: "Danger", //TODO: i18n
-		color: "var(--danger)",
-	},
-} satisfies ChartConfig;
+export function UserStatusChart({ users, sensor, userOnClick }: Props) {
+	const [t] = useTranslation();
+	const threshold = thresholds[sensor];
 
-export function UserStatusChart() {
-	const warningThreshold = 40;
-	const dangerThreshold = 80;
+	const data = users.flatMap((user) => {
+		const sensorStatus = user.status[sensor];
+		if (!sensorStatus) {
+			return [];
+		}
 
-	const data = [...rawChartData].sort((a, b) => b.percent - a.percent);
+		const percent = Math.round(
+			(sensorStatus.value / threshold.danger) * 100,
+		);
+		// Only show peak if it's above the current value
+		const peakPercent =
+			sensorStatus.peakValue &&
+			sensorStatus.peakValue > sensorStatus.value
+				? Math.round((sensorStatus.peakValue / threshold.danger) * 100)
+				: null;
 
-	const chartData = data.map((item) => ({
+		return [
+			{
+				name: user.username,
+				id: user.id,
+				status: sensorStatus.level,
+				percent,
+				peakPercent,
+			},
+		];
+	});
+
+	if (data.length === 0) {
+		return (
+			<Card className="w-192">
+				<CardContent className="flex h-48 items-center justify-center text-muted-foreground text-sm">
+					{t(($) => $.foremanDashboard.userStatusChart.noData)}
+				</CardContent>
+			</Card>
+		);
+	}
+
+	const warningThresholdLine = (threshold.warning / threshold.danger) * 100;
+	const dangerThresholdLine = 100;
+
+	const sortedData = [...data].sort((a, b) => b.percent - a.percent);
+
+	// Split percent into three parts for the stacked bar chart
+	const chartData = sortedData.map((item) => ({
 		...item,
-		safe: Math.min(item.percent, 40),
-		warning: Math.min(Math.max(item.percent - 40, 0), 40),
-		danger: Math.max(item.percent - 80, 0),
+		safe: Math.min(item.percent, warningThresholdLine),
+		warning: Math.min(
+			Math.max(item.percent - warningThresholdLine, 0),
+			dangerThresholdLine - warningThresholdLine,
+		),
+		danger: Math.max(item.percent - dangerThresholdLine, 0),
+		userId: item.id,
 	}));
+
+	const maxPercent = Math.max(100, ...chartData.map((item) => item.percent));
+	const xDomainPadding = 15;
+	const xDomainMax = maxPercent + xDomainPadding;
+
+	const barOnClick: BarProps["onClick"] = (barData) => {
+		const row = barData.payload;
+		userOnClick?.(row.id);
+	};
+
+	// One tick per 25%
+	const xTicks = Array.from(
+		{ length: Math.ceil(xDomainMax / 25) + 1 },
+		(_, i) => i * 25,
+	);
 
 	return (
 		<Card className="w-192 py-0">
 			<CardContent className="px-2 sm:p-6">
 				<ChartContainer
-					config={chartConfig}
-					className="aspect-auto h-[520px] w-full"
+					config={{}}
+					className={cn(
+						"aspect-auto h-[520px] w-full",
+						userOnClick &&
+							"[&_.recharts-bar-rectangle]:cursor-pointer",
+					)}
 				>
 					<BarChart
 						accessibilityLayer
 						layout="vertical"
 						data={chartData}
 						margin={{
-							left: 12,
-							right: 12,
+							bottom: 32,
+							top: 24,
 						}}
+						maxBarSize={48}
 					>
 						<CartesianGrid horizontal={false} />
 						<XAxis
@@ -171,14 +123,18 @@ export function UserStatusChart() {
 							tickLine={false}
 							axisLine={false}
 							tickMargin={8}
-							domain={[
-								0,
-								Math.max(
-									100,
-									...chartData.map((d) => d.percent),
-								),
-							]}
+							domain={[0, xDomainMax]}
 							tickFormatter={(v) => `${v}%`}
+							ticks={xTicks}
+							label={{
+								value: t(
+									($) =>
+										$.foremanDashboard.userStatusChart
+											.xAxisLabel,
+								),
+								position: "insideBottom",
+								offset: -24,
+							}}
 						/>
 						<YAxis
 							type="category"
@@ -189,32 +145,38 @@ export function UserStatusChart() {
 							tickFormatter={(v) => `${v}`}
 						/>
 						<ReferenceLine
-							x={warningThreshold}
+							x={warningThresholdLine}
 							stroke="var(--warning)"
-							strokeDasharray="4 4"
+							strokeDasharray="6 4"
+							strokeWidth={2}
 							label={{
-								value: "Warning",
+								value: t(($) => $.warning),
 								position: "insideTopRight",
+								dy: -16,
 								fill: "var(--warning)",
 							}}
 						/>
 						<ReferenceLine
-							x={dangerThreshold}
+							x={dangerThresholdLine}
 							stroke="var(--danger)"
-							strokeDasharray="4 4"
+							strokeDasharray="6 4"
+							strokeWidth={2}
 							label={{
-								value: "Danger",
-								position: "insideTopRight",
+								value: t(($) => $.danger),
+								position: "insideTopLeft",
+								dy: -16,
 								fill: "var(--danger)",
 							}}
 						/>
 						<ChartTooltip
+							cursor={false}
 							content={({ active, payload, label }) => {
 								if (!(active && payload?.length)) {
 									return null;
 								}
 
-								const total = payload[0]?.payload?.percent;
+								const avg = payload[0]?.payload?.percent;
+								const peak = payload[0]?.payload?.peakPercent;
 
 								return (
 									<div className="grid min-w-[8rem] gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
@@ -223,26 +185,41 @@ export function UserStatusChart() {
 										</div>
 										<div className="flex items-center justify-between gap-2">
 											<span className="text-muted-foreground">
-												{"Total"}
+												{t(($) => $.average)}
 											</span>
 											<span className="font-medium font-mono text-foreground tabular-nums">
-												{`${total}%`}
+												{`${avg}%`}
 											</span>
 										</div>
+										{peak != null && (
+											<div className="flex items-center justify-between gap-2">
+												<span className="text-muted-foreground">
+													{t(($) => $.peak)}
+												</span>
+												<span className="font-medium font-mono tabular-nums">{`${peak}%`}</span>
+											</div>
+										)}
 									</div>
 								);
 							}}
 						/>
-						<Bar dataKey="safe" stackId="risk" fill="var(--safe)" />
+						<Bar
+							dataKey="safe"
+							stackId="risk"
+							fill="var(--safe)"
+							onClick={barOnClick}
+						/>
 						<Bar
 							dataKey="warning"
 							stackId="risk"
 							fill="var(--warning)"
+							onClick={barOnClick}
 						/>
 						<Bar
 							dataKey="danger"
 							stackId="risk"
 							fill="var(--danger)"
+							onClick={barOnClick}
 						/>
 					</BarChart>
 				</ChartContainer>
