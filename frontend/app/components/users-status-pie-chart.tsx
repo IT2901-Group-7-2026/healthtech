@@ -1,54 +1,13 @@
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import {
-	type ChartConfig,
-	ChartContainer,
-	ChartTooltip,
-} from "@/components/ui/chart";
-import {
+	LabelList,
 	Pie,
 	PieChart,
-	type PieLabelRenderProps,
 	type PieSectorShapeProps,
 	Sector,
 } from "recharts";
 
-
 const RADIAN = Math.PI / 180;
-
-const pieLabel = ({
-	cx,
-	cy,
-	midAngle,
-	innerRadius,
-	outerRadius,
-	value,
-}: PieLabelRenderProps) => {
-	if (
-		cx == null ||
-		cy == null ||
-		innerRadius == null ||
-		outerRadius == null ||
-		value === 0
-	) {
-		return null;
-	}
-	const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-	const ncx = Number(cx);
-	const x = ncx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
-	const ncy = Number(cy);
-	const y = ncy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
-
-	return (
-		<text
-			x={x}
-			y={y}
-			fill="white"
-			textAnchor={x > ncx ? "start" : "end"}
-			dominantBaseline="central"
-		>
-			{value}
-		</text>
-	);
-};
 
 const pieShape = (props: PieSectorShapeProps) => {
 	const colorMap: Record<string, string> = {
@@ -68,12 +27,12 @@ export interface UserStatusData {
 
 export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
 	return (
-		<ChartContainer config={chartConfig} className="h-40 w-full">
+		<ChartContainer config={{}} className="h-40 w-full">
+			<PieChart>
 				<Pie
 					dataKey={"value"}
 					isAnimationActive={false}
 					data={[safe, warning, danger]}
-					label={pieLabel}
 					labelLine={false}
 					shape={pieShape}
 				>
@@ -105,9 +64,7 @@ export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
 						return (
 							<div className="grid min-w-[8rem] gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
 								<div className="flex items-center justify-between gap-2">
-									<span className="text-muted-foreground">
-										{label}
-									</span>
+									<span className="text-muted-foreground">{label}</span>
 									<span className="font-medium font-mono text-foreground tabular-nums">
 										{value}
 									</span>
