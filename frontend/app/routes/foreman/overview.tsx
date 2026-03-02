@@ -1,10 +1,15 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
+import { useQuery } from "@tanstack/react-query";
+import { MapPinIcon, UsersIcon } from "lucide-react";
+import { useQueryState } from "nuqs";
+import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes.js";
 import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { useUser } from "@/features/user/user-context";
-import { useSubordinatesQuery } from "@/lib/api";
+import { fetchSubordinatesQueryOptions } from "@/lib/api.js";
 import type { DangerLevel } from "@/lib/danger-levels";
 import { createLocationName, type UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
@@ -15,10 +20,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
-import { MapPinIcon, UsersIcon } from "lucide-react";
-import { useQueryState } from "nuqs";
-import { useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { ActionCard } from "./action-card";
 import { AtRiskPopup } from "./exposure-level-popup";
 import { PieChartCard } from "./pie-chart-card";
@@ -46,7 +47,9 @@ export default function ForemanOverview() {
 		setSelectedStatus(null);
 	};
 
-	const { data: subordinates } = useSubordinatesQuery(user.id);
+	const { data: subordinates } = useQuery(
+		fetchSubordinatesQueryOptions(user.id),
+	);
 	const addSubordinateDangerLevel = useCallback(
 		(
 			result: Record<Sensor | "total", Record<DangerLevel, number>>,
@@ -132,7 +135,7 @@ export default function ForemanOverview() {
 
 						<div className="flex items-center gap-2">
 							<UsersIcon />
-							{t(($) => $.foremanDashboard.teamMembersCount, {
+							{t(($) => $.foremanDashboard.team.membersCount, {
 								count: total,
 							})}
 						</div>

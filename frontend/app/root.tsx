@@ -40,7 +40,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 		<html lang={i18n.language} dir={i18n.dir(i18n.language)}>
 			<head>
 				<meta charSet="utf-8" />
-				<meta name="viewport" content="width=device-width, initial-scale=1" />
+				<meta
+					name="viewport"
+					content="width=device-width, initial-scale=1"
+				/>
 				<title>{t(($) => $.title)}</title>
 				<meta name="description" content={t(($) => $.description)} />
 				<Links />

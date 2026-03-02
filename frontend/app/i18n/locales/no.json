@@ -14,8 +14,7 @@
     "month": "måned",
     "dust": "Støv",
     "vibration": "Vibrasjon",
-    "noise": "Støy",
-    "userSelectPlaceholder": "Bruker"
+    "noise": "Støy"
   },
   "dustExposure": {
     "title": "Støveksponering"
@@ -64,6 +63,11 @@
   "buttons": {
     "confirm": "Ok",
     "close": "Lukk"
+  },
+  "table": {
+    "numberOfRowsSelected": "{{selected}} av {{total}} rader valgt",
+    "numberOfRowsSelected_one": "{{selected}} av {{total}} rad valgt",
+    "numberOfRowsSelected_other": "{{selected}} av {{total}} rader valgt"
   },
   "english": "Engelsk",
   "norwegian": "Norsk",
@@ -130,17 +134,25 @@
   "points": "Poeng",
   "dust_y_axis": "µg/m³",
   "foremanDashboard": {
-    "failedToLoadTeamMembers": "Kunne ikke laste teammedlemmer",
-    "noTeamMembersFound": "Ingen teammedlemmer funnet",
-    "teamTable": {
-      "username": "Brukernavn",
-      "email": "E-post",
-      "status": "Status",
-      "jobDescription": "Stillingsbeskrivelse"
+    "team": {
+      "title": "Ditt team",
+      "failedToLoadMembers": "Kunne ikke laste teammedlemmer",
+      "noMembersFound": "Ingen teammedlemmer funnet",
+      "table": {
+        "username": "Brukernavn",
+        "email": "E-post",
+        "status": "Status",
+        "jobDescription": "Stillingsbeskrivelse",
+        "action": "Handling"
+      },
+      "action": {
+        "removeSubordinate": "Fjern fra teamet",
+        "addSubordinate": "Legg til i teamet"
+      },
+      "membersCount": "{{count}} operatør i teamet",
+      "membersCount_one": "{{count}} operatør i teamet",
+      "membersCount_other": "{{count}} operatører i teamet"
     },
-    "teamMembersCount": "{{count}} operatør i teamet",
-    "teamMembersCount_one": "{{count}} operatør i teamet",
-    "teamMembersCount_other": "{{count}} operatører i teamet",
     "overview": {
       "title": "Foreman Oversikt",
       "statCards": {
@@ -174,9 +186,15 @@
     "role": {
       "operator": "Operatør",
       "foreman": "Forman"
-    }
+    },
+    "searchPlaceholder": "Søk etter brukere..."
   },
   "demo": {
     "currentRole": "Nåværende rolle:"
-  }
+  },
+  "select": {
+    "all": "Velg alle",
+    "row": "Velg rad"
+  },
+  "noOptions": "Ingen alternativer tilgjengelig"
 }

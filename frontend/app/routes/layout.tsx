@@ -71,7 +71,9 @@ function HomeLink() {
 			<div className="text-2xl">
 				<Logo />
 			</div>
-			<span className="hidden text-xl sm:inline-block">{"HealthTech"}</span>
+			<span className="hidden text-xl sm:inline-block">
+				{"HealthTech"}
+			</span>
 		</NavLink>
 	);
 }
@@ -221,7 +223,11 @@ export default function Layout() {
 
 						<ThemeSwitch />
 
-						<Button variant="ghost" size="icon" onClick={openNotificationPopup}>
+						<Button
+							variant="ghost"
+							size="icon"
+							onClick={openNotificationPopup}
+						>
 							<Bell className="size-[1.2rem]" />
 						</Button>
 
@@ -354,7 +360,11 @@ function MobileMenu({
 					{route.label}
 					{i > 0 && (
 						<Icon
-							variant={route.to.toString().replace("/", "") as IconVariant}
+							variant={
+								route.to
+									.toString()
+									.replace("/", "") as IconVariant
+							}
 							size="medium"
 							className="ml-2"
 						/>
@@ -385,7 +395,11 @@ function MobileMenu({
 											<span className="text-lg text-primary">
 												{t(($) => $.notifications)}
 											</span>
-											<Icon variant="bell" size="small" className="ml-2" />
+											<Icon
+												variant="bell"
+												size="small"
+												className="ml-2"
+											/>
 										</button>
 									</DrawerClose>
 								</li>
