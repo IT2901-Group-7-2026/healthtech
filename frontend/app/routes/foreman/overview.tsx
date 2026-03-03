@@ -112,7 +112,7 @@ export default function ForemanOverview() {
 					value={sensor ?? "all"}
 				>
 					<SelectTrigger
-						className="w-32 bg-background dark:bg-background"
+						className="w-36 bg-background dark:bg-background"
 						defaultValue="all"
 					>
 						<SelectValue
