@@ -20,6 +20,8 @@ import { computeYAxisRange } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useTranslation } from "react-i18next";
+import { useExportPDF } from "@/hooks/use-export-pdf";
+import { Button } from "@/components/ui/button";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function Noise() {
@@ -28,6 +30,7 @@ export default function Noise() {
 
 	const { date } = useDate();
 	const { user } = useUser();
+	const { exportToPDF } = useExportPDF();
 
 	const sensor: Sensor = "noise";
 
@@ -109,30 +112,52 @@ export default function Noise() {
 						<p>{t(($) => $.noData)}</p>
 					</Card>
 				) : (
-					<ChartLineDefault
-						chartData={data ?? []}
-						chartTitle={date.toLocaleDateString(i18n.language, {
-							day: "numeric",
-							month: "long",
-							year: "numeric",
-						})}
-						unit="db (TWA)"
-						startHour={8}
-						endHour={16}
-						maxY={maxY}
-						minY={minY}
-						lineType="monotone"
-						sensor={sensor}
-					>
-						<ThresholdLine
-							y={thresholds.noise.danger}
-							dangerLevel="danger"
-						/>
-						<ThresholdLine
-							y={thresholds.noise.warning}
-							dangerLevel="warning"
-						/>
-					</ChartLineDefault>
+					<div className="w-full">
+						<div className="mb-2 flex justify-end">
+						</div>
+
+						<div id="noise-chart-container">
+							<ChartLineDefault
+							chartData={data ?? []}
+							chartTitle={date.toLocaleDateString(i18n.language, {
+								day: "numeric",
+								month: "long",
+								year: "numeric",
+							})}
+							unit="db (TWA)"
+							startHour={8}
+							endHour={16}
+							maxY={maxY}
+							minY={minY}
+							lineType="monotone"
+							sensor={sensor}
+							headerRight={
+							<Button
+							size="sm"
+							variant="outline"
+							onClick={() => 
+								exportToPDF("noise-chart-container", `${date.toLocaleDateString(i18n.language, {
+								day: "numeric",
+								month: "long",
+								year: "numeric",
+							})}-${user.username}-Noise-Exposure-Overview`)
+							}
+							>
+							Export as PDF
+							</Button>
+						}
+							>
+							<ThresholdLine
+								y={thresholds.noise.danger}
+								dangerLevel="danger"
+							/>
+							<ThresholdLine
+								y={thresholds.noise.warning}
+								dangerLevel="warning"
+							/>
+							</ChartLineDefault>
+							</div>
+					</div>
 				)}
 			</div>
 		</div>

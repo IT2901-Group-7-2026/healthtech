@@ -21,6 +21,8 @@ import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
+import { useExportPDF } from "@/hooks/use-export-pdf";
+import { Button } from "@/components/ui/button";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function Vibration() {
@@ -29,6 +31,7 @@ export default function Vibration() {
 
 	const { date } = useDate();
 	const { user } = useUser();
+	const { exportToPDF } = useExportPDF();
 
 	const sensor: Sensor = "vibration";
 
@@ -116,6 +119,10 @@ export default function Vibration() {
 						<p>{t(($) => $.noData)}</p>
 					</Card>
 				) : (
+					<div className="w-full">
+						<div className="mb-2 flex justify-end">
+						</div>
+						<div id="vibration-chart-container">
 					<ChartLineDefault
 						chartData={makeCumulative(data)}
 						chartTitle={date.toLocaleDateString(i18n.language, {
@@ -130,6 +137,21 @@ export default function Vibration() {
 						minY={minY}
 						lineType="monotone"
 						sensor={sensor}
+						headerRight={
+							<Button
+							size="sm"
+							variant="outline"
+							onClick={() => 
+								exportToPDF("vibration-chart-container", `${date.toLocaleDateString(i18n.language, {
+								day: "numeric",
+								month: "long",
+								year: "numeric",
+							})}-${user.username}-Vibration-Exposure-Overview`)
+							}
+							>
+							Export as PDF
+							</Button>
+						}
 					>
 						<ThresholdLine
 							y={thresholds.vibration.danger}
@@ -140,6 +162,8 @@ export default function Vibration() {
 							dangerLevel="warning"
 						/>
 					</ChartLineDefault>
+					</div>
+					</div>
 				)}
 			</div>
 		</div>

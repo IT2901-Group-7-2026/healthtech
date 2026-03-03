@@ -22,6 +22,10 @@ import { getNextDay, getPrevDay } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import Noise from "./sensors/noise";
+import Dust from "./sensors/dust";
+import Vibration from "./sensors/vibration";
+import { useExportPDF } from "@/hooks/use-export-pdf";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function OperatorHome() {
@@ -30,6 +34,7 @@ export default function OperatorHome() {
 	const { view } = useView();
 	const translatedView = t(($) => $.overview[view]);
 	const { date, setDate } = useDate();
+	const { exportMultipleToPDF } = useExportPDF();
 
 	const { user } = useUser();
 
@@ -148,6 +153,7 @@ export default function OperatorHome() {
 												year: "numeric",
 											},
 										)}
+										
 									</CardTitle>
 									<p>{t(($) => $.noData)}</p>
 								</Card>
@@ -162,12 +168,55 @@ export default function OperatorHome() {
 											year: "numeric",
 										},
 									)}
+									headerRight={
+										<Button
+  onClick={() =>
+    exportMultipleToPDF(
+      [
+        "noise-chart-container",
+        "dust-chart-container",
+        "vibration-chart-container",
+      ],
+      `${date.toLocaleDateString(i18n.language, {
+								day: "numeric",
+								month: "long",
+								year: "numeric",
+							})}-${user.username}-Exposure-Overview`
+    )
+  }
+  variant="outline"
+>
+  Export Todays Overview as PDF
+</Button>
+									}
 								/>
 							)}
 						</section>
 					</div>
 				</div>
 			</div>
+			<div
+      id="full-report-container"
+      style={{
+        position: "fixed",
+        top: "-9999px",
+        left: "-9999px",
+		width: "1200px",
+        background: "white",
+      }}
+    >
+      <div id="noise-chart-container">
+        <Noise />
+      </div>
+
+      <div id="dust-chart-container">
+        <Dust />
+      </div>
+
+      <div id="vibration-chart-container">
+        <Vibration />
+      </div>
+    </div>
 		</div>
 	);
 }
