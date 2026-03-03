@@ -7,7 +7,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
-import type { TranslatedString } from "../../app/@types/i18n";
+import type { TranslatedString } from "../../app/@types/i18n.js";
 
 type OptionGroup<T extends string> = {
 	label?: TranslatedString;

@@ -1,5 +1,3 @@
-import type { View } from "@/features/views/views";
-import type { TranslateFn } from "@/i18n/config.js";
 import { type ClassValue, clsx } from "clsx";
 import {
 	addDays,
@@ -11,6 +9,8 @@ import {
 	subWeeks,
 } from "date-fns";
 import { twMerge } from "tailwind-merge";
+import type { View } from "@/features/views/views";
+import type { TranslateFn } from "@/i18n/config.js";
 import type { SensorDataResponseDto, User } from "./dto";
 
 export function cn(...inputs: Array<ClassValue>) {

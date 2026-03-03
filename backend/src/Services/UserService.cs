@@ -1,4 +1,5 @@
 using Backend.DTOs;
+using Backend.Extensions;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,7 @@ public interface IUserService
 	Task<User> CreateUserAsync(CreateUserDto createUserDto);
 	Task<User?> UpdateUserAsync(Guid id, UpdateUserDto updateUserDto);
 	Task<bool> DeleteUserAsync(Guid id);
+	Task<User?> UpdateSubordinatesAsync(Guid managerId, List<Guid> subordinateIds);
 }
 
 public class UserService : IUserService
@@ -107,5 +109,36 @@ public class UserService : IUserService
 		_context.User.Remove(user);
 		await _context.SaveChangesAsync();
 		return true;
+	}
+
+	public async Task<User?> UpdateSubordinatesAsync(Guid managerId, List<Guid> subordinateIds)
+	{
+		User? manager = await _context
+			.User.Include(u => u.Subordinates)
+			.FirstOrDefaultAsync(u => u.Id == managerId);
+
+		if (manager == null)
+			return null;
+
+		List<User> newSubordinates = await _context
+			.User.Where(u => subordinateIds.Contains(u.Id))
+			.ToListAsync();
+
+		if (subordinateIds.Count > 0)
+		{
+			if (newSubordinates.Count != subordinateIds.Distinct().Count())
+				return null;
+
+			if (newSubordinates.Any(u => u.Id == managerId))
+				return null;
+
+			if (!newSubordinates.All(u => manager.Role.CanManage(u.Role)))
+				return null;
+		}
+
+		manager.Subordinates = newSubordinates;
+		await _context.SaveChangesAsync();
+
+		return manager;
 	}
 }
