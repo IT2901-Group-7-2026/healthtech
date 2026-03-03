@@ -96,7 +96,7 @@ export function ChartLineDefault({
 	return (
 		<Card className="w-full">
 			<CardHeader>
-				<CardTitle>{chartTitle}</CardTitle>
+				<CardTitle className="mx-auto">{chartTitle}</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<ChartContainer config={chartConfig}>
