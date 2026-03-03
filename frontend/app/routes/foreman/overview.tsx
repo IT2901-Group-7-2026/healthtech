@@ -103,26 +103,29 @@ export default function ForemanOverview() {
 				</h1>
 				<Select
 					onValueChange={(value) => {
-						if (value === "__none") {
+						if (value === "all") {
 							setSensor(null);
 						} else {
 							setSensor(value as Sensor);
 						}
 					}}
-					value={sensor ?? undefined}
+					value={sensor ?? "all"}
 				>
-					<SelectTrigger className="w-32 bg-background dark:bg-background">
+					<SelectTrigger
+						className="w-32 bg-background dark:bg-background"
+						defaultValue="all"
+					>
 						<SelectValue
 							placeholder={t(($) => $.sensorSelectPlaceholder)}
 						/>
 					</SelectTrigger>
 					<SelectContent className="w-32">
+						<SelectItem value="all">{t(($) => $.all)}</SelectItem>
 						{sensors?.map((s) => (
 							<SelectItem key={s} value={s}>
 								{t(($) => $[s])}
 							</SelectItem>
 						))}
-						<SelectItem value="__none">{"None"}</SelectItem>
 					</SelectContent>
 				</Select>
 			</div>
