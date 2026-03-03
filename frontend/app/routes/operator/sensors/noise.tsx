@@ -14,7 +14,12 @@ import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
-import type { SensorDataRequestDto, SensorDataResponseDto } from "@/lib/dto";
+import {
+	type Aggregation,
+	Aggregations,
+	type SensorDataRequestDto,
+	type SensorDataResponseDto,
+} from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
 import { computeYAxisRange } from "@/lib/utils";
@@ -22,10 +27,6 @@ import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
-
-//TODO: Move
-export type NoiseViewMode = "average" | "peak";
-const NoiseViewModes: NoiseViewMode[] = ["average", "peak"];
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function Noise() {
@@ -35,13 +36,13 @@ export default function Noise() {
 	const { date } = useDate();
 	const { user } = useUser();
 
-	const parseAsNoiseViewMode = parseAsStringLiteral(NoiseViewModes);
+	const parseAsAggregation = parseAsStringLiteral(Aggregations);
 
-	const [viewMode, setViewMode] = useQueryState<NoiseViewMode>(
-		"viewMode",
-		parseAsNoiseViewMode.withDefault("average"),
+	const [aggregation, setAggregation] = useQueryState<Aggregation>(
+		"aggregation",
+		parseAsAggregation.withDefault("average"),
 	);
-	const usePeakData = viewMode === "peak";
+	const usePeakData = aggregation === "peak";
 
 	const sensor: Sensor = "noise";
 
@@ -108,34 +109,34 @@ export default function Noise() {
 						<p>{t(($) => $.errorLoadingData)}</p>
 					</Card>
 				) : view === "month" ? (
-					<ViewModeTabs viewMode={viewMode} setViewMode={setViewMode}>
+					<AggregationTabs
+						aggregation={aggregation}
+						setAggregation={setAggregation}
+					>
 						<CalendarWidget
 							selectedDay={date}
-							selectedViewMode={viewMode}
+							selectedAggregation={aggregation}
 							data={
-								mapSensorDataToMonthLists(
-									data ?? [],
-									"noise",
-									usePeakData,
-								) ?? []
+								mapSensorDataToMonthLists(data ?? [], "noise", usePeakData) ??
+								[]
 							}
 						/>
-					</ViewModeTabs>
+					</AggregationTabs>
 				) : view === "week" ? (
-					<ViewModeTabs viewMode={viewMode} setViewMode={setViewMode}>
+					<AggregationTabs
+						aggregation={aggregation}
+						setAggregation={setAggregation}
+					>
 						<WeekWidget
-							viewMode={viewMode}
+							aggregation={aggregation}
 							locale={getLocale(i18n.language)}
 							dayStartHour={8}
 							dayEndHour={16}
 							weekStartsOn={1}
 							minuteStep={60}
-							events={mapWeekDataToEvents(
-								data ?? [],
-								usePeakData,
-							)}
+							events={mapWeekDataToEvents(data ?? [], usePeakData)}
 						/>
-					</ViewModeTabs>
+					</AggregationTabs>
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">
 						<CardTitle>
@@ -148,7 +149,10 @@ export default function Noise() {
 						<p>{t(($) => $.noData)}</p>
 					</Card>
 				) : (
-					<ViewModeTabs viewMode={viewMode} setViewMode={setViewMode}>
+					<AggregationTabs
+						aggregation={aggregation}
+						setAggregation={setAggregation}
+					>
 						<ChartLineDefault
 							usePeakData={usePeakData}
 							chartData={data ?? []}
@@ -181,20 +185,20 @@ export default function Noise() {
 								/>
 							)}
 						</ChartLineDefault>
-					</ViewModeTabs>
+					</AggregationTabs>
 				)}
 			</div>
 		</div>
 	);
 }
 
-const ViewModeTabs = ({
-	viewMode,
-	setViewMode,
+const AggregationTabs = ({
+	aggregation,
+	setAggregation,
 	children,
 }: {
-	viewMode: NoiseViewMode;
-	setViewMode: (mode: NoiseViewMode) => void;
+	aggregation: Aggregation;
+	setAggregation: (mode: Aggregation) => void;
 	children: React.ReactNode;
 }) => {
 	const { t } = useTranslation();
@@ -204,18 +208,12 @@ const ViewModeTabs = ({
 			<div className="absolute top-2 left-2 rounded border">
 				{/* TODO: typesafety */}
 				<Tabs
-					value={viewMode}
-					onValueChange={(value) =>
-						setViewMode(value as NoiseViewMode)
-					}
+					value={aggregation}
+					onValueChange={(value) => setAggregation(value as Aggregation)}
 				>
 					<TabsList>
-						<TabsTrigger value="average">
-							{t(($) => $.average)}
-						</TabsTrigger>
-						<TabsTrigger value="peak">
-							{t(($) => $.peak)}
-						</TabsTrigger>
+						<TabsTrigger value="average">{t(($) => $.average)}</TabsTrigger>
+						<TabsTrigger value="peak">{t(($) => $.peak)}</TabsTrigger>
 					</TabsList>
 				</Tabs>
 			</div>

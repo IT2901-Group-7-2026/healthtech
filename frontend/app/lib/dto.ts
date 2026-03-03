@@ -123,6 +123,7 @@ export const UserWithStatusSchema = UserSchema.extend({
 export type UserWithStatusDto = z.infer<typeof UserWithStatusSchema>;
 
 export const createLocationName = (location: Location) =>
-	location.building
-		? `${location.building}, ${location.site}`
-		: location.site;
+	location.building ? `${location.building}, ${location.site}` : location.site;
+
+export type Aggregation = "average" | "peak";
+export const Aggregations: Aggregation[] = ["average", "peak"];

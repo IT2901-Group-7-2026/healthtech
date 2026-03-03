@@ -2,15 +2,15 @@ import { BasePopup } from "@/features/popups/base-popup";
 import type { DangerLevel } from "@/lib/danger-levels";
 import type { Sensor } from "@/lib/sensors";
 import { cn } from "@/lib/utils";
-import type { NoiseViewMode } from "app/routes/operator/sensors/noise";
 import { t } from "i18next";
 import { DailyNotes } from "../../components/daily-notes";
 import { Card } from "../../components/ui/card";
+import type { Aggregation } from "@/lib/dto";
 
 type CalendarPopupProps = {
 	title: string;
 	selectedDate: Date;
-	selectedViewMode?: NoiseViewMode;
+	selectedAggregation?: Aggregation;
 	exposureData?: CalendarPopupData | null;
 	open: boolean;
 	onClose: () => void;
@@ -23,7 +23,7 @@ export function CalendarPopup({
 	exposureData,
 	title,
 	selectedDate,
-	selectedViewMode,
+	selectedAggregation,
 	open,
 	onClose,
 	children,
@@ -32,7 +32,7 @@ export function CalendarPopup({
 		<BasePopup
 			title={title}
 			relevantDate={selectedDate}
-			relevantViewMode={selectedViewMode}
+			selectedAggregation={selectedAggregation}
 			open={open}
 			onClose={onClose}
 		>
@@ -50,9 +50,7 @@ export function CalendarPopup({
 							>
 								{t(($) => $[sensor as Sensor])}
 							</span>
-							<span className="text-muted-foreground">
-								{"->"}
-							</span>
+							<span className="text-muted-foreground">{"->"}</span>
 							<div className={`text-${danger}`}>
 								{t(($) => $.popup[danger])}
 							</div>

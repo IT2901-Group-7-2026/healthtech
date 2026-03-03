@@ -1,8 +1,8 @@
 import { Card } from "@/components/ui/card";
-import type { NoiseViewMode } from "app/routes/operator/sensors/noise";
 import { t } from "i18next";
 import type { WeekEvent } from "../week-widget/types";
 import { BasePopup } from "./base-popup";
+import type { Aggregation } from "@/lib/dto";
 
 export function WeeklyPopup({
 	title,
@@ -10,11 +10,11 @@ export function WeeklyPopup({
 	open,
 	onClose,
 	children,
-	viewMode,
+	selectedAggregation,
 }: {
 	title: string;
 	event: WeekEvent;
-	viewMode?: NoiseViewMode;
+	selectedAggregation?: Aggregation;
 	open: boolean;
 	onClose: () => void;
 	children?: React.ReactNode;
@@ -24,7 +24,7 @@ export function WeeklyPopup({
 			title={title}
 			relevantDate={event.startDate}
 			open={open}
-			relevantViewMode={viewMode}
+			selectedAggregation={selectedAggregation}
 			onClose={onClose}
 		>
 			{children}

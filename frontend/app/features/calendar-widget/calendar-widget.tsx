@@ -2,11 +2,21 @@
 
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
+import { DialogDescription } from "@/components/ui/dialog";
+import {
+	CalendarPopup,
+	type CalendarPopupData,
+} from "@/features/popups/calendar-popup";
 import { getLocale } from "@/i18n/locale";
 import type { DangerLevel } from "@/lib/danger-levels";
+import type { Aggregation } from "@/lib/dto";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 import type { CalendarDay, Modifiers } from "react-day-picker";
 import { useTranslation } from "react-i18next";
+import { useDate } from "../date-picker/use-date";
+import { usePopup } from "../popups/use-popup";
+import type { Sensor } from "../sensor-picker/sensors";
 
 export type MonthData = Record<
 	DangerLevel,
@@ -16,25 +26,14 @@ export type MonthData = Record<
 type CalendarProps = {
 	selectedDay: Date;
 	exposureType?: Sensor;
-	selectedViewMode?: NoiseViewMode;
+	selectedAggregation?: Aggregation;
 	data: MonthData;
 };
-
-import { DialogDescription } from "@/components/ui/dialog";
-import {
-	CalendarPopup,
-	type CalendarPopupData,
-} from "@/features/popups/calendar-popup";
-import type { NoiseViewMode } from "app/routes/operator/sensors/noise";
-import { useState } from "react";
-import { useDate } from "../date-picker/use-date";
-import { usePopup } from "../popups/use-popup";
-import type { Sensor } from "../sensor-picker/sensors";
 
 export function CalendarWidget({
 	selectedDay,
 	data,
-	selectedViewMode,
+	selectedAggregation,
 }: CalendarProps) {
 	const { t, i18n } = useTranslation();
 	const { visible, openPopup, closePopup } = usePopup();
@@ -51,17 +50,14 @@ export function CalendarWidget({
 	const warningDaysSet = new Set(
 		Object.values(data.warning).flat().map(dayKey),
 	);
-	const dangerDaysSet = new Set(
-		Object.values(data.danger).flat().map(dayKey),
-	);
+	const dangerDaysSet = new Set(Object.values(data.danger).flat().map(dayKey));
 
 	// Remove duplicates
 	warningDaysSet.forEach((d) => {
 		if (dangerDaysSet.has(d)) warningDaysSet.delete(d);
 	});
 	safeDaysSet.forEach((d) => {
-		if (dangerDaysSet.has(d) || warningDaysSet.has(d))
-			safeDaysSet.delete(d);
+		if (dangerDaysSet.has(d) || warningDaysSet.has(d)) safeDaysSet.delete(d);
 	});
 
 	const safeDays = Array.from(safeDaysSet).map((s) => new Date(s));
@@ -99,11 +95,7 @@ export function CalendarWidget({
 
 		(Object.keys(data) as Array<DangerLevel>).forEach((dangerKey) => {
 			Object.entries(data[dangerKey]).forEach(([sensor, dates]) => {
-				if (
-					dates.some(
-						(d) => d.toDateString() === clickedDay.toDateString(),
-					)
-				) {
+				if (dates.some((d) => d.toDateString() === clickedDay.toDateString())) {
 					//Override lower danger with the higher one
 					const prev = exposureData[sensor as Sensor];
 					if (
@@ -159,7 +151,7 @@ export function CalendarWidget({
 						year: "numeric",
 					})}
 					selectedDate={popupData.day}
-					selectedViewMode={selectedViewMode}
+					selectedAggregation={selectedAggregation}
 					open={visible}
 					onClose={closePopup}
 					exposureData={popupData.exposures}
@@ -203,11 +195,7 @@ function CustomDay({
 		<button
 			type="button"
 			disabled={relevantClassname === "noData"}
-			className={cn(
-				"h-11/12 w-11/12 rounded-lg",
-				relevantClassname,
-				className,
-			)}
+			className={cn("h-11/12 w-11/12 rounded-lg", relevantClassname, className)}
 			{...buttonProps}
 		/>
 	);

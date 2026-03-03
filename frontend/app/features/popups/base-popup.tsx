@@ -14,7 +14,7 @@ type BasePopupProps = {
 	open: boolean;
 	onClose: () => void;
 	relevantDate: Date | null;
-	relevantViewMode?: string;
+	selectedAggregation?: string;
 	navOverride?: string;
 	pathname?: string;
 	children: React.ReactNode;
@@ -25,7 +25,7 @@ export function BasePopup({
 	open,
 	onClose,
 	relevantDate,
-	relevantViewMode,
+	selectedAggregation,
 	navOverride,
 	pathname,
 	children,
@@ -34,9 +34,7 @@ export function BasePopup({
 		<Dialog open={open} onOpenChange={onClose}>
 			<DialogContent className="w-full max-w-6xl">
 				<DialogHeader>
-					<DialogTitle className="font-bold text-xl">
-						{title}
-					</DialogTitle>
+					<DialogTitle className="font-bold text-xl">{title}</DialogTitle>
 				</DialogHeader>
 
 				{children}
@@ -53,8 +51,7 @@ export function BasePopup({
 									pathname: pathname ? pathname : "",
 									search: navOverride
 										? navOverride
-										: //TODO: Find better name for viewmode
-											`?view=Day&date=${relevantDate.toISOString().split("T")[0]}${relevantViewMode ? `&viewMode=${relevantViewMode}` : ""}`,
+										: `?view=Day&date=${relevantDate.toISOString().split("T")[0]}${selectedAggregation ? `&aggregation=${selectedAggregation}` : ""}`,
 								}}
 								prefetch="intent"
 							>
