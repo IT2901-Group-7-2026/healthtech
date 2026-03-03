@@ -24,7 +24,6 @@ import { ActionCard } from "./action-card";
 import { AtRiskPopup } from "./exposure-level-popup";
 import { PieChartCard } from "./pie-chart-card";
 import { StatCard } from "./stat-card";
-import { AtRiskTable } from "./workers-at-risk-table";
 
 export default function ForemanOverview() {
 	const { t } = useTranslation();
@@ -204,7 +203,6 @@ export default function ForemanOverview() {
 							/>
 						</div>
 					</div>
-					<AtRiskTable users={subordinates ?? []} />
 
 					{sensor ? (
 						<UserStatusChart
