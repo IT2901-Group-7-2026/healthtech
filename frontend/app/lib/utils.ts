@@ -101,8 +101,14 @@ export function computeYAxisRange(
 		return { minY: 0, maxY: step };
 	}
 
-	const max = data.reduce((m, c) => (c.value > m ? c.value : m), data[0].value);
-	const min = data.reduce((m, c) => (c.value < m ? c.value : m), data[0].value);
+	const max = data.reduce(
+		(m, c) => (c.value > m ? c.value : m),
+		data[0].value,
+	);
+	const min = data.reduce(
+		(m, c) => (c.value < m ? c.value : m),
+		data[0].value,
+	);
 
 	const maxY = Math.ceil(max / step) * step + topPadding;
 	const minY = Math.floor((min - bottomPadding) / step) * step;
