@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { WeeklyPopup } from "@/features/popups/weekly-popup";
 import { useFormatDate } from "@/hooks/use-format-date.js";
+import type { Aggregation } from "@/lib/dto";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import type { Day, Locale } from "date-fns";
 import { useState } from "react";
@@ -12,7 +13,6 @@ import { WeekGrid } from "./components/week-grid";
 import { WeekHeader } from "./components/week-header";
 import type { Cell, WeekEvent } from "./types";
 import { useWeekView } from "./use-week-view";
-import type { Aggregation } from "@/lib/dto";
 
 export function WeekWidget({
 	minuteStep = 30,
@@ -93,7 +93,10 @@ export function WeekWidget({
 								<WeekDaysHeader days={timeSlotSegments} />
 								<div className="grid grid-cols-1 grid-rows-1">
 									<div className="col-start-1 row-start-1">
-										<WeekGrid days={timeSlotSegments} rowHeight={rowHeight} />
+										<WeekGrid
+											days={timeSlotSegments}
+											rowHeight={rowHeight}
+										/>
 									</div>
 									<div className="col-start-1 row-start-1">
 										<WeekEventGrid

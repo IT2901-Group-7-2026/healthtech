@@ -1,10 +1,5 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { useQuery } from "@tanstack/react-query";
-import { MapPinIcon, UsersIcon } from "lucide-react";
-import { useQueryState } from "nuqs";
-import { useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes.js";
 import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
@@ -20,6 +15,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import { MapPinIcon, UsersIcon } from "lucide-react";
+import { useQueryState } from "nuqs";
+import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ActionCard } from "./action-card";
 import { AtRiskPopup } from "./exposure-level-popup";
 import { PieChartCard } from "./pie-chart-card";

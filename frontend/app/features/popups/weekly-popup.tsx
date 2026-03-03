@@ -1,8 +1,8 @@
 import { Card } from "@/components/ui/card";
+import type { Aggregation } from "@/lib/dto";
 import { t } from "i18next";
 import type { WeekEvent } from "../week-widget/types";
 import { BasePopup } from "./base-popup";
-import type { Aggregation } from "@/lib/dto";
 
 export function WeeklyPopup({
 	title,

@@ -149,8 +149,14 @@ export function ChartLineDefault({
 								{maxDataDangerLevel === "safe" ? (
 									<>
 										{/* Whole line is green */}
-										<stop offset="0%" stopColor="var(--safe)" />
-										<stop offset="100%" stopColor="var(--safe)" />
+										<stop
+											offset="0%"
+											stopColor="var(--safe)"
+										/>
+										<stop
+											offset="100%"
+											stopColor="var(--safe)"
+										/>
 									</>
 								) : maxDataDangerLevel === "warning" ? (
 									<>
@@ -159,20 +165,30 @@ export function ChartLineDefault({
 											offset={getOffset(warning)}
 											stopColor="var(--warning)"
 										/>
-										<stop offset={getOffset(warning)} stopColor="var(--safe)" />
+										<stop
+											offset={getOffset(warning)}
+											stopColor="var(--safe)"
+										/>
 
-										<stop offset="100%" stopColor="var(--safe)" />
+										<stop
+											offset="100%"
+											stopColor="var(--safe)"
+										/>
 									</>
 								) : (
 									maxDataDangerLevel === "danger" && (
 										<>
 											{/* green, yellow and red line */}
 											<stop
-												offset={getOffset(dangerThreshold)}
+												offset={getOffset(
+													dangerThreshold,
+												)}
 												stopColor="var(--danger)"
 											/>
 											<stop
-												offset={getOffset(dangerThreshold)}
+												offset={getOffset(
+													dangerThreshold,
+												)}
 												stopColor="var(--warning)"
 											/>
 											<stop
@@ -183,7 +199,10 @@ export function ChartLineDefault({
 												offset={getOffset(warning)}
 												stopColor="var(--safe)"
 											/>
-											<stop offset="100%" stopColor="var(--safe)" />
+											<stop
+												offset="100%"
+												stopColor="var(--safe)"
+											/>
 										</>
 									)
 								)}
@@ -196,7 +215,11 @@ export function ChartLineDefault({
 							strokeWidth={2}
 							dot={false}
 							activeDot={(props) => (
-								<Dot {...props} warning={warning} danger={danger} />
+								<Dot
+									{...props}
+									warning={warning}
+									danger={danger}
+								/>
 							)}
 						/>
 						{children}

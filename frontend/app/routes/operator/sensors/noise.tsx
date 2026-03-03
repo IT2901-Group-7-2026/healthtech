@@ -117,8 +117,11 @@ export default function Noise() {
 							selectedDay={date}
 							selectedAggregation={aggregation}
 							data={
-								mapSensorDataToMonthLists(data ?? [], "noise", usePeakData) ??
-								[]
+								mapSensorDataToMonthLists(
+									data ?? [],
+									"noise",
+									usePeakData,
+								) ?? []
 							}
 						/>
 					</AggregationTabs>
@@ -134,7 +137,10 @@ export default function Noise() {
 							dayEndHour={16}
 							weekStartsOn={1}
 							minuteStep={60}
-							events={mapWeekDataToEvents(data ?? [], usePeakData)}
+							events={mapWeekDataToEvents(
+								data ?? [],
+								usePeakData,
+							)}
 						/>
 					</AggregationTabs>
 				) : !data || data.length === 0 ? (
@@ -209,11 +215,17 @@ const AggregationTabs = ({
 				{/* TODO: typesafety */}
 				<Tabs
 					value={aggregation}
-					onValueChange={(value) => setAggregation(value as Aggregation)}
+					onValueChange={(value) =>
+						setAggregation(value as Aggregation)
+					}
 				>
 					<TabsList>
-						<TabsTrigger value="average">{t(($) => $.average)}</TabsTrigger>
-						<TabsTrigger value="peak">{t(($) => $.peak)}</TabsTrigger>
+						<TabsTrigger value="average">
+							{t(($) => $.average)}
+						</TabsTrigger>
+						<TabsTrigger value="peak">
+							{t(($) => $.peak)}
+						</TabsTrigger>
 					</TabsList>
 				</Tabs>
 			</div>

@@ -1,11 +1,11 @@
 import { BasePopup } from "@/features/popups/base-popup";
 import type { DangerLevel } from "@/lib/danger-levels";
+import type { Aggregation } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { cn } from "@/lib/utils";
 import { t } from "i18next";
 import { DailyNotes } from "../../components/daily-notes";
 import { Card } from "../../components/ui/card";
-import type { Aggregation } from "@/lib/dto";
 
 type CalendarPopupProps = {
 	title: string;
@@ -50,7 +50,9 @@ export function CalendarPopup({
 							>
 								{t(($) => $[sensor as Sensor])}
 							</span>
-							<span className="text-muted-foreground">{"->"}</span>
+							<span className="text-muted-foreground">
+								{"->"}
+							</span>
 							<div className={`text-${danger}`}>
 								{t(($) => $.popup[danger])}
 							</div>

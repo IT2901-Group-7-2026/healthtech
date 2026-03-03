@@ -9,14 +9,9 @@ import { t } from "i18next";
 import { Outlet } from "react-router";
 
 function Title({ sensor }: { sensor: Sensor }) {
-	console.log({
-		sensor,
-		label: t(($) => $[sensor]),
-	});
-
 	return (
 		<h1 className="shrink-0 p-2 text-3xl">
-			Vibration{" "}
+			{t(($) => $[sensor])}
 			<span>
 				<Icon variant={"vibration"} size="medium" />
 			</span>

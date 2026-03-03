@@ -1,6 +1,6 @@
-import { useTranslation } from "react-i18next";
 import type { User } from "@/lib/dto.js";
 import { userRoleToString } from "@/lib/utils.js";
+import { useTranslation } from "react-i18next";
 import { BasePopup } from "./base-popup";
 
 interface ProfilePopupProps {
