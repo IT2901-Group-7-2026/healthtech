@@ -1,10 +1,5 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { useQuery } from "@tanstack/react-query";
-import { MapPinIcon, UsersIcon } from "lucide-react";
-import { useQueryState } from "nuqs";
-import { useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes.js";
 import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
@@ -20,6 +15,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import { MapPinIcon, UsersIcon } from "lucide-react";
+import { useQueryState } from "nuqs";
+import { useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ActionCard } from "./action-card";
 import { AtRiskPopup } from "./exposure-level-popup";
 import { PieChartCard } from "./pie-chart-card";
@@ -86,6 +86,8 @@ export default function ForemanOverview() {
 	}, [subordinates, addSubordinateDangerLevel]);
 
 	const total = subordinates?.length ?? 0;
+
+	const selectedSensorKey = sensor ?? "total";
 
 	const cardTotalText = t(($) => $.foremanDashboard.overview.statCards.total);
 	const cardViewDetailsText = t(
@@ -162,7 +164,10 @@ export default function ForemanOverview() {
 								onClick={() => openForStatus("danger")}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.total.danger}
+								value={
+									countPerDangerLevel[selectedSensorKey]
+										.danger
+								}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
@@ -180,7 +185,10 @@ export default function ForemanOverview() {
 								onClick={() => openForStatus("warning")}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.total.warning}
+								value={
+									countPerDangerLevel[selectedSensorKey]
+										.warning
+								}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
@@ -198,7 +206,9 @@ export default function ForemanOverview() {
 								onClick={() => openForStatus("safe")}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.total.safe}
+								value={
+									countPerDangerLevel[selectedSensorKey].safe
+								}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
