@@ -11,9 +11,9 @@ import { Outlet } from "react-router";
 function Title({ sensor }: { sensor: Sensor }) {
 	return (
 		<h1 className="shrink-0 p-2 text-3xl">
-			{t(($) => $[sensor])}
+			{t(($) => $[sensor])}{" "}
 			<span>
-				<Icon variant={"vibration"} size="medium" />
+				<Icon variant={sensor} size="medium" />
 			</span>
 		</h1>
 	);

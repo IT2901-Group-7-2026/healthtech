@@ -178,7 +178,7 @@ export default function Noise() {
 							<ThresholdLine
 								y={
 									usePeakData
-										? // biome-ignore lint/style/noNonNullAssertion: TODO:
+										? // biome-ignore lint/style/noNonNullAssertion: If usePeakData is true and peakDangerLevel is null, there is a bug somewhere else
 											thresholds.noise.peakDanger!
 										: thresholds.noise.danger
 								}
@@ -212,7 +212,6 @@ const AggregationTabs = ({
 	return (
 		<span className="relative w-full">
 			<div className="absolute top-2 left-2 rounded border">
-				{/* TODO: typesafety */}
 				<Tabs
 					value={aggregation}
 					onValueChange={(value) =>
@@ -243,7 +242,7 @@ const NoisePageLayout = ({
 }) => (
 	<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 		<div className="flex flex-col gap-4 md:w-1/4">
-			<Summary exposureType={"noise"} data={data} />
+			<Summary exposureType="noise" data={data} />
 			<DailyNotes />
 		</div>
 		<div className="flex flex-1 flex-col items-end gap-4">{children}</div>
