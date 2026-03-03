@@ -58,7 +58,7 @@ export const getNextDay = (selectedDay: Date, view: View): Date => {
 
 export const makeCumulative = (
 	data: Array<SensorDataResponseDto> | undefined,
-) => {
+): Array<SensorDataResponseDto> => {
 	if (!data || data.length === 0) {
 		return [];
 	}
@@ -70,7 +70,13 @@ export const makeCumulative = (
 			currentDate = point.time;
 		}
 		sum += point.value;
-		return { time: point.time, value: sum, dangerLevel: point.dangerLevel };
+		return {
+			time: point.time,
+			value: sum,
+			dangerLevel: point.dangerLevel,
+			peakValue: point.peakValue,
+			peakDangerLevel: point.peakDangerLevel,
+		};
 	});
 };
 
@@ -95,14 +101,8 @@ export function computeYAxisRange(
 		return { minY: 0, maxY: step };
 	}
 
-	const max = data.reduce(
-		(m, c) => (c.value > m ? c.value : m),
-		data[0].value,
-	);
-	const min = data.reduce(
-		(m, c) => (c.value < m ? c.value : m),
-		data[0].value,
-	);
+	const max = data.reduce((m, c) => (c.value > m ? c.value : m), data[0].value);
+	const min = data.reduce((m, c) => (c.value < m ? c.value : m), data[0].value);
 
 	const maxY = Math.ceil(max / step) * step + topPadding;
 	const minY = Math.floor((min - bottomPadding) / step) * step;
