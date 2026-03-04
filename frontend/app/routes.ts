@@ -16,4 +16,5 @@ export default [
 		]),
 		route("/foreman/team", "routes/foreman/team.tsx"),
 	]),
+	route("/register", "routes/register.tsx"),
 ] satisfies RouteConfig;
