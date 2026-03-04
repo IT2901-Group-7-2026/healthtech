@@ -212,7 +212,6 @@ export default function Layout() {
 					user={user}
 					users={sortedUsers}
 					setUser={setUser}
-					t={t}
 				/>
 
 				<header className="flex items-center justify-between p-2">
