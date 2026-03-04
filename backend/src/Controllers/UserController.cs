@@ -95,4 +95,46 @@ public class UserController(IUserService _userService, IUserStatusService _userS
 
 		return NoContent();
 	}
+
+	[HttpPut("{managerId}/subordinates/delete")]
+	public async Task<ActionResult<UserDto>> DeleteSubordinates(
+		Guid managerId,
+		List<Guid> subordinateIds
+	)
+	{
+		List<User> subordinates = await _userService.GetSubordinatesAsync(managerId);
+		List<Guid> remainingSubordinateIds = subordinates
+			.Select(s => s.Id)
+			.Where(id => !subordinateIds.Contains(id))
+			.ToList();
+
+		User? user = await _userService.UpdateSubordinatesAsync(managerId, remainingSubordinateIds);
+		if (user == null)
+		{
+			return NotFound();
+		}
+
+		return UserDto.FromEntity(user);
+	}
+
+	[HttpPut("{managerId}/subordinates/create")]
+	public async Task<ActionResult<UserDto>> CreateSubordinates(
+		Guid managerId,
+		List<Guid> subordinateIds
+	)
+	{
+		List<User> subordinates = await _userService.GetSubordinatesAsync(managerId);
+		List<Guid> newSubordinateIdList = subordinates
+			.Select(s => s.Id)
+			.Concat(subordinateIds)
+			.ToList();
+
+		User? user = await _userService.UpdateSubordinatesAsync(managerId, newSubordinateIdList);
+		if (user == null)
+		{
+			return NotFound();
+		}
+
+		return UserDto.FromEntity(user);
+	}
 }

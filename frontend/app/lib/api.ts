@@ -1,6 +1,10 @@
-import type { Sensor } from "@/features/sensor-picker/sensors";
-import { queryOptions, useQuery } from "@tanstack/react-query";
+import {
+	queryOptions,
+	useMutation,
+	useQueryClient,
+} from "@tanstack/react-query";
 import { minutesToMilliseconds } from "date-fns";
+import type { Sensor } from "@/features/sensor-picker/sensors";
 import {
 	type Note,
 	type NoteDataRequest,
@@ -163,40 +167,110 @@ export const createNote = async ({
 	return NoteSchema.parseAsync(json);
 };
 
-export const useSubordinatesQuery = (
+export const fetchSubordinatesQueryOptions = (
 	userId: string,
 	startTime?: Date,
 	endTime?: Date,
 ) =>
-	useQuery(
-		queryOptions({
-			queryKey: ["user.subordinates", userId, startTime, endTime],
-			queryFn: async () => {
-				const params = new URLSearchParams();
-				if (startTime) {
-					params.append("startTime", startTime.toISOString());
-				}
-				if (endTime) {
-					params.append("endTime", endTime.toISOString());
-				}
+	queryOptions({
+		queryKey: ["user.subordinates", userId, startTime, endTime],
+		queryFn: async () => {
+			const params = new URLSearchParams();
+			if (startTime) {
+				params.append("startTime", startTime.toISOString());
+			}
+			if (endTime) {
+				params.append("endTime", endTime.toISOString());
+			}
 
-				const response = await fetch(
-					`${baseURL}users/${userId}/subordinates?${params.toString()}`,
-					{
-						method: "GET",
-						headers: {
-							"Content-Type": "application/json",
-						},
+			const response = await fetch(
+				`${baseURL}users/${userId}/subordinates?${params.toString()}`,
+				{
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
 					},
-				);
+				},
+			);
 
-				if (!response.ok) {
-					throw new Error("Failed to fetch subordinates");
-				}
+			if (!response.ok) {
+				throw new Error("Failed to fetch subordinates");
+			}
 
-				const json = await response.json();
-				return UserWithStatusSchema.array().parseAsync(json);
+			const json = await response.json();
+			return UserWithStatusSchema.array().parseAsync(json);
+		},
+		staleTime: minutesToMilliseconds(10),
+	});
+
+export const removeSubordinates = async (
+	managerId: string,
+	subordinateIds: Array<string>,
+) => {
+	const response = await fetch(
+		`${baseURL}users/${managerId}/subordinates/delete`,
+		{
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
 			},
-			staleTime: minutesToMilliseconds(10),
-		}),
+			body: JSON.stringify(subordinateIds),
+		},
 	);
+
+	if (!response.ok) {
+		const errorText = await response.text();
+		throw new Error(`Failed to remove subordinates: ${errorText}`);
+	}
+};
+
+export const useRemoveSubordinatesMutation = (parentUserId: string) => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationKey: ["user.subordinates.remove", parentUserId],
+		mutationFn: (subordinateIds: Array<string>) =>
+			removeSubordinates(parentUserId, subordinateIds),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: fetchSubordinatesQueryOptions(parentUserId).queryKey,
+			});
+		},
+	});
+};
+
+export const addSubordinates = async (
+	managerId: string,
+	subordinateIds: Array<string>,
+) => {
+	const response = await fetch(
+		`${baseURL}users/${managerId}/subordinates/create`,
+		{
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(subordinateIds),
+		},
+	);
+
+	if (!response.ok) {
+		const errorText = await response.text();
+		throw new Error(`Failed to add subordinates: ${errorText}`);
+	}
+};
+
+export const useAddSubordinatesMutation = (parentUserId: string) => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationKey: ["user.subordinates.add", parentUserId],
+		mutationFn: (subordinateIds: Array<string>) =>
+			addSubordinates(parentUserId, subordinateIds),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: fetchSubordinatesQueryOptions(parentUserId).queryKey,
+			});
+		},
+	});
+};

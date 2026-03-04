@@ -1,3 +1,4 @@
+import { Languages } from "lucide-react";
 import {
 	Select,
 	SelectContent,
@@ -6,7 +7,6 @@ import {
 } from "@/components/ui/select.js";
 import type { i18nInstance, TranslateFn } from "@/i18n/config.js";
 import { cn } from "@/lib/utils.js";
-import { Languages } from "lucide-react";
 
 export const LanguageSelect = ({
 	i18n,

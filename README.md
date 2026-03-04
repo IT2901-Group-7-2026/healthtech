@@ -42,6 +42,9 @@ cd backend
 # Run migrations
 dotnet ef database update --project src
 
+# Navigate back to the root directory
+cd ..
+
 # Seed the database with sample data
 docker exec -it timescaledb psql -U postgres -d healthtech -f /seed/seed.sql
 

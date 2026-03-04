@@ -15,8 +15,7 @@
     "month": "month",
     "dust": "Dust",
     "vibration": "Vibration",
-    "noise": "Noise",
-    "userSelectPlaceholder": "User"
+    "noise": "Noise"
   },
   "dustExposure": {
     "title": "Dust exposure"
@@ -66,6 +65,11 @@
   "buttons": {
     "confirm": "Ok",
     "close": "Close"
+  },
+  "table": {
+    "numberOfRowsSelected": "{{selected}} of {{total}} rows selected",
+    "numberOfRowsSelected_one": "{{selected}} of {{total}} row selected",
+    "numberOfRowsSelected_other": "{{selected}} of {{total}} rows selected"
   },
   "english": "English",
   "norwegian": "Norwegian",
@@ -132,17 +136,25 @@
   "points": "Points",
   "dust_y_axis": "µg/m³",
   "foremanDashboard": {
-    "failedToLoadTeamMembers": "Failed to load team members",
-    "noTeamMembersFound": "No team members found",
-    "teamTable": {
-      "username": "Username",
-      "email": "Email",
-      "status": "Status",
-      "jobDescription": "Job description"
+    "team": {
+      "title": "Your team",
+      "failedToLoadMembers": "Failed to load team members",
+      "noMembersFound": "No team members found",
+      "table": {
+        "username": "Username",
+        "email": "Email",
+        "status": "Status",
+        "jobDescription": "Job description",
+        "action": "Action"
+      },
+      "action": {
+        "removeSubordinate": "Remove from team",
+        "addSubordinate": "Add to team"
+      },
+      "membersCount": "{{count}} operator in team",
+      "membersCount_one": "{{count}} operator in team",
+      "membersCount_other": "{{count}} operators in team"
     },
-    "teamMembersCount": "{{count}} operator in team",
-    "teamMembersCount_one": "{{count}} operator in team",
-    "teamMembersCount_other": "{{count}} operators in team",
     "overview": {
       "title": "Foreman Overview",
       "statCards": {
@@ -176,9 +188,15 @@
     "role": {
       "operator": "Operator",
       "foreman": "Foreman"
-    }
+    },
+    "searchPlaceholder": "Search users..."
   },
   "demo": {
     "currentRole": "Current role:"
-  }
+  },
+  "select": {
+    "all": "Select all",
+    "row": "Select row"
+  },
+  "noOptions": "No options available"
 }
