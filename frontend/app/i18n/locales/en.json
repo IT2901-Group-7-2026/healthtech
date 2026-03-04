@@ -5,7 +5,8 @@
     "overview": "Overview",
     "home": "Home",
     "team": "Team",
-    "statistics": "Statistics"
+    "statistics": "Statistics",
+    "export": "Export overview as PDF"
   },
   "overview": {
     "title": "Overview of the {{view}}",
@@ -21,7 +22,8 @@
     "title": "Dust exposure"
   },
   "vibrationExposure": {
-    "title": "Vibration exposure"
+    "title": "Vibration exposure",
+    "export": "Export as PDF"
   },
   "noiseExposure": {
     "title": "Noise exposure"

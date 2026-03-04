@@ -5,7 +5,8 @@
     "overview": "Oversikt",
     "home": "Hjem",
     "team": "Team",
-    "statistics": "Statistikk"
+    "statistics": "Statistikk",
+    "export": "Eksporter oversikt som PDF"
   },
   "overview": {
     "title": "Oversikt over {{view}}",
@@ -21,7 +22,8 @@
     "title": "Støveksponering"
   },
   "vibrationExposure": {
-    "title": "Vibrasjonseksponering"
+    "title": "Vibrasjonseksponering",
+    "export": "Eksporter som PDF"
   },
   "noiseExposure": {
     "title": "Støyeksponering"

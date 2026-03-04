@@ -3,7 +3,8 @@
 import { DailyNotes } from "@/components/daily-notes";
 import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
 import { Summary } from "@/components/summary";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
@@ -21,7 +22,6 @@ import { computeYAxisRange } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function Dust() {
@@ -81,7 +81,6 @@ export default function Dust() {
 					<Card className="flex h-24 w-full items-center">
 						<p>{t(($) => $.loadingData)}</p>
 					</Card>
-					
 				) : isError ? (
 					<Card className="flex h-24 w-full items-center">
 						<p>{t(($) => $.errorLoadingData)}</p>
@@ -115,50 +114,59 @@ export default function Dust() {
 					</Card>
 				) : (
 					<div className="w-full">
-					<div id="dust-chart-container">		
-					<ChartLineDefault
-						chartData={data ?? []}
-						chartTitle={date.toLocaleDateString(i18n.language, {
-							day: "numeric",
-							month: "long",
-							year: "numeric",
-						})}
-						unit={t(($) => $.dust_y_axis)}
-						startHour={8}
-						endHour={16}
-						maxY={maxY}
-						minY={minY}
-						lineType="monotone"
-						sensor={sensor}
-						headerRight={
-							<Button
-							size="sm"
-							variant="outline"
-							onClick={() => 
-								exportToPDF("dust-chart-container", `${date.toLocaleDateString(i18n.language, {
-								day: "numeric",
-								month: "long",
-								year: "numeric",
-							})}-${user.username}-Dust-Exposure-Overview`)
-							}
+						{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
+						<div id="dust-chart-container">
+							<ChartLineDefault
+								chartData={data ?? []}
+								chartTitle={date.toLocaleDateString(
+									i18n.language,
+									{
+										day: "numeric",
+										month: "long",
+										year: "numeric",
+									},
+								)}
+								unit={t(($) => $.dust_y_axis)}
+								startHour={8}
+								endHour={16}
+								maxY={maxY}
+								minY={minY}
+								lineType="monotone"
+								sensor={sensor}
+								headerRight={
+									<Button
+										size="sm"
+										variant="outline"
+										onClick={() =>
+											exportToPDF(
+												"dust-chart-container",
+												`${date.toLocaleDateString(
+													i18n.language,
+													{
+														day: "numeric",
+														month: "long",
+														year: "numeric",
+													},
+												)}-${user.username}-Dust-Exposure-Overview`,
+												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+											)
+										}
+									>
+										{t(($) => $.vibrationExposure.export)}
+									</Button>
+								}
 							>
-							Export as PDF
-							</Button>
-						}
-					>
-						<div className="mb-2 flex justify-end">
-							
+								<div className="mb-2 flex justify-end"></div>
+								<ThresholdLine
+									y={thresholds.dust.danger}
+									dangerLevel="danger"
+								/>
+								<ThresholdLine
+									y={thresholds.dust.warning}
+									dangerLevel="warning"
+								/>
+							</ChartLineDefault>
 						</div>
-						<ThresholdLine
-							y={thresholds.dust.danger}
-							dangerLevel="danger"
-						/>
-						<ThresholdLine
-							y={thresholds.dust.warning}
-							dangerLevel="warning"
-						/>
-					</ChartLineDefault>
-					</div>
 					</div>
 				)}
 			</div>
