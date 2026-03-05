@@ -30,7 +30,7 @@ First, download the files `NoiseData.csv`, `DustData.csv`, `VibrationData.csv` f
 
 You may also have to download `ef`, which you can do by running: `dotnet tool install --global dotnet-ef`
 
-Then run the following commands:
+Then run the following commands in the root directory of the project:
 
 ```sh
 # Start the database
@@ -48,7 +48,7 @@ cd ..
 # Seed the database with sample data
 docker exec -it timescaledb psql -U postgres -d healthtech -f /seed/seed.sql
 
-# Start the backend
+# Start the backend either with f5 (if you have the C# extension installed) or with the following command:
 dotnet watch run --project src
 
 # The backend will be running at http://localhost:5063
