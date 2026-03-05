@@ -28,7 +28,7 @@ import { useQuery } from "@tanstack/react-query";
 import { addWeeks, parseISO, startOfDay } from "date-fns";
 import { ChevronDownIcon, MapPinIcon, UsersIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
-import { useCallback, useMemo, useState } from "react";
+import { type ReactNode, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActionCard } from "./action-card";
 import { AtRiskPopup } from "./exposure-level-popup";
@@ -40,10 +40,7 @@ export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const [sensor, setSensor] = useQueryState("vibration", parseAsSensor);
 	const [date, setDate] = useQueryState("filterDate", parseAsString);
-	const [selectedUser, setSelectedUser] = useQueryState(
-		"user",
-		parseAsString,
-	);
+	const [selectedUser, setSelectedUser] = useQueryState("user", parseAsString);
 
 	const formatDate = useFormatDate();
 
@@ -127,19 +124,19 @@ export default function ForemanOverview() {
 					value={sensor ?? "all"}
 					onValueChange={(value) => setSensor(value as Sensor | null)}
 				>
-					<TabsList>
-						<TabsTrigger value="all" className="p-4">
+					<TabsList className="bg-transparent">
+						<SensorTabsTrigger value="all">
 							{t(($) => $.allSensors)}
-						</TabsTrigger>
-						<TabsTrigger value="vibration" className="p-4">
+						</SensorTabsTrigger>
+						<SensorTabsTrigger value="vibration">
 							{t(($) => $.vibration)}
-						</TabsTrigger>
-						<TabsTrigger value="noise" className="p-4">
+						</SensorTabsTrigger>
+						<SensorTabsTrigger value="noise">
 							{t(($) => $.noise)}
-						</TabsTrigger>
-						<TabsTrigger value="dust" className="p-4">
+						</SensorTabsTrigger>
+						<SensorTabsTrigger value="dust">
 							{t(($) => $.dust)}
-						</TabsTrigger>
+						</SensorTabsTrigger>
 					</TabsList>
 				</Tabs>
 				<div className="flex flex-end flex-row gap-4">
@@ -150,9 +147,7 @@ export default function ForemanOverview() {
 					>
 						<ComboboxInput
 							placeholder={t(
-								($) =>
-									$.foremanDashboard.overview
-										.selectUserPlaceholder,
+								($) => $.foremanDashboard.overview.selectUserPlaceholder,
 							)}
 							showClear
 						/>
@@ -178,9 +173,7 @@ export default function ForemanOverview() {
 								) : (
 									<span>
 										{t(
-											($) =>
-												$.foremanDashboard.overview
-													.selectDatePlaceholder,
+											($) => $.foremanDashboard.overview.selectDatePlaceholder,
 										)}
 									</span>
 								)}
@@ -196,11 +189,7 @@ export default function ForemanOverview() {
 								}}
 								selected={selectedDate}
 								onSelect={(val) =>
-									setDate(
-										val
-											? formatDate(val, "yyyy-MM-dd")
-											: null,
-									)
+									setDate(val ? formatDate(val, "yyyy-MM-dd") : null)
 								}
 								defaultMonth={selectedDate}
 							/>
@@ -235,13 +224,10 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards
-											.inDanger.description,
+										$.foremanDashboard.overview.statCards.inDanger.description,
 								)}
 								label={t(
-									($) =>
-										$.foremanDashboard.overview.statCards
-											.inDanger.label,
+									($) => $.foremanDashboard.overview.statCards.inDanger.label,
 								)}
 								onClick={() => openForStatus("danger")}
 								to="/"
@@ -253,13 +239,10 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards
-											.atRisk.description,
+										$.foremanDashboard.overview.statCards.atRisk.description,
 								)}
 								label={t(
-									($) =>
-										$.foremanDashboard.overview.statCards
-											.atRisk.label,
+									($) => $.foremanDashboard.overview.statCards.atRisk.label,
 								)}
 								onClick={() => openForStatus("warning")}
 								to="/"
@@ -271,13 +254,12 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards
-											.withinLimits.description,
+										$.foremanDashboard.overview.statCards.withinLimits
+											.description,
 								)}
 								label={t(
 									($) =>
-										$.foremanDashboard.overview.statCards
-											.withinLimits.label,
+										$.foremanDashboard.overview.statCards.withinLimits.label,
 								)}
 								onClick={() => openForStatus("safe")}
 								to="/"
@@ -307,35 +289,28 @@ export default function ForemanOverview() {
 										data={{
 											safe: {
 												name: "Safe",
-												value: countPerDangerLevel[s]
-													.safe,
+												value: countPerDangerLevel[s].safe,
 												label: t(
 													($) =>
-														$.foremanDashboard
-															.overview.statCards
-															.withinLimits.label,
+														$.foremanDashboard.overview.statCards.withinLimits
+															.label,
 												),
 											},
 											warning: {
 												name: "Warning",
-												value: countPerDangerLevel[s]
-													.warning,
+												value: countPerDangerLevel[s].warning,
 												label: t(
 													($) =>
-														$.foremanDashboard
-															.overview.statCards
-															.atRisk.label,
+														$.foremanDashboard.overview.statCards.atRisk.label,
 												),
 											},
 											danger: {
 												name: "Danger",
-												value: countPerDangerLevel[s]
-													.danger,
+												value: countPerDangerLevel[s].danger,
 												label: t(
 													($) =>
-														$.foremanDashboard
-															.overview.statCards
-															.inDanger.label,
+														$.foremanDashboard.overview.statCards.inDanger
+															.label,
 												),
 											},
 										}}
@@ -358,5 +333,22 @@ export default function ForemanOverview() {
 				/>
 			</div>
 		</div>
+	);
+}
+
+function SensorTabsTrigger({
+	value,
+	children,
+}: {
+	value: Sensor | "all";
+	children: ReactNode;
+}) {
+	return (
+		<TabsTrigger
+			value={value}
+			className="p-4 data-[state=active]:bg-neutral-900 data-[state=active]:text-white"
+		>
+			{children}
+		</TabsTrigger>
 	);
 }
