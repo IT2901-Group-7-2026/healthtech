@@ -46,7 +46,7 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 						<TableBody>
 							{operators.length === 0 ? (
 								<TableRow className="hover:bg-transparent">
-									<TableCell className="text-center text-zinc-500">
+									<TableCell className="whitespace-normal text-center text-zinc-500">
 										{t(
 											(x) =>
 												x.foremanDashboard.overview
