@@ -124,16 +124,16 @@ export default function ForemanOverview() {
 				>
 					<TabsList>
 						<TabsTrigger value="all" className="p-4">
-							All
+							{t(($) => $.allSensors)}
 						</TabsTrigger>
 						<TabsTrigger value="vibration" className="p-4">
-							Vibration
+							{t(($) => $.vibration)}
 						</TabsTrigger>
 						<TabsTrigger value="noise" className="p-4">
-							Noise
+							{t(($) => $.noise)}
 						</TabsTrigger>
 						<TabsTrigger value="dust" className="p-4">
-							Dust
+							{t(($) => $.dust)}
 						</TabsTrigger>
 					</TabsList>
 				</Tabs>
@@ -143,7 +143,12 @@ export default function ForemanOverview() {
 						value={selectedUser ?? undefined}
 						onValueChange={(value) => setSelectedUser(value)}
 					>
-						<ComboboxInput placeholder="Select a user" showClear />
+						<ComboboxInput
+							placeholder={t(
+								($) => $.foremanDashboard.overview.selectUserPlaceholder,
+							)}
+							showClear
+						/>
 						<ComboboxContent>
 							<ComboboxList>
 								{(item) => (
@@ -164,7 +169,11 @@ export default function ForemanOverview() {
 								{selectedDate ? (
 									format(selectedDate, "PPP")
 								) : (
-									<span>Pick a date</span>
+									<span>
+										{t(
+											($) => $.foremanDashboard.overview.selectDatePlaceholder,
+										)}
+									</span>
 								)}
 								<ChevronDownIcon data-icon="inline-end" />
 							</Button>

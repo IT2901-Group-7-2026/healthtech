@@ -89,6 +89,7 @@
   "dust": "Dust",
   "vibration": "Vibration",
   "noise": "Noise",
+  "allSensors": "All",
 
   "sensorSelectPlaceholder": "Sensor",
 
@@ -170,7 +171,9 @@
           "description": "Operators within safe exposure range",
           "label": "Within limits"
         }
-      }
+      },
+      "selectUserPlaceholder": "Pick a user",
+      "selectDatePlaceholder": "Pick a date"
     },
     "actionCard": {
       "safe": "All good!",
