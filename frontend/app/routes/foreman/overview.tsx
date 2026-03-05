@@ -86,6 +86,8 @@ export default function ForemanOverview() {
 
 	const total = subordinates?.length ?? 0;
 
+	const selectedSensorKey = sensor ?? "total";
+
 	const cardTotalText = t(($) => $.foremanDashboard.overview.statCards.total);
 	const cardViewDetailsText = t(
 		($) => $.foremanDashboard.overview.statCards.viewDetails,
@@ -100,26 +102,29 @@ export default function ForemanOverview() {
 				</h1>
 				<Select
 					onValueChange={(value) => {
-						if (value === "__none") {
+						if (value === "all") {
 							setSensor(null);
 						} else {
 							setSensor(value as Sensor);
 						}
 					}}
-					value={sensor ?? undefined}
+					value={sensor ?? "all"}
 				>
-					<SelectTrigger className="w-32 bg-background dark:bg-background">
+					<SelectTrigger
+						className="w-36 bg-background dark:bg-background"
+						defaultValue="all"
+					>
 						<SelectValue
 							placeholder={t(($) => $.sensorSelectPlaceholder)}
 						/>
 					</SelectTrigger>
 					<SelectContent className="w-32">
+						<SelectItem value="all">{t(($) => $.all)}</SelectItem>
 						{sensors?.map((s) => (
 							<SelectItem key={s} value={s}>
 								{t(($) => $[s])}
 							</SelectItem>
 						))}
-						<SelectItem value="__none">{"None"}</SelectItem>
 					</SelectContent>
 				</Select>
 			</div>
@@ -161,7 +166,10 @@ export default function ForemanOverview() {
 								onClick={() => openForStatus("danger")}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.total.danger}
+								value={
+									countPerDangerLevel[selectedSensorKey]
+										.danger
+								}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
@@ -179,7 +187,10 @@ export default function ForemanOverview() {
 								onClick={() => openForStatus("warning")}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.total.warning}
+								value={
+									countPerDangerLevel[selectedSensorKey]
+										.warning
+								}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
@@ -197,7 +208,9 @@ export default function ForemanOverview() {
 								onClick={() => openForStatus("safe")}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.total.safe}
+								value={
+									countPerDangerLevel[selectedSensorKey].safe
+								}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
