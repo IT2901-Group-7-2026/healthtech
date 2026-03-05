@@ -40,9 +40,16 @@ export default function ForemanOverview() {
 	const formatDate = useFormatDate();
 
 	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor);
-	const [date, setDate] = useQueryState("filterDate", parseAsString);
+	const [date, setDate] = useQueryState(
+		"filterDate",
+		parseAsString.withDefault(formatDate(new Date(), "yyyy-MM-dd")),
+	);
+
 	// TODO: Use this to show data for only that user
-	const [selectedUser, setSelectedUser] = useQueryState("user", parseAsString);
+	const [selectedUser, setSelectedUser] = useQueryState(
+		"user",
+		parseAsString,
+	);
 
 	const selectedDate = date ? parseISO(date) : undefined;
 
@@ -157,7 +164,9 @@ export default function ForemanOverview() {
 					>
 						<ComboboxInput
 							placeholder={t(
-								($) => $.foremanDashboard.overview.selectUserPlaceholder,
+								($) =>
+									$.foremanDashboard.overview
+										.selectUserPlaceholder,
 							)}
 							showClear
 							disabled={isUserComboboxDisabled}
@@ -184,7 +193,9 @@ export default function ForemanOverview() {
 								) : (
 									<span>
 										{t(
-											($) => $.foremanDashboard.overview.selectDatePlaceholder,
+											($) =>
+												$.foremanDashboard.overview
+													.selectDatePlaceholder,
 										)}
 									</span>
 								)}
@@ -200,7 +211,11 @@ export default function ForemanOverview() {
 								}}
 								selected={selectedDate}
 								onSelect={(val) =>
-									setDate(val ? formatDate(val, "yyyy-MM-dd") : null)
+									setDate(
+										val
+											? formatDate(val, "yyyy-MM-dd")
+											: null,
+									)
 								}
 								defaultMonth={selectedDate}
 							/>
@@ -235,47 +250,62 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.inDanger.description,
+										$.foremanDashboard.overview.statCards
+											.inDanger.description,
 								)}
 								label={t(
-									($) => $.foremanDashboard.overview.statCards.inDanger.label,
+									($) =>
+										$.foremanDashboard.overview.statCards
+											.inDanger.label,
 								)}
 								onClick={() => openForStatus("danger")}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel[selectedSensorKey].danger}
+								value={
+									countPerDangerLevel[selectedSensorKey]
+										.danger
+								}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.atRisk.description,
+										$.foremanDashboard.overview.statCards
+											.atRisk.description,
 								)}
 								label={t(
-									($) => $.foremanDashboard.overview.statCards.atRisk.label,
+									($) =>
+										$.foremanDashboard.overview.statCards
+											.atRisk.label,
 								)}
 								onClick={() => openForStatus("warning")}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel[selectedSensorKey].warning}
+								value={
+									countPerDangerLevel[selectedSensorKey]
+										.warning
+								}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.withinLimits
-											.description,
+										$.foremanDashboard.overview.statCards
+											.withinLimits.description,
 								)}
 								label={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.withinLimits.label,
+										$.foremanDashboard.overview.statCards
+											.withinLimits.label,
 								)}
 								onClick={() => openForStatus("safe")}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel[selectedSensorKey].safe}
+								value={
+									countPerDangerLevel[selectedSensorKey].safe
+								}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
@@ -299,28 +329,35 @@ export default function ForemanOverview() {
 										data={{
 											safe: {
 												name: "Safe",
-												value: countPerDangerLevel[s].safe,
+												value: countPerDangerLevel[s]
+													.safe,
 												label: t(
 													($) =>
-														$.foremanDashboard.overview.statCards.withinLimits
-															.label,
+														$.foremanDashboard
+															.overview.statCards
+															.withinLimits.label,
 												),
 											},
 											warning: {
 												name: "Warning",
-												value: countPerDangerLevel[s].warning,
+												value: countPerDangerLevel[s]
+													.warning,
 												label: t(
 													($) =>
-														$.foremanDashboard.overview.statCards.atRisk.label,
+														$.foremanDashboard
+															.overview.statCards
+															.atRisk.label,
 												),
 											},
 											danger: {
 												name: "Danger",
-												value: countPerDangerLevel[s].danger,
+												value: countPerDangerLevel[s]
+													.danger,
 												label: t(
 													($) =>
-														$.foremanDashboard.overview.statCards.inDanger
-															.label,
+														$.foremanDashboard
+															.overview.statCards
+															.inDanger.label,
 												),
 											},
 										}}
