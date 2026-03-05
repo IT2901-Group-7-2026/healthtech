@@ -120,11 +120,8 @@ export default function Noise() {
 							selectedDay={date}
 							selectedAggregation={aggregation}
 							data={
-								mapSensorDataToMonthLists(
-									data ?? [],
-									"noise",
-									usePeakData,
-								) ?? []
+								mapSensorDataToMonthLists(data ?? [], "noise", usePeakData) ??
+								[]
 							}
 						/>
 					</AggregationTabs>
@@ -140,10 +137,7 @@ export default function Noise() {
 							dayEndHour={16}
 							weekStartsOn={1}
 							minuteStep={60}
-							events={mapWeekDataToEvents(
-								data ?? [],
-								usePeakData,
-							)}
+							events={mapWeekDataToEvents(data ?? [], usePeakData)}
 						/>
 					</AggregationTabs>
 				) : !data || data.length === 0 ? (
@@ -162,90 +156,64 @@ export default function Noise() {
 						<div className="mb-2 flex justify-end"></div>
 						{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
 						<div id="noise-chart-container">
-							<ChartLineDefault
-								chartData={data ?? []}
-								chartTitle={date.toLocaleDateString(
-									i18n.language,
-									{
+							<AggregationTabs
+								aggregation={aggregation}
+								setAggregation={setAggregation}
+							>
+								<ChartLineDefault
+									usePeakData={usePeakData}
+									chartData={data ?? []}
+									chartTitle={date.toLocaleDateString(i18n.language, {
 										day: "numeric",
 										month: "long",
 										year: "numeric",
-									},
-								)}
-								unit="db (TWA)"
-								startHour={8}
-								endHour={16}
-								maxY={maxY}
-								minY={minY}
-								lineType="monotone"
-								sensor={sensor}
-								headerRight={
-									<Button
-										size="sm"
-										variant="outline"
-										onClick={() =>
-											exportToPDF(
-												"noise-chart-container",
-												`${date.toLocaleDateString(
-													i18n.language,
-													{
+									})}
+									unit="db (TWA)"
+									startHour={8}
+									endHour={16}
+									maxY={maxY}
+									minY={minY}
+									lineType="monotone"
+									sensor={sensor}
+									headerRight={
+										<Button
+											size="sm"
+											variant="outline"
+											onClick={() =>
+												exportToPDF(
+													"noise-chart-container",
+													`${date.toLocaleDateString(i18n.language, {
 														day: "numeric",
 														month: "long",
 														year: "numeric",
-													},
-												)}-${user.username}-Noise-Exposure-Overview`,
-												`Noise Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
-											)
+													})}-${user.username}-Noise-Exposure-Overview`,
+													`Noise Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+												)
+											}
+										>
+											{t(($) => $.vibrationExposure.export)}
+										</Button>
+									}
+								>
+									<ThresholdLine
+										y={
+											usePeakData
+												? // biome-ignore lint/style/noNonNullAssertion: If usePeakData is true and peakDangerLevel is null, there is a bug somewhere else
+													thresholds.noise.peakDanger!
+												: thresholds.noise.danger
 										}
-									>
-										{t(($) => $.vibrationExposure.export)}
-									</Button>
-								}
-							>
-								<ThresholdLine
-									y={thresholds.noise.danger}
-									dangerLevel="danger"
-								/>
-					<AggregationTabs
-						aggregation={aggregation}
-						setAggregation={setAggregation}
-					>
-						<ChartLineDefault
-							usePeakData={usePeakData}
-							chartData={data ?? []}
-							chartTitle={date.toLocaleDateString(i18n.language, {
-								day: "numeric",
-								month: "long",
-								year: "numeric",
-							})}
-							unit="db (TWA)"
-							startHour={8}
-							endHour={16}
-							maxY={maxY}
-							minY={minY}
-							lineType="monotone"
-							sensor={sensor}
-						>
-							<ThresholdLine
-								y={
-									usePeakData
-										? // biome-ignore lint/style/noNonNullAssertion: If usePeakData is true and peakDangerLevel is null, there is a bug somewhere else
-											thresholds.noise.peakDanger!
-										: thresholds.noise.danger
-								}
-								dangerLevel="danger"
-							/>
-							{!usePeakData && (
-								<ThresholdLine
-									y={thresholds.noise.warning}
-									dangerLevel="warning"
-								/>
-							</ChartLineDefault>
+										dangerLevel="danger"
+									/>
+									{!usePeakData && (
+										<ThresholdLine
+											y={thresholds.noise.warning}
+											dangerLevel="warning"
+										/>
+									)}
+								</ChartLineDefault>
+							</AggregationTabs>
 						</div>
 					</div>
-							)}
-						</ChartLineDefault>
-					</AggregationTabs>
 				)}
 			</div>
 		</div>
@@ -268,17 +236,11 @@ const AggregationTabs = ({
 			<div className="absolute top-2 left-2 rounded border">
 				<Tabs
 					value={aggregation}
-					onValueChange={(value) =>
-						setAggregation(value as Aggregation)
-					}
+					onValueChange={(value) => setAggregation(value as Aggregation)}
 				>
 					<TabsList>
-						<TabsTrigger value="average">
-							{t(($) => $.average)}
-						</TabsTrigger>
-						<TabsTrigger value="peak">
-							{t(($) => $.peak)}
-						</TabsTrigger>
+						<TabsTrigger value="average">{t(($) => $.average)}</TabsTrigger>
+						<TabsTrigger value="peak">{t(($) => $.peak)}</TabsTrigger>
 					</TabsList>
 				</Tabs>
 			</div>
