@@ -14,6 +14,7 @@ type BasePopupProps = {
 	open: boolean;
 	onClose: () => void;
 	relevantDate: Date | null;
+	selectedAggregation?: string;
 	navOverride?: string;
 	pathname?: string;
 	children: React.ReactNode;
@@ -24,6 +25,7 @@ export function BasePopup({
 	open,
 	onClose,
 	relevantDate,
+	selectedAggregation,
 	navOverride,
 	pathname,
 	children,
@@ -51,7 +53,7 @@ export function BasePopup({
 									pathname: pathname ? pathname : "",
 									search: navOverride
 										? navOverride
-										: `?view=Day&date=${relevantDate.toISOString().split("T")[0]}`,
+										: `?view=Day&date=${relevantDate.toISOString().split("T")[0]}${selectedAggregation ? `&aggregation=${selectedAggregation}` : ""}`,
 								}}
 								prefetch="intent"
 							>

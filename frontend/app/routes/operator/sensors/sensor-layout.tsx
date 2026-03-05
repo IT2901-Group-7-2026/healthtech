@@ -10,7 +10,7 @@ import { Outlet } from "react-router";
 
 function Title({ sensor }: { sensor: Sensor }) {
 	return (
-		<h1 className="p-2 text-3xl">
+		<h1 className="shrink-0 p-2 text-3xl">
 			{t(($) => $[sensor])}{" "}
 			<span>
 				<Icon variant={sensor} size="medium" />
@@ -23,35 +23,37 @@ export default function SensorLayout({ sensor }: { sensor: Sensor }) {
 	const { date, setDate } = useDate();
 	const { view } = useView();
 
+	//TODO: useMatches/useLocation to get sensor from url
+
 	return (
 		<section className="flex w-full flex-col">
-			{/* Header */}
 			<div className="flex flex-row">
 				<Title sensor={sensor} />
-				<div className="ml-auto flex flex-row gap-4">
-					<Button
-						onClick={() => setDate(new Date())}
-						size={"icon"}
-						className="px-8"
-					>
-						{"Today"}
-					</Button>
-					<Button
-						onClick={() => setDate(getPrevDay(date, view))}
-						size={"icon"}
-					>
-						{"<"}
-					</Button>
-					<ViewPicker />
-					<Button
-						onClick={() => setDate(getNextDay(date, view))}
-						size={"icon"}
-					>
-						{">"}
-					</Button>
+				<div className="flex w-full items-center">
+					<div className="ml-auto flex flex-row gap-4">
+						<Button
+							onClick={() => setDate(new Date())}
+							size={"icon"}
+							className="px-8"
+						>
+							{"Today"}
+						</Button>
+						<Button
+							onClick={() => setDate(getPrevDay(date, view))}
+							size={"icon"}
+						>
+							{"<"}
+						</Button>
+						<ViewPicker />
+						<Button
+							onClick={() => setDate(getNextDay(date, view))}
+							size={"icon"}
+						>
+							{">"}
+						</Button>
+					</div>
 				</div>
 			</div>
-			{/* Page content */}
 			<Outlet />
 		</section>
 	);

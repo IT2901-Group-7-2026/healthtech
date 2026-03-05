@@ -1,5 +1,6 @@
 import { BasePopup } from "@/features/popups/base-popup";
 import type { DangerLevel } from "@/lib/danger-levels";
+import type { Aggregation } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { cn } from "@/lib/utils";
 import { t } from "i18next";
@@ -9,6 +10,7 @@ import { Card } from "../../components/ui/card";
 type CalendarPopupProps = {
 	title: string;
 	selectedDate: Date;
+	selectedAggregation?: Aggregation;
 	exposureData?: CalendarPopupData | null;
 	open: boolean;
 	onClose: () => void;
@@ -21,6 +23,7 @@ export function CalendarPopup({
 	exposureData,
 	title,
 	selectedDate,
+	selectedAggregation,
 	open,
 	onClose,
 	children,
@@ -29,6 +32,7 @@ export function CalendarPopup({
 		<BasePopup
 			title={title}
 			relevantDate={selectedDate}
+			selectedAggregation={selectedAggregation}
 			open={open}
 			onClose={onClose}
 		>
