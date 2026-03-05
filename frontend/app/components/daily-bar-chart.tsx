@@ -45,11 +45,13 @@ export function DailyBarChart({
 	chartTitle,
 	startHour = 8,
 	endHour = 16,
+	headerRight,
 }: {
 	data: AllSensors;
 	chartTitle: string;
 	startHour?: number;
 	endHour?: number;
+	headerRight?: React.ReactNode;
 }) {
 	const { t } = useTranslation();
 	const { date } = useDate();
@@ -79,8 +81,9 @@ export function DailyBarChart({
 
 	return (
 		<Card className="w-full">
-			<CardHeader>
+			<CardHeader className="flex flex-row items-center justify-between">
 				<CardTitle>{chartTitle}</CardTitle>
+				{headerRight}
 			</CardHeader>
 			<CardContent>
 				<ChartContainer config={chartConfig}>

@@ -3,6 +3,7 @@
 import { DailyNotes } from "@/components/daily-notes";
 import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
 import { Summary } from "@/components/summary";
+import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
@@ -12,6 +13,7 @@ import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
+import { useExportPDF } from "@/hooks/use-export-pdf";
 import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import {
@@ -35,6 +37,7 @@ export default function Noise() {
 
 	const { date } = useDate();
 	const { user } = useUser();
+	const { exportToPDF } = useExportPDF();
 
 	const parseAsAggregation = parseAsStringLiteral(Aggregations);
 
@@ -155,43 +158,77 @@ export default function Noise() {
 						<p>{t(($) => $.noData)}</p>
 					</Card>
 				) : (
-					<AggregationTabs
-						aggregation={aggregation}
-						setAggregation={setAggregation}
-					>
-						<ChartLineDefault
-							usePeakData={usePeakData}
-							chartData={data ?? []}
-							chartTitle={date.toLocaleDateString(i18n.language, {
-								day: "numeric",
-								month: "long",
-								year: "numeric",
-							})}
-							unit="db (TWA)"
-							startHour={8}
-							endHour={16}
-							maxY={maxY}
-							minY={minY}
-							lineType="monotone"
-							sensor={sensor}
-						>
-							<ThresholdLine
-								y={
-									usePeakData
-										? // biome-ignore lint/style/noNonNullAssertion: If usePeakData is true and peakDangerLevel is null, there is a bug somewhere else
-											thresholds.noise.peakDanger!
-										: thresholds.noise.danger
-								}
-								dangerLevel="danger"
-							/>
-							{!usePeakData && (
-								<ThresholdLine
-									y={thresholds.noise.warning}
-									dangerLevel="warning"
-								/>
-							)}
-						</ChartLineDefault>
-					</AggregationTabs>
+					<div className="w-full">
+						<div className="mb-2 flex justify-end"></div>
+						{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
+						<div id="noise-chart-container">
+							<AggregationTabs
+								aggregation={aggregation}
+								setAggregation={setAggregation}
+							>
+								<ChartLineDefault
+									usePeakData={usePeakData}
+									chartData={data ?? []}
+									chartTitle={date.toLocaleDateString(
+										i18n.language,
+										{
+											day: "numeric",
+											month: "long",
+											year: "numeric",
+										},
+									)}
+									unit="db (TWA)"
+									startHour={8}
+									endHour={16}
+									maxY={maxY}
+									minY={minY}
+									lineType="monotone"
+									sensor={sensor}
+									headerRight={
+										<Button
+											size="sm"
+											variant="outline"
+											onClick={() =>
+												exportToPDF(
+													"noise-chart-container",
+													`${date.toLocaleDateString(
+														i18n.language,
+														{
+															day: "numeric",
+															month: "long",
+															year: "numeric",
+														},
+													)}-${user.username}-Noise-Exposure-Overview`,
+													`Noise Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+												)
+											}
+										>
+											{t(
+												($) =>
+													$.vibrationExposure.export,
+											)}
+										</Button>
+									}
+								>
+									<ThresholdLine
+										y={
+											usePeakData
+												? // biome-ignore lint/style/noNonNullAssertion: If usePeakData is true and peakDangerLevel is null, there is a bug somewhere else
+													thresholds.noise.peakDanger!
+												: thresholds.noise.danger
+										}
+										dangerLevel="danger"
+									/>
+									{!usePeakData && (
+										<ThresholdLine
+											y={thresholds.noise.warning}
+											dangerLevel="warning"
+										/>
+									)}
+								</ChartLineDefault>
+							</AggregationTabs>
+						</div>
+					</div>
 				)}
 			</div>
 		</div>

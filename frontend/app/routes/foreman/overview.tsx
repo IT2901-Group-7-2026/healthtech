@@ -36,6 +36,7 @@ import { AtRiskPopup } from "./exposure-level-popup";
 import { PieChartCard } from "./pie-chart-card";
 import { StatCard } from "./stat-card";
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const formatDate = useFormatDate();
