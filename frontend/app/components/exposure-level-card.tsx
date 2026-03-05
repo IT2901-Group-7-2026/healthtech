@@ -11,29 +11,17 @@ import { Link } from "react-router";
 interface Props {
 	users: Array<UserWithStatusDto>;
 	sensor: Sensor;
-	dangerLevel: string;
+	dangerLevel: "safe" | "warning" | "danger";
 }
 
-export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
+export function ExposureRiskCard({ users, sensor, dangerLevel}: Props) {
 	const { t } = useTranslation();
 
 	const operators = users.filter(
-		(user) => (user.status[sensor]?.level ?? "safe") === dangerLevel,
+		(user) => (user.status[sensor]?.dangerLevel ?? "safe") === dangerLevel,
 	);
-
-	// Translate dangerLevel to the correct .json key, used for translations and title colour
-	let dangerLabel: "inDanger" | "atRisk" | "withinLimits";
-	let colour: "red" | "orange" | "green";
-	if (dangerLevel === "danger") {
-		dangerLabel = "inDanger";
-		colour = "red";
-	} else if (dangerLevel === "warning") {
-		dangerLabel = "atRisk";
-		colour = "orange";
-	} else {
-		dangerLabel = "withinLimits";
-		colour = "green";
-	}
+	console.log(mapDangerLevelToColor(dangerLevel))
+	console.log(mapDangerLevelToColor("safe"))
 
 	return (
 		<Link
@@ -51,16 +39,14 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 				{/* TITLE */}
 				<CardHeader>
 					<CardTitle
-						className="text-center"
-						style={{ color: colour }}
+						className= {`text-center text-${mapDangerLevelToColor(dangerLevel ?? "safe")}`}
+						//style={{ color: "red"}}
 					>
 						{t(
 							(x) =>
-								x.foremanDashboard.overview.statCards[
-									dangerLabel
-								].label,
+								x.foremanDashboard.overview.statCards[dangerLevel].label
 						)}{" "}
-						{"("} {operators.length} {")"}
+						{`(${operators.length})`}
 					</CardTitle>
 				</CardHeader>
 
@@ -73,9 +59,7 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 									<TableCell className="text-center text-zinc-500">
 										{t(
 											(x) =>
-												x.foremanDashboard.overview
-													.statCards[dangerLabel]
-													.noOperators,
+												x.foremanDashboard.overview.statCards[dangerLevel].noOperators
 										)}
 									</TableCell>
 								</TableRow>
@@ -85,7 +69,7 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 										<TableCell>
 											<div className="flex items-center gap-5">
 												<div
-													className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(sub.status[sensor]?.level ?? "safe")}`}
+													className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(sub.status[sensor]?.dangerLevel ?? "safe")}`}
 												/>
 												<span>{sub.username}</span>
 											</div>

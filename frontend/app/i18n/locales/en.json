@@ -159,17 +159,17 @@
       "statCards": {
         "total": "Total",
         "viewDetails": "View details",
-        "inDanger": {
+        "danger": {
           "description": "Operators exceeding threshold",
           "label": "In danger",
           "noOperators": "No operators in danger"
         },
-        "atRisk": {
+        "warning": {
           "description": "Operators approaching exposure limit",
           "label": "At risk",
           "noOperators": "No operators at risk"
         },
-        "withinLimits": {
+        "safe": {
           "description": "Operators within safe exposure range",
           "label": "Within limits",
           "noOperators": "No operators within limits"

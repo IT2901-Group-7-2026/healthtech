@@ -159,17 +159,17 @@
       "statCards": {
         "total": "Totalt",
         "viewDetails": "Se detaljer",
-        "inDanger": {
+        "danger": {
           "description": "Operatører som har overskredet grenseverdien",
           "label": "Over grenseverdi",
           "noOperators": "Ingen over grenseverdien"
         },
-        "atRisk": {
+        "warning": {
           "description": "Operatører som nærmer seg grenseverdien",
           "label": "Nær grenseverdi",
           "noOperators": "Ingen nærmer grenseverdien"
         },
-        "withinLimits": {
+        "safe": {
           "description": "Operatører innenfor trygge grenseverdier",
           "label": "Innenfor grenseverdi",
           "noOperators": "Ingen innenfor trygge grenseverdier"

@@ -157,12 +157,12 @@ export default function ForemanOverview() {
 								description={t(
 									($) =>
 										$.foremanDashboard.overview.statCards
-											.inDanger.description,
+											.danger.description,
 								)}
 								label={t(
 									($) =>
 										$.foremanDashboard.overview.statCards
-											.inDanger.label,
+											.danger.label,
 								)}
 								onClick={() => openForStatus("danger")}
 								to="/"
@@ -178,12 +178,12 @@ export default function ForemanOverview() {
 								description={t(
 									($) =>
 										$.foremanDashboard.overview.statCards
-											.atRisk.description,
+											.warning.description,
 								)}
 								label={t(
 									($) =>
 										$.foremanDashboard.overview.statCards
-											.atRisk.label,
+											.warning.label,
 								)}
 								onClick={() => openForStatus("warning")}
 								to="/"
@@ -199,12 +199,12 @@ export default function ForemanOverview() {
 								description={t(
 									($) =>
 										$.foremanDashboard.overview.statCards
-											.withinLimits.description,
+											.safe.description,
 								)}
 								label={t(
 									($) =>
 										$.foremanDashboard.overview.statCards
-											.withinLimits.label,
+											.safe.label,
 								)}
 								onClick={() => openForStatus("safe")}
 								to="/"
@@ -215,7 +215,6 @@ export default function ForemanOverview() {
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
-							{/* TODO: move to right page after*/}
 							{/* Operators in danger for the chosen exposure */}
 							{sensor && (
 								<ExposureRiskCard
@@ -266,7 +265,7 @@ export default function ForemanOverview() {
 													($) =>
 														$.foremanDashboard
 															.overview.statCards
-															.withinLimits.label,
+															.safe.label,
 												),
 											},
 											warning: {
@@ -277,7 +276,7 @@ export default function ForemanOverview() {
 													($) =>
 														$.foremanDashboard
 															.overview.statCards
-															.atRisk.label,
+															.warning.label,
 												),
 											},
 											danger: {
@@ -288,7 +287,7 @@ export default function ForemanOverview() {
 													($) =>
 														$.foremanDashboard
 															.overview.statCards
-															.inDanger.label,
+															.danger.label,
 												),
 											},
 										}}
