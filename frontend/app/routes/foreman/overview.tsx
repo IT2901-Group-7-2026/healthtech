@@ -36,7 +36,7 @@ import { AtRiskPopup } from "./exposure-level-popup";
 import { PieChartCard } from "./pie-chart-card";
 import { StatCard } from "./stat-card";
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: fjksjk
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const formatDate = useFormatDate();
@@ -267,68 +267,78 @@ export default function ForemanOverview() {
 
 					<div className="grid gap-6 lg:grid-cols-3">
 						<div className="grid items-stretch gap-4 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
-							<StatCard
-								description={t(
-									($) =>
-										$.foremanDashboard.overview.statCards
-											.danger.description,
-								)}
-								label={t(
-									($) =>
-										$.foremanDashboard.overview.statCards
-											.danger.label,
-								)}
-								onClick={() => openForStatus("danger")}
-								to="/"
-								totalValue={total}
-								value={
-									countPerDangerLevel[selectedSensorKey]
-										.danger
-								}
-								totalText={cardTotalText}
-								viewDetailsText={cardViewDetailsText}
-							/>
-							<StatCard
-								description={t(
-									($) =>
-										$.foremanDashboard.overview.statCards
-											.warning.description,
-								)}
-								label={t(
-									($) =>
-										$.foremanDashboard.overview.statCards
-											.warning.label,
-								)}
-								onClick={() => openForStatus("warning")}
-								to="/"
-								totalValue={total}
-								value={
-									countPerDangerLevel[selectedSensorKey]
-										.warning
-								}
-								totalText={cardTotalText}
-								viewDetailsText={cardViewDetailsText}
-							/>
-							<StatCard
-								description={t(
-									($) =>
-										$.foremanDashboard.overview.statCards
-											.safe.description,
-								)}
-								label={t(
-									($) =>
-										$.foremanDashboard.overview.statCards
-											.safe.label,
-								)}
-								onClick={() => openForStatus("safe")}
-								to="/"
-								totalValue={total}
-								value={
-									countPerDangerLevel[selectedSensorKey].safe
-								}
-								totalText={cardTotalText}
-								viewDetailsText={cardViewDetailsText}
-							/>
+							{!sensor && (
+								<>
+									<StatCard
+										description={t(
+											($) =>
+												$.foremanDashboard.overview
+													.statCards.danger
+													.description,
+										)}
+										label={t(
+											($) =>
+												$.foremanDashboard.overview
+													.statCards.danger.label,
+										)}
+										onClick={() => openForStatus("danger")}
+										to="/"
+										totalValue={total}
+										value={
+											countPerDangerLevel[
+												selectedSensorKey
+											].danger
+										}
+										totalText={cardTotalText}
+										viewDetailsText={cardViewDetailsText}
+									/>
+									<StatCard
+										description={t(
+											($) =>
+												$.foremanDashboard.overview
+													.statCards.warning
+													.description,
+										)}
+										label={t(
+											($) =>
+												$.foremanDashboard.overview
+													.statCards.warning.label,
+										)}
+										onClick={() => openForStatus("warning")}
+										to="/"
+										totalValue={total}
+										value={
+											countPerDangerLevel[
+												selectedSensorKey
+											].warning
+										}
+										totalText={cardTotalText}
+										viewDetailsText={cardViewDetailsText}
+									/>
+									<StatCard
+										description={t(
+											($) =>
+												$.foremanDashboard.overview
+													.statCards.safe.description,
+										)}
+										label={t(
+											($) =>
+												$.foremanDashboard.overview
+													.statCards.safe.label,
+										)}
+										onClick={() => openForStatus("safe")}
+										to="/"
+										totalValue={total}
+										value={
+											countPerDangerLevel[
+												selectedSensorKey
+											].safe
+										}
+										totalText={cardTotalText}
+										viewDetailsText={cardViewDetailsText}
+									/>
+								</>
+							)}
 							{/* Operators in danger for the chosen exposure */}
 							{sensor && (
 								<ExposureRiskCard

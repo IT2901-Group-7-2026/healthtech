@@ -3,6 +3,7 @@
 import { DailyNotes } from "@/components/daily-notes";
 import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
 import { Summary } from "@/components/summary";
+import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
@@ -11,6 +12,7 @@ import { useUser } from "@/features/user/user-context";
 import { parseAsView } from "@/features/views/utils";
 import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
+import { useExportPDF } from "@/hooks/use-export-pdf";
 import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
@@ -29,6 +31,7 @@ export default function Vibration() {
 
 	const { date } = useDate();
 	const { user } = useUser();
+	const { exportToPDF } = useExportPDF();
 
 	const sensor: Sensor = "vibration";
 
@@ -116,30 +119,61 @@ export default function Vibration() {
 						<p>{t(($) => $.noData)}</p>
 					</Card>
 				) : (
-					<ChartLineDefault
-						chartData={makeCumulative(data)}
-						chartTitle={date.toLocaleDateString(i18n.language, {
-							day: "numeric",
-							month: "long",
-							year: "numeric",
-						})}
-						unit={t(($) => $.points)}
-						startHour={8}
-						endHour={16}
-						maxY={maxY}
-						minY={minY}
-						lineType="monotone"
-						sensor={sensor}
-					>
-						<ThresholdLine
-							y={thresholds.vibration.danger}
-							dangerLevel="danger"
-						/>
-						<ThresholdLine
-							y={thresholds.vibration.warning}
-							dangerLevel="warning"
-						/>
-					</ChartLineDefault>
+					<div className="w-full">
+						<div className="mb-2 flex justify-end"></div>
+						{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
+						<div id="vibration-chart-container">
+							<ChartLineDefault
+								chartData={makeCumulative(data)}
+								chartTitle={date.toLocaleDateString(
+									i18n.language,
+									{
+										day: "numeric",
+										month: "long",
+										year: "numeric",
+									},
+								)}
+								unit={t(($) => $.points)}
+								startHour={8}
+								endHour={16}
+								maxY={maxY}
+								minY={minY}
+								lineType="monotone"
+								sensor={sensor}
+								headerRight={
+									<Button
+										size="sm"
+										variant="outline"
+										onClick={() =>
+											exportToPDF(
+												"vibration-chart-container",
+												`${date.toLocaleDateString(
+													i18n.language,
+													{
+														day: "numeric",
+														month: "long",
+														year: "numeric",
+													},
+												)}-${user.username}-Vibration-Exposure-Overview`,
+												`Vibration Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+											)
+										}
+									>
+										{t(($) => $.vibrationExposure.export)}
+									</Button>
+								}
+							>
+								<ThresholdLine
+									y={thresholds.vibration.danger}
+									dangerLevel="danger"
+								/>
+								<ThresholdLine
+									y={thresholds.vibration.warning}
+									dangerLevel="warning"
+								/>
+							</ChartLineDefault>
+						</div>
+					</div>
 				)}
 			</div>
 		</div>

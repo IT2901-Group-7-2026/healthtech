@@ -14,6 +14,7 @@ import { useView } from "@/features/views/use-view";
 import { ViewSelect } from "@/features/views/view-select";
 import { mapAllWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
+import { useExportPDF } from "@/hooks/use-export-pdf";
 import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import type { AllSensors } from "@/lib/dto";
@@ -22,6 +23,9 @@ import { getNextDay, getPrevDay } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import Dust from "./sensors/dust";
+import Noise from "./sensors/noise";
+import Vibration from "./sensors/vibration";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function OperatorHome() {
@@ -30,6 +34,7 @@ export default function OperatorHome() {
 	const { view } = useView();
 	const translatedView = t(($) => $.overview[view]);
 	const { date, setDate } = useDate();
+	const { exportMultipleToPDF } = useExportPDF();
 
 	const { user } = useUser();
 
@@ -162,10 +167,65 @@ export default function OperatorHome() {
 											year: "numeric",
 										},
 									)}
+									headerRight={
+										<Button
+											onClick={() =>
+												exportMultipleToPDF(
+													[
+														"dust-chart-container",
+														"vibration-chart-container",
+														"noise-chart-container",
+													],
+													`${date.toLocaleDateString(
+														i18n.language,
+														{
+															day: "numeric",
+															month: "long",
+															year: "numeric",
+														},
+													)}-${user.username}-Exposure-Overview`,
+													[
+														`Dust Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+														`Vibration Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+														`Noise Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+													],
+												)
+											}
+											variant="outline"
+										>
+											{t(($) => $.layout.export)}
+										</Button>
+									}
 								/>
 							)}
 						</section>
 					</div>
+				</div>
+			</div>
+			{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
+			<div
+				id="full-report-container"
+				style={{
+					position: "fixed",
+					top: "-9999px",
+					left: "-9999px",
+					width: "1200px",
+					background: "white",
+				}}
+			>
+				{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
+				<div id="dust-chart-container">
+					<Dust />
+				</div>
+
+				{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
+				<div id="vibration-chart-container">
+					<Vibration />
+				</div>
+
+				{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
+				<div id="noise-chart-container">
+					<Noise />
 				</div>
 			</div>
 		</div>

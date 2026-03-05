@@ -42,6 +42,7 @@ interface LineChartProps {
 	lineType?: string;
 	children: React.ReactNode;
 	sensor: Sensor;
+	headerRight?: React.ReactNode;
 	usePeakData?: boolean;
 }
 
@@ -56,6 +57,7 @@ export function ChartLineDefault({
 	lineType = "natural",
 	children,
 	sensor,
+	headerRight,
 	usePeakData = false,
 }: LineChartProps) {
 	const { date: selectedDay } = useDate();
@@ -95,8 +97,9 @@ export function ChartLineDefault({
 
 	return (
 		<Card className="w-full">
-			<CardHeader>
-				<CardTitle className="mx-auto">{chartTitle}</CardTitle>
+			<CardHeader className="flex flex-row items-center justify-between">
+				<CardTitle>{chartTitle}</CardTitle>
+				{headerRight}
 			</CardHeader>
 			<CardContent>
 				<ChartContainer config={chartConfig}>
