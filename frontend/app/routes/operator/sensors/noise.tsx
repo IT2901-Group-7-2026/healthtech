@@ -120,8 +120,11 @@ export default function Noise() {
 							selectedDay={date}
 							selectedAggregation={aggregation}
 							data={
-								mapSensorDataToMonthLists(data ?? [], "noise", usePeakData) ??
-								[]
+								mapSensorDataToMonthLists(
+									data ?? [],
+									"noise",
+									usePeakData,
+								) ?? []
 							}
 						/>
 					</AggregationTabs>
@@ -137,7 +140,10 @@ export default function Noise() {
 							dayEndHour={16}
 							weekStartsOn={1}
 							minuteStep={60}
-							events={mapWeekDataToEvents(data ?? [], usePeakData)}
+							events={mapWeekDataToEvents(
+								data ?? [],
+								usePeakData,
+							)}
 						/>
 					</AggregationTabs>
 				) : !data || data.length === 0 ? (
@@ -163,11 +169,14 @@ export default function Noise() {
 								<ChartLineDefault
 									usePeakData={usePeakData}
 									chartData={data ?? []}
-									chartTitle={date.toLocaleDateString(i18n.language, {
-										day: "numeric",
-										month: "long",
-										year: "numeric",
-									})}
+									chartTitle={date.toLocaleDateString(
+										i18n.language,
+										{
+											day: "numeric",
+											month: "long",
+											year: "numeric",
+										},
+									)}
 									unit="db (TWA)"
 									startHour={8}
 									endHour={16}
@@ -182,16 +191,22 @@ export default function Noise() {
 											onClick={() =>
 												exportToPDF(
 													"noise-chart-container",
-													`${date.toLocaleDateString(i18n.language, {
-														day: "numeric",
-														month: "long",
-														year: "numeric",
-													})}-${user.username}-Noise-Exposure-Overview`,
+													`${date.toLocaleDateString(
+														i18n.language,
+														{
+															day: "numeric",
+															month: "long",
+															year: "numeric",
+														},
+													)}-${user.username}-Noise-Exposure-Overview`,
 													`Noise Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
 												)
 											}
 										>
-											{t(($) => $.vibrationExposure.export)}
+											{t(
+												($) =>
+													$.vibrationExposure.export,
+											)}
 										</Button>
 									}
 								>
@@ -236,11 +251,17 @@ const AggregationTabs = ({
 			<div className="absolute top-2 left-2 rounded border">
 				<Tabs
 					value={aggregation}
-					onValueChange={(value) => setAggregation(value as Aggregation)}
+					onValueChange={(value) =>
+						setAggregation(value as Aggregation)
+					}
 				>
 					<TabsList>
-						<TabsTrigger value="average">{t(($) => $.average)}</TabsTrigger>
-						<TabsTrigger value="peak">{t(($) => $.peak)}</TabsTrigger>
+						<TabsTrigger value="average">
+							{t(($) => $.average)}
+						</TabsTrigger>
+						<TabsTrigger value="peak">
+							{t(($) => $.peak)}
+						</TabsTrigger>
 					</TabsList>
 				</Tabs>
 			</div>
