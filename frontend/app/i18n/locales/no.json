@@ -181,8 +181,8 @@
     },
     "actionCard": {
       "safe": "Alt er bra!",
-      "warning": "Tiltak anbefales",
-      "danger": "Du må utføre et tiltak!"
+      "warning": "Oppmerksomhet anbefales!",
+      "danger": "Oppmerksomhet anbefales!"
     },
     "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",

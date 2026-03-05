@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
@@ -6,7 +7,6 @@ import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { AllSensors, SensorDataResponseDto } from "@/lib/dto";
 import { cn } from "@/lib/utils";
 import { Card } from "@/ui/card";
-import { useTranslation } from "react-i18next";
 
 type ExposureType = Sensor | "all";
 
@@ -63,7 +63,7 @@ export function Summary({ exposureType, data }: SummaryProps) {
 	const isMobile = useIsMobile();
 
 	return (
-		<Card className="flex w-full flex-col gap-0 p-5 shadow">
+		<Card className="w-full gap-0 p-5">
 			<div className="border-b-2 border-b-slate-300 md:pb-2 md:pl-2">
 				<h2 className="text-center text-xl md:text-left md:text-2xl">
 					{t(($) => $.exposure_summary.title)}
@@ -92,15 +92,8 @@ export function Summary({ exposureType, data }: SummaryProps) {
 					>
 						{summaryData.safeCount}
 					</span>
-					<span
-						className={cn(
-							"ml-1 text-xs md:ml-2 md:text-sm",
-							safeColor,
-						)}
-					>
-						{isMobile
-							? defaultLabels.safe
-							: summaryLabels.safeLabel}
+					<span className={cn("ml-1 text-xs md:ml-2 md:text-sm", safeColor)}>
+						{isMobile ? defaultLabels.safe : summaryLabels.safeLabel}
 					</span>
 				</div>
 				{/* Warning */}
@@ -116,15 +109,8 @@ export function Summary({ exposureType, data }: SummaryProps) {
 					>
 						{summaryData.warningCount}
 					</span>
-					<span
-						className={cn(
-							"ml-1 text-xs md:ml-2 md:text-sm",
-							warningColor,
-						)}
-					>
-						{isMobile
-							? defaultLabels.warning
-							: summaryLabels.warningLabel}
+					<span className={cn("ml-1 text-xs md:ml-2 md:text-sm", warningColor)}>
+						{isMobile ? defaultLabels.warning : summaryLabels.warningLabel}
 					</span>
 				</div>
 				{/* Danger */}
@@ -140,15 +126,8 @@ export function Summary({ exposureType, data }: SummaryProps) {
 					>
 						{summaryData.dangerCount}
 					</span>
-					<span
-						className={cn(
-							"ml-1 text-xs md:ml-2 md:text-sm",
-							dangerColor,
-						)}
-					>
-						{isMobile
-							? defaultLabels.danger
-							: summaryLabels.dangerLabel}
+					<span className={cn("ml-1 text-xs md:ml-2 md:text-sm", dangerColor)}>
+						{isMobile ? defaultLabels.danger : summaryLabels.dangerLabel}
 					</span>
 				</div>
 			</div>
@@ -208,8 +187,7 @@ const getSummaryForAll = (view: View, data: AllSensors): SummaryType => {
 		let allData = Object.entries(data)
 			.map(
 				([, sensorData]) =>
-					data &&
-					getSingleSummary(view, "all", sensorData.data ?? []),
+					data && getSingleSummary(view, "all", sensorData.data ?? []),
 			)
 			.reduce(
 				(acc: SummaryType, curr) => {
@@ -221,8 +199,7 @@ const getSummaryForAll = (view: View, data: AllSensors): SummaryType => {
 				},
 				{ safeCount: 0, dangerCount: 0, warningCount: 0 },
 			);
-		if (!allData)
-			allData = { safeCount: 0, dangerCount: 0, warningCount: 0 };
+		if (!allData) allData = { safeCount: 0, dangerCount: 0, warningCount: 0 };
 		return allData;
 	}
 
