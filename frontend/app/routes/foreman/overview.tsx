@@ -1,11 +1,5 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { useQuery } from "@tanstack/react-query";
-import { addWeeks, endOfDay, parseISO, startOfDay } from "date-fns";
-import { ChevronDownIcon, MapPinIcon, UsersIcon } from "lucide-react";
-import { parseAsString, useQueryState } from "nuqs";
-import { type ReactNode, useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes.js";
 import { ExposureRiskCard } from "@/components/exposure-level-card";
 import { Button } from "@/components/ui/button";
@@ -31,6 +25,12 @@ import { fetchSubordinatesQueryOptions, usersQueryOptions } from "@/lib/api.js";
 import type { DangerLevel } from "@/lib/danger-levels";
 import { createLocationName, type UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
+import { useQuery } from "@tanstack/react-query";
+import { addWeeks, endOfDay, parseISO, startOfDay } from "date-fns";
+import { ChevronDownIcon, MapPinIcon, UsersIcon } from "lucide-react";
+import { parseAsString, useQueryState } from "nuqs";
+import { type ReactNode, useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ActionCard } from "./action-card";
 import { AtRiskPopup } from "./exposure-level-popup";
 import { PieChartCard } from "./pie-chart-card";
@@ -141,9 +141,6 @@ export default function ForemanOverview() {
 	const selectedSensorKey = sensor ?? "total";
 
 	const cardTotalText = t(($) => $.foremanDashboard.overview.statCards.total);
-	const cardViewDetailsText = t(
-		($) => $.foremanDashboard.overview.statCards.viewDetails,
-	);
 
 	const isUserComboboxDisabled = !users || users.length === 0;
 
@@ -151,7 +148,7 @@ export default function ForemanOverview() {
 
 	return (
 		<div>
-			<Card className="mb-4 flex flex-row justify-between bg-zinc-100 px-4 py-2">
+			<Card className="mb-4 flex flex-row justify-between px-4 py-2">
 				<Tabs
 					value={sensor ?? "all"}
 					onValueChange={(value) =>
@@ -188,7 +185,6 @@ export default function ForemanOverview() {
 							)}
 							showClear
 							disabled={isUserComboboxDisabled}
-							className=""
 						/>
 						<ComboboxContent>
 							<ComboboxList>
@@ -290,7 +286,6 @@ export default function ForemanOverview() {
 											].danger
 										}
 										totalText={cardTotalText}
-										viewDetailsText={cardViewDetailsText}
 									/>
 									<StatCard
 										description={t(
@@ -313,7 +308,6 @@ export default function ForemanOverview() {
 											].warning
 										}
 										totalText={cardTotalText}
-										viewDetailsText={cardViewDetailsText}
 									/>
 									<StatCard
 										description={t(
@@ -335,7 +329,6 @@ export default function ForemanOverview() {
 											].safe
 										}
 										totalText={cardTotalText}
-										viewDetailsText={cardViewDetailsText}
 									/>
 								</>
 							)}
@@ -416,7 +409,6 @@ export default function ForemanOverview() {
 											},
 										}}
 										label={s}
-										viewDetailsText={cardViewDetailsText}
 										to="/"
 										key={s}
 									/>
