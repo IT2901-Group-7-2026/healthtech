@@ -42,7 +42,10 @@ export function AtRiskPopup({
 			}
 
 			if (popupStatus === "warning") {
-				return data.dangerLevel === "warning" || data.dangerLevel === "danger";
+				return (
+					data.dangerLevel === "warning" ||
+					data.dangerLevel === "danger"
+				);
 			}
 
 			return false;
@@ -90,25 +93,30 @@ export function AtRiskPopup({
 												<div className="flex items-center gap-5">
 													<div
 														className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(
-															worker.status.status as DangerLevel,
+															worker.status
+																.status as DangerLevel,
 														)}`}
 													/>
-													<span>{worker.username}</span>
+													<span>
+														{worker.username}
+													</span>
 												</div>
 
 												<div className="flex gap-2">
-													{getExposureBadges(worker, status).map(
-														({ key, data }) => (
-															<span
-																key={key}
-																className={`rounded-md px-2 py-0.5 font-medium text-white text-xs bg-${mapDangerLevelToColor(
-																	data?.dangerLevel ?? "safe",
-																)}`}
-															>
-																{key}
-															</span>
-														),
-													)}
+													{getExposureBadges(
+														worker,
+														status,
+													).map(({ key, data }) => (
+														<span
+															key={key}
+															className={`rounded-md px-2 py-0.5 font-medium text-white text-xs bg-${mapDangerLevelToColor(
+																data?.dangerLevel ??
+																	"safe",
+															)}`}
+														>
+															{key}
+														</span>
+													))}
 												</div>
 											</Link>
 										</TableCell>

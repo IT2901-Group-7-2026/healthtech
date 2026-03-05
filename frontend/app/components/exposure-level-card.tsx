@@ -6,7 +6,6 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { mapDangerLevelToColor } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
-import { cn } from "@/lib/utils";
 
 interface Props {
 	users: Array<UserWithStatusDto>;
@@ -34,7 +33,12 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 						className={`text-center text-${mapDangerLevelToColor(dangerLevel ?? "safe")}`}
 						//style={{ color: "red"}}
 					>
-						{t((x) => x.foremanDashboard.overview.statCards[dangerLevel].label)}{" "}
+						{t(
+							(x) =>
+								x.foremanDashboard.overview.statCards[
+									dangerLevel
+								].label,
+						)}{" "}
 						{`(${operators.length})`}
 					</CardTitle>
 				</CardHeader>
@@ -48,7 +52,8 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 									<TableCell className="text-center text-zinc-500">
 										{t(
 											(x) =>
-												x.foremanDashboard.overview.statCards[dangerLevel]
+												x.foremanDashboard.overview
+													.statCards[dangerLevel]
 													.noOperators,
 										)}
 									</TableCell>
@@ -72,7 +77,13 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 				</CardContent>
 				{/* VIEW DETAILS */}
 				<div className="mt-1 flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300">
-					<p>{t((x) => x.foremanDashboard.overview.statCards.viewDetails)}</p>
+					<p>
+						{t(
+							(x) =>
+								x.foremanDashboard.overview.statCards
+									.viewDetails,
+						)}
+					</p>
 					<ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
 				</div>
 			</Card>
