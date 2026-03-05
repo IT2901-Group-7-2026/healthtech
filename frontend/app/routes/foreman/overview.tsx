@@ -1,24 +1,34 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
 import { DailyNotes } from "@/components/daily-notes.js";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
+import {
+	Combobox,
+	ComboboxContent,
+	ComboboxInput,
+	ComboboxItem,
+	ComboboxList,
+} from "@/components/ui/combobox";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { useUser } from "@/features/user/user-context";
-import { fetchSubordinatesQueryOptions } from "@/lib/api.js";
+import { useFormatDate } from "@/hooks/use-format-date";
+import { fetchSubordinatesQueryOptions, usersQueryOptions } from "@/lib/api.js";
 import type { DangerLevel } from "@/lib/danger-levels";
 import { createLocationName, type UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/ui/select";
 import { useQuery } from "@tanstack/react-query";
-import { MapPinIcon, UsersIcon } from "lucide-react";
-import { useQueryState } from "nuqs";
-import { useCallback, useMemo, useState } from "react";
+import { addWeeks, endOfDay, parseISO, startOfDay } from "date-fns";
+import { ChevronDownIcon, MapPinIcon, UsersIcon } from "lucide-react";
+import { parseAsString, useQueryState } from "nuqs";
+import { type ReactNode, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActionCard } from "./action-card";
 import { AtRiskPopup } from "./exposure-level-popup";
@@ -27,7 +37,28 @@ import { StatCard } from "./stat-card";
 
 export default function ForemanOverview() {
 	const { t } = useTranslation();
-	const [sensor, setSensor] = useQueryState("vibration", parseAsSensor);
+	const formatDate = useFormatDate();
+
+	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor);
+	const [date, setDate] = useQueryState(
+		"filterDate",
+		parseAsString.withDefault(formatDate(new Date(), "yyyy-MM-dd")),
+	);
+
+	// TODO: Use this to show data for only that user
+	const [selectedUser, setSelectedUser] = useQueryState(
+		"user",
+		parseAsString,
+	);
+
+	const selectedDate = date ? parseISO(date) : undefined;
+
+	const startDate = selectedDate ? startOfDay(selectedDate) : undefined;
+	const endDate = selectedDate ? endOfDay(selectedDate) : undefined;
+
+	// Foremen can only see dates within the last week
+	const minSelectableDate = startOfDay(addWeeks(new Date(), -1));
+	const maxSelectableDate = new Date();
 
 	const { user } = useUser();
 
@@ -47,8 +78,11 @@ export default function ForemanOverview() {
 	};
 
 	const { data: subordinates } = useQuery(
-		fetchSubordinatesQueryOptions(user.id),
+		fetchSubordinatesQueryOptions(user.id, startDate, endDate),
 	);
+
+	const { data: users } = useQuery(usersQueryOptions());
+
 	const addSubordinateDangerLevel = useCallback(
 		(
 			result: Record<Sensor | "total", Record<DangerLevel, number>>,
@@ -92,42 +126,103 @@ export default function ForemanOverview() {
 	const cardViewDetailsText = t(
 		($) => $.foremanDashboard.overview.statCards.viewDetails,
 	);
+
+	const isUserComboboxDisabled = !users || users.length === 0;
+
 	//TODO: Update card links to point to stats page
 
 	return (
 		<div>
-			<div className="mb-4 flex items-center justify-between">
-				<h1 className="p-2 text-3xl">
-					{t(($) => $.foremanDashboard.overview.title)}
-				</h1>
-				<Select
-					onValueChange={(value) => {
-						if (value === "all") {
-							setSensor(null);
-						} else {
-							setSensor(value as Sensor);
-						}
-					}}
+			<Card className="mb-4 flex flex-row justify-between px-4 py-2">
+				<Tabs
 					value={sensor ?? "all"}
+					onValueChange={(value) =>
+						setSensor(value === "all" ? null : (value as Sensor))
+					}
 				>
-					<SelectTrigger
-						className="w-36 bg-background dark:bg-background"
-						defaultValue="all"
+					<TabsList className="bg-transparent">
+						<SensorTabsTrigger value="all">
+							{t(($) => $.allSensors)}
+						</SensorTabsTrigger>
+						<SensorTabsTrigger value="vibration">
+							{t(($) => $.vibration)}
+						</SensorTabsTrigger>
+						<SensorTabsTrigger value="noise">
+							{t(($) => $.noise)}
+						</SensorTabsTrigger>
+						<SensorTabsTrigger value="dust">
+							{t(($) => $.dust)}
+						</SensorTabsTrigger>
+					</TabsList>
+				</Tabs>
+				<div className="flex flex-end flex-row gap-4">
+					<Combobox
+						items={users?.map((u) => u.username) ?? []}
+						disabled={isUserComboboxDisabled}
+						value={selectedUser ?? undefined}
+						onValueChange={(value) => setSelectedUser(value)}
 					>
-						<SelectValue
-							placeholder={t(($) => $.sensorSelectPlaceholder)}
+						<ComboboxInput
+							placeholder={t(
+								($) =>
+									$.foremanDashboard.overview
+										.selectUserPlaceholder,
+							)}
+							showClear
+							disabled={isUserComboboxDisabled}
 						/>
-					</SelectTrigger>
-					<SelectContent className="w-32">
-						<SelectItem value="all">{t(($) => $.all)}</SelectItem>
-						{sensors?.map((s) => (
-							<SelectItem key={s} value={s}>
-								{t(($) => $[s])}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-			</div>
+						<ComboboxContent>
+							<ComboboxList>
+								{(item) => (
+									<ComboboxItem key={item} value={item}>
+										{item}
+									</ComboboxItem>
+								)}
+							</ComboboxList>
+						</ComboboxContent>
+					</Combobox>
+					<Popover>
+						<PopoverTrigger asChild>
+							<Button
+								variant={"outline"}
+								data-empty={!date}
+								className="w-52 justify-between text-left font-normal data-[empty=true]:text-muted-foreground"
+							>
+								{selectedDate ? (
+									formatDate(selectedDate, "PPP")
+								) : (
+									<span>
+										{t(
+											($) =>
+												$.foremanDashboard.overview
+													.selectDatePlaceholder,
+										)}
+									</span>
+								)}
+								<ChevronDownIcon data-icon="inline-end" />
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent className="w-auto p-0" align="start">
+							<Calendar
+								mode="single"
+								disabled={{
+									before: minSelectableDate,
+									after: maxSelectableDate,
+								}}
+								selected={selectedDate}
+								onSelect={(val) =>
+									setDate(
+										val
+											? formatDate(val, "yyyy-MM-dd")
+											: null,
+									)
+								}
+								defaultMonth={selectedDate}
+							/>
+						</PopoverContent>
+					</Popover>
+				</div>
+			</Card>
 
 			<div className="flex w-full flex-row gap-8">
 				<div className="flex flex-col gap-4 md:w-1/4">
@@ -285,5 +380,22 @@ export default function ForemanOverview() {
 				/>
 			</div>
 		</div>
+	);
+}
+
+function SensorTabsTrigger({
+	value,
+	children,
+}: {
+	value: Sensor | "all";
+	children: ReactNode;
+}) {
+	return (
+		<TabsTrigger
+			value={value}
+			className="p-4 data-[state=active]:bg-neutral-900 data-[state=active]:text-white"
+		>
+			{children}
+		</TabsTrigger>
 	);
 }

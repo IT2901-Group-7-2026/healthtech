@@ -1,9 +1,9 @@
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 import { Button } from "@/components/ui/button.js";
 import { Skeleton } from "@/components/ui/skeleton.js";
 import { type User, type UserRole, UserRoleSchema } from "@/lib/dto.js";
 import { cn, userRoleToString } from "@/lib/utils.js";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 
 interface DemoUserSwitchBannerProps {
 	user: User;
