@@ -19,12 +19,13 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { useUser } from "@/features/user/user-context";
+import { useFormatDate } from "@/hooks/use-format-date";
 import { fetchSubordinatesQueryOptions, usersQueryOptions } from "@/lib/api.js";
 import type { DangerLevel } from "@/lib/danger-levels";
 import { createLocationName, type UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
 import { useQuery } from "@tanstack/react-query";
-import { addWeeks, format, parseISO, startOfDay } from "date-fns";
+import { addWeeks, parseISO, startOfDay } from "date-fns";
 import { ChevronDownIcon, MapPinIcon, UsersIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import { useCallback, useMemo, useState } from "react";
@@ -44,7 +45,11 @@ export default function ForemanOverview() {
 		parseAsString,
 	);
 
+	const formatDate = useFormatDate();
+
+	// Foremen can only see dates within the last week
 	const minSelectableDate = startOfDay(addWeeks(new Date(), -1));
+	const maxSelectableDate = new Date();
 
 	const { user } = useUser();
 
@@ -145,7 +150,9 @@ export default function ForemanOverview() {
 					>
 						<ComboboxInput
 							placeholder={t(
-								($) => $.foremanDashboard.overview.selectUserPlaceholder,
+								($) =>
+									$.foremanDashboard.overview
+										.selectUserPlaceholder,
 							)}
 							showClear
 						/>
@@ -167,11 +174,13 @@ export default function ForemanOverview() {
 								className="w-[212px] justify-between text-left font-normal data-[empty=true]:text-muted-foreground"
 							>
 								{selectedDate ? (
-									format(selectedDate, "PPP")
+									formatDate(selectedDate, "PPP")
 								) : (
 									<span>
 										{t(
-											($) => $.foremanDashboard.overview.selectDatePlaceholder,
+											($) =>
+												$.foremanDashboard.overview
+													.selectDatePlaceholder,
 										)}
 									</span>
 								)}
@@ -181,11 +190,16 @@ export default function ForemanOverview() {
 						<PopoverContent className="w-auto p-0" align="start">
 							<Calendar
 								mode="single"
-								disabled={{ before: minSelectableDate }}
+								disabled={{
+									before: minSelectableDate,
+									after: maxSelectableDate,
+								}}
 								selected={selectedDate}
 								onSelect={(val) =>
 									setDate(
-										val ? format(val, "yyyy-MM-dd") : null,
+										val
+											? formatDate(val, "yyyy-MM-dd")
+											: null,
 									)
 								}
 								defaultMonth={selectedDate}
