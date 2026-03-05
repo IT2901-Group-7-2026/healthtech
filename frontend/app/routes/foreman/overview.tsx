@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
 import { DailyNotes } from "@/components/daily-notes.js";
+import { ExposureRiskCard } from "@/components/exposure-level-card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
@@ -251,12 +252,12 @@ export default function ForemanOverview() {
 								description={t(
 									($) =>
 										$.foremanDashboard.overview.statCards
-											.inDanger.description,
+											.danger.description,
 								)}
 								label={t(
 									($) =>
 										$.foremanDashboard.overview.statCards
-											.inDanger.label,
+											.danger.label,
 								)}
 								onClick={() => openForStatus("danger")}
 								to="/"
@@ -272,12 +273,12 @@ export default function ForemanOverview() {
 								description={t(
 									($) =>
 										$.foremanDashboard.overview.statCards
-											.atRisk.description,
+											.warning.description,
 								)}
 								label={t(
 									($) =>
 										$.foremanDashboard.overview.statCards
-											.atRisk.label,
+											.warning.label,
 								)}
 								onClick={() => openForStatus("warning")}
 								to="/"
@@ -293,12 +294,12 @@ export default function ForemanOverview() {
 								description={t(
 									($) =>
 										$.foremanDashboard.overview.statCards
-											.withinLimits.description,
+											.safe.description,
 								)}
 								label={t(
 									($) =>
 										$.foremanDashboard.overview.statCards
-											.withinLimits.label,
+											.safe.label,
 								)}
 								onClick={() => openForStatus("safe")}
 								to="/"
@@ -309,6 +310,30 @@ export default function ForemanOverview() {
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
+							{/* Operators in danger for the chosen exposure */}
+							{sensor && (
+								<ExposureRiskCard
+									users={subordinates ?? []}
+									sensor={sensor}
+									dangerLevel={"danger"}
+								/>
+							)}
+							{/* Operators that are under warning for the chosen exposure */}
+							{sensor && (
+								<ExposureRiskCard
+									users={subordinates ?? []}
+									sensor={sensor}
+									dangerLevel={"warning"}
+								/>
+							)}
+							{/* Operators that are safe for the chosen exposure */}
+							{sensor && (
+								<ExposureRiskCard
+									users={subordinates ?? []}
+									sensor={sensor}
+									dangerLevel={"safe"}
+								/>
+							)}
 						</div>
 					</div>
 
@@ -335,7 +360,7 @@ export default function ForemanOverview() {
 													($) =>
 														$.foremanDashboard
 															.overview.statCards
-															.withinLimits.label,
+															.safe.label,
 												),
 											},
 											warning: {
@@ -346,7 +371,7 @@ export default function ForemanOverview() {
 													($) =>
 														$.foremanDashboard
 															.overview.statCards
-															.atRisk.label,
+															.warning.label,
 												),
 											},
 											danger: {
@@ -357,7 +382,7 @@ export default function ForemanOverview() {
 													($) =>
 														$.foremanDashboard
 															.overview.statCards
-															.inDanger.label,
+															.danger.label,
 												),
 											},
 										}}
