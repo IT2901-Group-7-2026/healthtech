@@ -66,7 +66,7 @@ cd frontend
 pnpm install
 
 # Start the frontend
-pnpm dev
+pnpm run dev
 
 # The frontend will be running at http://localhost:5173
 ```
@@ -95,13 +95,13 @@ In the frontend directory, you can run the following commands:
 
 ```sh
 # Check for linting errors and apply safe fixes
-pnpm lint
+pnpm run lint:fix
 
 # Check for formatting errors and apply safe fixes
-pnpm format
+pnpm run format:fix
 
 # Do both in one check
-pnpm check
+pnpm run check:fix
 ```
 
 ## Frontend Deployment
@@ -111,13 +111,13 @@ pnpm check
 First, build your app for production:
 
 ```sh
-pnpm build
+pnpm run build
 ```
 
 Then run the app in production mode:
 
 ```sh
-pnpm start
+pnpm run start
 ```
 
 Now you'll need to pick a host to deploy it to.

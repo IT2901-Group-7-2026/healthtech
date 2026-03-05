@@ -89,6 +89,7 @@
   "dust": "Dust",
   "vibration": "Vibration",
   "noise": "Noise",
+  "allSensors": "All",
   "all": "All sensors",
 
   "sensorSelectPlaceholder": "Sensor",
@@ -174,7 +175,9 @@
           "label": "Within limits",
           "noOperators": "No operators within limits"
         }
-      }
+      },
+      "selectUserPlaceholder": "Pick a user",
+      "selectDatePlaceholder": "Pick a date"
     },
     "actionCard": {
       "safe": "All good!",

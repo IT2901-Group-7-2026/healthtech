@@ -89,6 +89,7 @@
   "dust": "Støv",
   "vibration": "Vibrasjon",
   "noise": "Støy",
+  "allSensors": "Alle",
   "all": "Alle sensorer",
 
   "sensorSelectPlaceholder": "Sensor",
@@ -174,7 +175,9 @@
           "label": "Innenfor grenseverdi",
           "noOperators": "Ingen innenfor trygge grenseverdier"
         }
-      }
+      },
+      "selectUserPlaceholder": "Velg en bruker",
+      "selectDatePlaceholder": "Velg en dato"
     },
     "actionCard": {
       "safe": "Alt er bra!",
