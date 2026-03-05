@@ -90,6 +90,7 @@
   "vibration": "Vibration",
   "noise": "Noise",
   "allSensors": "All",
+  "all": "All sensors",
 
   "sensorSelectPlaceholder": "Sensor",
 
@@ -193,11 +194,26 @@
     "searchPlaceholder": "Search users..."
   },
   "demo": {
-    "currentRole": "Current role:"
+    "currentRole": "Current role:",
+    "navigate": {
+      "toApp": "Go to app",
+      "toRegister": "Go to register page"
+    }
   },
   "select": {
     "all": "Select all",
     "row": "Select row"
   },
-  "noOptions": "No options available"
+  "noOptions": "No options available",
+  "register": {
+    "title": "Register to HealthTech",
+    "name": "Full name",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "privacyConsent": "I consent to sharing my data with my supervisors for health and safety purposes.",
+    "createAccount": "Create account",
+    "haveAccount": "Already have an account? ",
+    "login": "Log in"
+  }
 }

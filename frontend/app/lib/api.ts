@@ -1,10 +1,10 @@
+import type { Sensor } from "@/features/sensor-picker/sensors";
 import {
 	queryOptions,
 	useMutation,
 	useQueryClient,
 } from "@tanstack/react-query";
 import { minutesToMilliseconds } from "date-fns";
-import type { Sensor } from "@/features/sensor-picker/sensors";
 import {
 	type Note,
 	type NoteDataRequest,

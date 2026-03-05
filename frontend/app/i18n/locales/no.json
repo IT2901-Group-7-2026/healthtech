@@ -90,6 +90,7 @@
   "vibration": "Vibrasjon",
   "noise": "Støy",
   "allSensors": "Alle",
+  "all": "Alle sensorer",
 
   "sensorSelectPlaceholder": "Sensor",
 
@@ -193,11 +194,26 @@
     "searchPlaceholder": "Søk etter brukere..."
   },
   "demo": {
-    "currentRole": "Nåværende rolle:"
+    "currentRole": "Nåværende rolle:",
+    "navigate": {
+      "toApp": "Gå til appen",
+      "toRegister": "Gå til registreringssiden"
+    }
   },
   "select": {
     "all": "Velg alle",
     "row": "Velg rad"
   },
-  "noOptions": "Ingen alternativer tilgjengelig"
+  "noOptions": "Ingen alternativer tilgjengelig",
+  "register": {
+    "title": "Registrer til HealthTech",
+    "name": "Fullt navn",
+    "email": "E-postaddresse",
+    "password": "Passord",
+    "confirmPassword": "Bekreft passord",
+    "privacyConsent": "Jeg samtykker til å dele mine data med mine veiledere av hensyn til helse og sikkerhet.",
+    "createAccount": "Opprett konto",
+    "haveAccount": "Har du allerede en konto? ",
+    "login": "Logg inn"
+  }
 }

@@ -52,4 +52,9 @@ public class UserStatusDto
 	public UserSensorStatusDto? Vibration { get; set; }
 }
 
-public record UserSensorStatusDto(DangerLevel Level, double Value, double? PeakValue);
+public record UserSensorStatusDto(
+	DangerLevel dangerLevel,
+	DangerLevel? peakDangerLevel,
+	double Value,
+	double? PeakValue
+);

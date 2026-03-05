@@ -1,3 +1,5 @@
+import type { View } from "@/features/views/views";
+import type { TranslateFn } from "@/i18n/config.js";
 import { type ClassValue, clsx } from "clsx";
 import {
 	addDays,
@@ -9,8 +11,6 @@ import {
 	subWeeks,
 } from "date-fns";
 import { twMerge } from "tailwind-merge";
-import type { View } from "@/features/views/views";
-import type { TranslateFn } from "@/i18n/config.js";
 import type { SensorDataResponseDto, User } from "./dto";
 
 export function cn(...inputs: Array<ClassValue>) {
@@ -58,7 +58,7 @@ export const getNextDay = (selectedDay: Date, view: View): Date => {
 
 export const makeCumulative = (
 	data: Array<SensorDataResponseDto> | undefined,
-) => {
+): Array<SensorDataResponseDto> => {
 	if (!data || data.length === 0) {
 		return [];
 	}
@@ -70,7 +70,13 @@ export const makeCumulative = (
 			currentDate = point.time;
 		}
 		sum += point.value;
-		return { time: point.time, value: sum, dangerLevel: point.dangerLevel };
+		return {
+			time: point.time,
+			value: sum,
+			dangerLevel: point.dangerLevel,
+			peakValue: point.peakValue,
+			peakDangerLevel: point.peakDangerLevel,
+		};
 	});
 };
 

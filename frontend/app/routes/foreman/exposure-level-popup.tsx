@@ -1,13 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
-import { t } from "i18next";
-import { ArrowRightIcon } from "lucide-react";
-import { Link } from "react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BasePopup } from "@/features/popups/base-popup";
 import { useUser } from "@/features/user/user-context";
 import { fetchSubordinatesQueryOptions } from "@/lib/api.js";
 import { type DangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
+import { useQuery } from "@tanstack/react-query";
+import { t } from "i18next";
+import { ArrowRightIcon } from "lucide-react";
+import { Link } from "react-router";
 
 export function AtRiskPopup({
 	status,
@@ -38,11 +38,14 @@ export function AtRiskPopup({
 			if (!data) return false;
 
 			if (popupStatus === "danger") {
-				return data.level === "danger";
+				return data.dangerLevel === "danger";
 			}
 
 			if (popupStatus === "warning") {
-				return data.level === "warning" || data.level === "danger";
+				return (
+					data.dangerLevel === "warning" ||
+					data.dangerLevel === "danger"
+				);
 			}
 
 			return false;
@@ -107,7 +110,7 @@ export function AtRiskPopup({
 														<span
 															key={key}
 															className={`rounded-md px-2 py-0.5 font-medium text-white text-xs bg-${mapDangerLevelToColor(
-																data?.level ??
+																data?.dangerLevel ??
 																	"safe",
 															)}`}
 														>

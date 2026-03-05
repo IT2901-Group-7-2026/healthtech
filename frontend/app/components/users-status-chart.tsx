@@ -47,7 +47,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 			{
 				name: user.username,
 				id: user.id,
-				status: sensorStatus.level,
+				status: sensorStatus.dangerLevel,
 				percent,
 				peakPercent,
 			},
