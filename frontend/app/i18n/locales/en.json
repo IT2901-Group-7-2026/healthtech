@@ -14,8 +14,7 @@
     "month": "month",
     "dust": "Dust",
     "vibration": "Vibration",
-    "noise": "Noise",
-    "userSelectPlaceholder": "User"
+    "noise": "Noise"
   },
   "dustExposure": {
     "title": "Dust exposure"
@@ -65,6 +64,11 @@
     "confirm": "Ok",
     "close": "Close"
   },
+  "table": {
+    "numberOfRowsSelected": "{{selected}} of {{total}} rows selected",
+    "numberOfRowsSelected_one": "{{selected}} of {{total}} row selected",
+    "numberOfRowsSelected_other": "{{selected}} of {{total}} rows selected"
+  },
   "english": "English",
   "norwegian": "Norwegian",
 
@@ -85,6 +89,7 @@
   "dust": "Dust",
   "vibration": "Vibration",
   "noise": "Noise",
+  "all": "All sensors",
 
   "sensorSelectPlaceholder": "Sensor",
 
@@ -130,17 +135,25 @@
   "points": "Points",
   "dust_y_axis": "µg/m³",
   "foremanDashboard": {
-    "failedToLoadTeamMembers": "Failed to load team members",
-    "noTeamMembersFound": "No team members found",
-    "teamTable": {
-      "username": "Username",
-      "email": "Email",
-      "status": "Status",
-      "jobDescription": "Job description"
+    "team": {
+      "title": "Your team",
+      "failedToLoadMembers": "Failed to load team members",
+      "noMembersFound": "No team members found",
+      "table": {
+        "username": "Username",
+        "email": "Email",
+        "status": "Status",
+        "jobDescription": "Job description",
+        "action": "Action"
+      },
+      "action": {
+        "removeSubordinate": "Remove from team",
+        "addSubordinate": "Add to team"
+      },
+      "membersCount": "{{count}} operator in team",
+      "membersCount_one": "{{count}} operator in team",
+      "membersCount_other": "{{count}} operators in team"
     },
-    "teamMembersCount": "{{count}} operator in team",
-    "teamMembersCount_one": "{{count}} operator in team",
-    "teamMembersCount_other": "{{count}} operators in team",
     "overview": {
       "title": "Foreman Overview",
       "statCards": {
@@ -172,5 +185,35 @@
       "xAxisLabel": "Percentage of exposure limit",
       "noData": "No data available"
     }
+  },
+  "user": {
+    "role": {
+      "operator": "Operator",
+      "foreman": "Foreman"
+    },
+    "searchPlaceholder": "Search users..."
+  },
+  "demo": {
+    "currentRole": "Current role:",
+    "navigate": {
+      "toApp": "Go to app",
+      "toRegister": "Go to register page"
+    }
+  },
+  "select": {
+    "all": "Select all",
+    "row": "Select row"
+  },
+  "noOptions": "No options available",
+  "register": {
+    "title": "Register to HealthTech",
+    "name": "Full name",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "privacyConsent": "I consent to sharing my data with my supervisors for health and safety purposes.",
+    "createAccount": "Create account",
+    "haveAccount": "Already have an account? ",
+    "login": "Log in"
   }
 }

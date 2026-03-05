@@ -87,22 +87,48 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 			var dustLevel = TryLevel(SensorType.Dust, dustValue, null);
 			var vibLevel = TryLevel(SensorType.Vibration, vibValue, null);
 
-			var overall = ThresholdUtils.GetHighestDangerLevel(noiseLevel, dustLevel, vibLevel);
+			// Peak danger level is its own separate thing and isn't part of the overall users' status
+			var overall = ThresholdUtils.GetHighestDangerLevel(
+				noiseLevel.dangerLevel,
+				dustLevel.dangerLevel,
+				vibLevel.dangerLevel
+			);
+
+			var noiseSensorStatus = noiseLevel.dangerLevel.HasValue
+				? new UserSensorStatusDto(
+					noiseLevel.dangerLevel.Value,
+					noiseLevel.peakDangerLevel,
+					noiseValue ?? 0,
+					noisePeak
+				)
+				: null;
+
+			var dustSensorStatus = dustLevel.dangerLevel.HasValue
+				? new UserSensorStatusDto(
+					dustLevel.dangerLevel.Value,
+					dustLevel.peakDangerLevel,
+					dustValue ?? 0,
+					null
+				)
+				: null;
+
+			var vibSensorStatus = vibLevel.dangerLevel.HasValue
+				? new UserSensorStatusDto(
+					vibLevel.dangerLevel.Value,
+					vibLevel.peakDangerLevel,
+					vibValue ?? 0,
+					null
+				)
+				: null;
 
 			result.Add(
 				new UserStatusDto
 				{
 					UserId = userId,
 					Status = overall,
-					Noise = noiseLevel.HasValue
-						? new UserSensorStatusDto(noiseLevel.Value, noiseValue ?? 0, noisePeak)
-						: null,
-					Dust = dustLevel.HasValue
-						? new UserSensorStatusDto(dustLevel.Value, dustValue ?? 0, null)
-						: null,
-					Vibration = vibLevel.HasValue
-						? new UserSensorStatusDto(vibLevel.Value, vibValue ?? 0, null)
-						: null,
+					Noise = noiseSensorStatus,
+					Dust = dustSensorStatus,
+					Vibration = vibSensorStatus,
 				}
 			);
 		}
@@ -110,11 +136,15 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 		return result;
 	}
 
-	private static DangerLevel? TryLevel(SensorType type, double? value, double? maxValue = null)
+	private static (DangerLevel? dangerLevel, DangerLevel? peakDangerLevel) TryLevel(
+		SensorType type,
+		double? value,
+		double? maxValue = null
+	)
 	{
 		if (!value.HasValue)
 		{
-			return null;
+			return (null, null);
 		}
 
 		return ThresholdUtils.CalculateDangerLevel(type, value.Value, maxValue);

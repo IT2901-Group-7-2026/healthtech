@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { WeeklyPopup } from "@/features/popups/weekly-popup";
 import { useFormatDate } from "@/hooks/use-format-date.js";
+import type { Aggregation } from "@/lib/dto";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import type { Day, Locale } from "date-fns";
 import { useState } from "react";
@@ -24,6 +25,7 @@ export function WeekWidget({
 	isDisabledDay,
 	isDisabledWeek,
 	events,
+	aggregation,
 }: {
 	minuteStep?: number;
 	weekStartsOn?: Day;
@@ -36,6 +38,7 @@ export function WeekWidget({
 	isDisabledWeek?: (startDayOfWeek: Date) => boolean;
 	events?: Array<WeekEvent>;
 	onCellClick?: (cell: Cell) => void;
+	aggregation?: Aggregation;
 }) {
 	const { timeSlotSegments, selectNextWeek, selectPreviousWeek, viewTitle } =
 		useWeekView({
@@ -117,6 +120,7 @@ export function WeekWidget({
 			{/* interaction popup window */}
 			{popupData.event && (
 				<WeeklyPopup
+					selectedAggregation={aggregation}
 					title={eventTitle(popupData.event)}
 					event={popupData.event}
 					open={visible}

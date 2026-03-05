@@ -51,7 +51,7 @@
       },
       "style": {
         "noCommonJs": "error",
-        "noDefaultExport": "error",
+        "noDefaultExport": "off",
         "noNegationElse": "error",
         "noParameterAssign": "error",
         "noProcessEnv": "error", // No nodejs in SPA

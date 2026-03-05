@@ -4,8 +4,8 @@ import { DailyNotes } from "@/components/daily-notes.js";
 import { ExposureRiskCard } from "@/components/exposure-level-card";
 import { Card } from "@/components/ui/card";
 import { UserStatusChart } from "@/components/users-status-chart";
-import { useUser } from "@/features/user-context";
-import { useSubordinatesQuery } from "@/lib/api";
+import { useUser } from "@/features/user/user-context";
+import { fetchSubordinatesQueryOptions } from "@/lib/api.js";
 import type { DangerLevel } from "@/lib/danger-levels";
 import { createLocationName, type UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
@@ -16,6 +16,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
+import { useQuery } from "@tanstack/react-query";
 import { MapPinIcon, UsersIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useCallback, useMemo, useState } from "react";
@@ -24,9 +25,7 @@ import { ActionCard } from "./action-card";
 import { AtRiskPopup } from "./exposure-level-popup";
 import { PieChartCard } from "./pie-chart-card";
 import { StatCard } from "./stat-card";
-import { AtRiskTable } from "./workers-at-risk-table";
 
-// biome-ignore lint/style/noDefaultExport: react router needs default export
 export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const [sensor, setSensor] = useQueryState("vibration", parseAsSensor);
@@ -48,7 +47,9 @@ export default function ForemanOverview() {
 		setSelectedStatus(null);
 	};
 
-	const { data: subordinates } = useSubordinatesQuery(user.id);
+	const { data: subordinates } = useQuery(
+		fetchSubordinatesQueryOptions(user.id),
+	);
 	const addSubordinateDangerLevel = useCallback(
 		(
 			result: Record<Sensor | "total", Record<DangerLevel, number>>,
@@ -57,7 +58,7 @@ export default function ForemanOverview() {
 			result.total[subordinate.status.status]++;
 
 			for (const sensorType of sensors) {
-				const level = subordinate.status[sensorType]?.level;
+				const level = subordinate.status[sensorType]?.dangerLevel;
 
 				// Missing sensor data is treated as safe
 				result[sensorType][level ?? "safe"]++;
@@ -86,6 +87,8 @@ export default function ForemanOverview() {
 
 	const total = subordinates?.length ?? 0;
 
+	const selectedSensorKey = sensor ?? "total";
+
 	const cardTotalText = t(($) => $.foremanDashboard.overview.statCards.total);
 	const cardViewDetailsText = t(
 		($) => $.foremanDashboard.overview.statCards.viewDetails,
@@ -100,26 +103,29 @@ export default function ForemanOverview() {
 				</h1>
 				<Select
 					onValueChange={(value) => {
-						if (value === "__none") {
+						if (value === "all") {
 							setSensor(null);
 						} else {
 							setSensor(value as Sensor);
 						}
 					}}
-					value={sensor ?? undefined}
+					value={sensor ?? "all"}
 				>
-					<SelectTrigger className="w-32 bg-background dark:bg-background">
+					<SelectTrigger
+						className="w-36 bg-background dark:bg-background"
+						defaultValue="all"
+					>
 						<SelectValue
 							placeholder={t(($) => $.sensorSelectPlaceholder)}
 						/>
 					</SelectTrigger>
 					<SelectContent className="w-32">
+						<SelectItem value="all">{t(($) => $.all)}</SelectItem>
 						{sensors?.map((s) => (
 							<SelectItem key={s} value={s}>
 								{t(($) => $[s])}
 							</SelectItem>
 						))}
-						<SelectItem value="__none">{"None"}</SelectItem>
 					</SelectContent>
 				</Select>
 			</div>
@@ -134,7 +140,7 @@ export default function ForemanOverview() {
 
 						<div className="flex items-center gap-2">
 							<UsersIcon />
-							{t(($) => $.foremanDashboard.teamMembersCount, {
+							{t(($) => $.foremanDashboard.team.membersCount, {
 								count: total,
 							})}
 						</div>
@@ -161,7 +167,10 @@ export default function ForemanOverview() {
 								onClick={() => openForStatus("danger")}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.total.danger}
+								value={
+									countPerDangerLevel[selectedSensorKey]
+										.danger
+								}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
@@ -179,7 +188,10 @@ export default function ForemanOverview() {
 								onClick={() => openForStatus("warning")}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.total.warning}
+								value={
+									countPerDangerLevel[selectedSensorKey]
+										.warning
+								}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
@@ -197,7 +209,9 @@ export default function ForemanOverview() {
 								onClick={() => openForStatus("safe")}
 								to="/"
 								totalValue={total}
-								value={countPerDangerLevel.total.safe}
+								value={
+									countPerDangerLevel[selectedSensorKey].safe
+								}
 								totalText={cardTotalText}
 								viewDetailsText={cardViewDetailsText}
 							/>
@@ -228,7 +242,6 @@ export default function ForemanOverview() {
 							)}
 						</div>
 					</div>
-					{/* <AtRiskTable users={subordinates ?? []} /> */}
 
 					{sensor ? (
 						<UserStatusChart

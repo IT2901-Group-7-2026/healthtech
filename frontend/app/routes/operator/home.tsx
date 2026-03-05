@@ -9,7 +9,7 @@ import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { mapAllSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
 import { sensors } from "@/features/sensor-picker/sensors";
-import { useUser } from "@/features/user-context";
+import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { ViewSelect } from "@/features/views/view-select";
 import { mapAllWeekDataToEvents } from "@/features/week-widget/data-transform";
@@ -23,7 +23,6 @@ import { useQueries } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-// biome-ignore lint/style/noDefaultExport: react router needs default export
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function OperatorHome() {
 	const { t, i18n } = useTranslation();
