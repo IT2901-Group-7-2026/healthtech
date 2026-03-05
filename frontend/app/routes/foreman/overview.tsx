@@ -332,29 +332,24 @@ export default function ForemanOverview() {
 									/>
 								</>
 							)}
-							{/* Operators in danger for the chosen exposure */}
 							{sensor && (
-								<ExposureRiskCard
-									users={subordinates ?? []}
-									sensor={sensor}
-									dangerLevel={"danger"}
-								/>
-							)}
-							{/* Operators that are under warning for the chosen exposure */}
-							{sensor && (
-								<ExposureRiskCard
-									users={subordinates ?? []}
-									sensor={sensor}
-									dangerLevel={"warning"}
-								/>
-							)}
-							{/* Operators that are safe for the chosen exposure */}
-							{sensor && (
-								<ExposureRiskCard
-									users={subordinates ?? []}
-									sensor={sensor}
-									dangerLevel={"safe"}
-								/>
+								<>
+									<ExposureRiskCard
+										users={subordinates ?? []}
+										sensor={sensor}
+										dangerLevel="danger"
+									/>
+									<ExposureRiskCard
+										users={subordinates ?? []}
+										sensor={sensor}
+										dangerLevel="warning"
+									/>
+									<ExposureRiskCard
+										users={subordinates ?? []}
+										sensor={sensor}
+										dangerLevel="safe"
+									/>
+								</>
 							)}
 						</div>
 					</div>
