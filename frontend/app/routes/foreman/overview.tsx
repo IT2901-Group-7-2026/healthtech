@@ -25,7 +25,7 @@ import type { DangerLevel } from "@/lib/danger-levels";
 import { createLocationName, type UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
 import { useQuery } from "@tanstack/react-query";
-import { addWeeks, parseISO, startOfDay,endOfDay } from "date-fns";
+import { addWeeks, endOfDay, parseISO, startOfDay } from "date-fns";
 import { ChevronDownIcon, MapPinIcon, UsersIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import { type ReactNode, useCallback, useMemo, useState } from "react";
@@ -42,13 +42,17 @@ export default function ForemanOverview() {
 
 	const [sensor, setSensor] = useQueryState("vibration", parseAsSensor);
 	const [date, setDate] = useQueryState("filterDate", parseAsString);
-	const [selectedUser, setSelectedUser] = useQueryState("user", parseAsString);
+	// TODO: Use this to show data for only that user
+	const [selectedUser, setSelectedUser] = useQueryState(
+		"user",
+		parseAsString,
+	);
 
 	const selectedDate = date ? parseISO(date) : undefined;
-	
+
 	const startDate = selectedDate ? startOfDay(selectedDate) : undefined;
 	const endDate = selectedDate ? endOfDay(selectedDate) : undefined;
-	
+
 	// Foremen can only see dates within the last week
 	const minSelectableDate = startOfDay(addWeeks(new Date(), -1));
 	const maxSelectableDate = new Date();
@@ -150,7 +154,9 @@ export default function ForemanOverview() {
 					>
 						<ComboboxInput
 							placeholder={t(
-								($) => $.foremanDashboard.overview.selectUserPlaceholder,
+								($) =>
+									$.foremanDashboard.overview
+										.selectUserPlaceholder,
 							)}
 							showClear
 						/>
@@ -176,7 +182,9 @@ export default function ForemanOverview() {
 								) : (
 									<span>
 										{t(
-											($) => $.foremanDashboard.overview.selectDatePlaceholder,
+											($) =>
+												$.foremanDashboard.overview
+													.selectDatePlaceholder,
 										)}
 									</span>
 								)}
@@ -192,7 +200,11 @@ export default function ForemanOverview() {
 								}}
 								selected={selectedDate}
 								onSelect={(val) =>
-									setDate(val ? formatDate(val, "yyyy-MM-dd") : null)
+									setDate(
+										val
+											? formatDate(val, "yyyy-MM-dd")
+											: null,
+									)
 								}
 								defaultMonth={selectedDate}
 							/>
@@ -227,10 +239,13 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.inDanger.description,
+										$.foremanDashboard.overview.statCards
+											.inDanger.description,
 								)}
 								label={t(
-									($) => $.foremanDashboard.overview.statCards.inDanger.label,
+									($) =>
+										$.foremanDashboard.overview.statCards
+											.inDanger.label,
 								)}
 								onClick={() => openForStatus("danger")}
 								to="/"
@@ -242,10 +257,13 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.atRisk.description,
+										$.foremanDashboard.overview.statCards
+											.atRisk.description,
 								)}
 								label={t(
-									($) => $.foremanDashboard.overview.statCards.atRisk.label,
+									($) =>
+										$.foremanDashboard.overview.statCards
+											.atRisk.label,
 								)}
 								onClick={() => openForStatus("warning")}
 								to="/"
@@ -257,12 +275,13 @@ export default function ForemanOverview() {
 							<StatCard
 								description={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.withinLimits
-											.description,
+										$.foremanDashboard.overview.statCards
+											.withinLimits.description,
 								)}
 								label={t(
 									($) =>
-										$.foremanDashboard.overview.statCards.withinLimits.label,
+										$.foremanDashboard.overview.statCards
+											.withinLimits.label,
 								)}
 								onClick={() => openForStatus("safe")}
 								to="/"
@@ -292,28 +311,35 @@ export default function ForemanOverview() {
 										data={{
 											safe: {
 												name: "Safe",
-												value: countPerDangerLevel[s].safe,
+												value: countPerDangerLevel[s]
+													.safe,
 												label: t(
 													($) =>
-														$.foremanDashboard.overview.statCards.withinLimits
-															.label,
+														$.foremanDashboard
+															.overview.statCards
+															.withinLimits.label,
 												),
 											},
 											warning: {
 												name: "Warning",
-												value: countPerDangerLevel[s].warning,
+												value: countPerDangerLevel[s]
+													.warning,
 												label: t(
 													($) =>
-														$.foremanDashboard.overview.statCards.atRisk.label,
+														$.foremanDashboard
+															.overview.statCards
+															.atRisk.label,
 												),
 											},
 											danger: {
 												name: "Danger",
-												value: countPerDangerLevel[s].danger,
+												value: countPerDangerLevel[s]
+													.danger,
 												label: t(
 													($) =>
-														$.foremanDashboard.overview.statCards.inDanger
-															.label,
+														$.foremanDashboard
+															.overview.statCards
+															.inDanger.label,
 												),
 											},
 										}}
