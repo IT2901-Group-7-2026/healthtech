@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
 import { useQuery } from "@tanstack/react-query";
-import { addWeeks, endOfDay, parseISO, startOfDay } from "date-fns";
+import { addWeeks, endOfDay, isToday, parseISO, startOfDay } from "date-fns";
 import { ChevronDownIcon, MapPinIcon, UsersIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import { type ReactNode, useCallback, useMemo, useState } from "react";
@@ -146,6 +146,7 @@ export default function ForemanOverview() {
 	);
 
 	const isUserComboboxDisabled = !users || users.length === 0;
+	const showActionCard = selectedDate ? isToday(selectedDate) : false;
 
 	//TODO: Update card links to point to stats page
 
@@ -263,7 +264,11 @@ export default function ForemanOverview() {
 				</div>
 
 				<div className="flex grow flex-col gap-4">
-					<ActionCard dangerLevel={highestDangerLevel} />
+					{
+						showActionCard && (
+							<ActionCard dangerLevel={highestDangerLevel} />
+						)
+					}
 
 					<div className="grid gap-6 lg:grid-cols-3">
 						<div className="grid items-stretch gap-4 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
