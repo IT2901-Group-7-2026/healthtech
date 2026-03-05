@@ -1,6 +1,3 @@
-import { useId } from "react";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -10,6 +7,9 @@ import {
 	FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useId } from "react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import { Checkbox } from "./ui/checkbox.js";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {

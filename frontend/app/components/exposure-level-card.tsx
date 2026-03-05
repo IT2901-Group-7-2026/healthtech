@@ -14,14 +14,12 @@ interface Props {
 	dangerLevel: "safe" | "warning" | "danger";
 }
 
-export function ExposureRiskCard({ users, sensor, dangerLevel}: Props) {
+export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 	const { t } = useTranslation();
 
 	const operators = users.filter(
 		(user) => (user.status[sensor]?.dangerLevel ?? "safe") === dangerLevel,
 	);
-	console.log(mapDangerLevelToColor(dangerLevel))
-	console.log(mapDangerLevelToColor("safe"))
 
 	return (
 		<Link
@@ -39,12 +37,14 @@ export function ExposureRiskCard({ users, sensor, dangerLevel}: Props) {
 				{/* TITLE */}
 				<CardHeader>
 					<CardTitle
-						className= {`text-center text-${mapDangerLevelToColor(dangerLevel ?? "safe")}`}
+						className={`text-center text-${mapDangerLevelToColor(dangerLevel ?? "safe")}`}
 						//style={{ color: "red"}}
 					>
 						{t(
 							(x) =>
-								x.foremanDashboard.overview.statCards[dangerLevel].label
+								x.foremanDashboard.overview.statCards[
+									dangerLevel
+								].label,
 						)}{" "}
 						{`(${operators.length})`}
 					</CardTitle>
@@ -59,7 +59,9 @@ export function ExposureRiskCard({ users, sensor, dangerLevel}: Props) {
 									<TableCell className="text-center text-zinc-500">
 										{t(
 											(x) =>
-												x.foremanDashboard.overview.statCards[dangerLevel].noOperators
+												x.foremanDashboard.overview
+													.statCards[dangerLevel]
+													.noOperators,
 										)}
 									</TableCell>
 								</TableRow>
