@@ -121,13 +121,15 @@ export default function ForemanOverview() {
 	const cardViewDetailsText = t(
 		($) => $.foremanDashboard.overview.statCards.viewDetails,
 	);
+
+	const isUserComboboxDisabled = !users || users.length === 0;
+
 	//TODO: Update card links to point to stats page
 
 	return (
 		<div>
 			<Card className="mb-4 flex flex-row justify-between px-4 py-2">
 				<Tabs
-					className="w-[400px]"
 					value={sensor ?? "all"}
 					onValueChange={(value) => setSensor(value as Sensor | null)}
 				>
@@ -149,6 +151,7 @@ export default function ForemanOverview() {
 				<div className="flex flex-end flex-row gap-4">
 					<Combobox
 						items={users?.map((u) => u.username) ?? []}
+						disabled={isUserComboboxDisabled}
 						value={selectedUser ?? undefined}
 						onValueChange={(value) => setSelectedUser(value)}
 					>
@@ -159,6 +162,7 @@ export default function ForemanOverview() {
 										.selectUserPlaceholder,
 							)}
 							showClear
+							disabled={isUserComboboxDisabled}
 						/>
 						<ComboboxContent>
 							<ComboboxList>
@@ -175,7 +179,7 @@ export default function ForemanOverview() {
 							<Button
 								variant={"outline"}
 								data-empty={!date}
-								className="w-[212px] justify-between text-left font-normal data-[empty=true]:text-muted-foreground"
+								className="w-52 justify-between text-left font-normal data-[empty=true]:text-muted-foreground"
 							>
 								{selectedDate ? (
 									formatDate(selectedDate, "PPP")
