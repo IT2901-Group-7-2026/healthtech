@@ -1,9 +1,5 @@
 // biome-ignore-all lint/nursery/noShadow: user user user
 
-import { useQuery } from "@tanstack/react-query";
-import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button.js";
 import { Checkbox } from "@/components/ui/checkbox.js";
 import { DataTable } from "@/components/ui/data-table";
@@ -20,6 +16,10 @@ import {
 	mapDangerLevelToLabel,
 } from "@/lib/danger-levels";
 import { type User, UserRole, type UserWithStatusDto } from "@/lib/dto";
+import { useQuery } from "@tanstack/react-query";
+import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function TeamPage() {
 	const { t } = useTranslation();

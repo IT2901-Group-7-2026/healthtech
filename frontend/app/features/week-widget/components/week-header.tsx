@@ -20,7 +20,7 @@ export function WeekHeader({
 }) {
 	return (
 		<div className="flex h-16 items-center justify-between border-card-highlight border-b-2 px-6 py-4">
-			<h1 className="flex items-center gap-3 font-semibold text-base text-foreground">
+			<h1 className="mx-auto flex items-center gap-3 font-semibold text-base text-foreground">
 				{title}
 			</h1>
 			<div className="flex items-center space-x-5">

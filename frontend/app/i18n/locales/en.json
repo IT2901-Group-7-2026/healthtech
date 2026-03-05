@@ -91,6 +91,8 @@
   "dust": "Dust",
   "vibration": "Vibration",
   "noise": "Noise",
+  "allSensors": "All",
+  "all": "All sensors",
 
   "sensorSelectPlaceholder": "Sensor",
 
@@ -160,19 +162,24 @@
       "statCards": {
         "total": "Total",
         "viewDetails": "View details",
-        "inDanger": {
+        "danger": {
           "description": "Operators exceeding threshold",
-          "label": "In danger"
+          "label": "In danger",
+          "noOperators": "No operators in danger"
         },
-        "atRisk": {
+        "warning": {
           "description": "Operators approaching exposure limit",
-          "label": "At risk"
+          "label": "At risk",
+          "noOperators": "No operators at risk"
         },
-        "withinLimits": {
+        "safe": {
           "description": "Operators within safe exposure range",
-          "label": "Within limits"
+          "label": "Within limits",
+          "noOperators": "No operators within limits"
         }
-      }
+      },
+      "selectUserPlaceholder": "Pick a user",
+      "selectDatePlaceholder": "Pick a date"
     },
     "actionCard": {
       "safe": "All good!",
@@ -192,11 +199,26 @@
     "searchPlaceholder": "Search users..."
   },
   "demo": {
-    "currentRole": "Current role:"
+    "currentRole": "Current role:",
+    "navigate": {
+      "toApp": "Go to app",
+      "toRegister": "Go to register page"
+    }
   },
   "select": {
     "all": "Select all",
     "row": "Select row"
   },
-  "noOptions": "No options available"
+  "noOptions": "No options available",
+  "register": {
+    "title": "Register to HealthTech",
+    "name": "Full name",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "privacyConsent": "I consent to sharing my data with my supervisors for health and safety purposes.",
+    "createAccount": "Create account",
+    "haveAccount": "Already have an account? ",
+    "login": "Log in"
+  }
 }

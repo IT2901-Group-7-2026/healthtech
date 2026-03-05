@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import type { Aggregation } from "@/lib/dto";
 import { t } from "i18next";
 import type { WeekEvent } from "../week-widget/types";
 import { BasePopup } from "./base-popup";
@@ -9,9 +10,11 @@ export function WeeklyPopup({
 	open,
 	onClose,
 	children,
+	selectedAggregation,
 }: {
 	title: string;
 	event: WeekEvent;
+	selectedAggregation?: Aggregation;
 	open: boolean;
 	onClose: () => void;
 	children?: React.ReactNode;
@@ -21,6 +24,7 @@ export function WeeklyPopup({
 			title={title}
 			relevantDate={event.startDate}
 			open={open}
+			selectedAggregation={selectedAggregation}
 			onClose={onClose}
 		>
 			{children}
