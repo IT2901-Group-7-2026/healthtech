@@ -45,7 +45,7 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 					<Table>
 						<TableBody>
 							{operators.length === 0 ? (
-								<TableRow>
+								<TableRow className="hover:bg-transparent">
 									<TableCell className="text-center text-zinc-500">
 										{t(
 											(x) =>
