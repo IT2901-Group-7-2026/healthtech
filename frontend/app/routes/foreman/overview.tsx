@@ -25,7 +25,7 @@ import type { DangerLevel } from "@/lib/danger-levels";
 import { createLocationName, type UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
 import { useQuery } from "@tanstack/react-query";
-import { addWeeks, parseISO, startOfDay } from "date-fns";
+import { addWeeks, parseISO, startOfDay,endOfDay } from "date-fns";
 import { ChevronDownIcon, MapPinIcon, UsersIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import { type ReactNode, useCallback, useMemo, useState } from "react";
@@ -38,12 +38,17 @@ import { AtRiskTable } from "./workers-at-risk-table";
 
 export default function ForemanOverview() {
 	const { t } = useTranslation();
+	const formatDate = useFormatDate();
+
 	const [sensor, setSensor] = useQueryState("vibration", parseAsSensor);
 	const [date, setDate] = useQueryState("filterDate", parseAsString);
 	const [selectedUser, setSelectedUser] = useQueryState("user", parseAsString);
 
-	const formatDate = useFormatDate();
-
+	const selectedDate = date ? parseISO(date) : undefined;
+	
+	const startDate = selectedDate ? startOfDay(selectedDate) : undefined;
+	const endDate = selectedDate ? endOfDay(selectedDate) : undefined;
+	
 	// Foremen can only see dates within the last week
 	const minSelectableDate = startOfDay(addWeeks(new Date(), -1));
 	const maxSelectableDate = new Date();
@@ -66,7 +71,7 @@ export default function ForemanOverview() {
 	};
 
 	const { data: subordinates } = useQuery(
-		fetchSubordinatesQueryOptions(user.id),
+		fetchSubordinatesQueryOptions(user.id, startDate, endDate),
 	);
 
 	const { data: users } = useQuery(usersQueryOptions());
@@ -113,8 +118,6 @@ export default function ForemanOverview() {
 		($) => $.foremanDashboard.overview.statCards.viewDetails,
 	);
 	//TODO: Update card links to point to stats page
-
-	const selectedDate = date ? parseISO(date) : undefined;
 
 	return (
 		<div>
