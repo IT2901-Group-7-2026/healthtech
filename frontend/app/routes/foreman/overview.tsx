@@ -1,11 +1,5 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { useQuery } from "@tanstack/react-query";
-import { addWeeks, endOfDay, isToday, parseISO, startOfDay } from "date-fns";
-import { ChevronDownIcon, MapPinIcon, UsersIcon } from "lucide-react";
-import { parseAsString, useQueryState } from "nuqs";
-import { type ReactNode, useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes.js";
 import { ExposureRiskCard } from "@/components/exposure-level-card";
 import { Button } from "@/components/ui/button";
@@ -31,6 +25,12 @@ import { fetchSubordinatesQueryOptions, usersQueryOptions } from "@/lib/api.js";
 import type { DangerLevel } from "@/lib/danger-levels";
 import { createLocationName, type UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
+import { useQuery } from "@tanstack/react-query";
+import { addWeeks, endOfDay, isToday, parseISO, startOfDay } from "date-fns";
+import { ChevronDownIcon, MapPinIcon, UsersIcon } from "lucide-react";
+import { parseAsString, useQueryState } from "nuqs";
+import { type ReactNode, useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ActionCard } from "./action-card";
 import { AtRiskPopup } from "./exposure-level-popup";
 import { PieChartCard } from "./pie-chart-card";
@@ -264,11 +264,9 @@ export default function ForemanOverview() {
 				</div>
 
 				<div className="flex grow flex-col gap-4">
-					{
-						showActionCard && (
-							<ActionCard dangerLevel={highestDangerLevel} />
-						)
-					}
+					{showActionCard && (
+						<ActionCard dangerLevel={highestDangerLevel} />
+					)}
 
 					<div className="grid gap-6 lg:grid-cols-3">
 						<div className="grid items-stretch gap-4 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
