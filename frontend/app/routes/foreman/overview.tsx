@@ -79,7 +79,7 @@ export default function ForemanOverview() {
 		setSelectedStatus(null);
 	};
 
-	const { data: subordinates } = useQuery(
+	const { data: subordinates, isLoading: isSubordinatesLoading } = useQuery(
 		fetchSubordinatesQueryOptions(user.id, startDate, endDate),
 	);
 
@@ -259,7 +259,10 @@ export default function ForemanOverview() {
 				</div>
 
 				<div className="flex grow flex-col gap-4">
-					<ActionCard dangerLevel={highestDangerLevel} />
+					<ActionCard
+						dangerLevel={highestDangerLevel}
+						isLoading={isSubordinatesLoading}
+					/>
 
 					<div className="grid gap-6 lg:grid-cols-3">
 						<div className="grid items-stretch gap-4 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
