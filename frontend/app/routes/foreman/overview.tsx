@@ -48,10 +48,7 @@ export default function ForemanOverview() {
 	);
 
 	// TODO: Use this to show data for only that user
-	const [selectedUser, setSelectedUser] = useQueryState(
-		"user",
-		parseAsString,
-	);
+	const [selectedUser, setSelectedUser] = useQueryState("user", parseAsString);
 
 	const selectedDate = date ? parseISO(date) : undefined;
 
@@ -79,7 +76,7 @@ export default function ForemanOverview() {
 		setSelectedStatus(null);
 	};
 
-	const { data: subordinates } = useQuery(
+	const { data: subordinates, isLoading: isSubordinatesLoading } = useQuery(
 		fetchSubordinatesQueryOptions(user.id, startDate, endDate),
 	);
 
@@ -141,9 +138,6 @@ export default function ForemanOverview() {
 	const selectedSensorKey = sensor ?? "total";
 
 	const cardTotalText = t(($) => $.foremanDashboard.overview.statCards.total);
-	const cardViewDetailsText = t(
-		($) => $.foremanDashboard.overview.statCards.viewDetails,
-	);
 
 	const isUserComboboxDisabled = !users || users.length === 0;
 	const showActionCard = selectedDate ? isToday(selectedDate) : false;
@@ -152,7 +146,7 @@ export default function ForemanOverview() {
 
 	return (
 		<div>
-			<Card className="mb-4 flex flex-row justify-between bg-zinc-100 px-4 py-2">
+			<Card className="mb-4 flex flex-row justify-between px-4 py-2">
 				<Tabs
 					value={sensor ?? "all"}
 					onValueChange={(value) =>
@@ -183,13 +177,10 @@ export default function ForemanOverview() {
 					>
 						<ComboboxInput
 							placeholder={t(
-								($) =>
-									$.foremanDashboard.overview
-										.selectUserPlaceholder,
+								($) => $.foremanDashboard.overview.selectUserPlaceholder,
 							)}
 							showClear
 							disabled={isUserComboboxDisabled}
-							className=""
 						/>
 						<ComboboxContent>
 							<ComboboxList>
@@ -213,9 +204,7 @@ export default function ForemanOverview() {
 								) : (
 									<span>
 										{t(
-											($) =>
-												$.foremanDashboard.overview
-													.selectDatePlaceholder,
+											($) => $.foremanDashboard.overview.selectDatePlaceholder,
 										)}
 									</span>
 								)}
@@ -231,11 +220,7 @@ export default function ForemanOverview() {
 								}}
 								selected={selectedDate}
 								onSelect={(val) =>
-									setDate(
-										val
-											? formatDate(val, "yyyy-MM-dd")
-											: null,
-									)
+									setDate(val ? formatDate(val, "yyyy-MM-dd") : null)
 								}
 								defaultMonth={selectedDate}
 							/>
@@ -265,7 +250,10 @@ export default function ForemanOverview() {
 
 				<div className="flex grow flex-col gap-4">
 					{showActionCard && (
-						<ActionCard dangerLevel={highestDangerLevel} />
+						<ActionCard
+							dangerLevel={highestDangerLevel}
+							isLoading={isSubordinatesLoading}
+						/>
 					)}
 
 					<div className="grid gap-6 lg:grid-cols-3">
@@ -275,96 +263,68 @@ export default function ForemanOverview() {
 									<StatCard
 										description={t(
 											($) =>
-												$.foremanDashboard.overview
-													.statCards.danger
+												$.foremanDashboard.overview.statCards.danger
 													.description,
 										)}
 										label={t(
-											($) =>
-												$.foremanDashboard.overview
-													.statCards.danger.label,
+											($) => $.foremanDashboard.overview.statCards.danger.label,
 										)}
 										onClick={() => openForStatus("danger")}
 										to="/"
 										totalValue={total}
-										value={
-											countPerDangerLevel[
-												selectedSensorKey
-											].danger
-										}
+										value={countPerDangerLevel[selectedSensorKey].danger}
 										totalText={cardTotalText}
-										viewDetailsText={cardViewDetailsText}
 									/>
 									<StatCard
 										description={t(
 											($) =>
-												$.foremanDashboard.overview
-													.statCards.warning
+												$.foremanDashboard.overview.statCards.warning
 													.description,
 										)}
 										label={t(
 											($) =>
-												$.foremanDashboard.overview
-													.statCards.warning.label,
+												$.foremanDashboard.overview.statCards.warning.label,
 										)}
 										onClick={() => openForStatus("warning")}
 										to="/"
 										totalValue={total}
-										value={
-											countPerDangerLevel[
-												selectedSensorKey
-											].warning
-										}
+										value={countPerDangerLevel[selectedSensorKey].warning}
 										totalText={cardTotalText}
-										viewDetailsText={cardViewDetailsText}
 									/>
 									<StatCard
 										description={t(
 											($) =>
-												$.foremanDashboard.overview
-													.statCards.safe.description,
+												$.foremanDashboard.overview.statCards.safe.description,
 										)}
 										label={t(
-											($) =>
-												$.foremanDashboard.overview
-													.statCards.safe.label,
+											($) => $.foremanDashboard.overview.statCards.safe.label,
 										)}
 										onClick={() => openForStatus("safe")}
 										to="/"
 										totalValue={total}
-										value={
-											countPerDangerLevel[
-												selectedSensorKey
-											].safe
-										}
+										value={countPerDangerLevel[selectedSensorKey].safe}
 										totalText={cardTotalText}
-										viewDetailsText={cardViewDetailsText}
 									/>
 								</>
 							)}
-							{/* Operators in danger for the chosen exposure */}
 							{sensor && (
-								<ExposureRiskCard
-									users={subordinates ?? []}
-									sensor={sensor}
-									dangerLevel={"danger"}
-								/>
-							)}
-							{/* Operators that are under warning for the chosen exposure */}
-							{sensor && (
-								<ExposureRiskCard
-									users={subordinates ?? []}
-									sensor={sensor}
-									dangerLevel={"warning"}
-								/>
-							)}
-							{/* Operators that are safe for the chosen exposure */}
-							{sensor && (
-								<ExposureRiskCard
-									users={subordinates ?? []}
-									sensor={sensor}
-									dangerLevel={"safe"}
-								/>
+								<>
+									<ExposureRiskCard
+										users={subordinates ?? []}
+										sensor={sensor}
+										dangerLevel="danger"
+									/>
+									<ExposureRiskCard
+										users={subordinates ?? []}
+										sensor={sensor}
+										dangerLevel="warning"
+									/>
+									<ExposureRiskCard
+										users={subordinates ?? []}
+										sensor={sensor}
+										dangerLevel="safe"
+									/>
+								</>
 							)}
 						</div>
 					</div>
@@ -386,40 +346,30 @@ export default function ForemanOverview() {
 										data={{
 											safe: {
 												name: "Safe",
-												value: countPerDangerLevel[s]
-													.safe,
+												value: countPerDangerLevel[s].safe,
 												label: t(
 													($) =>
-														$.foremanDashboard
-															.overview.statCards
-															.safe.label,
+														$.foremanDashboard.overview.statCards.safe.label,
 												),
 											},
 											warning: {
 												name: "Warning",
-												value: countPerDangerLevel[s]
-													.warning,
+												value: countPerDangerLevel[s].warning,
 												label: t(
 													($) =>
-														$.foremanDashboard
-															.overview.statCards
-															.warning.label,
+														$.foremanDashboard.overview.statCards.warning.label,
 												),
 											},
 											danger: {
 												name: "Danger",
-												value: countPerDangerLevel[s]
-													.danger,
+												value: countPerDangerLevel[s].danger,
 												label: t(
 													($) =>
-														$.foremanDashboard
-															.overview.statCards
-															.danger.label,
+														$.foremanDashboard.overview.statCards.danger.label,
 												),
 											},
 										}}
 										label={s}
-										viewDetailsText={cardViewDetailsText}
 										to="/"
 										key={s}
 									/>
