@@ -132,6 +132,9 @@
     "safe": "Arbeidere innenfor grenseverdier",
     "no_in_danger": "Ingen arbeidere i denne kategorien"
   },
+  "interactiveCard": {
+    "viewDetails": "View details"
+  },
   "loadingData": "Laster inn data...",
   "errorLoadingData": "Noe gikk galt under henting av sensordata.",
   "noData": "Ingen eksponeringsdata funnet for denne dagen",
@@ -161,7 +164,6 @@
       "title": "Foreman Oversikt",
       "statCards": {
         "total": "Totalt",
-        "viewDetails": "Se detaljer",
         "danger": {
           "description": "Operatører som har overskredet grenseverdien",
           "label": "Over grenseverdi",
