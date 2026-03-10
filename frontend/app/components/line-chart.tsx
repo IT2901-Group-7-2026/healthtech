@@ -285,7 +285,7 @@ export function ThresholdLine({
 }) {
 	const { t } = useTranslation();
 	const { theme } = useTheme();
-	const color = (theme === "dark" ? "white" : "black");
+	const color = theme === "dark" ? "white" : "black";
 	const lineLabel = label ?? t(($) => $.line_chart[dangerLevel]);
 	return (
 		<ReferenceLine
@@ -315,7 +315,6 @@ function getDangerLevel(
 
 	return data.dangerLevel;
 }
-function useChart(): { config: any; } {
+function useChart(): { config: any } {
 	throw new Error("Function not implemented.");
 }
-
