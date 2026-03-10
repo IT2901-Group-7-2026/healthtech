@@ -50,7 +50,6 @@
         }
       },
       "style": {
-        // "useBlockStatements": "error",
         "noCommonJs": "error",
         "noDefaultExport": "off",
         "noNegationElse": "error",
