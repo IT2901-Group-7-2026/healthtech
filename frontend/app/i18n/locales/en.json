@@ -134,6 +134,9 @@
     "safe": "Workers Within Limits",
     "no_in_danger": "No workers in this category"
   },
+  "interactiveCard": {
+    "viewDetails": "View details"
+  },
   "loadingData": "Loading data...",
   "errorLoadingData": "Something went wrong while fetching sensor data.",
   "noData": "No exposure data found for this day",
@@ -163,7 +166,6 @@
       "title": "Foreman Overview",
       "statCards": {
         "total": "Total",
-        "viewDetails": "View details",
         "danger": {
           "description": "Operators exceeding threshold",
           "label": "In danger",

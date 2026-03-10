@@ -130,7 +130,7 @@ export default function Layout() {
 		closePopup: closeNotificationPopup,
 	} = usePopup();
 
-	const { user, setUser } = useUser();
+	const { user, setUser, isLoading: isUserLoading } = useUser();
 	const { data: users } = useQuery(usersQueryOptions());
 
 	// Sort Ola and Kari to the top, as they are the main demo users
@@ -161,7 +161,7 @@ export default function Layout() {
 	const navigate = useNavigate();
 	// Redirect users to the appropriate base route if they try to access a route that doesn't match their role
 	useEffect(() => {
-		if (!user?.role) {
+		if (!user?.role || isUserLoading) {
 			return;
 		}
 
@@ -177,7 +177,7 @@ export default function Layout() {
 		if (user.role === "foreman" && isOperatorRoute) {
 			navigate("/foreman", { replace: true });
 		}
-	}, [user?.role, location.pathname, navigate]);
+	}, [user?.role, location.pathname, navigate, isUserLoading]);
 
 	const mobileHeader = (
 		<div className="flex items-center gap-4">
