@@ -1,11 +1,5 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { useQuery } from "@tanstack/react-query";
-import { addWeeks, endOfDay, isToday, parseISO, startOfDay } from "date-fns";
-import { ChevronDownIcon } from "lucide-react";
-import { parseAsString, useQueryState } from "nuqs";
-import { type ReactNode, useCallback, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { DailyNotes } from "@/components/daily-notes.js";
 import { ExposureRiskCard } from "@/components/exposure-level-card";
 import { Button } from "@/components/ui/button";
@@ -32,6 +26,12 @@ import { fetchSubordinatesQueryOptions, usersQueryOptions } from "@/lib/api.js";
 import type { DangerLevel } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
+import { useQuery } from "@tanstack/react-query";
+import { addWeeks, endOfDay, isToday, parseISO, startOfDay } from "date-fns";
+import { ChevronDownIcon } from "lucide-react";
+import { parseAsString, useQueryState } from "nuqs";
+import { type ReactNode, useCallback, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ActionCard } from "./action-card";
 import { AtRiskPopup } from "./exposure-level-popup";
 import { PieChartCard } from "./pie-chart-card";

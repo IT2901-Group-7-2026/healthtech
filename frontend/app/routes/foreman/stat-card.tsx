@@ -1,8 +1,8 @@
-import { ArrowRightIcon } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card.js";
 import { cn } from "@/lib/utils.js";
+import { ArrowRightIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export type StatCardProps = {
 	className?: string;
