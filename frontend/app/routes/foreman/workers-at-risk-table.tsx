@@ -1,6 +1,3 @@
-import { ArrowRightIcon } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 import {
 	Card,
 	CardContent,
@@ -14,6 +11,9 @@ import {
 	mapDangerLevelToColor,
 } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
+import { ArrowRightIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 
 interface Props {
 	users: Array<UserWithStatusDto>;

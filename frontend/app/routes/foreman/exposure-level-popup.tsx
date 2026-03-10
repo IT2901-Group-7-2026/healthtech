@@ -1,7 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import { ArrowRightIcon } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BasePopup } from "@/features/popups/base-popup";
@@ -9,6 +5,10 @@ import { useUser } from "@/features/user/user-context";
 import { fetchSubordinatesQueryOptions } from "@/lib/api.js";
 import { type DangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto.js";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowRightIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 
 const getExposureBadges = (
 	worker: UserWithStatusDto,
