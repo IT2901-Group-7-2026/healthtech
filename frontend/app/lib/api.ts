@@ -268,8 +268,8 @@ export const fetchThresholdSummaryQueryOptions = (
 				params.append("endTime", endTime.toISOString());
 			}
 
-			const response = await fetch(
-				`${baseURL}users/${managerUserId}/subordinates/threshold-summary?${params.toString()}`,
+			const response = await fetchWithUserId(
+				`users/${managerUserId}/subordinates/threshold-summary?${params.toString()}`,
 				{
 					method: "GET",
 					headers: {
