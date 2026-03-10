@@ -96,7 +96,9 @@ export function ChartLineDefault({
 	const maxDataDangerLevel = getDangerLevel(maxData, usePeakData);
 
 	return (
-		<Card className="w-full">
+		<Card className="w-full"
+			
+		>
 			<CardHeader className="flex flex-row items-center justify-between">
 				<CardTitle>{chartTitle}</CardTitle>
 				{headerRight}
@@ -111,6 +113,13 @@ export function ChartLineDefault({
 							right: 12,
 						}}
 					>
+						<rect
+							x="0"
+							y="0"
+							width="100%"
+							height="100%"
+							fill={`url(#${id}-bg)`}
+							/>
 						<CartesianGrid vertical={false} />
 						<XAxis
 							dataKey="time"
@@ -209,6 +218,16 @@ export function ChartLineDefault({
 										</>
 									)
 								)}
+							</linearGradient>
+							<linearGradient id={`${id}-bg`} x1="0" y1="0" x2="0" y2="1">
+								<stop offset="0%" stopColor="var(--danger)" stopOpacity={0.15} />
+								<stop offset={getOffset(dangerThreshold)} stopColor="var(--danger)" stopOpacity={0.15} />
+
+								<stop offset={getOffset(dangerThreshold)} stopColor="var(--warning)" stopOpacity={0.15} />
+								<stop offset={getOffset(warning)} stopColor="var(--warning)" stopOpacity={0.15} />
+
+								<stop offset={getOffset(warning)} stopColor="var(--safe)" stopOpacity={0.15} />
+								<stop offset="100%" stopColor="var(--safe)" stopOpacity={0.15} />
 							</linearGradient>
 						</defs>
 						<Line
