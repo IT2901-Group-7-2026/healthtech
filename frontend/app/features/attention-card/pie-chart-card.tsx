@@ -1,6 +1,3 @@
-import { ArrowRightIcon } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 import {
 	Card,
 	CardContent,
@@ -17,6 +14,9 @@ import {
 	mapDangerLevelToColor,
 } from "@/lib/danger-levels";
 import { cn } from "@/lib/utils";
+import { ArrowRightIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 
 export type PieChartCardProps = {
 	className?: string;

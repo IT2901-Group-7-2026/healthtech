@@ -1,27 +1,22 @@
-import { ArrowRightIcon } from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card.js";
 import { cn } from "@/lib/utils.js";
+import { ArrowRightIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export type StatCardProps = {
 	className?: string;
-	totalValue: number;
 	value: number;
 	to: string;
 	label: string;
 	description: string;
-	totalText: string;
 	onClick?: () => void;
 };
 
 export const StatCard = ({
 	className,
-	totalValue,
 	value,
 	label,
 	description,
-	totalText,
 	onClick,
 }: StatCardProps) => {
 	const { t } = useTranslation();
@@ -33,15 +28,9 @@ export const StatCard = ({
 				className={cn("group h-full justify-between gap-2", className)}
 			>
 				<CardContent>
-					<div className="flex items-center justify-between gap-2">
-						<h2 className="text-xs uppercase tracking-widest dark:text-zinc-400">
-							{label}
-						</h2>
-
-						<Badge variant="outline" className="rounded-lg">
-							{totalValue} {totalText}
-						</Badge>
-					</div>
+					<h2 className="text-xs uppercase tracking-widest dark:text-zinc-400">
+						{label}
+					</h2>
 
 					<p className="w-fit font-bold text-3xl leading-tight">
 						{value}
