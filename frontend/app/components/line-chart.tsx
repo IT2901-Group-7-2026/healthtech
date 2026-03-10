@@ -219,7 +219,7 @@ export function ChartLineDefault({
 									)
 								)}
 							</linearGradient>
-							<linearGradient id={`${id}-bg`} x1="0" y1="0" x2="0" y2="1">
+							<linearGradient id={`${id}-bg`} x1="0" y1="0.115" x2="0" y2="0.785">
 								<stop offset="0%" stopColor="var(--danger)" stopOpacity={0.15} />
 								<stop offset={getOffset(dangerThreshold)} stopColor="var(--danger)" stopOpacity={0.15} />
 
