@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
@@ -7,6 +6,7 @@ import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { AllSensors, SensorDataResponseDto } from "@/lib/dto";
 import { cn } from "@/lib/utils";
 import { Card } from "@/ui/card";
+import { useTranslation } from "react-i18next";
 
 type ExposureType = Sensor | "all";
 
