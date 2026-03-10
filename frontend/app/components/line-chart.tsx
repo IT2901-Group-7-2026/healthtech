@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/chart";
 import { useTheme } from "@/features/dark-mode/use-theme";
 import { useDate } from "@/features/date-picker/use-date";
-import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
+import type { DangerLevel } from "@/lib/danger-levels";
 import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
@@ -314,7 +314,4 @@ function getDangerLevel(
 	}
 
 	return data.dangerLevel;
-}
-function useChart(): { config: any } {
-	throw new Error("Function not implemented.");
 }
