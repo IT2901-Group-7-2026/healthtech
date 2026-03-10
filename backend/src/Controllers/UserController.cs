@@ -41,8 +41,8 @@ public class UserController(IUserService _userService, IUserStatusService _userS
 		List<User> subordinates = await _userService.GetSubordinatesAsync(managerId);
 
 		// Default to current day if no time range is provided
-		var start = startTime ?? DateTime.UtcNow.Date;
-		var end = endTime ?? DateTime.UtcNow.Date.AddDays(1).AddTicks(-1);
+		DateTime start = startTime ?? DateTime.UtcNow.Date;
+		DateTime end = endTime ?? DateTime.UtcNow.Date.AddDays(1).AddTicks(-1);
 
 		IEnumerable<UserStatusDto> userStatuses = await _userStatusService.GetStatusForUsersInRange(
 			subordinates.Select(u => u.Id),
