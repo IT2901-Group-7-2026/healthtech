@@ -1,13 +1,19 @@
-import { InteractiveCard } from "@/components/interactive-card";
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRightIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import {
 	DANGER_LEVEL_SEVERITY,
 	mapDangerLevelToColor,
 } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 
 interface Props {
 	users: Array<UserWithStatusDto>;
@@ -26,7 +32,7 @@ export function AtRiskTable({ users }: Props) {
 			to={`/foreman/team/`}
 			className="h-full w-full flex-1 basis-64 rounded-2xl"
 		>
-			<InteractiveCard>
+			<Card hoverable>
 				<CardHeader>
 					<CardTitle className="text-center">
 						{t((x) => x.atRiskTable.title)}
@@ -59,7 +65,12 @@ export function AtRiskTable({ users }: Props) {
 						</TableBody>
 					</Table>
 				</CardContent>
-			</InteractiveCard>
+
+				<CardFooter className="gap-1 text-muted-foreground text-xs">
+					<p>{t(($) => $.interactiveCard.viewDetails)}</p>
+					<ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+				</CardFooter>
+			</Card>
 		</Link>
 	);
 }
