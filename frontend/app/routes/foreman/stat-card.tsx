@@ -27,6 +27,7 @@ export const StatCard = ({
 }: StatCardProps) => (
 	<button type="button" onClick={onClick} className="w-full text-left">
 		<Card
+			hoverable
 			className={cn("group h-full justify-between gap-2 p-4", className)}
 		>
 			<div className="flex items-center justify-between gap-2">

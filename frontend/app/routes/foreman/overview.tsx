@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { addWeeks, endOfDay, parseISO, startOfDay } from "date-fns";
-import { ChevronDownIcon, MapPinIcon, UsersIcon } from "lucide-react";
+import { ChevronDownIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import { type ReactNode, useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -25,11 +25,12 @@ import {
 } from "@/components/ui/popover";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserStatusChart } from "@/components/users-status-chart";
+import { TeamSummary } from "@/features/sidebar/team-summary.js";
 import { useUser } from "@/features/user/user-context";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { fetchSubordinatesQueryOptions, usersQueryOptions } from "@/lib/api.js";
 import type { DangerLevel } from "@/lib/danger-levels";
-import { createLocationName, type UserWithStatusDto } from "@/lib/dto.js";
+import type { UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
 import { ActionCard } from "./action-card";
 import { AtRiskPopup } from "./exposure-level-popup";
@@ -150,8 +151,8 @@ export default function ForemanOverview() {
 	//TODO: Update card links to point to stats page
 
 	return (
-		<div>
-			<Card className="mb-4 flex flex-row justify-between bg-zinc-100 px-4 py-2">
+		<div className="flex flex-col gap-8">
+			<Card muted className="flex flex-row justify-between p-2">
 				<Tabs
 					value={sensor ?? "all"}
 					onValueChange={(value) =>
@@ -188,7 +189,7 @@ export default function ForemanOverview() {
 							)}
 							showClear
 							disabled={isUserComboboxDisabled}
-							className=""
+							className="bg-background dark:bg-input/30"
 						/>
 						<ComboboxContent>
 							<ComboboxList>
@@ -243,127 +244,107 @@ export default function ForemanOverview() {
 				</div>
 			</Card>
 
-			<div className="flex w-full flex-row gap-8">
-				<div className="flex flex-col gap-4 md:w-1/4">
-					<Card className="flex h-fit flex-col gap-4 p-4">
-						<div className="flex items-center gap-2">
-							<MapPinIcon />
-							{createLocationName(user.location)}
-						</div>
-
-						<div className="flex items-center gap-2">
-							<UsersIcon />
-							{t(($) => $.foremanDashboard.team.membersCount, {
-								count: total,
-							})}
-						</div>
-					</Card>
-
+			<div className="flex w-full flex-row gap-6">
+				<aside className="flex flex-col gap-6 md:w-1/5">
+					<TeamSummary subordinateCount={total} />
 					<DailyNotes />
-				</div>
+				</aside>
 
-				<div className="flex grow flex-col gap-4">
+				<div className="flex flex-col gap-12 md:w-3/5">
 					<ActionCard dangerLevel={highestDangerLevel} />
 
-					<div className="grid gap-6 lg:grid-cols-3">
-						<div className="grid items-stretch gap-4 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
-							{!sensor && (
-								<>
-									<StatCard
-										description={t(
-											($) =>
-												$.foremanDashboard.overview
-													.statCards.danger
-													.description,
-										)}
-										label={t(
-											($) =>
-												$.foremanDashboard.overview
-													.statCards.danger.label,
-										)}
-										onClick={() => openForStatus("danger")}
-										to="/"
-										totalValue={total}
-										value={
-											countPerDangerLevel[
-												selectedSensorKey
-											].danger
-										}
-										totalText={cardTotalText}
-										viewDetailsText={cardViewDetailsText}
-									/>
-									<StatCard
-										description={t(
-											($) =>
-												$.foremanDashboard.overview
-													.statCards.warning
-													.description,
-										)}
-										label={t(
-											($) =>
-												$.foremanDashboard.overview
-													.statCards.warning.label,
-										)}
-										onClick={() => openForStatus("warning")}
-										to="/"
-										totalValue={total}
-										value={
-											countPerDangerLevel[
-												selectedSensorKey
-											].warning
-										}
-										totalText={cardTotalText}
-										viewDetailsText={cardViewDetailsText}
-									/>
-									<StatCard
-										description={t(
-											($) =>
-												$.foremanDashboard.overview
-													.statCards.safe.description,
-										)}
-										label={t(
-											($) =>
-												$.foremanDashboard.overview
-													.statCards.safe.label,
-										)}
-										onClick={() => openForStatus("safe")}
-										to="/"
-										totalValue={total}
-										value={
-											countPerDangerLevel[
-												selectedSensorKey
-											].safe
-										}
-										totalText={cardTotalText}
-										viewDetailsText={cardViewDetailsText}
-									/>
-								</>
-							)}
-							{/* Operators in danger for the chosen exposure */}
-							{sensor && (
-								<ExposureRiskCard
-									users={subordinates ?? []}
-									sensor={sensor}
-									dangerLevel={"danger"}
+					<div className="grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
+						{!sensor && (
+							<>
+								<StatCard
+									description={t(
+										($) =>
+											$.foremanDashboard.overview
+												.statCards.danger.description,
+									)}
+									label={t(
+										($) =>
+											$.foremanDashboard.overview
+												.statCards.danger.label,
+									)}
+									onClick={() => openForStatus("danger")}
+									to="/"
+									totalValue={total}
+									value={
+										countPerDangerLevel[selectedSensorKey]
+											.danger
+									}
+									totalText={cardTotalText}
+									viewDetailsText={cardViewDetailsText}
 								/>
-							)}
-							{/* Operators that are under warning for the chosen exposure */}
-							{sensor && (
-								<ExposureRiskCard
-									users={subordinates ?? []}
-									sensor={sensor}
-									dangerLevel={"warning"}
+								<StatCard
+									description={t(
+										($) =>
+											$.foremanDashboard.overview
+												.statCards.warning.description,
+									)}
+									label={t(
+										($) =>
+											$.foremanDashboard.overview
+												.statCards.warning.label,
+									)}
+									onClick={() => openForStatus("warning")}
+									to="/"
+									totalValue={total}
+									value={
+										countPerDangerLevel[selectedSensorKey]
+											.warning
+									}
+									totalText={cardTotalText}
+									viewDetailsText={cardViewDetailsText}
 								/>
-							)}
-							{/* Operators that are safe for the chosen exposure */}
-							{sensor && (
-								<ExposureRiskCard
-									users={subordinates ?? []}
-									sensor={sensor}
-									dangerLevel={"safe"}
+								<StatCard
+									description={t(
+										($) =>
+											$.foremanDashboard.overview
+												.statCards.safe.description,
+									)}
+									label={t(
+										($) =>
+											$.foremanDashboard.overview
+												.statCards.safe.label,
+									)}
+									onClick={() => openForStatus("safe")}
+									to="/"
+									totalValue={total}
+									value={
+										countPerDangerLevel[selectedSensorKey]
+											.safe
+									}
+									totalText={cardTotalText}
+									viewDetailsText={cardViewDetailsText}
 								/>
-							)}
-						</div>
+							</>
+						)}
+						{/* Operators in danger for the chosen exposure */}
+						{sensor && (
+							<ExposureRiskCard
+								users={subordinates ?? []}
+								sensor={sensor}
+								dangerLevel={"danger"}
+							/>
+						)}
+						{/* Operators that are under warning for the chosen exposure */}
+						{sensor && (
+							<ExposureRiskCard
+								users={subordinates ?? []}
+								sensor={sensor}
+								dangerLevel={"warning"}
+							/>
+						)}
+						{/* Operators that are safe for the chosen exposure */}
+						{sensor && (
+							<ExposureRiskCard
+								users={subordinates ?? []}
+								sensor={sensor}
+								dangerLevel={"safe"}
+							/>
+						)}
 					</div>
 
 					{sensor ? (

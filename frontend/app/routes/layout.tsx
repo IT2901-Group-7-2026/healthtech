@@ -1,3 +1,15 @@
+import { useQuery } from "@tanstack/react-query";
+import { Bell, House, type LucideIcon, User as UserIcon } from "lucide-react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+	href,
+	NavLink,
+	Outlet,
+	type To,
+	useLocation,
+	useNavigate,
+} from "react-router";
 import { Button } from "@/components/ui/button";
 import {
 	Drawer,
@@ -30,18 +42,6 @@ import type { TranslateFn } from "@/i18n/config.js";
 import { usersQueryOptions } from "@/lib/api";
 import type { User } from "@/lib/dto.js";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { Bell, House, type LucideIcon, User as UserIcon } from "lucide-react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import {
-	href,
-	NavLink,
-	Outlet,
-	type To,
-	useLocation,
-	useNavigate,
-} from "react-router";
 
 const Logo = () => (
 	<svg
@@ -140,7 +140,7 @@ export default function Layout() {
 		const aPriority = priorityUserIds.indexOf(a.id);
 		const bPriority = priorityUserIds.indexOf(b.id);
 
-		if (aPriority === -1 && bPriority === -1) {
+		if (aPriority === bPriority) {
 			return a.username.localeCompare(b.username);
 		}
 
@@ -214,7 +214,7 @@ export default function Layout() {
 					setUser={setUser}
 				/>
 
-				<header className="flex items-center justify-between p-2">
+				<header className="mx-5 my-2 flex items-center justify-between">
 					{isMobile ? mobileHeader : desktopHeader}
 
 					<div className="flex flex-row items-center gap-2">
@@ -249,7 +249,7 @@ export default function Layout() {
 					title={t(($) => $.notifications)}
 				/>
 
-				<main className="m-2 flex-col items-center justify-center">
+				<main className="m-5 items-center justify-center">
 					<Outlet />
 					{isMobile && (
 						<div className="mt-2 flex w-full justify-center p-4">

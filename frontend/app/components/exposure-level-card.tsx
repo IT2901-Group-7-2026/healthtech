@@ -26,7 +26,7 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 			to={`/`}
 			className="h-full w-full flex-1 basis-64 rounded-2xl"
 		>
-			<Card className="group h-full justify-between gap-4 p-4">
+			<Card hoverable className="group h-full justify-between gap-4 p-4">
 				{/* TITLE */}
 				<CardHeader>
 					<CardTitle
