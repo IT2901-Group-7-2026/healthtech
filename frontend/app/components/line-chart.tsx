@@ -6,6 +6,7 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useTheme } from "@/features/dark-mode/use-theme";
 import { useDate } from "@/features/date-picker/use-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
@@ -283,7 +284,8 @@ export function ThresholdLine({
 	label?: string;
 }) {
 	const { t } = useTranslation();
-	const color = `var(--${DangerLevels[dangerLevel].color})`;
+	const { theme } = useTheme();
+	const color = (theme === "dark" ? "white" : "black");
 	const lineLabel = label ?? t(($) => $.line_chart[dangerLevel]);
 	return (
 		<ReferenceLine
@@ -294,9 +296,9 @@ export function ThresholdLine({
 				value: lineLabel,
 				position: "left",
 				fill: color,
-				offset: 0,
-				dy: -10,
-				fontSize: "80%",
+				offset: 10,
+				dy: -12,
+				fontSize: "75%",
 			}}
 		/>
 	);
@@ -313,3 +315,7 @@ function getDangerLevel(
 
 	return data.dangerLevel;
 }
+function useChart(): { config: any; } {
+	throw new Error("Function not implemented.");
+}
+
