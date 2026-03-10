@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BasePopup } from "@/features/popups/base-popup";
 import { useUser } from "@/features/user/user-context";
@@ -28,7 +28,9 @@ const getExposureBadges = (
 		}
 
 		if (popupStatus === "warning") {
-			return data.dangerLevel === "warning" || data.dangerLevel === "danger";
+			return (
+				data.dangerLevel === "warning" || data.dangerLevel === "danger"
+			);
 		}
 
 		return false;
@@ -119,7 +121,11 @@ export function AtRiskPopup({
 		workers.length === 0
 			? emptyTableBody
 			: workers.map((worker) => (
-					<WorkerRow key={worker.id} worker={worker} status={status} />
+					<WorkerRow
+						key={worker.id}
+						worker={worker}
+						status={status}
+					/>
 				));
 
 	return (
@@ -133,17 +139,17 @@ export function AtRiskPopup({
 				to={`/foreman/team/`}
 				className="h-full w-full flex-1 basis-4 rounded-2xl"
 			>
-				<Card className="p-4">
+				<Card hoverable>
 					<CardContent>
 						<Table>
 							<TableBody>{tableBody}</TableBody>
 						</Table>
 					</CardContent>
 
-					<div className="mt-1 flex items-center gap-1 text-xs text-zinc-600 dark:text-zinc-300">
-						<p>{t((x) => x.atRiskTable.detailText)}</p>
-						<ArrowRightIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-					</div>
+					<CardFooter className="gap-1 text-muted-foreground text-xs">
+						<p>{t(($) => $.atRiskTable.detailText)}</p>
+						<ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+					</CardFooter>
 				</Card>
 			</Link>
 		</BasePopup>

@@ -37,7 +37,12 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 					<CardTitle
 						className={`text-center text-${mapDangerLevelToColor(dangerLevel ?? "safe")}`}
 					>
-						{t((x) => x.foremanDashboard.overview.statCards[dangerLevel].label)}{" "}
+						{t(
+							(x) =>
+								x.foremanDashboard.overview.statCards[
+									dangerLevel
+								].label,
+						)}{" "}
 						{`(${operators.length})`}
 					</CardTitle>
 				</CardHeader>
@@ -50,7 +55,8 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 									<TableCell className="whitespace-normal text-center text-zinc-500">
 										{t(
 											(x) =>
-												x.foremanDashboard.overview.statCards[dangerLevel]
+												x.foremanDashboard.overview
+													.statCards[dangerLevel]
 													.noOperators,
 										)}
 									</TableCell>
@@ -73,7 +79,7 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 					</Table>
 				</CardContent>
 
-				<CardFooter className="gap-1 text-xs text-muted-foreground">
+				<CardFooter className="gap-1 text-muted-foreground text-xs">
 					<p>{t(($) => $.interactiveCard.viewDetails)}</p>
 					<ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
 				</CardFooter>
