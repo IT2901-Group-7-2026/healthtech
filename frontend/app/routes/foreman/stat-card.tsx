@@ -1,5 +1,8 @@
-import { InteractiveCard } from "@/components/interactive-card";
+import { ArrowRightIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardFooter } from "@/components/ui/card.js";
+import { cn } from "@/lib/utils.js";
 
 export type StatCardProps = {
 	className?: string;
@@ -20,24 +23,40 @@ export const StatCard = ({
 	description,
 	totalText,
 	onClick,
-}: StatCardProps) => (
-	<button type="button" onClick={onClick} className="w-full text-left">
-		<InteractiveCard className={className}>
-			<div className="flex items-center justify-between gap-2">
-				<h2 className="text-xs uppercase tracking-widest dark:text-zinc-400">
-					{label}
-				</h2>
+}: StatCardProps) => {
+	const { t } = useTranslation();
 
-				<Badge variant="outline" className="rounded-lg">
-					{totalValue} {totalText}
-				</Badge>
-			</div>
+	return (
+		<button type="button" onClick={onClick} className="w-full text-left">
+			<Card
+				hoverable
+				className={cn("group h-full justify-between gap-2", className)}
+			>
+				<CardContent>
+					<div className="flex items-center justify-between gap-2">
+						<h2 className="text-xs uppercase tracking-widest dark:text-zinc-400">
+							{label}
+						</h2>
 
-			<p className="w-fit font-bold text-3xl leading-tight">{value}</p>
+						<Badge variant="outline" className="rounded-lg">
+							{totalValue} {totalText}
+						</Badge>
+					</div>
 
-			<p className="text-xs text-zinc-500 dark:text-zinc-400">
-				{description}
-			</p>
-		</InteractiveCard>
-	</button>
-);
+					<p className="w-fit font-bold text-3xl leading-tight">
+						{value}
+					</p>
+
+					<p className="text-xs text-zinc-500 dark:text-zinc-400">
+						{description}
+					</p>
+				</CardContent>
+
+				<CardFooter className="gap-1 text-muted-foreground text-xs">
+					<p>{t(($) => $.interactiveCard.viewDetails)}</p>
+					<ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+				</CardFooter>
+			</Card>
+		</button>
+	);
+};

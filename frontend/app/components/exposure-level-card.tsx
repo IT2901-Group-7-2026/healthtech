@@ -1,11 +1,17 @@
-import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowRightIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { mapDangerLevelToColor } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
-import { InteractiveCard } from "./interactive-card";
 
 interface Props {
 	users: Array<UserWithStatusDto>;
@@ -24,9 +30,9 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 		<Link
 			//TODO: change routing to the subs individual page
 			to={`/`}
-			className="h-full w-full flex-1 basis-64 rounded-2xl"
+			className="group h-full w-full flex-1 basis-64 rounded-2xl"
 		>
-			<InteractiveCard>
+			<Card hoverable>
 				<CardHeader>
 					<CardTitle
 						className={`text-center text-${mapDangerLevelToColor(dangerLevel ?? "safe")}`}
@@ -72,7 +78,12 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 						</TableBody>
 					</Table>
 				</CardContent>
-			</InteractiveCard>
+
+				<CardFooter className="gap-1 text-muted-foreground text-xs">
+					<p>{t(($) => $.interactiveCard.viewDetails)}</p>
+					<ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+				</CardFooter>
+			</Card>
 		</Link>
 	);
 }
