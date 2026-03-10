@@ -1,5 +1,6 @@
 import { ExposureRiskCard } from "@/components/exposure-level-card";
-import { Card } from "@/components/ui/card.js";
+import { SensorIcon } from "@/components/sensor-icon.js";
+import { Card, CardContent, CardHeader } from "@/components/ui/card.js";
 import { Skeleton } from "@/components/ui/skeleton.js";
 import { AtRiskPopup } from "@/features/attention-card/exposure-level-popup.js";
 import { StatCard } from "@/features/attention-card/stat-card";
@@ -9,6 +10,7 @@ import {
 } from "@/lib/danger-levels.js";
 import type { ThresholdSummary, UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor } from "@/lib/sensors.js";
+import { cn } from "@/lib/utils";
 import { formatDate, isToday } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
 import { useMemo, useState } from "react";
@@ -37,7 +39,6 @@ export const AttentionCard = ({
 	const [selectedStatus, setSelectedStatus] = useState<DangerLevel | null>(
 		null,
 	);
-
 	const [popupStatus, setPopupStatus] = useState<DangerLevel | null>(null);
 
 	const openForStatus = (status: DangerLevel) => {
@@ -72,92 +73,122 @@ export const AttentionCard = ({
 	const selectedSensorKey = sensor ?? "total";
 	const showActionCard = date ? isToday(date) : false;
 
+	const dangerLevelColor =
+		highestDangerLevel !== null
+			? `text-${mapDangerLevelToColor(highestDangerLevel)}`
+			: null;
+
+	const attentionHeaderText =
+		highestDangerLevel !== null
+			? t(($) => $.foremanDashboard.actionCard[highestDangerLevel])
+			: null;
+
 	if (
 		isThresholdSummaryLoading ||
 		thresholdSummary === undefined ||
 		highestDangerLevel === null
 	) {
-		// TODO: replace with skeleton loading
-		return <Card>{"Loading..."}</Card>;
+		return (
+			<Card className="gap-3 p-6">
+				<Skeleton className="h-8 w-[50%] rounded-full bg-zinc-100 dark:bg-accent" />
+				<Skeleton className="mt-4 h-32 w-full rounded-xl bg-zinc-100 dark:bg-accent" />
+			</Card>
+		);
 	}
+
+	const actionCardHeader = showActionCard && (
+		<CardHeader>
+			{isSubordinatesLoading ? (
+				<Skeleton className="h-8 w-[50%] rounded-full bg-zinc-100 dark:bg-accent" />
+			) : (
+				<h2 className={cn("font-bold text-2xl", dangerLevelColor)}>
+					{attentionHeaderText}
+				</h2>
+			)}
+		</CardHeader>
+	);
 
 	return (
 		<>
-			<Card>
-				{showActionCard &&
-					(isSubordinatesLoading ? (
-						<Skeleton className="mx-auto h-8 w-[50%] rounded-md bg-zinc-100 dark:bg-accent" />
-					) : (
-						<p
-							className={`text-center text-${mapDangerLevelToColor(highestDangerLevel)} caption-bottom font-bold text-2xl`}
-						>
-							{t(
-								($) =>
-									$.foremanDashboard.actionCard[
-										highestDangerLevel
-									],
-							)}
-						</p>
-					))}
+			<Card muted className="gap-3">
+				{actionCardHeader}
 
-				<div className="grid gap-6 lg:grid-cols-3">
-					<div className="grid items-stretch gap-4 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
+				<CardContent className="gap-6">
+					<p>
+						{
+							"3 operatører er over grenseverdien i A1, Verdal (placeholder)"
+						}
+					</p>
+
+					<div className="grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
 						{!sensor && (
 							<>
 								<StatCard
-									description={t(
-										($) =>
-											$.foremanDashboard.overview
-												.statCards.danger.description,
-									)}
 									label={t(
 										($) =>
 											$.foremanDashboard.overview
 												.statCards.danger.label,
 									)}
 									onClick={() => openForStatus("danger")}
-									to="/"
 									value={
 										thresholdSummary[selectedSensorKey]
 											.danger
 									}
-								/>
+								>
+									<div className="flex flex-row items-center gap-2">
+										<LocationCard
+											zone="A1"
+											location="Verdal"
+										>
+											<SensorIcon type="noise" />
+											<SensorIcon type="dust" />
+										</LocationCard>
+									</div>
+								</StatCard>
+
 								<StatCard
-									description={t(
-										($) =>
-											$.foremanDashboard.overview
-												.statCards.warning.description,
-									)}
 									label={t(
 										($) =>
 											$.foremanDashboard.overview
 												.statCards.warning.label,
 									)}
 									onClick={() => openForStatus("warning")}
-									to="/"
 									value={
 										thresholdSummary[selectedSensorKey]
 											.warning
 									}
-								/>
+								>
+									<div className="flex flex-row items-center gap-2">
+										<LocationCard
+											zone="A1"
+											location="Verdal"
+										>
+											<SensorIcon type="dust" />
+										</LocationCard>
+
+										<LocationCard
+											zone="B9"
+											location="Sandsli"
+										>
+											<SensorIcon type="noise" />
+											<SensorIcon type="vibration" />
+										</LocationCard>
+									</div>
+								</StatCard>
+
 								<StatCard
-									description={t(
-										($) =>
-											$.foremanDashboard.overview
-												.statCards.safe.description,
-									)}
 									label={t(
 										($) =>
 											$.foremanDashboard.overview
 												.statCards.safe.label,
 									)}
-									to="/"
 									value={
 										thresholdSummary[selectedSensorKey].safe
 									}
 								/>
 							</>
 						)}
+
 						{sensor && (
 							<>
 								<ExposureRiskCard
@@ -178,7 +209,7 @@ export const AttentionCard = ({
 							</>
 						)}
 					</div>
-				</div>
+				</CardContent>
 			</Card>
 
 			{(popupStatus === "warning" || popupStatus === "danger") && (
@@ -192,3 +223,23 @@ export const AttentionCard = ({
 		</>
 	);
 };
+
+interface LocationCardProps {
+	zone: string;
+	location: string;
+	children?: React.ReactNode;
+}
+
+const LocationCard = ({ zone, location, children }: LocationCardProps) => (
+	<Card className="min-w-22 gap-2 bg-card-highlight p-2">
+		<div className="flex flex-col">
+			<p className="font-semibold text-muted-foreground text-sm">
+				{zone}
+			</p>
+			<p className="text-muted-foreground text-xs">{location}</p>
+		</div>
+		{children && (
+			<div className="flex flex-row items-center gap-2">{children}</div>
+		)}
+	</Card>
+);
