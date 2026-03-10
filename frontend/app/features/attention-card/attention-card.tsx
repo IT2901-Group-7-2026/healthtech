@@ -151,7 +151,6 @@ export const AttentionCard = ({
 											$.foremanDashboard.overview
 												.statCards.safe.label,
 									)}
-									onClick={() => openForStatus("safe")}
 									to="/"
 									value={
 										thresholdSummary[selectedSensorKey].safe
@@ -182,12 +181,14 @@ export const AttentionCard = ({
 				</div>
 			</Card>
 
-			<AtRiskPopup
-				open={selectedStatus !== null}
-				onClose={closePopup}
-				title="Workers"
-				status={popupStatus ?? "danger"}
-			/>
+			{(popupStatus === "warning" || popupStatus === "danger") && (
+				<AtRiskPopup
+					open={selectedStatus !== null}
+					onClose={closePopup}
+					title="Workers"
+					status={popupStatus}
+				/>
+			)}
 		</>
 	);
 };

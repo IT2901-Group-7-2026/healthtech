@@ -21,10 +21,12 @@ export const StatCard = ({
 }: StatCardProps) => {
 	const { t } = useTranslation();
 
+	const isHoverable = onClick !== undefined;
+
 	return (
 		<button type="button" onClick={onClick} className="w-full text-left">
 			<Card
-				hoverable
+				hoverable={isHoverable}
 				className={cn("group h-full justify-between gap-2", className)}
 			>
 				<CardContent>
@@ -41,10 +43,12 @@ export const StatCard = ({
 					</p>
 				</CardContent>
 
-				<CardFooter className="gap-1 text-muted-foreground text-xs">
-					<p>{t(($) => $.interactiveCard.viewDetails)}</p>
-					<ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
-				</CardFooter>
+				{isHoverable && (
+					<CardFooter className="gap-1 text-muted-foreground text-xs">
+						<p>{t(($) => $.interactiveCard.viewDetails)}</p>
+						<ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+					</CardFooter>
+				)}
 			</Card>
 		</button>
 	);
