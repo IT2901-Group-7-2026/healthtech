@@ -1,5 +1,6 @@
 using Backend.Data;
 using Backend.DTOs;
+using Backend.Middleware;
 using Backend.Models;
 using Backend.Records;
 using Backend.Utils;
@@ -9,29 +10,28 @@ namespace Backend.Services;
 
 public interface ISensorDataService
 {
-	Task<IEnumerable<NoiseData>> GetAllNoiseDataAsync();
-	Task<IEnumerable<SensorDataDto>> GetAggregatedDataAsync(RequestContext requestContext);
+	Task<IEnumerable<SensorDataDto>> GetAggregatedDataAsync(
+		SensorDataRequestDto request,
+		Guid? userId,
+		SensorType sensorType
+	);
 }
 
-public class SensorDataService(AppDbContext context) : ISensorDataService
+public class SensorDataService(AppDbContext context, SignedInUserContext signedInUserContext)
+	: ISensorDataService
 {
 	private readonly AppDbContext _context = context;
+	private readonly SignedInUserContext _signedInUserContext = signedInUserContext;
 
 	// TODO: Cumulative value for vibration is still being done in the frontend, but now the dangerlevel cumulation is done here which could lead to confusion.
 	// Maybe instead of always cumulate vibration, add a flag to the request to indicate if cumulation is wanted? And then do cumulation for both value and dangerlevel here?
 
-	public async Task<IEnumerable<NoiseData>> GetAllNoiseDataAsync()
-	{
-		return await _context.NoiseData.ToListAsync();
-	}
-
 	public async Task<IEnumerable<SensorDataDto>> GetAggregatedDataAsync(
-		RequestContext requestContext
+		SensorDataRequestDto request,
+		Guid? userId,
+		SensorType sensorType
 	)
 	{
-		var request = requestContext.Request;
-		var sensorType = requestContext.SensorType;
-
 		string materializedViewName = SensorUtils.GetMaterializedViewName(
 			sensorType,
 			request.Granularity
@@ -45,6 +45,11 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
 
 		DateTimeOffset startTime = request.StartTime;
 		DateTimeOffset endTime = request.EndTime;
+
+		startTime = AuthorizationUtils.ClampRequestStartDateForRole(
+			startTime.UtcDateTime,
+			_signedInUserContext?.User?.Role
+		);
 
 		string avgColumnName = SensorUtils.GetAggregateColumnName(
 			AggregationFunction.Avg,
@@ -81,7 +86,7 @@ public class SensorDataService(AppDbContext context) : ISensorDataService
 			.Where(data =>
 				data.Time >= startTime
 				&& data.Time <= endTime
-				&& (requestContext.UserId == null || data.UserId == requestContext.UserId)
+				&& (userId == null || data.UserId == userId)
 			)
 			.ToListAsync();
 

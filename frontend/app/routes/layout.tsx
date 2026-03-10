@@ -19,11 +19,8 @@ import { LanguageSelect } from "@/features/navbar/language-select.js";
 import { BellPopup } from "@/features/popups/bell-popup";
 import { usePopup } from "@/features/popups/use-popup";
 import { ProfileBadge } from "@/features/profile/profile-badge";
-import {
-	KARI_NORDMANN_ID,
-	OLA_NORDMANN_ID,
-	useUser,
-} from "@/features/user/user-context";
+import { useUser } from "@/features/user/user-context";
+import { KARI_NORDMANN_ID, OLA_NORDMANN_ID } from "@/features/user/user-utils";
 import { useView } from "@/features/views/use-view";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { TranslateFn } from "@/i18n/config.js";
