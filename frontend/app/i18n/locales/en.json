@@ -165,7 +165,6 @@
     "overview": {
       "title": "Foreman Overview",
       "statCards": {
-        "total": "Total",
         "danger": {
           "description": "Operators exceeding threshold",
           "label": "In danger",

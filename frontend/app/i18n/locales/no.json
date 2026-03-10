@@ -165,7 +165,6 @@
     "overview": {
       "title": "Foreman Oversikt",
       "statCards": {
-        "total": "Totalt",
         "danger": {
           "description": "Operatører som har overskredet grenseverdien",
           "label": "Over grenseverdi",

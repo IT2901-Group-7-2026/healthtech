@@ -13,6 +13,7 @@ import {
 	type SensorDataRequestDto,
 	type SensorDataResponseDto,
 	SensorDataResponseDtoSchema,
+	ThresholdSummarySchema,
 	UserSchema,
 	UserWithStatusSchema,
 } from "./dto";
@@ -245,3 +246,41 @@ export const useAddSubordinatesMutation = (parentUserId: string) => {
 		},
 	});
 };
+
+export const fetchThresholdSummaryQueryOptions = (
+	managerUserId: string,
+	startTime?: Date,
+	endTime?: Date,
+) =>
+	queryOptions({
+		queryKey: [
+			"user.subordinates.threshold-summary",
+			managerUserId,
+			startTime,
+			endTime,
+		],
+		queryFn: async () => {
+			const params = new URLSearchParams();
+			if (startTime) {
+				params.append("startTime", startTime.toISOString());
+			}
+			if (endTime) {
+				params.append("endTime", endTime.toISOString());
+			}
+
+			const response = await fetchWithUserId(
+				`users/${managerUserId}/subordinates/threshold-summary?${params.toString()}`,
+				{
+					method: "GET",
+				},
+			);
+
+			if (!response.ok) {
+				throw new Error("Failed to fetch threshold summary");
+			}
+
+			const json = await response.json();
+			return ThresholdSummarySchema.parseAsync(json);
+		},
+		staleTime: minutesToMilliseconds(10),
+	});
