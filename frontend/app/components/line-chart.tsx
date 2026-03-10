@@ -97,9 +97,7 @@ export function ChartLineDefault({
 	const maxDataDangerLevel = getDangerLevel(maxData, usePeakData);
 
 	return (
-		<Card className="w-full"
-			
-		>
+		<Card className="w-full">
 			<CardHeader className="flex flex-row items-center justify-between">
 				<CardTitle>{chartTitle}</CardTitle>
 				{headerRight}
@@ -216,26 +214,26 @@ export function ChartLineDefault({
 						</defs>
 						{/* Safe zone */}
 						<ReferenceArea
-						y1={minY}
-						y2={warning}
-						fill="var(--safe)"
-						fillOpacity={0.15}
+							y1={minY}
+							y2={warning}
+							fill="var(--safe)"
+							fillOpacity={0.15}
 						/>
 
 						{/* Warning zone */}
 						<ReferenceArea
-						y1={warning}
-						y2={dangerThreshold}
-						fill="var(--warning)"
-						fillOpacity={0.15}
+							y1={warning}
+							y2={dangerThreshold}
+							fill="var(--warning)"
+							fillOpacity={0.15}
 						/>
 
 						{/* Danger zone */}
 						<ReferenceArea
-						y1={dangerThreshold}
-						y2={maxY}
-						fill="var(--danger)"
-						fillOpacity={0.15}
+							y1={dangerThreshold}
+							y2={maxY}
+							fill="var(--danger)"
+							fillOpacity={0.15}
 						/>
 						<Line
 							dataKey="value"
