@@ -52,8 +52,7 @@
     "danger": "Fare: Eksponeringsgrenser overskredet den"
   },
   "daily_notes": {
-    "dayTitle": "Dagens notater",
-    "daySubtitle": "Notat for {{day}}:",
+    "dayTitle": "Dine notater for {{day}}",
     "writeHere": "Skriv her...",
     "edit": "Rediger",
     "save": "Lagre",
@@ -70,6 +69,9 @@
     "numberOfRowsSelected": "{{selected}} av {{total}} rader valgt",
     "numberOfRowsSelected_one": "{{selected}} av {{total}} rad valgt",
     "numberOfRowsSelected_other": "{{selected}} av {{total}} rader valgt"
+  },
+  "sidebar": {
+    "yourTeam": "Ditt team"
   },
   "english": "Engelsk",
   "norwegian": "Norsk",

@@ -3,6 +3,7 @@
 import { useDate } from "@/features/date-picker/use-date";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
+import { useFormatDate } from "@/hooks/use-format-date.js";
 import { createNote, notesQueryOptions, updateNote } from "@/lib/api";
 import type { Note } from "@/lib/dto";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -77,6 +78,8 @@ export const DailyNotes = ({
 		}
 	}, [data, date]);
 
+	const formatDate = useFormatDate();
+
 	if (isLoading) {
 		return (
 			<Card className="flex h-24 w-full items-center">
@@ -95,25 +98,23 @@ export const DailyNotes = ({
 
 	if (view === "day" || popUpOverride) {
 		return (
-			<Card className="max-h-96 w-full overflow-y-auto">
+			<Card muted className="max-h-96 w-full overflow-y-auto">
 				<CardHeader>
-					<h2 className="text-xl">
-						{t(($) => $.daily_notes.dayTitle)}
-					</h2>
-					<p>
-						{t(($) => $.daily_notes.daySubtitle, {
-							day: date.toLocaleDateString(locale, {
-								day: "numeric",
-								month: "long",
-							}),
+					<h2 className="text-muted-foreground text-xs uppercase tracking-wider">
+						{t(($) => $.daily_notes.dayTitle, {
+							day: formatDate(
+								date,
+								locale === "en" ? "MMMM do" : "do MMMM",
+							),
 						})}
-					</p>
+					</h2>
 				</CardHeader>
 				<CardContent>
 					{showTextArea ? (
 						<Textarea
 							placeholder={t(($) => $.daily_notes.writeHere)}
-							value={todayNote ? todayNote.note : ""}
+							value={todayNote?.note ?? ""}
+							className="min-h-15"
 							onChange={(e) =>
 								setTodayNote({
 									time: date,
@@ -131,12 +132,27 @@ export const DailyNotes = ({
 					)}
 				</CardContent>
 				<CardFooter className="justify-end gap-2">
-					<Button variant={"secondary"} onClick={handleEdit}>
-						{t(($) => $.daily_notes.edit)}
-					</Button>
-					<Button disabled={!showTextArea} onClick={handleSubmit}>
-						{t(($) => $.daily_notes.save)}
-					</Button>
+					{todayNote !== null && !showTextArea && (
+						<Button
+							size="sm"
+							variant={"secondary"}
+							onClick={handleEdit}
+						>
+							{t(($) => $.daily_notes.edit)}
+						</Button>
+					)}
+					{showTextArea && (
+						<Button
+							size="sm"
+							disabled={
+								todayNote === null ||
+								todayNote.note.trim() === ""
+							}
+							onClick={handleSubmit}
+						>
+							{t(($) => $.daily_notes.save)}
+						</Button>
+					)}
 				</CardFooter>
 			</Card>
 		);
@@ -144,7 +160,7 @@ export const DailyNotes = ({
 
 	if (view === "week") {
 		return (
-			<Card className="max-h-96 w-full overflow-y-auto">
+			<Card muted className="max-h-96 w-full overflow-y-auto">
 				<CardHeader>
 					<h2 className="text-xl">
 						{t(($) => $.daily_notes.notesFromThis)}
@@ -190,7 +206,7 @@ export const DailyNotes = ({
 
 	//month-view
 	return (
-		<Card className="max-h-96 w-full overflow-y-auto">
+		<Card muted className="max-h-96 w-full overflow-y-auto">
 			<CardHeader>
 				<h2 className="text-xl">
 					{t(($) => $.daily_notes.notesFromThis)}

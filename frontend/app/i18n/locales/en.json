@@ -52,8 +52,7 @@
     "danger": "Danger: Exposure limits exceeded on"
   },
   "daily_notes": {
-    "dayTitle": "Daily notes",
-    "daySubtitle": "Note for {{day}}:",
+    "dayTitle": "Your notes for {{day}}",
     "writeHere": "Write here...",
     "edit": "Edit",
     "save": "Save",
@@ -70,6 +69,9 @@
     "numberOfRowsSelected": "{{selected}} of {{total}} rows selected",
     "numberOfRowsSelected_one": "{{selected}} of {{total}} row selected",
     "numberOfRowsSelected_other": "{{selected}} of {{total}} rows selected"
+  },
+  "sidebar": {
+    "yourTeam": "Your team"
   },
   "english": "English",
   "norwegian": "Norwegian",

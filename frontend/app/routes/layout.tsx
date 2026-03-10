@@ -19,11 +19,8 @@ import { LanguageSelect } from "@/features/navbar/language-select.js";
 import { BellPopup } from "@/features/popups/bell-popup";
 import { usePopup } from "@/features/popups/use-popup";
 import { ProfileBadge } from "@/features/profile/profile-badge";
-import {
-	KARI_NORDMANN_ID,
-	OLA_NORDMANN_ID,
-	useUser,
-} from "@/features/user/user-context";
+import { useUser } from "@/features/user/user-context";
+import { KARI_NORDMANN_ID, OLA_NORDMANN_ID } from "@/features/user/user-utils";
 import { useView } from "@/features/views/use-view";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { TranslateFn } from "@/i18n/config.js";
@@ -140,7 +137,7 @@ export default function Layout() {
 		const aPriority = priorityUserIds.indexOf(a.id);
 		const bPriority = priorityUserIds.indexOf(b.id);
 
-		if (aPriority === -1 && bPriority === -1) {
+		if (aPriority === bPriority) {
 			return a.username.localeCompare(b.username);
 		}
 
@@ -214,7 +211,7 @@ export default function Layout() {
 					setUser={setUser}
 				/>
 
-				<header className="flex items-center justify-between p-2">
+				<header className="mx-5 my-2 flex items-center justify-between">
 					{isMobile ? mobileHeader : desktopHeader}
 
 					<div className="flex flex-row items-center gap-2">
@@ -249,7 +246,7 @@ export default function Layout() {
 					title={t(($) => $.notifications)}
 				/>
 
-				<main className="m-2 flex-col items-center justify-center">
+				<main className="m-5 items-center justify-center">
 					<Outlet />
 					{isMobile && (
 						<div className="mt-2 flex w-full justify-center p-4">
