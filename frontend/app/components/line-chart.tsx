@@ -18,6 +18,7 @@ import {
 	CartesianGrid,
 	Line,
 	LineChart,
+	ReferenceArea,
 	ReferenceLine,
 	XAxis,
 	YAxis,
@@ -113,13 +114,6 @@ export function ChartLineDefault({
 							right: 12,
 						}}
 					>
-						<rect
-							x="0"
-							y="0"
-							width="100%"
-							height="100%"
-							fill={`url(#${id}-bg)`}
-							/>
 						<CartesianGrid vertical={false} />
 						<XAxis
 							dataKey="time"
@@ -219,17 +213,30 @@ export function ChartLineDefault({
 									)
 								)}
 							</linearGradient>
-							<linearGradient id={`${id}-bg`} x1="0" y1="0.115" x2="0" y2="0.785">
-								<stop offset="0%" stopColor="var(--danger)" stopOpacity={0.15} />
-								<stop offset={getOffset(dangerThreshold)} stopColor="var(--danger)" stopOpacity={0.15} />
-
-								<stop offset={getOffset(dangerThreshold)} stopColor="var(--warning)" stopOpacity={0.15} />
-								<stop offset={getOffset(warning)} stopColor="var(--warning)" stopOpacity={0.15} />
-
-								<stop offset={getOffset(warning)} stopColor="var(--safe)" stopOpacity={0.15} />
-								<stop offset="100%" stopColor="var(--safe)" stopOpacity={0.15} />
-							</linearGradient>
 						</defs>
+						{/* Safe zone */}
+						<ReferenceArea
+						y1={minY}
+						y2={warning}
+						fill="var(--safe)"
+						fillOpacity={0.15}
+						/>
+
+						{/* Warning zone */}
+						<ReferenceArea
+						y1={warning}
+						y2={dangerThreshold}
+						fill="var(--warning)"
+						fillOpacity={0.15}
+						/>
+
+						{/* Danger zone */}
+						<ReferenceArea
+						y1={dangerThreshold}
+						y2={maxY}
+						fill="var(--danger)"
+						fillOpacity={0.15}
+						/>
 						<Line
 							dataKey="value"
 							type={lineType as CurveType}
@@ -289,8 +296,9 @@ export function ThresholdLine({
 				value: lineLabel,
 				position: "left",
 				fill: color,
-				offset: -80,
+				offset: 0,
 				dy: -10,
+				fontSize: "80%",
 			}}
 		/>
 	);
