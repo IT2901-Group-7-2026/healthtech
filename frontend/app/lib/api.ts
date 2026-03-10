@@ -272,9 +272,6 @@ export const fetchThresholdSummaryQueryOptions = (
 				`users/${managerUserId}/subordinates/threshold-summary?${params.toString()}`,
 				{
 					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
-					},
 				},
 			);
 
