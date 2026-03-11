@@ -16,6 +16,8 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
+
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { AttentionCard } from "@/features/attention-card/attention-card.js";
@@ -25,6 +27,7 @@ import { useFormatDate } from "@/hooks/use-format-date";
 import {
 	fetchSubordinatesQueryOptions,
 	fetchThresholdSummaryQueryOptions,
+	sensorQueryOptions,
 	usersQueryOptions,
 } from "@/lib/api.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
@@ -35,6 +38,10 @@ import { parseAsString, useQueryState } from "nuqs";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { PieChartCard } from "../../features/attention-card/pie-chart-card";
+import { buildSensorQuery } from "@/lib/queries";
+
+import { RadialExposureChart } from "@/components/ui/radial";
+import { thresholds } from "@/lib/thresholds";
 
 export default function ForemanOverview() {
 	const { t } = useTranslation();
@@ -47,10 +54,7 @@ export default function ForemanOverview() {
 	);
 
 	// TODO: Use this to show data for only that user
-	const [selectedUser, setSelectedUser] = useQueryState(
-		"user",
-		parseAsString,
-	);
+	const [selectedUser, setSelectedUser] = useQueryState("user", parseAsString);
 
 	const selectedDate = date ? parseISO(date) : undefined;
 
@@ -65,14 +69,54 @@ export default function ForemanOverview() {
 
 	const { data: users } = useQuery(usersQueryOptions());
 
+	const { data: dustTwa1Data } = useQuery(
+		sensorQueryOptions({
+			sensor: "dust",
+			query: {
+				startTime: startOfDay(selectedDate),
+				endTime: endOfDay(selectedDate),
+				granularity: "day",
+				function: "avg",
+				field: "pm1_twa",
+			},
+			userId: "87654321-8765-4321-8765-432187654321",
+		}),
+	);
+
+	const { data: dustTwa25Data } = useQuery(
+		sensorQueryOptions({
+			sensor: "dust",
+			query: {
+				startTime: startOfDay(selectedDate),
+				endTime: endOfDay(selectedDate),
+				granularity: "day",
+				function: "avg",
+				field: "pm25_twa",
+			},
+			userId: "87654321-8765-4321-8765-432187654321",
+		}),
+	);
+
+	const { data: dustTwa10Data } = useQuery(
+		sensorQueryOptions({
+			sensor: "dust",
+			query: {
+				startTime: startOfDay(selectedDate),
+				endTime: endOfDay(selectedDate),
+				granularity: "day",
+				function: "avg",
+				field: "pm10_twa",
+			},
+			userId: "87654321-8765-4321-8765-432187654321",
+		}),
+	);
+
 	const { data: subordinates, isLoading: isSubordinatesLoading } = useQuery(
 		fetchSubordinatesQueryOptions(user.id, startDate, endDate),
 	);
 
 	const { data: thresholdSummary, isLoading: isThresholdSummaryLoading } =
-		useQuery(
-			fetchThresholdSummaryQueryOptions(user.id, startDate, endDate),
-		);
+		useQuery(fetchThresholdSummaryQueryOptions(user.id, startDate, endDate));
 
 	const subordinateCount = subordinates?.length ?? 0;
 	const isUserComboboxDisabled = !users || users.length === 0;
@@ -113,9 +157,7 @@ export default function ForemanOverview() {
 					>
 						<ComboboxInput
 							placeholder={t(
-								($) =>
-									$.foremanDashboard.overview
-										.selectUserPlaceholder,
+								($) => $.foremanDashboard.overview.selectUserPlaceholder,
 							)}
 							showClear
 							disabled={isUserComboboxDisabled}
@@ -144,9 +186,7 @@ export default function ForemanOverview() {
 								) : (
 									<span>
 										{t(
-											($) =>
-												$.foremanDashboard.overview
-													.selectDatePlaceholder,
+											($) => $.foremanDashboard.overview.selectDatePlaceholder,
 										)}
 									</span>
 								)}
@@ -162,11 +202,7 @@ export default function ForemanOverview() {
 								}}
 								selected={selectedDate}
 								onSelect={(val) =>
-									setDate(
-										val
-											? formatDate(val, "yyyy-MM-dd")
-											: null,
-									)
+									setDate(val ? formatDate(val, "yyyy-MM-dd") : null)
 								}
 								defaultMonth={selectedDate}
 							/>
@@ -208,38 +244,28 @@ export default function ForemanOverview() {
 											data={{
 												safe: {
 													name: "Safe",
-													value: thresholdSummary[s]
-														.safe,
+													value: thresholdSummary[s].safe,
 													label: t(
 														($) =>
-															$.foremanDashboard
-																.overview
-																.statCards.safe
-																.label,
+															$.foremanDashboard.overview.statCards.safe.label,
 													),
 												},
 												warning: {
 													name: "Warning",
-													value: thresholdSummary[s]
-														.warning,
+													value: thresholdSummary[s].warning,
 													label: t(
 														($) =>
-															$.foremanDashboard
-																.overview
-																.statCards
-																.warning.label,
+															$.foremanDashboard.overview.statCards.warning
+																.label,
 													),
 												},
 												danger: {
 													name: "Danger",
-													value: thresholdSummary[s]
-														.danger,
+													value: thresholdSummary[s].danger,
 													label: t(
 														($) =>
-															$.foremanDashboard
-																.overview
-																.statCards
-																.danger.label,
+															$.foremanDashboard.overview.statCards.danger
+																.label,
 													),
 												},
 											}}
@@ -251,6 +277,37 @@ export default function ForemanOverview() {
 								)}
 						</div>
 					)}
+					{
+						selectedUser && (
+
+							<div className="flex flex-row items-center gap-8">
+						{dustTwa1Data && dustTwa1Data.length > 0 && (
+							<RadialExposureChart
+							label="PM1 TWA"
+							value={dustTwa1Data[0].value}
+							thresholdValue={thresholds["dust"].danger}
+							/>
+						)}
+
+						{dustTwa25Data && dustTwa25Data.length > 0 && (
+							<RadialExposureChart
+							label="PM2.5 TWA"
+							
+							value={dustTwa25Data[0].value}
+							thresholdValue={thresholds["dust"].danger}
+							/>
+						)}
+
+						{dustTwa10Data && dustTwa10Data.length > 0 && (
+							<RadialExposureChart
+							label="PM10 TWA"
+							value={dustTwa10Data[0].value}
+							thresholdValue={thresholds["dust"].danger}
+							/>
+						)}
+					</div>
+						)
+					}
 				</div>
 			</div>
 		</div>
