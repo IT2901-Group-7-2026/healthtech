@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
+import { useTheme } from "@/features/dark-mode/use-theme";
 import { useDate } from "@/features/date-picker/use-date";
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { sensors } from "@/features/sensor-picker/sensors";
@@ -9,7 +10,7 @@ import type { DangerLevel } from "@/lib/danger-levels";
 import type { AllSensors } from "@/lib/dto";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, Cell, XAxis, YAxis, ReferenceLine } from "recharts";
 
 // the chart data is always the same, we only change the colors based on exposure data
 const generateChartData = (): Array<Record<string, Sensor>> =>
@@ -79,6 +80,9 @@ export function DailyBarChart({
 	const domainMax = totalHours * 10;
 	const ticks = Array.from({ length: totalHours + 1 }, (_, i) => i * 10);
 
+	const { theme } = useTheme();
+	const color = theme === "dark" ? "white" : "black";
+
 	return (
 		<Card className="w-full">
 			<CardHeader className="flex flex-row items-center justify-between">
@@ -88,6 +92,16 @@ export function DailyBarChart({
 			<CardContent>
 				<ChartContainer config={chartConfig}>
 					<BarChart data={generateChartData()} layout="vertical">
+						{/* Vertical lines at each hour */}
+						{ticks.map((tick, idx) => (
+  <ReferenceLine
+    key={`ref-${idx}`}
+    x={tick}
+    stroke="var(--muted-foreground)"
+    strokeWidth={1}
+    strokeDasharray="3 3" // optional, makes dashed lines
+  />
+))}
 						<XAxis
 							type="number"
 							domain={[0, domainMax]}
@@ -95,6 +109,7 @@ export function DailyBarChart({
 							tickFormatter={(value) =>
 								`${startHour + value / 10}:00`
 							}
+							tick={{ fill: color}}
 						/>
 						<YAxis
 							dataKey="sensor"
@@ -105,13 +120,14 @@ export function DailyBarChart({
 							tickFormatter={(value) =>
 								t(($) => $.overview[value as Sensor])
 							}
+							tick={{fill: color}}
 						/>
 						{hourKeys.map((key) => (
 							<Bar
 								key={key}
 								dataKey={key}
 								stackId="a"
-								stroke={"var(--muted-foreground)"} // Tailwind + theme aware
+								stroke={color} // Tailwind + theme aware
 								strokeWidth={0.1}
 							>
 								{generateChartData().map((entry, index) => {
