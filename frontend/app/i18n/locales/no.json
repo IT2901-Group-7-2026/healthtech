@@ -111,7 +111,8 @@
     "warning": "En eksponeringsgrense var nær å bli brutt",
     "danger": "Eksponeringsgrense ble brutt",
     "openDaily": "Se detaljer for informasjon om eksponeringstype",
-    "eventTitle": "{{day}}, fra {{start}} til {{end}}"
+    "eventTitle": "{{day}}, fra {{start}} til {{end}}",
+    "notifTitle": "Notifikasjon mottatt {{date}}"
   },
   "profile": {
     "title": "Profil",
