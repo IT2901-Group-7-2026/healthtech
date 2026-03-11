@@ -7,15 +7,15 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import { useFormatDate } from "@/hooks/use-format-date";
 import type { User } from "@/lib/dto.js";
 import { userRoleToString } from "@/lib/utils.js";
-import { addWeeks, isBefore, startOfDay } from "date-fns";
+import { isBefore } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { BasePopup } from "./base-popup";
-import { useFormatDate } from "@/hooks/use-format-date";
 
 interface ProfilePopupProps {
 	user: User;
@@ -34,7 +34,7 @@ export function ProfilePopup({
 	avatarSrc,
 	children,
 }: ProfilePopupProps) {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const title = t(($) => $.profile.title);
 
 	const tempListOfRegulations = ["Safety boots", "Helmet", "Protective mask"];
@@ -56,7 +56,11 @@ export function ProfilePopup({
 	const format = useFormatDate();
 
 	const onSubmit = (data: FormValues) => {
-		if (data.fromDate && data.toDate && isBefore(data.toDate, data.fromDate)) {
+		if (
+			data.fromDate &&
+			data.toDate &&
+			isBefore(data.toDate, data.fromDate)
+		) {
 			form.setError("toDate", {
 				message: t(($) => $.popup.invalidDate),
 			});
