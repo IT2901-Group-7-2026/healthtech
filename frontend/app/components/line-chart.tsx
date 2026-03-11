@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/chart";
 import { useTheme } from "@/features/dark-mode/use-theme";
 import { useDate } from "@/features/date-picker/use-date";
-import type { DangerLevel } from "@/lib/danger-levels";
+import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
@@ -98,7 +98,10 @@ export function ChartLineDefault({
 	const maxDataDangerLevel = getDangerLevel(maxData, usePeakData);
 
 	const { theme } = useTheme();
-	const color = theme === "dark" ? "rgb(205, 205, 205)" : "rgb(50, 50, 50)";
+	const color =
+		theme === "dark"
+			? "oklch(90% 0.019 276.296)"
+			: "oklch(35% 0.015 286.067)";
 
 	return (
 		<Card className="w-full">
@@ -221,7 +224,7 @@ export function ChartLineDefault({
 							y1={minY}
 							y2={warning}
 							fill="var(--safe)"
-							fillOpacity={0.15}
+							fillOpacity={0.08}
 						/>
 
 						{/* Warning zone */}
@@ -229,7 +232,7 @@ export function ChartLineDefault({
 							y1={warning}
 							y2={dangerThreshold}
 							fill="var(--warning)"
-							fillOpacity={0.15}
+							fillOpacity={0.08}
 						/>
 
 						{/* Danger zone */}
@@ -237,13 +240,13 @@ export function ChartLineDefault({
 							y1={dangerThreshold}
 							y2={maxY}
 							fill="var(--danger)"
-							fillOpacity={0.15}
+							fillOpacity={0.08}
 						/>
 						<Line
 							dataKey="value"
 							type={lineType as CurveType}
 							stroke={`url(#${id})`}
-							strokeWidth={2}
+							strokeWidth={1.25}
 							dot={false}
 							activeDot={(props) => (
 								<Dot
@@ -287,8 +290,7 @@ export function ThresholdLine({
 	label?: string;
 }) {
 	const { t } = useTranslation();
-	const { theme } = useTheme();
-	const color = theme === "dark" ? "white" : "black";
+	const color = `var(--${DangerLevels[dangerLevel].color})`;
 	const lineLabel = label ?? t(($) => $.line_chart[dangerLevel]);
 	return (
 		<ReferenceLine
