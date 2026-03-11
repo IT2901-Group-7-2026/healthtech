@@ -113,7 +113,7 @@
     "openDaily": "See details for information about type of exposure",
     "eventTitle": "{{day}}, from {{start}} to {{end}}",
     "notifTitle": "Notification received {{date}}",
-    "deleteData": "Delete my data",
+    "deleteData": "Delete data",
     "dataDeleted": "Data successfully deleted from",
     "to": "to",
     "from": "from",

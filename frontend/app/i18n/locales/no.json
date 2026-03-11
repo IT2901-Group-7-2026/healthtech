@@ -113,7 +113,7 @@
     "openDaily": "Se detaljer for informasjon om eksponeringstype",
     "eventTitle": "{{day}}, fra {{start}} til {{end}}",
     "notifTitle": "Notifikasjon mottatt {{date}}",
-    "deleteData": "Slett min data",
+    "deleteData": "Slett data",
     "dataDeleted": "Personlig data slettet fra",
     "to": "til",
     "from": "fra",

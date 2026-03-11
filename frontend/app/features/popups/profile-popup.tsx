@@ -9,12 +9,13 @@ import {
 } from "@/components/ui/popover";
 import type { User } from "@/lib/dto.js";
 import { userRoleToString } from "@/lib/utils.js";
-import { addWeeks, format, startOfDay } from "date-fns";
+import { addWeeks, isBefore, startOfDay } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { BasePopup } from "./base-popup";
+import { useFormatDate } from "@/hooks/use-format-date";
 
 interface ProfilePopupProps {
 	user: User;
@@ -52,9 +53,10 @@ export function ProfilePopup({
 
 	const fromDate = form.watch("fromDate");
 	const toDate = form.watch("toDate");
+	const format = useFormatDate();
 
 	const onSubmit = (data: FormValues) => {
-		if (data.fromDate && data.toDate && data.toDate < data.fromDate) {
+		if (data.fromDate && data.toDate && isBefore(data.toDate, data.fromDate)) {
 			form.setError("toDate", {
 				message: t(($) => $.popup.invalidDate),
 			});
@@ -68,7 +70,7 @@ export function ProfilePopup({
 		}, 15000);
 	};
 
-	const minSelectableDate = startOfDay(addWeeks(new Date(), -1));
+	const minSelectableDate = new Date(2024, 0, 1);
 	const maxSelectableDate = new Date();
 
 	const [fromCalendarOpen, setFromCalendarOpen] = useState(false);
@@ -148,7 +150,7 @@ export function ProfilePopup({
 									<Button
 										type="submit"
 										disabled={!(fromDate && toDate)}
-										className="h-8 w-28 text-sm"
+										className="h-8 w-25 text-sm"
 									>
 										{t(($) => $.popup.deleteData)}
 									</Button>
@@ -170,12 +172,12 @@ export function ProfilePopup({
 															data-empty={
 																!field.value
 															}
-															className="h-8 w-20 justify-between text-left font-normal text-sm data-[empty=true]:text-muted-foreground"
+															className="h-8 w-25 justify-between text-left font-normal text-sm data-[empty=true]:text-muted-foreground"
 														>
 															{fromDate
 																? format(
 																		fromDate,
-																		"dd.MM",
+																		"dd.MM.yy",
 																	)
 																: t(
 																		($) =>
@@ -227,12 +229,12 @@ export function ProfilePopup({
 															data-empty={
 																!field.value
 															}
-															className="h-8 w-20 justify-between text-left font-normal text-sm data-[empty=true]:text-muted-foreground"
+															className="h-8 w-24 justify-between text-left font-normal text-sm data-[empty=true]:text-muted-foreground"
 														>
 															{toDate
 																? format(
 																		toDate,
-																		"dd.MM",
+																		"dd.MM.yy",
 																	)
 																: t(
 																		($) =>
@@ -276,23 +278,9 @@ export function ProfilePopup({
 									{deleteText && fromDate && toDate && (
 										<div className="text-green-700 text-sm">
 											{t(($) => $.popup.dataDeleted)}{" "}
-											{fromDate.toLocaleDateString(
-												i18n.language,
-												{
-													day: "numeric",
-													month: "long",
-													year: "numeric",
-												},
-											)}{" "}
+											{format(fromDate, "d MMMM yyyy")}{" "}
 											{t(($) => $.popup.to)}{" "}
-											{toDate.toLocaleDateString(
-												i18n.language,
-												{
-													day: "numeric",
-													month: "long",
-													year: "numeric",
-												},
-											)}
+											{format(toDate, "d MMMM yyyy")}
 										</div>
 									)}
 								</div>
