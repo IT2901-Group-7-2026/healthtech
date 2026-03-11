@@ -7,6 +7,7 @@ import { getNextDay, getPrevDay } from "@/lib/utils";
 import { Button } from "@/ui/button";
 import { t } from "i18next";
 import { Outlet } from "react-router";
+import { useLocation } from "react-router";
 
 function Title({ sensor }: { sensor: Sensor }) {
 	return (
@@ -19,11 +20,12 @@ function Title({ sensor }: { sensor: Sensor }) {
 	);
 }
 
-export default function SensorLayout({ sensor }: { sensor: Sensor }) {
+export default function SensorLayout() {
 	const { date, setDate } = useDate();
 	const { view } = useView();
 
-	//TODO: useMatches/useLocation to get sensor from url
+	const location = useLocation();
+	const sensor = location.pathname.split("/")[2] as Sensor;
 
 	return (
 		<section className="flex w-full flex-col">
