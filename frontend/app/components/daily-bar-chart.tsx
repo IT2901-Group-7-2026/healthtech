@@ -79,6 +79,44 @@ export function DailyBarChart({
 	const domainMax = totalHours * 10;
 	const ticks = Array.from({ length: totalHours + 1 }, (_, i) => i * 10);
 
+	function cssVarToRgb(variable: string): [number, number, number] {
+  const value = getComputedStyle(document.documentElement)
+    .getPropertyValue(variable)
+    .trim();
+
+  const ctx = document.createElement("canvas").getContext("2d")!;
+  ctx.fillStyle = value;
+  const computed = ctx.fillStyle;
+
+  const match = computed.match(/\d+/g);
+  return [
+    Number(match?.[0] ?? 0),
+    Number(match?.[1] ?? 0),
+    Number(match?.[2] ?? 0),
+  ];
+}
+
+function interpolateColor(value: number) {
+  const safe = cssVarToRgb("--safe");
+  const warn = cssVarToRgb("--warning");
+  const danger = cssVarToRgb("--danger");
+
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+  if (value <= 1) {
+    const t = value;
+    return `rgb(${lerp(safe[0], warn[0], t)},
+                ${lerp(safe[1], warn[1], t)},
+                ${lerp(safe[2], warn[2], t)})`;
+  }
+
+  const t = value - 1;
+
+  return `rgb(${lerp(warn[0], danger[0], t)},
+              ${lerp(warn[1], danger[1], t)},
+              ${lerp(warn[2], danger[2], t)})`;
+}
+
 	return (
 		<Card className="w-full">
 			<CardHeader className="flex flex-row items-center justify-between">
@@ -111,55 +149,95 @@ export function DailyBarChart({
 								key={key}
 								dataKey={key}
 								stackId="a"
-								stroke={"var(--muted-foreground)"} // Tailwind + theme aware
-								strokeWidth={1}
+								// stroke={"var(--muted-foreground)"} // Tailwind + theme aware
+								// strokeWidth={1}
+								stroke="none"
 							>
-								{generateChartData().map((entry, index) => {
-									const sensor = entry.sensor;
-									const i = Number(key);
+{generateChartData().map((entry, index) => {
+  const sensor = entry.sensor;
+  const i = Number(key);
+  const levels = hourlyDangerLevels[sensor];
 
-									let color = chartConfig[key].color;
-									if (
-										hourlyDangerLevels[sensor][i] ===
-										"danger"
-									) {
-										color = "var(--danger)";
-									} else if (
-										hourlyDangerLevels[sensor][i] ===
-										"warning"
-									) {
-										color = "var(--warning)";
-									} else if (
-										hourlyDangerLevels[sensor][i] === "safe"
-									) {
-										color = "var(--safe)";
-									}
-									if (color === `var(--card)`) {
-										// Non-active cell, No data
-										return (
-											<Cell
-												key={`cell-${index}-${key}`}
-												fill={color}
-											/>
-										);
-									}
-									return (
-										// Active cell, has data, interactable
-										<Cell
-											onClick={() =>
-												navigate({
-													pathname: entry.sensor,
-													search: `?view=Day&date=${date.toISOString().split("T")[0]}`,
-												})
-											}
-											key={`cell-${index}-${key}`}
-											fill={color}
-											className={
-												"cursor-pointer hover:brightness-90 active:brightness-90"
-											}
-										/>
-									);
-								})}
+  const dangerValue: Record<string, number> = {
+    safe: 0,
+    warning: 1,
+    danger: 2,
+  };
+
+  function getBlendedLevel(
+    levels: (DangerLevel | null)[],
+    i: number
+  ) {
+    const neighbors = [
+  levels[i - 1],
+  levels[i],
+  levels[i],
+  levels[i],
+  levels[i + 1],
+]
+      .filter(Boolean)
+      .map((l) => dangerValue[l as DangerLevel]);
+
+    if (neighbors.length === 0) return null;
+
+    return (
+      neighbors.reduce((a, b) => a + b, 0) /
+      neighbors.length
+    );
+  }
+
+  function interpolateColor(value: number) {
+    const safe = [34, 197, 94];
+    const warn = [245, 158, 11];
+    const danger = [239, 68, 68];
+
+    if (value <= 1) {
+      const t = value;
+      return `rgb(${safe[0] + (warn[0] - safe[0]) * t},
+                  ${safe[1] + (warn[1] - safe[1]) * t},
+                  ${safe[2] + (warn[2] - safe[2]) * t})`;
+    }
+
+    const t = value - 1;
+
+    return `rgb(${warn[0] + (danger[0] - warn[0]) * t},
+                ${warn[1] + (danger[1] - warn[1]) * t},
+                ${warn[2] + (danger[2] - warn[2]) * t})`;
+  }
+
+  let color = chartConfig[key].color;
+
+  const blended = getBlendedLevel(levels, i);
+
+  if (blended !== null) {
+    color = interpolateColor(blended);
+  }
+
+  if (color === `var(--card)`) {
+    return (
+      <Cell
+        key={`cell-${index}-${key}`}
+        fill={color}
+      />
+    );
+  }
+
+  return (
+    <Cell
+      onClick={() =>
+        navigate({
+          pathname: entry.sensor,
+          search: `?view=Day&date=${
+            date.toISOString().split("T")[0]
+          }`,
+        })
+      }
+      key={`cell-${index}-${key}`}
+      fill={color}
+      className="cursor-pointer hover:brightness-90 active:brightness-90"
+    />
+  );
+})}
 							</Bar>
 						))}
 					</BarChart>
