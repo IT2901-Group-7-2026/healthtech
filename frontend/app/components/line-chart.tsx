@@ -97,6 +97,9 @@ export function ChartLineDefault({
 
 	const maxDataDangerLevel = getDangerLevel(maxData, usePeakData);
 
+	const { theme } = useTheme();
+	const color = theme === "dark" ? "rgb(205, 205, 205)" : "rgb(50, 50, 50)";
+
 	return (
 		<Card className="w-full">
 			<CardHeader className="flex flex-row items-center justify-between">
@@ -188,25 +191,25 @@ export function ChartLineDefault({
 												offset={getOffset(
 													dangerThreshold,
 												)}
-												stopColor="var(--danger)"
+												stopColor={color}
 											/>
 											<stop
 												offset={getOffset(
 													dangerThreshold,
 												)}
-												stopColor="var(--warning)"
+												stopColor={color}
 											/>
 											<stop
 												offset={getOffset(warning)}
-												stopColor="var(--warning)"
+												stopColor={color}
 											/>
 											<stop
 												offset={getOffset(warning)}
-												stopColor="var(--safe)"
+												stopColor={color}
 											/>
 											<stop
 												offset="100%"
-												stopColor="var(--safe)"
+												stopColor={color}
 											/>
 										</>
 									)
