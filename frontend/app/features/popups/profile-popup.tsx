@@ -1,16 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Card } from "@/components/ui/card";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
 import type { User } from "@/lib/dto.js";
 import { userRoleToString } from "@/lib/utils.js";
-import { addWeeks, format, startOfDay } from "date-fns";
-import { ChevronDownIcon } from "lucide-react";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BasePopup } from "./base-popup";
 
@@ -31,21 +20,10 @@ export function ProfilePopup({
 	avatarSrc,
 	children,
 }: ProfilePopupProps) {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const title = t(($) => $.profile.title);
 
 	const tempListOfRegulations = ["Safety boots", "Helmet", "Protective mask"];
-	const [selectedDate] = useState<Date | undefined>();
-
-	const minSelectableDate = startOfDay(addWeeks(new Date(), -1));
-	const maxSelectableDate = new Date();
-	const [fromDate, setFromDate] = useState<Date | undefined>();
-	const [toDate, setToDate] = useState<Date | undefined>();
-
-	const [fromCalendarOpen, setFromCalendarOpen] = useState(false);
-	const [toCalendarOpen, setToCalendarOpen] = useState(false);
-	const [deleteText, setDeleteText] = useState(false);
-	const isInvalidRange = !(fromDate && toDate) || toDate < fromDate;
 
 	return (
 		<BasePopup
@@ -112,114 +90,6 @@ export function ProfilePopup({
 						<p>{user.jobDescription}</p>
 					</div>
 				</div>
-				<Card className="p-4">
-					<div className="flex flex-col gap-2">
-						<div className="flex flex-wrap items-center gap-2">
-							<Button
-								onClick={() => {
-									setDeleteText(true);
-
-									setTimeout(() => {
-										setDeleteText(false);
-									}, 15000);
-								}}
-								disabled={isInvalidRange}
-								className="h-8 w-30 text-sm"
-							>
-								{t(($) => $.popup.deleteData)}
-							</Button>
-							{t(($) => $.popup.from)}
-							<Popover
-								open={fromCalendarOpen}
-								onOpenChange={setFromCalendarOpen}
-							>
-								<PopoverTrigger asChild>
-									<Button
-										variant={"outline"}
-										data-empty={!selectedDate}
-										className="h-8 w-20 justify-between text-left font-normal text-sm data-[empty=true]:text-muted-foreground"
-									>
-										{fromDate
-											? format(fromDate, "dd.MM")
-											: t(($) => $.popup.select)}
-										<ChevronDownIcon data-icon="inline-end" />
-									</Button>
-								</PopoverTrigger>
-								<PopoverContent
-									className="w-auto p-0"
-									align="start"
-								>
-									<Calendar
-										mode="single"
-										selected={fromDate}
-										onSelect={(val) => {
-											setFromDate(val);
-											setFromCalendarOpen(false);
-										}}
-										disabled={{
-											before: minSelectableDate,
-											after: maxSelectableDate,
-										}}
-									/>
-								</PopoverContent>
-							</Popover>
-							{t(($) => $.popup.to)}
-							<Popover
-								open={toCalendarOpen}
-								onOpenChange={setToCalendarOpen}
-							>
-								<PopoverTrigger asChild>
-									<Button
-										variant={"outline"}
-										data-empty={!selectedDate}
-										className="h-8 w-20 justify-between text-left font-normal data-[empty=true]:text-muted-foreground"
-									>
-										{toDate
-											? format(toDate, "dd.MM")
-											: t(($) => $.popup.date)}
-										<ChevronDownIcon data-icon="inline-end" />
-									</Button>
-								</PopoverTrigger>
-								<PopoverContent
-									className="w-auto p-0"
-									align="start"
-								>
-									<Calendar
-										mode="single"
-										selected={toDate}
-										onSelect={(val) => {
-											setToDate(val);
-											setToCalendarOpen(false);
-										}}
-										disabled={{
-											before: minSelectableDate,
-											after: maxSelectableDate,
-										}}
-									/>
-								</PopoverContent>
-							</Popover>
-							{deleteText && fromDate && toDate && (
-								<div className="text-green-700 text-sm">
-									{t(($) => $.popup.dataDeleted)}{" "}
-									{fromDate.toLocaleDateString(
-										i18n.language,
-										{
-											day: "numeric",
-											month: "long",
-											year: "numeric",
-										},
-									)}{" "}
-									{t(($) => $.popup.to)}{" "}
-									{toDate.toLocaleDateString(i18n.language, {
-										day: "numeric",
-										month: "long",
-										year: "numeric",
-									})}
-								</div>
-							)}
-						</div>
-					</div>
-				</Card>
 			</div>
 		</BasePopup>
 	);
