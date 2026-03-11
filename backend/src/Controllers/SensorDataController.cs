@@ -26,8 +26,7 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
 			return BadRequest("StartTime must be earlier than EndTime.");
 		}
 
-		var requestContext = new RequestContext(request, userId, sensorType);
-		var response = await _sensorDataService.GetAggregatedDataAsync(requestContext);
+		var response = await _sensorDataService.GetAggregatedDataAsync(request, userId, sensorType);
 		return Ok(response);
 	}
 }

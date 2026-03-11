@@ -41,8 +41,8 @@ public class UserController(IUserService _userService, IUserStatusService _userS
 		List<User> subordinates = await _userService.GetSubordinatesAsync(managerId);
 
 		// Default to current day if no time range is provided
-		var start = startTime ?? DateTime.UtcNow.Date;
-		var end = endTime ?? DateTime.UtcNow.Date.AddDays(1).AddTicks(-1);
+		DateTime start = startTime ?? DateTime.UtcNow.Date;
+		DateTime end = endTime ?? DateTime.UtcNow.Date.AddDays(1).AddTicks(-1);
 
 		IEnumerable<UserStatusDto> userStatuses = await _userStatusService.GetStatusForUsersInRange(
 			subordinates.Select(u => u.Id),
@@ -62,6 +62,71 @@ public class UserController(IUserService _userService, IUserStatusService _userS
 			.ToList();
 
 		return dtos;
+	}
+
+	[HttpGet("{managerId}/subordinates/threshold-summary")]
+	public async Task<
+		ActionResult<Dictionary<string, SensorThresholdSummaryDto>>
+	> GetSubordinatesThresholdStatus(
+		Guid managerId,
+		[FromQuery] DateTime? startTime,
+		[FromQuery] DateTime? endTime
+	)
+	{
+		List<User> subordinates = await _userService.GetSubordinatesAsync(managerId);
+		if (subordinates.Count == 0)
+		{
+			return Ok(new Dictionary<string, SensorThresholdSummaryDto>());
+		}
+
+		var start = startTime ?? DateTime.UtcNow.Date;
+		var end = endTime ?? DateTime.UtcNow.Date.AddDays(1).AddTicks(-1);
+
+		IEnumerable<UserStatusDto> userStatuses = await _userStatusService.GetStatusForUsersInRange(
+			subordinates.Select(u => u.Id),
+			start,
+			end
+		);
+
+		var summary = new Dictionary<string, SensorThresholdSummaryDto>(
+			StringComparer.OrdinalIgnoreCase
+		)
+		{
+			["noise"] = new SensorThresholdSummaryDto(),
+			["dust"] = new SensorThresholdSummaryDto(),
+			["vibration"] = new SensorThresholdSummaryDto(),
+			["total"] = new SensorThresholdSummaryDto(),
+		};
+
+		// Helper function to safely increment the correct bucket
+		void IncrementBucket(SensorThresholdSummaryDto counts, DangerLevel? level)
+		{
+			switch (level)
+			{
+				case DangerLevel.Safe:
+					counts.Safe++;
+					break;
+				case DangerLevel.Warning:
+					counts.Warning++;
+					break;
+				case DangerLevel.Danger:
+					counts.Danger++;
+					break;
+			}
+		}
+
+		foreach (var status in userStatuses)
+		{
+			IncrementBucket(summary["noise"], status.Noise?.dangerLevel);
+			IncrementBucket(summary["dust"], status.Dust?.dangerLevel);
+			IncrementBucket(summary["vibration"], status.Vibration?.dangerLevel);
+
+			IncrementBucket(summary["total"], status.Noise?.dangerLevel);
+			IncrementBucket(summary["total"], status.Dust?.dangerLevel);
+			IncrementBucket(summary["total"], status.Vibration?.dangerLevel);
+		}
+
+		return Ok(summary);
 	}
 
 	[HttpPost]

@@ -1,4 +1,5 @@
 using Backend.DTOs;
+using Backend.Middleware;
 using Backend.Models;
 using Backend.Utils;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,8 @@ public interface IUserStatusService
 
 public record UserAggRow(Guid UserId, double? Value, double? MaxValue);
 
-public class UserStatusService(AppDbContext _context) : IUserStatusService
+public class UserStatusService(AppDbContext _context, SignedInUserContext _signedInUserContext)
+	: IUserStatusService
 {
 	public async Task<IEnumerable<UserStatusDto>> GetStatusForUsersInRange(
 		IEnumerable<Guid> userIds,
@@ -29,6 +31,11 @@ public class UserStatusService(AppDbContext _context) : IUserStatusService
 		{
 			return [];
 		}
+
+		startTime = AuthorizationUtils.ClampRequestStartDateForRole(
+			startTime,
+			_signedInUserContext?.User?.Role
+		);
 
 		DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
 

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Backend.Middleware;
 using Backend.Services;
 using Backend.Utils;
 using Backend.Validation;
@@ -62,6 +63,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 	options.UseNpgsql(builder.Configuration.GetValue<string>("DATABASE_URL"))
 );
 
+builder.Services.AddScoped<SignedInUserContext>();
 builder.Services.AddScoped<ISensorDataService, SensorDataService>();
 builder.Services.AddScoped<ValidateFieldForSensorTypeFilter>();
 builder.Services.AddScoped<INoteDataService, NoteDataService>();
@@ -69,6 +71,8 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserStatusService, UserStatusService>();
 
 var app = builder.Build();
+
+app.UseMiddleware<SignedInUserMiddleware>();
 
 // Migrate database during startup
 using (var scope = app.Services.CreateScope())

@@ -129,3 +129,21 @@ export const createLocationName = (location: Location) =>
 
 export type Aggregation = "average" | "peak";
 export const Aggregations: Array<Aggregation> = ["average", "peak"];
+
+export const SensorThresholdSummarySchema = z.object({
+	safe: z.int().nonnegative(),
+	warning: z.int().nonnegative(),
+	danger: z.int().nonnegative(),
+});
+
+export const ThresholdSummarySchema = z.object({
+	total: SensorThresholdSummarySchema,
+	dust: SensorThresholdSummarySchema,
+	vibration: SensorThresholdSummarySchema,
+	noise: SensorThresholdSummarySchema,
+} satisfies Record<Sensor | "total", unknown>);
+
+export type SensorThresholdSummary = z.infer<
+	typeof SensorThresholdSummarySchema
+>;
+export type ThresholdSummary = z.infer<typeof ThresholdSummarySchema>;
