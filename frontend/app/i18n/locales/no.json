@@ -114,7 +114,9 @@
     "deleteData": "Slett min data",
     "dataDeleted": "Personlig data slettet fra",
     "to": "til",
-    "from": "fra"
+    "from": "fra",
+    "select": "velg",
+    "date": "dato"
   },
   "profile": {
     "title": "Profil",

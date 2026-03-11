@@ -114,7 +114,9 @@
     "deleteData": "Delete my data",
     "dataDeleted": "Data successfully deleted from",
     "to": "to",
-    "from": "from"
+    "from": "from",
+    "select": "select",
+    "date": "date"
   },
   "profile": {
     "title": "Profile",
