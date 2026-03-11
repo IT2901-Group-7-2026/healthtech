@@ -6,8 +6,7 @@ import { ViewPicker } from "@/features/views/view-picker";
 import { getNextDay, getPrevDay } from "@/lib/utils";
 import { Button } from "@/ui/button";
 import { t } from "i18next";
-import { Outlet } from "react-router";
-import { useLocation } from "react-router";
+import { Outlet, useLocation } from "react-router";
 
 function Title({ sensor }: { sensor: Sensor }) {
 	return (
