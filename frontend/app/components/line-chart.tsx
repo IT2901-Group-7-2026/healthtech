@@ -6,8 +6,9 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useTheme } from "@/features/dark-mode/use-theme";
 import { useDate } from "@/features/date-picker/use-date";
-import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
+import type { DangerLevel } from "@/lib/danger-levels";
 import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
@@ -18,6 +19,7 @@ import {
 	CartesianGrid,
 	Line,
 	LineChart,
+	ReferenceArea,
 	ReferenceLine,
 	XAxis,
 	YAxis,
@@ -211,6 +213,29 @@ export function ChartLineDefault({
 								)}
 							</linearGradient>
 						</defs>
+						{/* Safe zone */}
+						<ReferenceArea
+							y1={minY}
+							y2={warning}
+							fill="var(--safe)"
+							fillOpacity={0.15}
+						/>
+
+						{/* Warning zone */}
+						<ReferenceArea
+							y1={warning}
+							y2={dangerThreshold}
+							fill="var(--warning)"
+							fillOpacity={0.15}
+						/>
+
+						{/* Danger zone */}
+						<ReferenceArea
+							y1={dangerThreshold}
+							y2={maxY}
+							fill="var(--danger)"
+							fillOpacity={0.15}
+						/>
 						<Line
 							dataKey="value"
 							type={lineType as CurveType}
@@ -259,7 +284,8 @@ export function ThresholdLine({
 	label?: string;
 }) {
 	const { t } = useTranslation();
-	const color = `var(--${DangerLevels[dangerLevel].color})`;
+	const { theme } = useTheme();
+	const color = theme === "dark" ? "white" : "black";
 	const lineLabel = label ?? t(($) => $.line_chart[dangerLevel]);
 	return (
 		<ReferenceLine
@@ -270,8 +296,9 @@ export function ThresholdLine({
 				value: lineLabel,
 				position: "left",
 				fill: color,
-				offset: -80,
-				dy: -10,
+				offset: 10,
+				dy: -12,
+				fontSize: "75%",
 			}}
 		/>
 	);
