@@ -118,7 +118,8 @@
     "to": "to",
     "from": "from",
     "select": "select",
-    "date": "date"
+    "date": "date",
+    "invalidDate": "End date must be after start date"
   },
   "profile": {
     "title": "Profile",

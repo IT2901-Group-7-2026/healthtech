@@ -118,7 +118,8 @@
     "to": "til",
     "from": "fra",
     "select": "velg",
-    "date": "dato"
+    "date": "dato",
+    "invalidDate": "Sluttdato må være etter startdato"
   },
   "profile": {
     "title": "Profil",
