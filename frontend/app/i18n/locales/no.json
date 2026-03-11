@@ -110,7 +110,11 @@
     "danger": "Eksponeringsgrense ble brutt",
     "openDaily": "Se detaljer for informasjon om eksponeringstype",
     "eventTitle": "{{day}}, fra {{start}} til {{end}}",
-    "notifTitle": "Notifikasjon mottatt {{date}}"
+    "notifTitle": "Notifikasjon mottatt {{date}}",
+    "deleteData": "Slett min data",
+    "dataDeleted": "Personlig data slettet fra",
+    "to": "til",
+    "from": "fra"
   },
   "profile": {
     "title": "Profil",
