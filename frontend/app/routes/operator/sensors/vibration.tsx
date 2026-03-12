@@ -22,6 +22,7 @@ import { computeYAxisRange, makeCumulative } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { useQueryState } from "nuqs";
+import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
@@ -32,6 +33,7 @@ export default function Vibration() {
 	const { date } = useDate();
 	const { user } = useUser();
 	const { exportToPDF } = useExportPDF();
+	const chartContainerId = useId();
 
 	const sensor: Sensor = "vibration";
 
@@ -121,8 +123,7 @@ export default function Vibration() {
 				) : (
 					<div className="w-full">
 						<div className="mb-2 flex justify-end"></div>
-						{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
-						<div id="vibration-chart-container">
+						<div id={chartContainerId}>
 							<ChartLineDefault
 								chartData={makeCumulative(data)}
 								chartTitle={date.toLocaleDateString(
@@ -146,7 +147,7 @@ export default function Vibration() {
 										variant="outline"
 										onClick={() =>
 											exportToPDF(
-												"vibration-chart-container",
+												chartContainerId,
 												`${date.toLocaleDateString(
 													i18n.language,
 													{

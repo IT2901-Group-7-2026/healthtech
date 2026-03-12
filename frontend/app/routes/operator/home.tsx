@@ -21,7 +21,7 @@ import type { AllSensors } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/queries";
 import { getNextDay, getPrevDay } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import Dust from "./sensors/dust";
 import Noise from "./sensors/noise";
@@ -35,6 +35,10 @@ export default function OperatorHome() {
 	const translatedView = t(($) => $.overview[view]);
 	const { date, setDate } = useDate();
 	const { exportMultipleToPDF } = useExportPDF();
+
+	const pdfDustChartContainerId = useId();
+	const pdfVibrationChartContainerId = useId();
+	const pdfNoiseChartContainerId = useId();
 
 	const { user } = useUser();
 
@@ -172,9 +176,9 @@ export default function OperatorHome() {
 											onClick={() =>
 												exportMultipleToPDF(
 													[
-														"dust-chart-container",
-														"vibration-chart-container",
-														"noise-chart-container",
+														pdfDustChartContainerId,
+														pdfVibrationChartContainerId,
+														pdfNoiseChartContainerId,
 													],
 													`${date.toLocaleDateString(
 														i18n.language,
@@ -202,9 +206,7 @@ export default function OperatorHome() {
 					</div>
 				</div>
 			</div>
-			{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
 			<div
-				id="full-report-container"
 				style={{
 					position: "fixed",
 					top: "-9999px",
@@ -213,18 +215,15 @@ export default function OperatorHome() {
 					background: "white",
 				}}
 			>
-				{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
-				<div id="dust-chart-container">
+				<div id={pdfDustChartContainerId}>
 					<Dust />
 				</div>
 
-				{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
-				<div id="vibration-chart-container">
+				<div id={pdfVibrationChartContainerId}>
 					<Vibration />
 				</div>
 
-				{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
-				<div id="noise-chart-container">
+				<div id={pdfNoiseChartContainerId}>
 					<Noise />
 				</div>
 			</div>
