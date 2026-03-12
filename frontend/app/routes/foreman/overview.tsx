@@ -40,7 +40,7 @@ import { useTranslation } from "react-i18next";
 import { PieChartCard } from "../../features/attention-card/pie-chart-card";
 import { buildSensorQuery } from "@/lib/queries";
 
-import { RadialExposureChart } from "@/components/ui/radial";
+import { DustChart } from "@/components/ui/dust-chart";
 import { thresholds } from "@/lib/thresholds";
 
 export default function ForemanOverview() {
@@ -282,7 +282,7 @@ export default function ForemanOverview() {
 
 							<div className="flex flex-row items-center gap-8">
 						{dustTwa1Data && dustTwa1Data.length > 0 && (
-							<RadialExposureChart
+							<DustChart
 							label="PM1 TWA"
 							value={dustTwa1Data[0].value}
 							thresholdValue={thresholds["dust"].danger}
@@ -290,7 +290,7 @@ export default function ForemanOverview() {
 						)}
 
 						{dustTwa25Data && dustTwa25Data.length > 0 && (
-							<RadialExposureChart
+							<DustChart
 							label="PM2.5 TWA"
 							
 							value={dustTwa25Data[0].value}
@@ -299,7 +299,7 @@ export default function ForemanOverview() {
 						)}
 
 						{dustTwa10Data && dustTwa10Data.length > 0 && (
-							<RadialExposureChart
+							<DustChart
 							label="PM10 TWA"
 							value={dustTwa10Data[0].value}
 							thresholdValue={thresholds["dust"].danger}

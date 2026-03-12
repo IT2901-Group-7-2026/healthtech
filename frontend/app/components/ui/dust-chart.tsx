@@ -1,6 +1,7 @@
 import { ChartContainer } from "@/components/ui/chart";
 import { Pie, PieChart } from "recharts";
 import { Card } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 
 interface Props {
 	value: number;
@@ -9,12 +10,16 @@ interface Props {
 	label?: string;
 }
 // NOTE: This is just a proof of concept. The code will be rewritten completely later on.
-export function RadialExposureChart({
+export function DustChart({
 	value,
 	thresholdValue,
-	unit = "μg/m3",
+	unit,
 	label,
 }: Props) {
+	const { t } = useTranslation();
+	const resolvedUnit = unit ?? t(($) => $.dust_y_axis);
+	const resolvedLabel = label ?? t(($) => $.dust);
+
 	const min = 0;
 	const max = thresholdValue;
 
@@ -27,8 +32,8 @@ export function RadialExposureChart({
 
 	const angle = 180 - percent * 180;
 
-	const needleInnerOffset = 36;
-	const needleLength = radius + 9;
+	const needleInnerOffset = 52;
+	const needleLength = radius + 1;
 
 	const needleRadians = (Math.PI / 180) * angle;
 
@@ -39,7 +44,7 @@ export function RadialExposureChart({
 	const y2 = cy - needleLength * Math.sin(needleRadians);
 
 	return (
-		<Card className= "w-fit">
+		<Card className="w-fit">
 			<div className="relative h-[170px] w-[200px]">
 				<ChartContainer config={{}} className="h-full w-full">
 					<PieChart width={200} height={170}>
@@ -99,7 +104,8 @@ export function RadialExposureChart({
 						y1={y1}
 						x2={x2}
 						y2={y2}
-						stroke="#a1a1aa"
+						stroke="currentColor"
+						className="text-foreground"
 						strokeWidth={4}
 						strokeLinecap="round"
 					/>
@@ -108,7 +114,7 @@ export function RadialExposureChart({
 						x={cx}
 						y={92}
 						textAnchor="middle"
-						className=" text-[16px] font-bold"
+						className="fill-current text-[16px] font-bold text-foreground"
 					>
 						{clampedValue.toFixed(2)}
 					</text>
@@ -117,14 +123,14 @@ export function RadialExposureChart({
 						x={cx}
 						y={112}
 						textAnchor="middle"
-						className=" text-[10px] font-medium"
+						className="fill-current text-[10px] font-medium text-muted-foreground"
 					>
-						{unit}
+						{resolvedUnit}
 					</text>
 				</svg>
 			</div>
 
-			<div className="mt-2 text-sm font-medium ">{label}</div>
+			<div className="mt-2 w-full text-center text-sm font-medium">{resolvedLabel}</div>
 		</Card>
 	);
 }
