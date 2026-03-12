@@ -1,8 +1,14 @@
+import type { Sensor } from "@/lib/sensors.js";
 import { cn } from "@/lib/utils.js";
-import { EarIcon, SprayCanIcon, VibrateIcon } from "lucide-react";
+import {
+	EarIcon,
+	type LucideIcon,
+	SprayCanIcon,
+	VibrateIcon,
+} from "lucide-react";
 import { Badge } from "./ui/badge.js";
 
-const iconConfig = {
+const iconConfig: Record<Sensor, { icon: LucideIcon; className: string }> = {
 	noise: {
 		icon: EarIcon,
 		className: "bg-violet-400/50 dark:bg-violet-600/50",
@@ -18,7 +24,7 @@ const iconConfig = {
 };
 
 interface SensorIconProps {
-	type: "noise" | "dust" | "vibration";
+	type: Sensor;
 	value?: string | number;
 }
 
