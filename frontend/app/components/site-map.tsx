@@ -178,7 +178,11 @@ export function SiteMap({
 						>
 							<Tooltip direction="top">
 								{isUsersAnonymized
-									? "Anonymous operator"
+									? t(
+											($) =>
+												$.foremanDashboard.siteMap
+													.anonymousOperator,
+										)
 									: operator.username}
 							</Tooltip>
 

@@ -201,7 +201,8 @@
       "noData": "Ingen data tilgjengelig"
     },
     "siteMap": {
-      "title": "Områdekart"
+      "title": "Områdekart",
+      "anonymousOperator": "Anonym operatør"
     }
   },
   "user": {
