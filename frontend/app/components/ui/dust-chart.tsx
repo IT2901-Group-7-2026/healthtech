@@ -9,6 +9,7 @@ interface Props {
 	unit?: string;
 	label?: string;
 }
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 // NOTE: This is just a proof of concept. The code will be rewritten completely later on.
 export function DustChart({
 	value,
