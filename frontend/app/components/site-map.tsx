@@ -24,8 +24,9 @@ type ImageSize = {
 };
 
 const PIN_SIZE = 30;
-// NOTE:
-const PIN_EDGE_PADDING = 120;
+// NOTE: This is only necessary because the example image doesn't have more space outside the boundaries of the relevant zone.
+// When we get real images of the aker sites we can remove this.
+const PIN_EDGE_PADDING = 130;
 
 /// Generates a deterministic position for a user based on their id for demo purposes
 function getPositionFromUserId(
@@ -133,7 +134,7 @@ export function SiteMap({
 		<Card className="overflow-hidden">
 			<CardHeader>
 				<h2 className="text-muted-foreground text-xs uppercase tracking-wider">
-					Site map
+					{t(($) => $.foremanDashboard.siteMap.title)}
 				</h2>
 			</CardHeader>
 			<CardContent
@@ -176,18 +177,14 @@ export function SiteMap({
 							}}
 						>
 							<Tooltip direction="top">
-								{isUsersAnonymized
-									? "Anonymous operator"
-									: operator.username}
+								{isUsersAnonymized ? "Anonymous operator" : operator.username}
 							</Tooltip>
 
 							{isUsersClickable && (
 								<Popup>
-									<div className="font-semibold">
-										{operator.username}
-									</div>
+									<div className="font-semibold">{operator.username}</div>
 									<div>
-										{"Status"}:{" "}
+										{"Status: "}
 										{t(($) => $[operator.status.status])}
 									</div>
 								</Popup>
