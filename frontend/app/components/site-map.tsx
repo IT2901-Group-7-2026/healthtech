@@ -4,6 +4,7 @@ import L, { type LatLngBoundsExpression } from "leaflet";
 import { UserIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { renderToString } from "react-dom/server";
+import { useTranslation } from "react-i18next";
 import {
 	ImageOverlay,
 	MapContainer,
@@ -12,6 +13,7 @@ import {
 	Tooltip,
 } from "react-leaflet";
 import seedrandom from "seedrandom";
+import { Card, CardContent, CardHeader } from "./ui/card";
 import { Skeleton } from "./ui/skeleton";
 
 type MapMode = "operator" | "foreman";
@@ -22,6 +24,8 @@ type ImageSize = {
 };
 
 const PIN_SIZE = 30;
+// NOTE:
+const PIN_EDGE_PADDING = 120;
 
 /// Generates a deterministic position for a user based on their id for demo purposes
 function getPositionFromUserId(
@@ -30,15 +34,14 @@ function getPositionFromUserId(
 	height: number,
 ): [number, number] {
 	// Padding to keep the pins inside the edges of the image
-	const padding = PIN_SIZE;
-	const safeWidth = Math.max(1, width - padding * 2);
-	const safeHeight = Math.max(1, height - padding * 2);
+	const safeWidth = Math.max(1, width - PIN_EDGE_PADDING * 2);
+	const safeHeight = Math.max(1, height - PIN_EDGE_PADDING * 2);
 
 	const rndX = seedrandom(`${userId}-x`);
 	const rndY = seedrandom(`${userId}-y`);
 
-	const x = padding + rndX() * safeWidth;
-	const y = padding + rndY() * safeHeight;
+	const x = PIN_EDGE_PADDING + rndX() * safeWidth;
+	const y = PIN_EDGE_PADDING + rndY() * safeHeight;
 
 	// Leaflet coordinate system is [y, x]
 	return [y, x];
@@ -96,6 +99,7 @@ export function SiteMap({
 	imageUrl = "/factory_arial_view.jpg",
 }: SiteMapProps) {
 	const imageSize = useImageSize(imageUrl);
+	const { t } = useTranslation();
 
 	const isUsersAnonymized = mode === "operator";
 	const isUsersClickable = mode === "foreman";
@@ -116,7 +120,7 @@ export function SiteMap({
 		[],
 	);
 
-	if (!imageSize || !bounds) {
+	if (!(imageSize && bounds)) {
 		return (
 			<Skeleton
 				className="w-full rounded-xl bg-muted"
@@ -126,55 +130,72 @@ export function SiteMap({
 	}
 
 	return (
-		<div
-			className="w-full overflow-hidden rounded-xl"
-			style={{ aspectRatio: `${imageSize.width} / ${imageSize.height}` }}
-		>
-			<MapContainer
-				crs={L.CRS.Simple}
-				bounds={bounds}
-				maxBounds={bounds}
-				maxBoundsViscosity={1.0}
-				minZoom={1}
-				maxZoom={2}
+		<Card className="overflow-hidden">
+			<CardHeader>
+				<h2 className="text-muted-foreground text-xs uppercase tracking-wider">
+					Site map
+				</h2>
+			</CardHeader>
+			<CardContent
+				className="w-full rounded-xl"
 				style={{
-					height: "100%",
-					width: "100%",
-					background: "var(--card-background)",
+					aspectRatio: `${imageSize.width} / ${imageSize.height}`,
 				}}
 			>
-				<ImageOverlay url={imageUrl} bounds={bounds} />
+				<MapContainer
+					crs={L.CRS.Simple}
+					bounds={bounds}
+					maxBounds={bounds}
+					maxBoundsViscosity={1.0}
+					minZoom={-1}
+					maxZoom={2}
+					zoomSnap={0}
+					style={{
+						height: "100%",
+						width: "100%",
+						background: "var(--card-background)",
+					}}
+				>
+					<ImageOverlay url={imageUrl} bounds={bounds} />
 
-				{operators.map((operator) => (
-					<Marker
-						key={operator.id}
-						position={getPositionFromUserId(
-							operator.id,
-							imageSize.width,
-							imageSize.height,
-						)}
-						icon={iconsByDangerLevel[operator.status.status]}
-						eventHandlers={{
-							click: () => {
-								if (isUsersClickable) {
-									onUserClick?.(operator.id);
-								}
-							},
-						}}
-					>
-						<Tooltip direction="top">
-							{isUsersAnonymized ? "Anonymous operator" : operator.username}
-						</Tooltip>
+					{operators.map((operator) => (
+						<Marker
+							key={operator.id}
+							position={getPositionFromUserId(
+								operator.id,
+								imageSize.width,
+								imageSize.height,
+							)}
+							icon={iconsByDangerLevel[operator.status.status]}
+							eventHandlers={{
+								click: () => {
+									if (isUsersClickable) {
+										onUserClick?.(operator.id);
+									}
+								},
+							}}
+						>
+							<Tooltip direction="top">
+								{isUsersAnonymized
+									? "Anonymous operator"
+									: operator.username}
+							</Tooltip>
 
-						{isUsersClickable && (
-							<Popup>
-								<div className="font-bold">{operator.username}</div>
-								<div>Status: {operator.status.status}</div>
-							</Popup>
-						)}
-					</Marker>
-				))}
-			</MapContainer>
-		</div>
+							{isUsersClickable && (
+								<Popup>
+									<div className="font-semibold">
+										{operator.username}
+									</div>
+									<div>
+										{"Status"}:{" "}
+										{t(($) => $[operator.status.status])}
+									</div>
+								</Popup>
+							)}
+						</Marker>
+					))}
+				</MapContainer>
+			</CardContent>
+		</Card>
 	);
 }

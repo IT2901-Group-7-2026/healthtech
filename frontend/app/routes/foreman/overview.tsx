@@ -176,10 +176,10 @@ export default function ForemanOverview() {
 				</div>
 			</Card>
 			<div className="flex w-full flex-row gap-6">
-				<SiteMap operators={subordinates ?? []} />
 				<aside className="flex flex-col gap-6 md:w-1/5">
 					<TeamSummary subordinateCount={subordinateCount} />
 					<DailyNotes />
+					<SiteMap operators={subordinates ?? []} />
 				</aside>
 				<div className="flex flex-col gap-12 md:w-3/5">
 					<AttentionCard
