@@ -73,8 +73,8 @@ export default function ForemanOverview() {
 		sensorQueryOptions({
 			sensor: "dust",
 			query: {
-				startTime: startOfDay(selectedDate),
-				endTime: endOfDay(selectedDate),
+				startTime: startOfDay(selectedDate ?? new Date()),
+				endTime: endOfDay(selectedDate ?? new Date()),
 				granularity: "day",
 				function: "avg",
 				field: "pm1_twa",
@@ -87,8 +87,8 @@ export default function ForemanOverview() {
 		sensorQueryOptions({
 			sensor: "dust",
 			query: {
-				startTime: startOfDay(selectedDate),
-				endTime: endOfDay(selectedDate),
+				startTime: startOfDay(selectedDate ?? new Date()),
+				endTime: endOfDay(selectedDate ?? new Date()),
 				granularity: "day",
 				function: "avg",
 				field: "pm25_twa",
@@ -101,8 +101,8 @@ export default function ForemanOverview() {
 		sensorQueryOptions({
 			sensor: "dust",
 			query: {
-				startTime: startOfDay(selectedDate),
-				endTime: endOfDay(selectedDate),
+				startTime: startOfDay(selectedDate ?? new Date()),
+				endTime: endOfDay(selectedDate ?? new Date()),
 				granularity: "day",
 				function: "avg",
 				field: "pm10_twa",
