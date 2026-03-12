@@ -199,6 +199,10 @@
     "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",
       "noData": "Ingen data tilgjengelig"
+    },
+    "siteMap": {
+      "title": "Områdekart",
+      "anonymousOperator": "Anonym operatør"
     }
   },
   "user": {

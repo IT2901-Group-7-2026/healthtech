@@ -199,6 +199,10 @@
     "userStatusChart": {
       "xAxisLabel": "Percentage of exposure limit",
       "noData": "No data available"
+    },
+    "siteMap": {
+      "title": "Site map",
+      "anonymousOperator": "Anonymous operator"
     }
   },
   "user": {

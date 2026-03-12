@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
 import { DailyNotes } from "@/components/daily-notes.js";
+import { SiteMap } from "@/components/site-map";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
@@ -174,13 +175,12 @@ export default function ForemanOverview() {
 					</Popover>
 				</div>
 			</Card>
-
 			<div className="flex w-full flex-row gap-6">
 				<aside className="flex flex-col gap-6 md:w-1/5">
 					<TeamSummary subordinateCount={subordinateCount} />
 					<DailyNotes />
+					<SiteMap operators={subordinates ?? []} />
 				</aside>
-
 				<div className="flex flex-col gap-12 md:w-3/5">
 					<AttentionCard
 						subordinates={subordinates}

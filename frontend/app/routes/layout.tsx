@@ -39,6 +39,7 @@ import {
 	useLocation,
 	useNavigate,
 } from "react-router";
+import "leaflet/dist/leaflet.css";
 
 const Logo = () => (
 	<svg
