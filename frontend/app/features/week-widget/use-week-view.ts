@@ -90,8 +90,8 @@ export function useWeekView({
 	};
 
 	const daysInWeek = eachDayOfInterval({
-		start: startOfWeek(selectedDay),
-		end: addDays(startOfWeek(selectedDay), 6),
+		start: startOfWeek(selectedDay, { weekStartsOn }),
+		end: addDays(startOfWeek(selectedDay, { weekStartsOn }), 6),
 	});
 
 	const timeSlotSegments = daysInWeek.map((day) => {

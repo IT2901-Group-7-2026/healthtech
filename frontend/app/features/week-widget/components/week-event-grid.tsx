@@ -1,6 +1,12 @@
 import { DangerLevels } from "@/lib/danger-levels";
 import { cn } from "@/lib/utils";
-import { type Day, getDay, getMinutes, isSameWeek } from "date-fns";
+import {
+	type Day,
+	differenceInCalendarDays,
+	getMinutes,
+	isSameWeek,
+	startOfWeek,
+} from "date-fns";
 import type { TimeSlotSegments, WeekEvent } from "../types";
 
 export function WeekEventGrid({
@@ -33,7 +39,9 @@ export function WeekEventGrid({
 			{(events || [])
 				.filter(
 					(event) =>
-						isSameWeek(days[0].date, event.startDate) &&
+						isSameWeek(days[0].date, event.startDate, {
+							weekStartsOn,
+						}) &&
 						event.endDate.getUTCHours() <= dayEndHour &&
 						event.startDate.getUTCHours() >= dayStartHour,
 				)
@@ -61,7 +69,12 @@ export function WeekEventGrid({
 								gridRowStart: start,
 								gridRowEnd: end,
 								gridColumnStart:
-									getDay(event.startDate) - weekStartsOn + 2,
+									differenceInCalendarDays(
+										event.startDate,
+										startOfWeek(event.startDate, {
+											weekStartsOn,
+										}),
+									) + 2,
 								gridColumnEnd: "span 1",
 							}}
 						>
