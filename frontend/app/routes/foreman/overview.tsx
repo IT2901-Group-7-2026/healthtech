@@ -12,6 +12,7 @@ import {
 	ComboboxItem,
 	ComboboxList,
 } from "@/components/ui/combobox";
+import { DustChart } from "@/components/ui/dust-chart";
 import {
 	Popover,
 	PopoverContent,
@@ -26,9 +27,11 @@ import { useFormatDate } from "@/hooks/use-format-date";
 import {
 	fetchSubordinatesQueryOptions,
 	fetchThresholdSummaryQueryOptions,
+	sensorQueryOptions,
 	usersQueryOptions,
 } from "@/lib/api.js";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
+import { thresholds } from "@/lib/thresholds";
 import { useQuery } from "@tanstack/react-query";
 import { addWeeks, endOfDay, parseISO, startOfDay } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
@@ -37,6 +40,7 @@ import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { PieChartCard } from "../../features/attention-card/pie-chart-card";
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const formatDate = useFormatDate();
@@ -65,6 +69,48 @@ export default function ForemanOverview() {
 	const { user } = useUser();
 
 	const { data: users } = useQuery(usersQueryOptions());
+
+	const { data: dustTwa1Data } = useQuery(
+		sensorQueryOptions({
+			sensor: "dust",
+			query: {
+				startTime: startOfDay(selectedDate ?? new Date()),
+				endTime: endOfDay(selectedDate ?? new Date()),
+				granularity: "day",
+				function: "avg",
+				field: "pm1_twa",
+			},
+			userId: "87654321-8765-4321-8765-432187654321",
+		}),
+	);
+
+	const { data: dustTwa25Data } = useQuery(
+		sensorQueryOptions({
+			sensor: "dust",
+			query: {
+				startTime: startOfDay(selectedDate ?? new Date()),
+				endTime: endOfDay(selectedDate ?? new Date()),
+				granularity: "day",
+				function: "avg",
+				field: "pm25_twa",
+			},
+			userId: "87654321-8765-4321-8765-432187654321",
+		}),
+	);
+
+	const { data: dustTwa10Data } = useQuery(
+		sensorQueryOptions({
+			sensor: "dust",
+			query: {
+				startTime: startOfDay(selectedDate ?? new Date()),
+				endTime: endOfDay(selectedDate ?? new Date()),
+				granularity: "day",
+				function: "avg",
+				field: "pm10_twa",
+			},
+			userId: "87654321-8765-4321-8765-432187654321",
+		}),
+	);
 
 	const { data: subordinates, isLoading: isSubordinatesLoading } = useQuery(
 		fetchSubordinatesQueryOptions(user.id, startDate, endDate),
@@ -249,6 +295,33 @@ export default function ForemanOverview() {
 										/>
 									) : null,
 								)}
+						</div>
+					)}
+					{selectedUser && (
+						<div className="flex flex-row items-center gap-8">
+							{dustTwa1Data && dustTwa1Data.length > 0 && (
+								<DustChart
+									label="PM1 TWA"
+									value={dustTwa1Data[0].value}
+									thresholdValue={thresholds.dust.danger}
+								/>
+							)}
+
+							{dustTwa25Data && dustTwa25Data.length > 0 && (
+								<DustChart
+									label="PM2.5 TWA"
+									value={dustTwa25Data[0].value}
+									thresholdValue={thresholds.dust.danger}
+								/>
+							)}
+
+							{dustTwa10Data && dustTwa10Data.length > 0 && (
+								<DustChart
+									label="PM10 TWA"
+									value={dustTwa10Data[0].value}
+									thresholdValue={thresholds.dust.danger}
+								/>
+							)}
 						</div>
 					)}
 				</div>
