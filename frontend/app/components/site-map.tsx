@@ -1,7 +1,8 @@
 import { type DangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
-import L from "leaflet";
+import L, { type LatLngBoundsExpression } from "leaflet";
 import { UserIcon } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { renderToString } from "react-dom/server";
 import {
 	ImageOverlay,
@@ -10,32 +11,36 @@ import {
 	Popup,
 	Tooltip,
 } from "react-leaflet";
+import seedrandom from "seedrandom";
+import { Skeleton } from "./ui/skeleton";
 
 type MapMode = "operator" | "foreman";
 
-const bounds: [[number, number], [number, number]] = [
-	[0, 0],
-	[1000, 1000],
-];
+type ImageSize = {
+	width: number;
+	height: number;
+};
 
+const PIN_SIZE = 30;
+
+/// Generates a deterministic position for a user based on their id for demo purposes
 function getPositionFromUserId(
-	id: string,
-	width = 1000,
-	height = 1000,
+	userId: string,
+	width: number,
+	height: number,
 ): [number, number] {
-	let hash = 0;
-	for (let i = 0; i < id.length; i++) {
-		hash = (hash << 5) - hash + id.charCodeAt(i);
-		hash |= 0;
-	}
+	// Padding to keep the pins inside the edges of the image
+	const padding = PIN_SIZE;
+	const safeWidth = Math.max(1, width - padding * 2);
+	const safeHeight = Math.max(1, height - padding * 2);
 
-	const margin = 50;
-	const ySeed = Math.abs((hash * 9301 + 49297) % 233280);
+	const rndX = seedrandom(`${userId}-x`);
+	const rndY = seedrandom(`${userId}-y`);
 
-	const x = margin + Math.abs(hash % (width - margin * 2));
-	const y = margin + Math.abs(ySeed % (height - margin * 2));
+	const x = padding + rndX() * safeWidth;
+	const y = padding + rndY() * safeHeight;
 
-	// leaflet uses [y, x]
+	// Leaflet coordinate system is [y, x]
 	return [y, x];
 }
 
@@ -47,68 +52,127 @@ function getUserIcon(dangerLevel: DangerLevel) {
 	return L.divIcon({
 		className: "",
 		html: `
-		<div class="flex h-[30px] w-[30px] items-center justify-center rounded-full border-[3px] border-white shadow-lg bg-${mapDangerLevelToColor(dangerLevel)}">
+		<div class="flex h-[${PIN_SIZE}px] w-[${PIN_SIZE}px] items-center justify-center rounded-full border-[3px] border-white shadow-lg bg-${mapDangerLevelToColor(dangerLevel)}">
 			${userSvg}
 		</div>
 	`,
-		iconSize: [30, 30],
-		iconAnchor: [15, 15],
+		iconSize: [PIN_SIZE, PIN_SIZE],
+		iconAnchor: [PIN_SIZE / 2, PIN_SIZE / 2],
 	});
+}
+
+function useImageSize(imageUrl: string) {
+	const [imageSize, setImageSize] = useState<ImageSize | null>(null);
+
+	useEffect(() => {
+		const image = new Image();
+
+		image.onload = () => {
+			setImageSize({
+				width: image.naturalWidth,
+				height: image.naturalHeight,
+			});
+		};
+
+		image.src = imageUrl;
+	}, [imageUrl]);
+
+	return imageSize;
 }
 
 type SiteMapProps = {
 	mode?: MapMode;
 	onUserClick?: (userId: string) => void;
 	operators: Array<UserWithStatusDto>;
+	imageUrl?: string;
 };
 
 export function SiteMap({
 	mode = "foreman",
 	onUserClick,
 	operators,
+	imageUrl = "/factory_arial_view.jpg",
 }: SiteMapProps) {
-	const anonymizeUsers = mode === "operator";
-	const isUserClickable = mode === "foreman";
+	const imageSize = useImageSize(imageUrl);
+
+	const isUsersAnonymized = mode === "operator";
+	const isUsersClickable = mode === "foreman";
+
+	const bounds: LatLngBoundsExpression | undefined = imageSize
+		? [
+				[0, 0],
+				[imageSize.height, imageSize.width],
+			]
+		: undefined;
+
+	const iconsByDangerLevel = useMemo(
+		() => ({
+			safe: getUserIcon("safe"),
+			warning: getUserIcon("warning"),
+			danger: getUserIcon("danger"),
+		}),
+		[],
+	);
+
+	if (!imageSize || !bounds) {
+		return (
+			<Skeleton
+				className="w-full rounded-xl bg-muted"
+				style={{ aspectRatio: "16 / 9" }}
+			/>
+		);
+	}
 
 	return (
-		<MapContainer
-			crs={L.CRS.Simple}
-			bounds={bounds}
-			maxBounds={bounds}
-			maxBoundsViscosity={1.0}
-			minZoom={-2}
-			maxZoom={2}
-			style={{ height: "600px", width: "100%", background: "#0f172a" }}
+		<div
+			className="w-full overflow-hidden rounded-xl"
+			style={{ aspectRatio: `${imageSize.width} / ${imageSize.height}` }}
 		>
-			<ImageOverlay url="/factory_arial_view.jpg" bounds={bounds} />
+			<MapContainer
+				crs={L.CRS.Simple}
+				bounds={bounds}
+				maxBounds={bounds}
+				maxBoundsViscosity={1.0}
+				minZoom={1}
+				maxZoom={2}
+				style={{
+					height: "100%",
+					width: "100%",
+					background: "var(--card-background)",
+				}}
+			>
+				<ImageOverlay url={imageUrl} bounds={bounds} />
 
-			{operators.map((operator) => (
-				<Marker
-					key={operator.id}
-					position={getPositionFromUserId(operator.id)}
-					icon={getUserIcon(operator.status.status)}
-					eventHandlers={{
-						click: () => {
-							if (isUserClickable) {
-								onUserClick?.(operator.id);
-							}
-						},
-					}}
-				>
-					<Tooltip direction="top" offset={[0, -12]} opacity={1}>
-						{anonymizeUsers ? "Anonymous operator" : operator.username}
-					</Tooltip>
+				{operators.map((operator) => (
+					<Marker
+						key={operator.id}
+						position={getPositionFromUserId(
+							operator.id,
+							imageSize.width,
+							imageSize.height,
+						)}
+						icon={iconsByDangerLevel[operator.status.status]}
+						eventHandlers={{
+							click: () => {
+								if (isUsersClickable) {
+									onUserClick?.(operator.id);
+								}
+							},
+						}}
+					>
+						<Tooltip direction="top" offset={[0, -(PIN_SIZE / 2)]}>
+							{isUsersAnonymized ? "Anonymous operator" : operator.username}
+						</Tooltip>
 
-					{isUserClickable && (
-						<Popup>
-							<div>
-								<div style={{ fontWeight: 600 }}>{operator.username}</div>
+						{isUsersClickable && (
+							<Popup>
+								<div className="font-bold">{operator.username}</div>
 								<div>Status: {operator.status.status}</div>
-							</div>
-						</Popup>
-					)}
-				</Marker>
-			))}
-		</MapContainer>
+							</Popup>
+						)}
+					</Marker>
+				))}
+			</MapContainer>
+		</div>
 	);
 }
