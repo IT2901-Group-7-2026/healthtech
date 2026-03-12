@@ -52,12 +52,14 @@ function getUserIcon(dangerLevel: DangerLevel) {
 	return L.divIcon({
 		className: "",
 		html: `
-		<div class="flex h-[${PIN_SIZE}px] w-[${PIN_SIZE}px] items-center justify-center rounded-full border-[3px] border-white shadow-lg bg-${mapDangerLevelToColor(dangerLevel)}">
+		<div class="flex h-full w-full items-center justify-center rounded-full border-[3px] border-white shadow-lg bg-${mapDangerLevelToColor(dangerLevel)}">
 			${userSvg}
 		</div>
 	`,
 		iconSize: [PIN_SIZE, PIN_SIZE],
 		iconAnchor: [PIN_SIZE / 2, PIN_SIZE / 2],
+		tooltipAnchor: [0, -(PIN_SIZE / 2)],
+		popupAnchor: [0, -(PIN_SIZE / 3)],
 	});
 }
 
@@ -160,7 +162,7 @@ export function SiteMap({
 							},
 						}}
 					>
-						<Tooltip direction="top" offset={[0, -(PIN_SIZE / 2)]}>
+						<Tooltip direction="top">
 							{isUsersAnonymized ? "Anonymous operator" : operator.username}
 						</Tooltip>
 
