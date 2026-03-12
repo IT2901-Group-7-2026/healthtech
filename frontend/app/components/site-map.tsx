@@ -177,12 +177,16 @@ export function SiteMap({
 							}}
 						>
 							<Tooltip direction="top">
-								{isUsersAnonymized ? "Anonymous operator" : operator.username}
+								{isUsersAnonymized
+									? "Anonymous operator"
+									: operator.username}
 							</Tooltip>
 
 							{isUsersClickable && (
 								<Popup>
-									<div className="font-semibold">{operator.username}</div>
+									<div className="font-semibold">
+										{operator.username}
+									</div>
 									<div>
 										{"Status: "}
 										{t(($) => $[operator.status.status])}
