@@ -21,6 +21,7 @@ import { thresholds } from "@/lib/thresholds";
 import { computeYAxisRange } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
+import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
@@ -28,8 +29,10 @@ export default function Dust() {
 	const { view } = useView();
 	const { date } = useDate();
 	const { t, i18n } = useTranslation();
+	const locale = i18n.language;
 	const { user } = useUser();
 	const { exportToPDF } = useExportPDF();
+	const chartContainerId = useId();
 
 	const sensor: Sensor = "dust";
 
@@ -94,7 +97,7 @@ export default function Dust() {
 					/>
 				) : view === "week" ? (
 					<WeekWidget
-						locale={getLocale(i18n.language)}
+						locale={getLocale(locale)}
 						dayStartHour={8}
 						dayEndHour={16}
 						weekStartsOn={1}
@@ -104,7 +107,7 @@ export default function Dust() {
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">
 						<CardTitle>
-							{date.toLocaleDateString(i18n.language, {
+							{date.toLocaleDateString(locale, {
 								day: "numeric",
 								month: "long",
 								year: "numeric",
@@ -114,18 +117,14 @@ export default function Dust() {
 					</Card>
 				) : (
 					<div className="w-full">
-						{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
-						<div id="dust-chart-container">
+						<div id={chartContainerId}>
 							<ChartLineDefault
 								chartData={data ?? []}
-								chartTitle={date.toLocaleDateString(
-									i18n.language,
-									{
-										day: "numeric",
-										month: "long",
-										year: "numeric",
-									},
-								)}
+								chartTitle={date.toLocaleDateString(locale, {
+									day: "numeric",
+									month: "long",
+									year: "numeric",
+								})}
 								unit={t(($) => $.dust_y_axis)}
 								startHour={8}
 								endHour={16}
@@ -139,16 +138,16 @@ export default function Dust() {
 										variant="outline"
 										onClick={() =>
 											exportToPDF(
-												"dust-chart-container",
+												chartContainerId,
 												`${date.toLocaleDateString(
-													i18n.language,
+													locale,
 													{
 														day: "numeric",
 														month: "long",
 														year: "numeric",
 													},
 												)}-${user.username}-Dust-Exposure-Overview`,
-												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(locale)}`,
 											)
 										}
 									>

@@ -28,6 +28,7 @@ import { computeYAxisRange } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
+import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
@@ -38,6 +39,7 @@ export default function Noise() {
 	const { date } = useDate();
 	const { user } = useUser();
 	const { exportToPDF } = useExportPDF();
+	const chartContainerId = useId();
 
 	const parseAsAggregation = parseAsStringLiteral(Aggregations);
 
@@ -160,8 +162,7 @@ export default function Noise() {
 				) : (
 					<div className="w-full">
 						<div className="mb-2 flex justify-end"></div>
-						{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
-						<div id="noise-chart-container">
+						<div id={chartContainerId}>
 							<AggregationTabs
 								aggregation={aggregation}
 								setAggregation={setAggregation}
@@ -190,7 +191,7 @@ export default function Noise() {
 											variant="outline"
 											onClick={() =>
 												exportToPDF(
-													"noise-chart-container",
+													chartContainerId,
 													`${date.toLocaleDateString(
 														i18n.language,
 														{
