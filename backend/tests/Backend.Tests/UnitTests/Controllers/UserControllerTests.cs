@@ -9,6 +9,17 @@ namespace Backend.Tests.UnitTests.Controllers;
 
 public class UserControllerTests
 {
+	private readonly Mock<IUserService> _mockUserService;
+	private readonly Mock<IUserStatusService> _mockUserStatusService;
+	private readonly UserController _controller;
+
+	public UserControllerTests()
+	{
+		_mockUserService = new Mock<IUserService>();
+		_mockUserStatusService = new Mock<IUserStatusService>();
+		_controller = new UserController(_mockUserService.Object, _mockUserStatusService.Object);
+	}
+
 	private readonly Location MockLocation = new()
 	{
 		Id = Guid.Parse("b7c814ea-47c2-4b11-9841-38d9c429a8be"), // Random GUID
@@ -26,17 +37,15 @@ public class UserControllerTests
 	public async Task GetAllUsers_ReturnsEmptyList_WhenNoUsers()
 	{
 		// Arrange
-		var mockService = new Mock<IUserService>();
-		mockService.Setup(service => service.GetAllUsersAsync()).ReturnsAsync(new List<User>());
-
-		var controller = new UserController(mockService.Object);
+		_mockUserService
+			.Setup(service => service.GetAllUsersAsync())
+			.ReturnsAsync(new List<User>());
 
 		// Act
-		var result = await controller.GetAllUsers();
+		var result = await _controller.GetAllUsers();
 
 		// Assert
-		var okResult = Assert.IsType<OkObjectResult>(result.Result);
-		var users = Assert.IsAssignableFrom<IEnumerable<User>>(okResult.Value);
+		var users = Assert.IsAssignableFrom<IEnumerable<UserDto>>(result.Value);
 		Assert.Empty(users);
 	}
 
@@ -44,14 +53,13 @@ public class UserControllerTests
 	public async Task GetUserById_ReturnsNotFound_WhenUserDoesNotExist()
 	{
 		// Arrange
-		var mockService = new Mock<IUserService>();
 		var userId = Guid.NewGuid();
-		mockService.Setup(service => service.GetUserByIdAsync(userId)).ReturnsAsync((User?)null);
-
-		var controller = new UserController(mockService.Object);
+		_mockUserService
+			.Setup(service => service.GetUserByIdAsync(userId))
+			.ReturnsAsync((User?)null);
 
 		// Act
-		var result = await controller.GetUserById(userId);
+		var result = await _controller.GetUserById(userId);
 
 		// Assert
 		Assert.IsType<NotFoundResult>(result.Result);
@@ -61,7 +69,6 @@ public class UserControllerTests
 	public async Task CreateUser_ReturnsCreatedUser_WhenDataIsValid()
 	{
 		// Arrange
-		var mockService = new Mock<IUserService>();
 		var createUserDto = new CreateUserDto(
 			Username: "testuser",
 			Email: "test@example.com",
@@ -87,18 +94,15 @@ public class UserControllerTests
 			Subordinates = [],
 		};
 
-		mockService
+		_mockUserService
 			.Setup(service => service.CreateUserAsync(createUserDto))
 			.ReturnsAsync(expectedUser);
 
-		var controller = new UserController(mockService.Object);
-
 		// Act
-		var result = await controller.CreateUser(createUserDto);
+		var result = await _controller.CreateUser(createUserDto);
 
 		// Assert
-		var createdAtResult = Assert.IsType<CreatedAtActionResult>(result.Result);
-		var userResponse = Assert.IsType<User>(createdAtResult.Value);
+		var userResponse = Assert.IsType<UserDto>(result.Value);
 		Assert.Equal(expectedUser.Username, userResponse.Username);
 		Assert.Equal(expectedUser.Email, userResponse.Email);
 	}
@@ -107,21 +111,18 @@ public class UserControllerTests
 	public async Task UpdateUser_ReturnsNotFound_WhenUserDoesNotExist()
 	{
 		// Arrange
-		var mockService = new Mock<IUserService>();
 		var userId = Guid.NewGuid();
 		var updateUserDto = new UpdateUserDto(
 			Username: "updateduser",
 			Email: "updated@example.com"
 		);
 
-		mockService
+		_mockUserService
 			.Setup(service => service.UpdateUserAsync(userId, updateUserDto))
 			.ReturnsAsync((User?)null);
 
-		var controller = new UserController(mockService.Object);
-
 		// Act
-		var result = await controller.UpdateUser(userId, updateUserDto);
+		var result = await _controller.UpdateUser(userId, updateUserDto);
 
 		// Assert
 		Assert.IsType<NotFoundResult>(result.Result);
