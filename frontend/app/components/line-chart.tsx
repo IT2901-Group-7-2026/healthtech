@@ -212,29 +212,6 @@ export function ChartLineDefault({
 								)}
 							</linearGradient>
 						</defs>
-						{/* Safe zone */}
-						<ReferenceArea
-							y1={minY}
-							y2={warning}
-							fill="var(--safe)"
-							fillOpacity={0.03}
-						/>
-
-						{/* Warning zone */}
-						<ReferenceArea
-							y1={warning}
-							y2={dangerThreshold}
-							fill="var(--warning)"
-							fillOpacity={0.03}
-						/>
-
-						{/* Danger zone */}
-						<ReferenceArea
-							y1={dangerThreshold}
-							y2={maxY}
-							fill="var(--danger)"
-							fillOpacity={0.03}
-						/>
 						<Line
 							dataKey="value"
 							type={lineType as CurveType}
