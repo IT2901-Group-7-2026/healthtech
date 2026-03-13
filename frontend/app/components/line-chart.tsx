@@ -18,7 +18,6 @@ import {
 	CartesianGrid,
 	Line,
 	LineChart,
-	ReferenceArea,
 	ReferenceLine,
 	XAxis,
 	YAxis,
