@@ -93,7 +93,10 @@ export function WeekWidget({
 								<WeekDaysHeader days={timeSlotSegments} />
 								<div className="grid grid-cols-1 grid-rows-1">
 									<div className="col-start-1 row-start-1">
-										<WeekGrid days={timeSlotSegments} rowHeight={rowHeight} />
+										<WeekGrid
+											days={timeSlotSegments}
+											rowHeight={rowHeight}
+										/>
 									</div>
 									<div className="col-start-1 row-start-1">
 										<WeekEventGrid

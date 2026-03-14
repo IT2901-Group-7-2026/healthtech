@@ -143,8 +143,8 @@ export default function Noise() {
 						<WeekWidget
 							aggregation={aggregation}
 							locale={getLocale(i18n.language)}
-							dayStartHour={8}
-							dayEndHour={16}
+							dayStartHour={0}
+							dayEndHour={23}
 							weekStartsOn={1}
 							data={calendarData}
 						/>

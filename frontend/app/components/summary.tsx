@@ -57,7 +57,6 @@ export function Summary({ exposureType, data }: SummaryProps) {
 	};
 	const isMobile = useIsMobile();
 
-	//TODO: Create component for summary rows
 	return (
 		<Card className="w-full gap-0 p-5">
 			<div className="border-b-2 border-b-slate-300 md:pb-2 md:pl-2">
@@ -75,78 +74,66 @@ export function Summary({ exposureType, data }: SummaryProps) {
 				</h4>
 			</div>
 			<div className="exposures-wrapper flex flex-row justify-center gap-4 md:flex-col md:gap-0">
-				<div
-					className="flex items-baseline justify-center p-2 md:justify-start"
-					title={DangerLevels.safe.label}
-				>
-					<span
-						className={cn(
-							"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
-							safeColor,
-						)}
-					>
-						{data.safeCount}
-					</span>
-					<span
-						className={cn(
-							"ml-1 text-xs md:ml-2 md:text-sm",
-							safeColor,
-						)}
-					>
-						{isMobile
-							? defaultLabels.safe
-							: summaryLabels.safeLabel}
-					</span>
-				</div>
-
-				<div
-					className="flex items-baseline justify-center p-2 md:justify-start"
-					title={DangerLevels.warning.label}
-				>
-					<span
-						className={cn(
-							"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
-							warningColor,
-						)}
-					>
-						{data.warningCount}
-					</span>
-					<span
-						className={cn(
-							"ml-1 text-xs md:ml-2 md:text-sm",
-							warningColor,
-						)}
-					>
-						{isMobile
+				<SummaryRow
+					count={data.safeCount}
+					label={
+						isMobile ? defaultLabels.safe : summaryLabels.safeLabel
+					}
+					hoverTitle={DangerLevels.safe.label}
+					colorClass={safeColor}
+				/>
+				<SummaryRow
+					count={data.warningCount}
+					label={
+						isMobile
 							? defaultLabels.warning
-							: summaryLabels.warningLabel}
-					</span>
-				</div>
-
-				<div
-					className="flex items-baseline justify-center p-2 md:justify-start"
-					title={DangerLevels.danger.label}
-				>
-					<span
-						className={cn(
-							"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
-							dangerColor,
-						)}
-					>
-						{data.dangerCount}
-					</span>
-					<span
-						className={cn(
-							"ml-1 text-xs md:ml-2 md:text-sm",
-							dangerColor,
-						)}
-					>
-						{isMobile
+							: summaryLabels.warningLabel
+					}
+					hoverTitle={DangerLevels.warning.label}
+					colorClass={warningColor}
+				/>
+				<SummaryRow
+					count={data.dangerCount}
+					label={
+						isMobile
 							? defaultLabels.danger
-							: summaryLabels.dangerLabel}
-					</span>
-				</div>
+							: summaryLabels.dangerLabel
+					}
+					hoverTitle={DangerLevels.danger.label}
+					colorClass={dangerColor}
+				/>
 			</div>
 		</Card>
 	);
 }
+
+interface SummaryRowProps {
+	count: number;
+	label: string;
+	hoverTitle: string;
+	colorClass: string;
+}
+
+const SummaryRow = ({
+	hoverTitle,
+	count,
+	label,
+	colorClass,
+}: SummaryRowProps) => (
+	<div
+		className="flex items-baseline justify-center p-2 md:justify-start"
+		title={hoverTitle}
+	>
+		<span
+			className={cn(
+				"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
+				colorClass,
+			)}
+		>
+			{count}
+		</span>
+		<span className={cn("ml-1 text-xs md:ml-2 md:text-sm", colorClass)}>
+			{label}
+		</span>
+	</div>
+);

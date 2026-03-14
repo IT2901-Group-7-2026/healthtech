@@ -46,20 +46,26 @@ export function WeekEventGrid({
 						isSameWeek(days[0].date, timeBucketStatus.time, {
 							weekStartsOn,
 						}) &&
-						addHours(timeBucketStatus.time, 1).getUTCHours() <= dayEndHour &&
+						addHours(timeBucketStatus.time, 1).getUTCHours() <=
+							dayEndHour &&
 						timeBucketStatus.time.getUTCHours() >= dayStartHour,
 				)
 				.map((timeBucketStatus) => {
-					const start = timeBucketStatus.time.getUTCHours() - dayStartHour + 1;
+					const start =
+						timeBucketStatus.time.getUTCHours() - dayStartHour + 1;
 					const end =
-						addHours(timeBucketStatus.time, 1).getUTCHours() - dayStartHour + 1;
+						addHours(timeBucketStatus.time, 1).getUTCHours() -
+						dayStartHour +
+						1;
 					const paddingTop =
-						((getMinutes(timeBucketStatus.time) % minuteStep) / minuteStep) *
+						((getMinutes(timeBucketStatus.time) % minuteStep) /
+							minuteStep) *
 						rowHeight;
 
 					const paddingBottom =
 						(rowHeight -
-							((getMinutes(addHours(timeBucketStatus.time, 1)) % minuteStep) /
+							((getMinutes(addHours(timeBucketStatus.time, 1)) %
+								minuteStep) /
 								minuteStep) *
 								rowHeight) %
 						rowHeight;
@@ -94,7 +100,9 @@ export function WeekEventGrid({
 									top: paddingTop,
 									bottom: paddingBottom,
 								}}
-								onClick={() => handleHourClick(timeBucketStatus)}
+								onClick={() =>
+									handleHourClick(timeBucketStatus)
+								}
 							/>
 						</div>
 					);

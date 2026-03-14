@@ -102,8 +102,8 @@ export default function Dust() {
 				) : view === "week" ? (
 					<WeekWidget
 						locale={getLocale(locale)}
-						dayStartHour={8}
-						dayEndHour={16}
+						dayStartHour={0}
+						dayEndHour={23}
 						weekStartsOn={1}
 						data={calendarData}
 					/>

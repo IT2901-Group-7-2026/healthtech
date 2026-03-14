@@ -53,7 +53,12 @@ export default function OperatorHome() {
 		isError,
 	} = useQuery(
 		sensorOverviewQueryOptions({
-			query: buildSensorOverviewQuery([...sensors], view, date, granularity),
+			query: buildSensorOverviewQuery(
+				[...sensors],
+				view,
+				date,
+				granularity,
+			),
 			userId: user.id,
 		}),
 	);
@@ -72,11 +77,17 @@ export default function OperatorHome() {
 					>
 						{t(($) => $.today)}
 					</Button>
-					<Button onClick={() => setDate(getPrevDay(date, view))} size={"icon"}>
+					<Button
+						onClick={() => setDate(getPrevDay(date, view))}
+						size={"icon"}
+					>
 						{"<"}
 					</Button>
 					<ViewSelect />
-					<Button onClick={() => setDate(getNextDay(date, view))} size={"icon"}>
+					<Button
+						onClick={() => setDate(getNextDay(date, view))}
+						size={"icon"}
+					>
 						{">"}
 					</Button>
 				</div>
@@ -110,8 +121,8 @@ export default function OperatorHome() {
 							) : view === "week" ? (
 								<WeekWidget
 									locale={getLocale(i18n.language)}
-									dayStartHour={8}
-									dayEndHour={16}
+									dayStartHour={0}
+									dayEndHour={23}
 									weekStartsOn={1}
 									data={mapOverviewDataToTimeBucketStatuses(
 										overviewBuckets ?? [],
@@ -121,11 +132,14 @@ export default function OperatorHome() {
 								overviewBuckets.length === 0 ? (
 								<Card className="flex h-24 w-full items-center">
 									<CardTitle>
-										{date.toLocaleDateString(i18n.language, {
-											day: "numeric",
-											month: "long",
-											year: "numeric",
-										})}
+										{date.toLocaleDateString(
+											i18n.language,
+											{
+												day: "numeric",
+												month: "long",
+												year: "numeric",
+											},
+										)}
 									</CardTitle>
 									<p>{t(($) => $.noData)}</p>
 								</Card>
@@ -136,11 +150,16 @@ export default function OperatorHome() {
 										0,
 										23,
 									)}
-									chartTitle={date.toLocaleDateString(i18n.language, {
-										day: "numeric",
-										month: "long",
-										year: "numeric",
-									})}
+									startHour={0}
+									endHour={23}
+									chartTitle={date.toLocaleDateString(
+										i18n.language,
+										{
+											day: "numeric",
+											month: "long",
+											year: "numeric",
+										},
+									)}
 									headerRight={
 										<Button
 											onClick={() =>
@@ -150,11 +169,14 @@ export default function OperatorHome() {
 														pdfVibrationChartContainerId,
 														pdfNoiseChartContainerId,
 													],
-													`${date.toLocaleDateString(i18n.language, {
-														day: "numeric",
-														month: "long",
-														year: "numeric",
-													})}-${user.username}-Exposure-Overview`,
+													`${date.toLocaleDateString(
+														i18n.language,
+														{
+															day: "numeric",
+															month: "long",
+															year: "numeric",
+														},
+													)}-${user.username}-Exposure-Overview`,
 													[
 														`Dust Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
 														`Vibration Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
