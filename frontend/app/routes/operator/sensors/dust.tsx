@@ -6,11 +6,9 @@ import { Summary } from "@/components/summary";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
-import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
-import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { getLocale } from "@/i18n/locale";
@@ -18,6 +16,10 @@ import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
+import {
+	calculateSummaryCounts,
+	mapSensorDataToTimeBucketStatuses,
+} from "@/lib/time-bucket-utils";
 import { computeYAxisRange } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
@@ -36,6 +38,7 @@ export default function Dust() {
 
 	const sensor: Sensor = "dust";
 
+	//TODO: Why are these using max instead of avg?
 	const dayQuery: SensorDataRequestDto = {
 		startTime: new Date(date.setUTCHours(8)),
 		endTime: new Date(date.setUTCHours(16)),
@@ -73,10 +76,16 @@ export default function Dust() {
 
 	const { minY, maxY } = computeYAxisRange(data ?? []);
 
+	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], "dust");
+
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex flex-col gap-4 md:w-1/4">
-				<Summary exposureType={"dust"} data={data} />
+				<Summary
+					exposureType={"dust"}
+					//TODO: This should really use the hour bucket for the day view, cause if not then the day summary can be misleading.
+					data={calculateSummaryCounts(data ?? [])}
+				/>
 				<DailyNotes />
 			</div>
 			<div className="flex flex-1 flex-col items-end gap-4">
@@ -89,20 +98,14 @@ export default function Dust() {
 						<p>{t(($) => $.errorLoadingData)}</p>
 					</Card>
 				) : view === "month" ? (
-					<CalendarWidget
-						selectedDay={date}
-						data={
-							mapSensorDataToMonthLists(data ?? [], "dust") ?? []
-						}
-					/>
+					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
 					<WeekWidget
 						locale={getLocale(locale)}
 						dayStartHour={8}
 						dayEndHour={16}
 						weekStartsOn={1}
-						minuteStep={60}
-						events={mapWeekDataToEvents(data ?? [])}
+						data={calendarData}
 					/>
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">
