@@ -43,8 +43,8 @@ function getHourlyDangerLevels(
 export function DailyBarChart({
 	data,
 	chartTitle,
-	startHour = 0,
-	endHour = 23,
+	startHour = 8,
+	endHour = 16,
 	headerRight,
 }: {
 	data: AllSensors;
@@ -113,7 +113,6 @@ export function DailyBarChart({
 								stackId="a"
 								stroke={"var(--muted-foreground)"} // Tailwind + theme aware
 								strokeWidth={1}
-								barSize={180}
 							>
 								{generateChartData().map((entry, index) => {
 									const sensor = entry.sensor;

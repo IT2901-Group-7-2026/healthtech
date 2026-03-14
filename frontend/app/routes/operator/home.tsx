@@ -133,8 +133,8 @@ export default function OperatorHome() {
 							) : view === "week" ? (
 								<WeekWidget
 									locale={getLocale(i18n.language)}
-									dayStartHour={0}
-									dayEndHour={23}
+									dayStartHour={8}
+									dayEndHour={16}
 									weekStartsOn={1}
 									minuteStep={60}
 									events={mapAllWeekDataToEvents(
