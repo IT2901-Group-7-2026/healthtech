@@ -1,4 +1,4 @@
-import type { Sensor } from "@/features/sensor-picker/sensors";
+import { type Sensor, SensorSchema } from "@/features/sensor-picker/sensors";
 import { z } from "zod";
 import { DangerLevelSchema } from "./danger-levels";
 
@@ -28,6 +28,10 @@ export type SensorDataRequestDto = {
 	field?: string;
 };
 
+export type SensorOverviewDataRequestDto = Partial<
+	Record<Sensor, SensorDataRequestDto>
+>;
+
 export const SensorDataResponseDtoSchema = z.object({
 	time: z.coerce.date(),
 	value: z.number(),
@@ -37,6 +41,14 @@ export const SensorDataResponseDtoSchema = z.object({
 });
 
 export type SensorDataResponseDto = z.infer<typeof SensorDataResponseDtoSchema>;
+
+export const OverviewBucketDtoSchema = z.object({
+	time: z.coerce.date(),
+	dangerLevel: DangerLevelSchema,
+	sensorDangerLevels: z.partialRecord(SensorSchema, DangerLevelSchema),
+});
+
+export type OverviewBucketDto = z.infer<typeof OverviewBucketDtoSchema>;
 
 export type SensorDataResult = {
 	data: Array<SensorDataResponseDto> | undefined;

@@ -29,4 +29,14 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
 		var response = await _sensorDataService.GetAggregatedDataAsync(request, userId, sensorType);
 		return Ok(response);
 	}
+
+	[HttpPost("overview/{userId}")]
+	public async Task<ActionResult<IEnumerable<CombinedSensorBucketDto>>> GetOverviewData(
+		[FromBody] Dictionary<SensorType, SensorDataRequestDto> requests,
+		[FromRoute] Guid userId
+	)
+	{
+		var response = await _sensorDataService.GetOverviewDataAsync(requests, userId);
+		return Ok(response);
+	}
 }

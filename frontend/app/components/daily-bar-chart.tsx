@@ -5,79 +5,70 @@ import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { sensors } from "@/features/sensor-picker/sensors";
-import type { DangerLevel } from "@/lib/danger-levels";
-import type { AllSensors } from "@/lib/dto";
+import type { OverviewChartRow } from "@/lib/time-bucket-types";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts";
 
-// the chart data is always the same, we only change the colors based on exposure data
-const generateChartData = (): Array<Record<string, Sensor>> =>
-	sensors.map((sensor) => ({
+const HOUR_BLOCK_SIZE = 10;
+
+// Creates a record per sensor, where each record contains a key for each hour in the day and the size of the block to render
+function generateChartData(
+	startHour: number,
+	endHour: number,
+): Array<Record<string, string>> {
+	return sensors.map((sensor) => ({
 		sensor,
 		...Object.fromEntries(
-			Array.from({ length: 24 }, (_, h) => [h.toString(), 10]),
+			Array.from({ length: endHour - startHour + 1 }, (_, i) => [
+				String(startHour + i),
+				HOUR_BLOCK_SIZE,
+			]),
 		),
 	}));
-
-function getHourlyDangerLevels(
-	data: AllSensors,
-): Record<Sensor, Array<DangerLevel | null>> {
-	const result = {} as Record<Sensor, Array<DangerLevel | null>>;
-
-	sensors.forEach((sensor) => {
-		const hourlyLevels = Array(24).fill(null);
-
-		for (const item of data[sensor].data ?? []) {
-			const hour = item.time.getUTCHours();
-			hourlyLevels[hour] = item.dangerLevel;
-		}
-
-		result[sensor] = hourlyLevels;
-	});
-
-	return result;
 }
 
-//TODO: Here it says vibration 9-10 is safe, but in vibration week chart it says 9-10 warning. But looking at the vibration day chart, there is a point between 9 and 10 that is above warning level. So maybe the week chart is wrong, or maybe the date timezones again
+interface DailyBarChartProps {
+	data: Array<OverviewChartRow>;
+	chartTitle: string;
+	startHour?: number;
+	endHour?: number;
+	headerRight?: React.ReactNode;
+}
+
 export function DailyBarChart({
 	data,
 	chartTitle,
 	startHour = 0,
 	endHour = 23,
 	headerRight,
-}: {
-	data: AllSensors;
-	chartTitle: string;
-	startHour?: number;
-	endHour?: number;
-	headerRight?: React.ReactNode;
-}) {
+}: DailyBarChartProps) {
 	const { t } = useTranslation();
 	const { date } = useDate();
 	const navigate = useNavigate();
+
 	const totalHours = endHour - startHour + 1;
 	const hours = Array.from({ length: totalHours }, (_, i) => startHour + i);
 
-	const hourlyDangerLevels = getHourlyDangerLevels(data);
+	const chartData = generateChartData(startHour, endHour);
 
-	//the default color is var(--card), i.e. same as background
-	const chartConfig = Object.fromEntries(
-		hours.map((h) => [
-			h.toString(),
+	// Empty hour blocks
+	const chartConfig: ChartConfig = Object.fromEntries(
+		hours.map((hour) => [
+			hour.toString(),
 			{
-				label: `${h}:00`,
-				color: `var(--card)`,
+				label: `${hour}:00`,
+				color: "var(--card)",
 			},
 		]),
-	) satisfies ChartConfig;
-
-	const hourKeys = Array.from(
-		{ length: endHour - startHour + 1 },
-		(_, i) => `${startHour + i}`,
 	);
-	const domainMax = totalHours * 10;
-	const ticks = Array.from({ length: totalHours + 1 }, (_, i) => i * 10);
+
+	const hourKeys = hours.map(String);
+	const domainMax = totalHours * HOUR_BLOCK_SIZE;
+	const ticks = Array.from(
+		{ length: totalHours + 1 },
+		(_, i) => i * HOUR_BLOCK_SIZE,
+	);
 
 	return (
 		<Card className="w-full">
@@ -85,15 +76,16 @@ export function DailyBarChart({
 				<CardTitle>{chartTitle}</CardTitle>
 				{headerRight}
 			</CardHeader>
+
 			<CardContent>
 				<ChartContainer config={chartConfig}>
-					<BarChart data={generateChartData()} layout="vertical">
+					<BarChart data={chartData} layout="vertical">
 						<XAxis
 							type="number"
 							domain={[0, domainMax]}
 							ticks={ticks}
 							tickFormatter={(value) =>
-								`${startHour + value / 10}:00`
+								`${startHour + value / HOUR_BLOCK_SIZE}:00`
 							}
 						/>
 						<YAxis
@@ -106,37 +98,31 @@ export function DailyBarChart({
 								t(($) => $.overview[value as Sensor])
 							}
 						/>
+
 						{hourKeys.map((key) => (
 							<Bar
 								key={key}
 								dataKey={key}
 								stackId="a"
-								stroke={"var(--muted-foreground)"} // Tailwind + theme aware
+								stroke="var(--muted-foreground)"
 								strokeWidth={1}
 								barSize={180}
 							>
-								{generateChartData().map((entry, index) => {
-									const sensor = entry.sensor;
-									const i = Number(key);
-
+								{data.map((row, index) => {
+									const hour = Number(key);
+									const dangerLevel =
+										row.dangerLevelByHour[hour];
 									let color = chartConfig[key].color;
-									if (
-										hourlyDangerLevels[sensor][i] ===
-										"danger"
-									) {
+
+									if (dangerLevel === "danger") {
 										color = "var(--danger)";
-									} else if (
-										hourlyDangerLevels[sensor][i] ===
-										"warning"
-									) {
+									} else if (dangerLevel === "warning") {
 										color = "var(--warning)";
-									} else if (
-										hourlyDangerLevels[sensor][i] === "safe"
-									) {
+									} else if (dangerLevel === "safe") {
 										color = "var(--safe)";
 									}
-									if (color === `var(--card)`) {
-										// Non-active cell, No data
+
+									if (color === "var(--card)") {
 										return (
 											<Cell
 												key={`cell-${index}-${key}`}
@@ -144,19 +130,17 @@ export function DailyBarChart({
 											/>
 										);
 									}
+
 									return (
-										// Active cell, has data, interactable
 										<Cell
-											onClick={() =>
-												navigate({
-													pathname: entry.sensor,
-													search: `?view=Day&date=${date.toISOString().split("T")[0]}`,
-												})
-											}
 											key={`cell-${index}-${key}`}
 											fill={color}
-											className={
-												"cursor-pointer hover:brightness-90 active:brightness-90"
+											className="cursor-pointer hover:brightness-90 active:brightness-90"
+											onClick={() =>
+												navigate({
+													pathname: row.sensor,
+													search: `?view=Day&date=${date.toISOString().split("T")[0]}`,
+												})
 											}
 										/>
 									);

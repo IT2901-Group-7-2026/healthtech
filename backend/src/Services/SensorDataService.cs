@@ -15,6 +15,10 @@ public interface ISensorDataService
 		Guid? userId,
 		SensorType sensorType
 	);
+	Task<IEnumerable<CombinedSensorBucketDto>> GetOverviewDataAsync(
+		Dictionary<SensorType, SensorDataRequestDto> requests,
+		Guid? userId
+	);
 }
 
 public class SensorDataService(AppDbContext context, SignedInUserContext signedInUserContext)
@@ -102,5 +106,51 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 		});
 
 		return result;
+	}
+
+	/// <summary>
+	/// Combines data from multiple sensor requests into buckets
+	/// </summary>
+	/// <param name="requests"></param>
+	/// <param name="userId"></param>
+	/// <returns></returns>
+	public async Task<IEnumerable<CombinedSensorBucketDto>> GetOverviewDataAsync(
+		Dictionary<SensorType, SensorDataRequestDto> requests,
+		Guid? userId
+	)
+	{
+		Dictionary<DateTime, CombinedSensorBucketDto> combinedData = [];
+
+		foreach (var (sensorType, request) in requests)
+		{
+			IEnumerable<SensorDataDto> sensorDataList = await GetAggregatedDataAsync(
+				request,
+				userId,
+				sensorType
+			);
+
+			foreach (var sensorData in sensorDataList)
+			{
+				if (!combinedData.TryGetValue(sensorData.Time, out CombinedSensorBucketDto? bucket))
+				{
+					bucket = new CombinedSensorBucketDto
+					{
+						Time = sensorData.Time,
+						DangerLevel = sensorData.DangerLevel,
+						SensorDangerLevels = [],
+					};
+					combinedData[sensorData.Time] = bucket;
+				}
+
+				bucket.SensorDangerLevels[sensorType] = sensorData.DangerLevel;
+
+				if (sensorData.DangerLevel > bucket.DangerLevel)
+				{
+					bucket.DangerLevel = sensorData.DangerLevel;
+				}
+			}
+		}
+
+		return combinedData.Values.OrderBy(bucket => bucket.Time).ToList();
 	}
 }
