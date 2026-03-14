@@ -113,7 +113,6 @@ export function DailyBarChart({
 								stackId="a"
 								stroke={"var(--muted-foreground)"} // Tailwind + theme aware
 								strokeWidth={1}
-								barSize={180}
 							>
 								{generateChartData().map((entry, index) => {
 									const sensor = entry.sensor;
