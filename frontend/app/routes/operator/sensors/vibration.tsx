@@ -6,11 +6,9 @@ import { Summary } from "@/components/summary";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
-import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
 import { useUser } from "@/features/user/user-context";
 import { parseAsView } from "@/features/views/utils";
-import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { getLocale } from "@/i18n/locale";
@@ -18,6 +16,10 @@ import { sensorQueryOptions } from "@/lib/api";
 import type { SensorDataRequestDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
+import {
+	calculateSummaryCounts,
+	mapSensorDataToTimeBucketStatuses,
+} from "@/lib/time-bucket-utils";
 import { computeYAxisRange, makeCumulative } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
@@ -74,12 +76,17 @@ export default function Vibration() {
 
 	const { minY, maxY } = computeYAxisRange(makeCumulative(data) ?? []);
 
+	const calendarData = mapSensorDataToTimeBucketStatuses(
+		data ?? [],
+		"vibration",
+	);
+
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex flex-col gap-4 md:w-1/4">
 				<Summary
-					exposureType={"vibration"}
-					data={makeCumulative(data)}
+					exposureType="vibration"
+					data={calculateSummaryCounts(data ?? [])}
 				/>
 				<DailyNotes />
 			</div>
@@ -93,21 +100,14 @@ export default function Vibration() {
 						<p>{t(($) => $.errorLoadingData)}</p>
 					</Card>
 				) : view === "month" ? (
-					<CalendarWidget
-						selectedDay={date}
-						data={mapSensorDataToMonthLists(
-							data ?? [],
-							"vibration",
-						)}
-					/>
+					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
 					<WeekWidget
 						locale={getLocale(i18n.language)}
 						dayStartHour={8}
 						dayEndHour={16}
 						weekStartsOn={1}
-						minuteStep={60}
-						events={mapWeekDataToEvents(makeCumulative(data))}
+						data={calendarData}
 					/>
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">
@@ -125,6 +125,7 @@ export default function Vibration() {
 						<div className="mb-2 flex justify-end"></div>
 						<div id={chartContainerId}>
 							<ChartLineDefault
+								//TODO: This should just use data straight from the backend
 								chartData={makeCumulative(data)}
 								chartTitle={date.toLocaleDateString(
 									i18n.language,
