@@ -10,9 +10,12 @@ import {
 	type Note,
 	type NoteDataRequest,
 	NoteSchema,
+	type OverviewBucketDto,
+	OverviewBucketDtoSchema,
 	type SensorDataRequestDto,
 	type SensorDataResponseDto,
 	SensorDataResponseDtoSchema,
+	type SensorOverviewDataRequestDto,
 	ThresholdSummarySchema,
 	UserSchema,
 	UserWithStatusSchema,
@@ -56,6 +59,37 @@ const fetchSensorData = async (
 	const json = await response.json();
 	return SensorDataResponseDtoSchema.array().parseAsync(json);
 };
+
+const fetchSensorOverviewData = async (
+	userId: string,
+	requests: SensorOverviewDataRequestDto,
+): Promise<Array<OverviewBucketDto>> => {
+	const response = await fetchWithUserId(`sensor/overview/${userId}`, {
+		method: "POST",
+		body: JSON.stringify(requests),
+	});
+
+	if (!response.ok) {
+		throw new Error("Failed to fetch sensor overview data");
+	}
+
+	const json = await response.json();
+	return OverviewBucketDtoSchema.array().parseAsync(json);
+};
+
+export function sensorOverviewQueryOptions({
+	query,
+	userId,
+}: {
+	query: SensorOverviewDataRequestDto;
+	userId: string;
+}) {
+	return queryOptions({
+		queryKey: [query, userId],
+		queryFn: () => fetchSensorOverviewData(userId, query),
+		staleTime: minutesToMilliseconds(10),
+	});
+}
 
 export function sensorQueryOptions({
 	sensor,

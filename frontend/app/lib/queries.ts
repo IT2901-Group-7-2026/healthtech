@@ -5,6 +5,7 @@ import type {
 	AggregateFnKey,
 	GranularityKey,
 	SensorDataRequestDto,
+	SensorOverviewDataRequestDto,
 } from "./dto";
 
 const viewToGranularity: Record<View, GranularityKey> = {
@@ -15,24 +16,25 @@ const viewToGranularity: Record<View, GranularityKey> = {
 
 const sensorViewToAggregateFn: Record<Sensor, Record<View, AggregateFnKey>> = {
 	dust: {
-		day: "max",
-		week: "max",
-		month: "max",
+		day: "avg",
+		week: "avg",
+		month: "avg",
 	},
 	noise: {
-		day: "max",
-		week: "max",
-		month: "max",
+		day: "avg",
+		week: "avg",
+		month: "avg",
 	},
 	vibration: {
-		day: "max",
-		week: "max",
-		month: "max",
+		day: "avg",
+		week: "avg",
+		month: "avg",
 	},
 };
 
+//TODO: Doing defaults like this is stupid
 const sensorToField: Record<Sensor, string | undefined> = {
-	dust: "pm1_stel",
+	dust: "pm1_twa",
 	noise: undefined,
 	vibration: undefined,
 };
@@ -89,4 +91,18 @@ export function buildSensorQuery(
 	};
 
 	return query;
+}
+
+export function buildSensorOverviewQuery(
+	sensors: Array<Sensor>,
+	view: View,
+	date: Date,
+	granularity?: GranularityKey,
+): SensorOverviewDataRequestDto {
+	return Object.fromEntries(
+		sensors.map((sensor) => [
+			sensor,
+			buildSensorQuery(sensor, view, date, granularity),
+		]),
+	);
 }
