@@ -7,11 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
-import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
-import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { getLocale } from "@/i18n/locale";
@@ -24,6 +22,10 @@ import {
 } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
+import {
+	calculateSummaryCounts,
+	mapSensorDataToTimeBucketStatuses,
+} from "@/lib/time-bucket-utils";
 import { computeYAxisRange } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
@@ -98,10 +100,19 @@ export default function Noise() {
 		);
 	}
 
+	const calendarData = mapSensorDataToTimeBucketStatuses(
+		data ?? [],
+		"noise",
+		usePeakData,
+	);
+
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex flex-col gap-4 md:w-1/4">
-				<Summary exposureType={"noise"} data={data} />
+				<Summary
+					exposureType="noise"
+					data={calculateSummaryCounts(data ?? [], usePeakData)}
+				/>
 				<DailyNotes />
 			</div>
 			<div className="flex flex-1 flex-col items-end gap-4">
@@ -121,13 +132,7 @@ export default function Noise() {
 						<CalendarWidget
 							selectedDay={date}
 							selectedAggregation={aggregation}
-							data={
-								mapSensorDataToMonthLists(
-									data ?? [],
-									"noise",
-									usePeakData,
-								) ?? []
-							}
+							data={calendarData}
 						/>
 					</AggregationTabs>
 				) : view === "week" ? (
@@ -141,11 +146,7 @@ export default function Noise() {
 							dayStartHour={8}
 							dayEndHour={16}
 							weekStartsOn={1}
-							minuteStep={60}
-							events={mapWeekDataToEvents(
-								data ?? [],
-								usePeakData,
-							)}
+							data={calendarData}
 						/>
 					</AggregationTabs>
 				) : !data || data.length === 0 ? (
@@ -274,13 +275,18 @@ const AggregationTabs = ({
 const NoisePageLayout = ({
 	children,
 	data,
+	usePeakData,
 }: {
 	children: React.ReactNode;
 	data: Array<SensorDataResponseDto>;
+	usePeakData?: boolean;
 }) => (
 	<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 		<div className="flex flex-col gap-4 md:w-1/4">
-			<Summary exposureType="noise" data={data} />
+			<Summary
+				exposureType="noise"
+				data={calculateSummaryCounts(data ?? [], usePeakData)}
+			/>
 			<DailyNotes />
 		</div>
 		<div className="flex flex-1 flex-col items-end gap-4">{children}</div>
