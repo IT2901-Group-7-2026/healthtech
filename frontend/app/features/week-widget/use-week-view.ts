@@ -39,7 +39,6 @@ const getViewTitle = (firstDay: Date, lastDay: Date, locale?: Locale) => {
 };
 
 interface WeekViewOptions {
-	minuteStep?: number;
 	dayStartHour?: number;
 	dayEndHour?: number;
 	weekStartsOn?: Day;
@@ -50,7 +49,6 @@ interface WeekViewOptions {
 }
 
 export function useWeekView({
-	minuteStep = 30,
 	weekStartsOn = 1,
 	dayStartHour,
 	dayEndHour,
@@ -109,10 +107,8 @@ export function useWeekView({
 			milliseconds: 0,
 		});
 
-		const dateSteps = eachMinuteOfInterval(
-			{ start, end },
-			{ step: minuteStep },
-		);
+		// 1 time slot per hour
+		const dateSteps = eachMinuteOfInterval({ start, end }, { step: 60 });
 
 		const cells = dateSteps.map((date) => ({
 			date: date,

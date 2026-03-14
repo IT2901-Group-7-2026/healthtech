@@ -2,8 +2,9 @@ import { Card } from "@/components/ui/card";
 import { WeeklyPopup } from "@/features/popups/weekly-popup";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import type { Aggregation } from "@/lib/dto";
+import type { TimeBucketStatus } from "@/lib/time-bucket-types";
 import { DialogDescription } from "@radix-ui/react-dialog";
-import type { Day, Locale } from "date-fns";
+import { addHours, type Day, type Locale } from "date-fns";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { usePopup } from "../popups/use-popup";
@@ -11,23 +12,10 @@ import { WeekDaysHeader } from "./components/week-days-header";
 import { WeekEventGrid } from "./components/week-event-grid";
 import { WeekGrid } from "./components/week-grid";
 import { WeekHeader } from "./components/week-header";
-import type { Cell, WeekEvent } from "./types";
+import type { Cell } from "./types";
 import { useWeekView } from "./use-week-view";
 
-export function WeekWidget({
-	minuteStep = 30,
-	weekStartsOn = 1,
-	dayStartHour = 8,
-	dayEndHour = 16,
-	locale,
-	rowHeight = 56,
-	isDisabledCell,
-	isDisabledDay,
-	isDisabledWeek,
-	events,
-	aggregation,
-}: {
-	minuteStep?: number;
+interface WeekWidgetProps {
 	weekStartsOn?: Day;
 	dayStartHour?: number;
 	dayEndHour?: number;
@@ -36,13 +24,25 @@ export function WeekWidget({
 	isDisabledCell?: (date: Date) => boolean;
 	isDisabledDay?: (date: Date) => boolean;
 	isDisabledWeek?: (startDayOfWeek: Date) => boolean;
-	events?: Array<WeekEvent>;
+	data: Array<TimeBucketStatus>;
 	onCellClick?: (cell: Cell) => void;
 	aggregation?: Aggregation;
-}) {
+}
+
+export function WeekWidget({
+	weekStartsOn = 1,
+	dayStartHour = 8,
+	dayEndHour = 16,
+	locale,
+	rowHeight = 56,
+	isDisabledCell,
+	isDisabledDay,
+	isDisabledWeek,
+	data,
+	aggregation,
+}: WeekWidgetProps) {
 	const { timeSlotSegments, selectNextWeek, selectPreviousWeek, viewTitle } =
 		useWeekView({
-			minuteStep,
 			weekStartsOn,
 			dayStartHour,
 			dayEndHour,
@@ -56,20 +56,20 @@ export function WeekWidget({
 	const { visible, closePopup, openPopup } = usePopup();
 
 	const [popupData, setPopupData] = useState<{
-		event: WeekEvent | null;
-	}>({ event: null });
+		timeBucket: TimeBucketStatus | null;
+	}>({ timeBucket: null });
 
 	const formatDate = useFormatDate();
 
-	function handleEventClick(event: WeekEvent): void {
-		setPopupData({ event: event });
+	function handleHourClick(timeBucket: TimeBucketStatus): void {
+		setPopupData({ timeBucket });
 		openPopup();
 	}
 
-	const eventTitle = (event: WeekEvent) => {
-		const actualDay = formatDate(event.startDate, "d MMMM");
-		const start = formatDate(event.startDate, "p");
-		const end = formatDate(event.endDate, "p");
+	const timeBucketTitle = (timeBucket: TimeBucketStatus) => {
+		const actualDay = formatDate(timeBucket.time, "d MMMM");
+		const start = formatDate(timeBucket.time, "p");
+		const end = formatDate(addHours(timeBucket.time, 1), "p");
 
 		return t(($) => $.popup.eventTitle, {
 			day: actualDay,
@@ -93,18 +93,14 @@ export function WeekWidget({
 								<WeekDaysHeader days={timeSlotSegments} />
 								<div className="grid grid-cols-1 grid-rows-1">
 									<div className="col-start-1 row-start-1">
-										<WeekGrid
-											days={timeSlotSegments}
-											rowHeight={rowHeight}
-										/>
+										<WeekGrid days={timeSlotSegments} rowHeight={rowHeight} />
 									</div>
 									<div className="col-start-1 row-start-1">
 										<WeekEventGrid
 											days={timeSlotSegments}
-											events={events}
-											handleEventClick={handleEventClick}
+											data={data}
+											handleHourClick={handleHourClick}
 											weekStartsOn={weekStartsOn}
-											minuteStep={minuteStep}
 											rowHeight={rowHeight}
 											dayStartHour={dayStartHour}
 											dayEndHour={dayEndHour}
@@ -117,12 +113,11 @@ export function WeekWidget({
 				</div>
 			</Card>
 
-			{/* interaction popup window */}
-			{popupData.event && (
+			{popupData.timeBucket && (
 				<WeeklyPopup
 					selectedAggregation={aggregation}
-					title={eventTitle(popupData.event)}
-					event={popupData.event}
+					title={timeBucketTitle(popupData.timeBucket)}
+					timeBucketStatus={popupData.timeBucket}
 					open={visible}
 					onClose={closePopup}
 				>
