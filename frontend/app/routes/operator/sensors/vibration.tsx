@@ -103,8 +103,8 @@ export default function Vibration() {
 				) : view === "week" ? (
 					<WeekWidget
 						locale={getLocale(i18n.language)}
-						dayStartHour={8}
-						dayEndHour={16}
+						dayStartHour={0}
+						dayEndHour={23}
 						weekStartsOn={1}
 						minuteStep={60}
 						events={mapWeekDataToEvents(makeCumulative(data))}
