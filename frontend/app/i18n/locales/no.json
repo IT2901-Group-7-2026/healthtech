@@ -28,7 +28,7 @@
     "title": "Støyeksponering"
   },
   "exposure_summary": {
-    "title": "Alle sensorer",
+    "title": "Eksponeringer",
     "greenHourText": "Timer med trygg mengde eksponering",
     "greenDayText": "Dager med trygg mengde eksponering",
     "orangeHourText": "Timer nær eksponeringsgrensen",

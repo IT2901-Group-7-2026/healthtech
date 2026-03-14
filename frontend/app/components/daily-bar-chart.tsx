@@ -43,8 +43,8 @@ function getHourlyDangerLevels(
 export function DailyBarChart({
 	data,
 	chartTitle,
-	startHour = 0,
-	endHour = 23,
+	startHour = 8,
+	endHour = 16,
 	headerRight,
 }: {
 	data: AllSensors;

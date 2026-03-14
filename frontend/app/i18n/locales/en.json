@@ -28,7 +28,7 @@
     "title": "Noise exposure"
   },
   "exposure_summary": {
-    "title": "All sensors",
+    "title": "Exposure summary",
     "greenHourText": "Hours with safe amount of exposure",
     "greenDayText": "Days with safe amount of exposure",
     "orangeHourText": "Hours close to exposure limit",
