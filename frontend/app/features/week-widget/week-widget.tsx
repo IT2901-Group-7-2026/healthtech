@@ -17,8 +17,8 @@ import { useWeekView } from "./use-week-view";
 export function WeekWidget({
 	minuteStep = 30,
 	weekStartsOn = 1,
-	dayStartHour = 8,
-	dayEndHour = 16,
+	dayStartHour = 0,
+	dayEndHour = 23,
 	locale,
 	rowHeight = 56,
 	isDisabledCell,
