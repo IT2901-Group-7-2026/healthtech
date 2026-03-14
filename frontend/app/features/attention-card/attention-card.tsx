@@ -124,6 +124,7 @@ export const AttentionCard = ({
 						{!sensor && (
 							<>
 								<StatCard
+								className="text-red-500"
 									label={t(
 										($) =>
 											$.foremanDashboard.overview
@@ -147,6 +148,7 @@ export const AttentionCard = ({
 								</StatCard>
 
 								<StatCard
+								className="text-orange-400"
 									label={t(
 										($) =>
 											$.foremanDashboard.overview
@@ -177,6 +179,7 @@ export const AttentionCard = ({
 								</StatCard>
 
 								<StatCard
+								className="text-green-600"
 									label={t(
 										($) =>
 											$.foremanDashboard.overview
