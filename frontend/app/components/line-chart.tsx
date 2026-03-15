@@ -53,7 +53,6 @@ interface LineChartProps {
 	usePeakData?: boolean;
 }
 
-//TODO: Make start and end hour dynamic based on data (+/- 1 hour) and not hardcoded to 8-16
 export function ChartLineDefault({
 	chartData,
 	chartTitle,
