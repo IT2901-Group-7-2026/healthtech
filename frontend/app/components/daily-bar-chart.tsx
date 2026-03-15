@@ -39,8 +39,8 @@ interface DailyBarChartProps {
 export function DailyBarChart({
 	data,
 	chartTitle,
-	startHour = 8,
-	endHour = 16,
+	startHour = 0,
+	endHour = 23,
 	headerRight,
 }: DailyBarChartProps) {
 	const { t } = useTranslation();
@@ -106,6 +106,7 @@ export function DailyBarChart({
 								stackId="a"
 								stroke="var(--muted-foreground)"
 								strokeWidth={1}
+								barSize={180}
 							>
 								{data.map((row, index) => {
 									const hour = Number(key);
