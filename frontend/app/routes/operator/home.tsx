@@ -70,11 +70,17 @@ export default function OperatorHome() {
 					>
 						{t(($) => $.today)}
 					</Button>
-					<Button onClick={() => setDate(getPrevDay(date, view))} size={"icon"}>
+					<Button
+						onClick={() => setDate(getPrevDay(date, view))}
+						size={"icon"}
+					>
 						{"<"}
 					</Button>
 					<ViewSelect />
-					<Button onClick={() => setDate(getNextDay(date, view))} size={"icon"}>
+					<Button
+						onClick={() => setDate(getNextDay(date, view))}
+						size={"icon"}
+					>
 						{">"}
 					</Button>
 				</div>
@@ -115,14 +121,18 @@ export default function OperatorHome() {
 										overviewBuckets ?? [],
 									)}
 								/>
-							) : !overviewBuckets || overviewBuckets.length === 0 ? (
+							) : !overviewBuckets ||
+								overviewBuckets.length === 0 ? (
 								<Card className="flex h-24 w-full items-center">
 									<CardTitle>
-										{date.toLocaleDateString(i18n.language, {
-											day: "numeric",
-											month: "long",
-											year: "numeric",
-										})}
+										{date.toLocaleDateString(
+											i18n.language,
+											{
+												day: "numeric",
+												month: "long",
+												year: "numeric",
+											},
+										)}
 									</CardTitle>
 									<p>{t(($) => $.noData)}</p>
 								</Card>
@@ -135,11 +145,14 @@ export default function OperatorHome() {
 									)}
 									startHour={0}
 									endHour={23}
-									chartTitle={date.toLocaleDateString(i18n.language, {
-										day: "numeric",
-										month: "long",
-										year: "numeric",
-									})}
+									chartTitle={date.toLocaleDateString(
+										i18n.language,
+										{
+											day: "numeric",
+											month: "long",
+											year: "numeric",
+										},
+									)}
 									headerRight={
 										<Button
 											onClick={() =>
@@ -149,11 +162,14 @@ export default function OperatorHome() {
 														pdfVibrationChartContainerId,
 														pdfNoiseChartContainerId,
 													],
-													`${date.toLocaleDateString(i18n.language, {
-														day: "numeric",
-														month: "long",
-														year: "numeric",
-													})}-${user.username}-Exposure-Overview`,
+													`${date.toLocaleDateString(
+														i18n.language,
+														{
+															day: "numeric",
+															month: "long",
+															year: "numeric",
+														},
+													)}-${user.username}-Exposure-Overview`,
 													[
 														`Dust Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
 														`Vibration Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,

@@ -43,9 +43,9 @@ export function usersQueryOptions() {
 }
 
 const fetchSensorData = async (
-	userId: string,
 	sensor: Sensor,
 	sensorDataRequest: SensorDataRequestDto,
+	userId?: string,
 ): Promise<Array<SensorDataResponseDto>> => {
 	const response = await fetchWithUserId(`sensor/${sensor}/${userId}`, {
 		method: "POST",
@@ -61,8 +61,8 @@ const fetchSensorData = async (
 };
 
 const fetchSensorOverviewData = async (
-	userId: string,
 	requests: SensorOverviewDataRequestDto,
+	userId?: string,
 ): Promise<Array<OverviewBucketDto>> => {
 	const response = await fetchWithUserId(`sensor/overview/${userId}`, {
 		method: "POST",
@@ -82,11 +82,11 @@ export function sensorOverviewQueryOptions({
 	userId,
 }: {
 	query: SensorOverviewDataRequestDto;
-	userId: string;
+	userId?: string;
 }) {
 	return queryOptions({
 		queryKey: [query, userId],
-		queryFn: () => fetchSensorOverviewData(userId, query),
+		queryFn: () => fetchSensorOverviewData(query, userId),
 		staleTime: minutesToMilliseconds(10),
 	});
 }
@@ -99,12 +99,12 @@ export function sensorQueryOptions({
 }: {
 	sensor: Sensor;
 	query: SensorDataRequestDto;
-	userId: string;
+	userId?: string;
 	enabled?: boolean;
 }) {
 	return queryOptions({
 		queryKey: [sensor, query, userId],
-		queryFn: () => fetchSensorData(userId, sensor, query),
+		queryFn: () => fetchSensorData(sensor, query, userId),
 		staleTime: minutesToMilliseconds(10),
 		enabled,
 	});

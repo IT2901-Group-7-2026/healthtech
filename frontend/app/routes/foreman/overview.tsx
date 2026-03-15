@@ -51,16 +51,19 @@ export default function ForemanOverview() {
 		parseAsString.withDefault(formatDate(new Date(), "yyyy-MM-dd")),
 	);
 
+	const { data: users } = useQuery(usersQueryOptions());
+
 	// TODO: Use this to show data for only that user
-	const [selectedUser, setSelectedUser] = useQueryState(
-		"user",
+	const [selectedUserId, setSelectedUserId] = useQueryState(
+		"userId",
 		parseAsString,
 	);
+	const selectedUser = users?.find((u) => u.id === selectedUserId);
 
-	const selectedDate = date ? parseISO(date) : undefined;
+	const selectedDate = parseISO(date);
 
-	const startDate = selectedDate ? startOfDay(selectedDate) : undefined;
-	const endDate = selectedDate ? endOfDay(selectedDate) : undefined;
+	const startDate = startOfDay(selectedDate);
+	const endDate = endOfDay(selectedDate);
 
 	// Foremen can only see dates within the last week
 	const minSelectableDate = startOfDay(addWeeks(new Date(), -1));
@@ -68,20 +71,21 @@ export default function ForemanOverview() {
 
 	const { user } = useUser();
 
-	const { data: users } = useQuery(usersQueryOptions());
+	const dustQueriesEnabled = !!selectedUserId;
 
 	//TODO: Use buildSensorQuery here too
 	const { data: dustTwa1Data } = useQuery(
 		sensorQueryOptions({
 			sensor: "dust",
 			query: {
-				startTime: startOfDay(selectedDate ?? new Date()),
-				endTime: endOfDay(selectedDate ?? new Date()),
+				startTime: startOfDay(selectedDate),
+				endTime: endOfDay(selectedDate),
 				granularity: "day",
 				function: "avg",
 				field: "pm1_twa",
 			},
-			userId: "87654321-8765-4321-8765-432187654321",
+			userId: selectedUserId ?? undefined,
+			enabled: dustQueriesEnabled,
 		}),
 	);
 
@@ -89,13 +93,14 @@ export default function ForemanOverview() {
 		sensorQueryOptions({
 			sensor: "dust",
 			query: {
-				startTime: startOfDay(selectedDate ?? new Date()),
-				endTime: endOfDay(selectedDate ?? new Date()),
+				startTime: startOfDay(selectedDate),
+				endTime: endOfDay(selectedDate),
 				granularity: "day",
 				function: "avg",
 				field: "pm25_twa",
 			},
-			userId: "87654321-8765-4321-8765-432187654321",
+			userId: selectedUserId ?? undefined,
+			enabled: dustQueriesEnabled,
 		}),
 	);
 
@@ -103,13 +108,14 @@ export default function ForemanOverview() {
 		sensorQueryOptions({
 			sensor: "dust",
 			query: {
-				startTime: startOfDay(selectedDate ?? new Date()),
-				endTime: endOfDay(selectedDate ?? new Date()),
+				startTime: startOfDay(selectedDate),
+				endTime: endOfDay(selectedDate),
 				granularity: "day",
 				function: "avg",
 				field: "pm10_twa",
 			},
-			userId: "87654321-8765-4321-8765-432187654321",
+			userId: selectedUserId ?? undefined,
+			enabled: dustQueriesEnabled,
 		}),
 	);
 
@@ -126,6 +132,12 @@ export default function ForemanOverview() {
 	const isUserComboboxDisabled = !users || users.length === 0;
 
 	//TODO: Update card links to point to stats page
+
+	const userComboboxOptions =
+		users?.map((u) => ({
+			value: u.id,
+			label: u.username,
+		})) ?? [];
 
 	return (
 		<div className="flex flex-col gap-8">
@@ -154,10 +166,10 @@ export default function ForemanOverview() {
 
 				<div className="flex flex-end flex-row gap-4">
 					<Combobox
-						items={users?.map((u) => u.username) ?? []}
+						items={userComboboxOptions}
 						disabled={isUserComboboxDisabled}
-						value={selectedUser ?? undefined}
-						onValueChange={(value) => setSelectedUser(value)}
+						value={selectedUserId ?? undefined}
+						onValueChange={(value) => setSelectedUserId(value)}
 					>
 						<ComboboxInput
 							placeholder={t(
@@ -168,12 +180,16 @@ export default function ForemanOverview() {
 							showClear
 							disabled={isUserComboboxDisabled}
 							className="bg-background dark:bg-input/30"
+							value={selectedUser?.username ?? ""}
 						/>
 						<ComboboxContent>
 							<ComboboxList>
 								{(item) => (
-									<ComboboxItem key={item} value={item}>
-										{item}
+									<ComboboxItem
+										key={item.value}
+										value={item.value}
+									>
+										{item.label}
 									</ComboboxItem>
 								)}
 							</ComboboxList>
@@ -187,17 +203,7 @@ export default function ForemanOverview() {
 								data-empty={!date}
 								className="w-52 justify-between text-left font-normal data-[empty=true]:text-muted-foreground"
 							>
-								{selectedDate ? (
-									formatDate(selectedDate, "PPP")
-								) : (
-									<span>
-										{t(
-											($) =>
-												$.foremanDashboard.overview
-													.selectDatePlaceholder,
-										)}
-									</span>
-								)}
+								{formatDate(selectedDate, "PPP")}
 								<ChevronDownIcon data-icon="inline-end" />
 							</Button>
 						</PopoverTrigger>
@@ -298,7 +304,7 @@ export default function ForemanOverview() {
 								)}
 						</div>
 					)}
-					{selectedUser && (
+					{selectedUserId && (
 						<div className="flex flex-row items-center gap-8">
 							{dustTwa1Data && dustTwa1Data.length > 0 && (
 								<DustChart

@@ -17,7 +17,7 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
 	[ServiceFilter(typeof(ValidateFieldForSensorTypeFilter))]
 	public async Task<ActionResult<IEnumerable<SensorDataDto>>> GetAggregatedData(
 		[FromBody] SensorDataRequestDto request,
-		[FromRoute] Guid userId,
+		[FromRoute] Guid? userId,
 		[FromRoute] SensorType sensorType
 	)
 	{
@@ -33,7 +33,7 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
 	[HttpPost("overview/{userId}")]
 	public async Task<ActionResult<IEnumerable<CombinedSensorBucketDto>>> GetOverviewData(
 		[FromBody] Dictionary<SensorType, SensorDataRequestDto> requests,
-		[FromRoute] Guid userId
+		[FromRoute] Guid? userId
 	)
 	{
 		var response = await _sensorDataService.GetOverviewDataAsync(requests, userId);
