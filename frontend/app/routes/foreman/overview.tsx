@@ -30,6 +30,7 @@ import {
 	sensorQueryOptions,
 	usersQueryOptions,
 } from "@/lib/api.js";
+import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
 import { useQuery } from "@tanstack/react-query";
@@ -73,17 +74,14 @@ export default function ForemanOverview() {
 
 	const dustQueriesEnabled = !!selectedUserId;
 
-	//TODO: Use buildSensorQuery here too
 	const { data: dustTwa1Data } = useQuery(
 		sensorQueryOptions({
 			sensor: "dust",
-			query: {
-				startTime: startOfDay(selectedDate),
-				endTime: endOfDay(selectedDate),
+			query: buildSensorQuery("dust", "day", selectedDate, {
 				granularity: "day",
-				function: "avg",
+				aggregationFunction: "avg",
 				field: "pm1_twa",
-			},
+			}),
 			userId: selectedUserId ?? undefined,
 			enabled: dustQueriesEnabled,
 		}),
@@ -92,13 +90,11 @@ export default function ForemanOverview() {
 	const { data: dustTwa25Data } = useQuery(
 		sensorQueryOptions({
 			sensor: "dust",
-			query: {
-				startTime: startOfDay(selectedDate),
-				endTime: endOfDay(selectedDate),
+			query: buildSensorQuery("dust", "day", selectedDate, {
 				granularity: "day",
-				function: "avg",
+				aggregationFunction: "avg",
 				field: "pm25_twa",
-			},
+			}),
 			userId: selectedUserId ?? undefined,
 			enabled: dustQueriesEnabled,
 		}),
@@ -107,13 +103,11 @@ export default function ForemanOverview() {
 	const { data: dustTwa10Data } = useQuery(
 		sensorQueryOptions({
 			sensor: "dust",
-			query: {
-				startTime: startOfDay(selectedDate),
-				endTime: endOfDay(selectedDate),
+			query: buildSensorQuery("dust", "day", selectedDate, {
 				granularity: "day",
-				function: "avg",
+				aggregationFunction: "avg",
 				field: "pm10_twa",
-			},
+			}),
 			userId: selectedUserId ?? undefined,
 			enabled: dustQueriesEnabled,
 		}),
