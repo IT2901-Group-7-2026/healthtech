@@ -66,12 +66,12 @@ export default function Noise() {
 		{
 			queries: [
 				sensorQueryOptions({
-					sensor: sensor,
+					sensor,
 					query,
 					userId: user.id,
 				}),
 				sensorQueryOptions({
-					sensor: sensor,
+					sensor,
 					query: daySummaryQuery,
 					userId: user.id,
 					enabled: useDaySummary,

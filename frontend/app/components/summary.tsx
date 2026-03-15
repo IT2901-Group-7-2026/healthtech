@@ -124,16 +124,16 @@ const SummaryRow = ({
 		className="flex items-baseline justify-center p-2 md:justify-start"
 		title={hoverTitle}
 	>
-		<span
+		<p
 			className={cn(
 				"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
 				colorClass,
 			)}
 		>
 			{count}
-		</span>
-		<span className={cn("ml-1 text-xs md:ml-2 md:text-sm", colorClass)}>
+		</p>
+		<p className={cn("ml-1 text-xs md:ml-2 md:text-sm", colorClass)}>
 			{label}
-		</span>
+		</p>
 	</div>
 );

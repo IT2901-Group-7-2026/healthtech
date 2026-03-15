@@ -72,7 +72,7 @@ export default function ForemanOverview() {
 
 	const { user } = useUser();
 
-	const dustQueriesEnabled = !!selectedUserId;
+	const isDustQueriesEnabled = Boolean(selectedUserId);
 
 	const { data: dustTwa1Data } = useQuery(
 		sensorQueryOptions({
@@ -83,7 +83,7 @@ export default function ForemanOverview() {
 				field: "pm1_twa",
 			}),
 			userId: selectedUserId ?? undefined,
-			enabled: dustQueriesEnabled,
+			enabled: isDustQueriesEnabled,
 		}),
 	);
 
@@ -96,7 +96,7 @@ export default function ForemanOverview() {
 				field: "pm25_twa",
 			}),
 			userId: selectedUserId ?? undefined,
-			enabled: dustQueriesEnabled,
+			enabled: isDustQueriesEnabled,
 		}),
 	);
 
@@ -109,7 +109,7 @@ export default function ForemanOverview() {
 				field: "pm10_twa",
 			}),
 			userId: selectedUserId ?? undefined,
-			enabled: dustQueriesEnabled,
+			enabled: isDustQueriesEnabled,
 		}),
 	);
 

@@ -9,7 +9,7 @@ import type {
 
 export function calculateSummaryCounts(
 	data: Array<SensorDataResponseDto> | Array<OverviewBucketDto>,
-	usePeakData?: boolean,
+	usePeakDangerLevel?: boolean,
 ): SummaryCounts {
 	const summary: SummaryCounts = {
 		safeCount: 0,
@@ -20,7 +20,7 @@ export function calculateSummaryCounts(
 	data.forEach((point) => {
 		const dangerLevel =
 			"peakDangerLevel" in point
-				? getDangerLevelFromData(point, usePeakData)
+				? getDangerLevelFromData(point, usePeakDangerLevel)
 				: point.dangerLevel;
 
 		switch (dangerLevel) {
@@ -41,9 +41,9 @@ export function calculateSummaryCounts(
 
 export function getDangerLevelFromData(
 	data: SensorDataResponseDto,
-	usePeakData?: boolean,
+	usePeakDangerLevel?: boolean,
 ): DangerLevel {
-	if (usePeakData) {
+	if (usePeakDangerLevel) {
 		return data.peakDangerLevel ?? data.dangerLevel;
 	}
 	return data.dangerLevel;
@@ -52,10 +52,10 @@ export function getDangerLevelFromData(
 export function mapSensorDataToTimeBucketStatuses(
 	data: Array<SensorDataResponseDto>,
 	sensor: Sensor,
-	usePeakData?: boolean,
+	usePeakDangerLevel?: boolean,
 ): Array<TimeBucketStatus> {
 	return data.map((point) => {
-		const dangerLevel = getDangerLevelFromData(point, usePeakData);
+		const dangerLevel = getDangerLevelFromData(point, usePeakDangerLevel);
 
 		return {
 			time: point.time,

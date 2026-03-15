@@ -49,12 +49,12 @@ export default function Vibration() {
 		{
 			queries: [
 				sensorQueryOptions({
-					sensor: sensor,
+					sensor,
 					query,
 					userId: user.id,
 				}),
 				sensorQueryOptions({
-					sensor: sensor,
+					sensor,
 					query: daySummaryQuery,
 					userId: user.id,
 					enabled: useDaySummary,

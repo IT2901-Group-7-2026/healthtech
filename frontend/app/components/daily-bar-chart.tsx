@@ -17,14 +17,16 @@ function generateChartData(
 	startHour: number,
 	endHour: number,
 ): Array<Record<string, string>> {
+	const hourEntries = Array.from(
+		{ length: endHour - startHour + 1 },
+		(_, i) => [String(startHour + i), HOUR_BLOCK_SIZE],
+	);
+
+	const hourData = Object.fromEntries(hourEntries);
+
 	return sensors.map((sensor) => ({
 		sensor,
-		...Object.fromEntries(
-			Array.from({ length: endHour - startHour + 1 }, (_, i) => [
-				String(startHour + i),
-				HOUR_BLOCK_SIZE,
-			]),
-		),
+		...hourData,
 	}));
 }
 

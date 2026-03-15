@@ -100,7 +100,7 @@ export function buildSensorQuery(
 	const granularity =
 		options?.granularity ??
 		getGranularityFromView(view, options?.isOverview);
-	const func =
+	const aggregationFunction =
 		options?.aggregationFunction ??
 		getAggregationFunction(sensor, options?.usePeakAggregation ?? false);
 	const field = options?.field ?? getSensorTypeFieldFromSensor(sensor);
@@ -109,7 +109,7 @@ export function buildSensorQuery(
 		startTime,
 		endTime,
 		granularity,
-		function: func,
+		function: aggregationFunction,
 		field,
 	};
 

@@ -52,18 +52,6 @@ export function CalendarWidget({
 		.filter((d) => d.dangerLevel === "danger")
 		.map((d) => d.time);
 
-	function getDayDangerLevel(day: Date): DangerLevel | null {
-		const dayStatus = data.find(
-			(d) => d.time.toDateString() === day.toDateString(),
-		);
-
-		if (dayStatus) {
-			return dayStatus.dangerLevel;
-		}
-
-		return null;
-	}
-
 	function handleDayClick(clickedDay: Date) {
 		const utcDate = new Date(
 			Date.UTC(
@@ -104,8 +92,8 @@ export function CalendarWidget({
 						DayButton: (props) => (
 							<CustomDay
 								{...props}
-								getDayDangerLevel={getDayDangerLevel}
 								handleDayClick={handleDayClick}
+								data={data}
 							/>
 						),
 					}}
@@ -144,31 +132,46 @@ export function CalendarWidget({
 	);
 }
 
+function getDayDangerLevel(
+	day: Date,
+	data: Array<TimeBucketStatus>,
+): DangerLevel | null {
+	const dayStatus = data.find(
+		(d) => d.time.toDateString() === day.toDateString(),
+	);
+
+	if (dayStatus) {
+		return dayStatus.dangerLevel;
+	}
+
+	return null;
+}
+
 type CustomDayProps = {
+	data: Array<TimeBucketStatus>;
 	day: CalendarDay;
 	modifiers: Modifiers;
 	className?: string;
-	getDayDangerLevel: (day: Date) => DangerLevel | null;
 	handleDayClick: (day: Date) => void;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 function CustomDay({
+	data,
 	day,
 	className,
-	getDayDangerLevel,
 	handleDayClick,
 	...buttonProps
 }: CustomDayProps) {
-	const dangerLevel = getDayDangerLevel(day.date);
-	const disabled = !dangerLevel;
+	const dangerLevel = getDayDangerLevel(day.date, data);
+	const disabled = dangerLevel === null;
 
 	let bgClassname = "";
 	if (dangerLevel === "safe") {
-		bgClassname = `bg-safe ${bgClassname}`;
+		bgClassname = "bg-safe";
 	} else if (dangerLevel === "warning") {
-		bgClassname = `bg-warning ${bgClassname}`;
+		bgClassname = "bg-warning";
 	} else if (dangerLevel === "danger") {
-		bgClassname = `bg-danger ${bgClassname}`;
+		bgClassname = "bg-danger";
 	}
 
 	return (

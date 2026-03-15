@@ -75,14 +75,14 @@ export function ChartLineDefault({
 	const getValue = (data: SensorDataResponseDto) =>
 		usePeakData ? (data.peakValue ?? data.value) : data.value;
 
-	const maxData = [...chartData].sort((a, b) => getValue(b) - getValue(a))[0];
-	const minData = [...chartData].sort((a, b) => getValue(a) - getValue(b))[0];
+	const maxData = chartData.toSorted((a, b) => getValue(b) - getValue(a))[0];
+	const minData = chartData.toSorted((a, b) => getValue(a) - getValue(b))[0];
 
 	// Set the domain to be from 1 hour before the first data point to 1 hour after the last data point, clamped to the current day
-	const minTime = [...chartData].sort(
+	const minTime = chartData.toSorted(
 		(a, b) => a.time.getTime() - b.time.getTime(),
 	)[0].time;
-	const maxTime = [...chartData].sort(
+	const maxTime = chartData.toSorted(
 		(a, b) => b.time.getTime() - a.time.getTime(),
 	)[0].time;
 

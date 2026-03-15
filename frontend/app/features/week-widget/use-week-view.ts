@@ -1,17 +1,18 @@
 import { useDate } from "@/features/date-picker/use-date";
 import { getFormatOptions, useFormatDate } from "@/hooks/use-format-date.js";
 import { tz } from "@date-fns/tz";
-import type { Day, Locale } from "date-fns";
 import {
 	addDays,
 	addWeeks,
+	type Day,
 	eachDayOfInterval,
-	eachMinuteOfInterval,
+	eachHourOfInterval,
 	format,
 	getWeek,
 	isSameMonth,
 	isSameYear,
 	isToday,
+	type Locale,
 	set,
 	startOfDay,
 	startOfWeek,
@@ -108,7 +109,7 @@ export function useWeekView({
 		});
 
 		// 1 time slot per hour
-		const dateSteps = eachMinuteOfInterval({ start, end }, { step: 60 });
+		const dateSteps = eachHourOfInterval({ start, end });
 
 		const cells = dateSteps.map((date) => ({
 			date: date,
