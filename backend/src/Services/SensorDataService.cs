@@ -15,6 +15,10 @@ public interface ISensorDataService
 		Guid? userId,
 		SensorType sensorType
 	);
+	Task<IEnumerable<CombinedSensorBucketDto>> GetOverviewDataAsync(
+		Dictionary<SensorType, SensorDataRequestDto> requests,
+		Guid? userId
+	);
 }
 
 public class SensorDataService(AppDbContext context, SignedInUserContext signedInUserContext)
@@ -22,9 +26,6 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 {
 	private readonly AppDbContext _context = context;
 	private readonly SignedInUserContext _signedInUserContext = signedInUserContext;
-
-	// TODO: Cumulative value for vibration is still being done in the frontend, but now the dangerlevel cumulation is done here which could lead to confusion.
-	// Maybe instead of always cumulate vibration, add a flag to the request to indicate if cumulation is wanted? And then do cumulation for both value and dangerlevel here?
 
 	public async Task<IEnumerable<SensorDataDto>> GetAggregatedDataAsync(
 		SensorDataRequestDto request,
@@ -90,7 +91,21 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 			)
 			.ToListAsync();
 
-		var dataWithDangerLevels = ThresholdUtils.CalculateDangerLevels(sensorType, rawSensorData);
+		// For vibration data, danger levels are always calculated from cumulative daily sum expore,
+		// ignoring the requested aggregation function.
+		// If the requested aggregation function is sum, the value is cumulated.
+		// NOTE: Maybe this should be changed in the future, for example by only allowing sum aggregation for vibration data,
+		// but for now this is done to allow fetching different aggregations while making sure the threshold logic remains correct.
+		var dataWithCumulatedSensorSumValues = SensorUtils.CumulateVibrationSumValues(
+			sensorType,
+			request.Function,
+			rawSensorData
+		);
+
+		var dataWithDangerLevels = ThresholdUtils.CalculateDangerLevels(
+			sensorType,
+			dataWithCumulatedSensorSumValues
+		);
 
 		var result = dataWithDangerLevels.Select(item => new SensorDataDto
 		{
@@ -102,5 +117,51 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 		});
 
 		return result;
+	}
+
+	/// <summary>
+	/// Combines data from multiple sensor requests into buckets
+	/// </summary>
+	/// <param name="requests"></param>
+	/// <param name="userId"></param>
+	/// <returns></returns>
+	public async Task<IEnumerable<CombinedSensorBucketDto>> GetOverviewDataAsync(
+		Dictionary<SensorType, SensorDataRequestDto> requests,
+		Guid? userId
+	)
+	{
+		Dictionary<DateTime, CombinedSensorBucketDto> combinedData = [];
+
+		foreach (var (sensorType, request) in requests)
+		{
+			IEnumerable<SensorDataDto> sensorDataList = await GetAggregatedDataAsync(
+				request,
+				userId,
+				sensorType
+			);
+
+			foreach (var sensorData in sensorDataList)
+			{
+				if (!combinedData.TryGetValue(sensorData.Time, out CombinedSensorBucketDto? bucket))
+				{
+					bucket = new CombinedSensorBucketDto
+					{
+						Time = sensorData.Time,
+						DangerLevel = sensorData.DangerLevel,
+						SensorDangerLevels = [],
+					};
+					combinedData[sensorData.Time] = bucket;
+				}
+
+				bucket.SensorDangerLevels[sensorType] = sensorData.DangerLevel;
+
+				if (sensorData.DangerLevel > bucket.DangerLevel)
+				{
+					bucket.DangerLevel = sensorData.DangerLevel;
+				}
+			}
+		}
+
+		return combinedData.Values.OrderBy(bucket => bucket.Time).ToList();
 	}
 }

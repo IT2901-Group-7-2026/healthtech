@@ -1,33 +1,37 @@
 import { DangerLevels } from "@/lib/danger-levels";
+import type { TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
 import {
+	addHours,
 	type Day,
 	differenceInCalendarDays,
 	getMinutes,
 	isSameWeek,
 	startOfWeek,
 } from "date-fns";
-import type { TimeSlotSegments, WeekEvent } from "../types";
+import type { TimeSlotSegments } from "../types";
+
+interface WeekEventGridProps {
+	days: TimeSlotSegments;
+	data: Array<TimeBucketStatus>;
+	weekStartsOn: Day;
+	rowHeight: number;
+	handleHourClick: (timeBucketStatus: TimeBucketStatus) => void;
+	dayStartHour: number;
+	dayEndHour: number;
+}
 
 export function WeekEventGrid({
 	days,
-	events,
+	data,
 	weekStartsOn,
-	minuteStep,
 	rowHeight,
-	handleEventClick,
+	handleHourClick,
 	dayStartHour,
 	dayEndHour,
-}: {
-	days: TimeSlotSegments;
-	events?: Array<WeekEvent>;
-	weekStartsOn: Day;
-	minuteStep: number;
-	rowHeight: number;
-	handleEventClick: (event: WeekEvent) => void;
-	dayStartHour: number;
-	dayEndHour: number;
-}) {
+}: WeekEventGridProps) {
+	const minuteStep = 60;
+
 	return (
 		<div
 			style={{
@@ -36,42 +40,47 @@ export function WeekEventGrid({
 				gridTemplateRows: `repeat(${days[0].cells.length}, minmax(${rowHeight}px, 1fr))`,
 			}}
 		>
-			{(events || [])
+			{data
 				.filter(
-					(event) =>
-						isSameWeek(days[0].date, event.startDate, {
+					(timeBucketStatus) =>
+						isSameWeek(days[0].date, timeBucketStatus.time, {
 							weekStartsOn,
 						}) &&
-						event.endDate.getUTCHours() <= dayEndHour &&
-						event.startDate.getUTCHours() >= dayStartHour,
+						addHours(timeBucketStatus.time, 1).getUTCHours() <=
+							dayEndHour &&
+						timeBucketStatus.time.getUTCHours() >= dayStartHour,
 				)
-				.map((event) => {
+				.map((timeBucketStatus) => {
 					const start =
-						event.startDate.getUTCHours() - dayStartHour + 1;
-					const end = event.endDate.getUTCHours() - dayStartHour + 1;
+						timeBucketStatus.time.getUTCHours() - dayStartHour + 1;
+					const end =
+						addHours(timeBucketStatus.time, 1).getUTCHours() -
+						dayStartHour +
+						1;
 					const paddingTop =
-						((getMinutes(event.startDate) % minuteStep) /
+						((getMinutes(timeBucketStatus.time) % minuteStep) /
 							minuteStep) *
 						rowHeight;
 
 					const paddingBottom =
 						(rowHeight -
-							((getMinutes(event.endDate) % minuteStep) /
+							((getMinutes(addHours(timeBucketStatus.time, 1)) %
+								minuteStep) /
 								minuteStep) *
 								rowHeight) %
 						rowHeight;
 
 					return (
 						<div
-							key={event.startDate.toISOString()}
+							key={timeBucketStatus.time.toISOString()}
 							className="relative flex transition-all"
 							style={{
 								gridRowStart: start,
 								gridRowEnd: end,
 								gridColumnStart:
 									differenceInCalendarDays(
-										event.startDate,
-										startOfWeek(event.startDate, {
+										timeBucketStatus.time,
+										startOfWeek(timeBucketStatus.time, {
 											weekStartsOn,
 										}),
 									) + 2,
@@ -82,16 +91,18 @@ export function WeekEventGrid({
 								type="button"
 								className={cn(
 									"absolute inset-1 flex cursor-pointer flex-col overflow-y-auto rounded-md text-xs leading-5 transition",
-									`bg-${DangerLevels[event.dangerLevel].color}`,
+									`bg-${DangerLevels[timeBucketStatus.dangerLevel].color}`,
 									"border-t-2 border-t-muted-foreground border-dotted",
-									`${event.startDate.getUTCHours() === dayStartHour && "border-t-0"} `,
+									`${timeBucketStatus.time.getUTCHours() === dayStartHour && "border-t-0"} `,
 									"hover:brightness-85",
 								)}
 								style={{
 									top: paddingTop,
 									bottom: paddingBottom,
 								}}
-								onClick={() => handleEventClick(event)}
+								onClick={() =>
+									handleHourClick(timeBucketStatus)
+								}
 							/>
 						</div>
 					);

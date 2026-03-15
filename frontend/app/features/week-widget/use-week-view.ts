@@ -1,17 +1,18 @@
 import { useDate } from "@/features/date-picker/use-date";
 import { getFormatOptions, useFormatDate } from "@/hooks/use-format-date.js";
 import { tz } from "@date-fns/tz";
-import type { Day, Locale } from "date-fns";
 import {
 	addDays,
 	addWeeks,
+	type Day,
 	eachDayOfInterval,
-	eachMinuteOfInterval,
+	eachHourOfInterval,
 	format,
 	getWeek,
 	isSameMonth,
 	isSameYear,
 	isToday,
+	type Locale,
 	set,
 	startOfDay,
 	startOfWeek,
@@ -39,7 +40,6 @@ const getViewTitle = (firstDay: Date, lastDay: Date, locale?: Locale) => {
 };
 
 interface WeekViewOptions {
-	minuteStep?: number;
 	dayStartHour?: number;
 	dayEndHour?: number;
 	weekStartsOn?: Day;
@@ -50,7 +50,6 @@ interface WeekViewOptions {
 }
 
 export function useWeekView({
-	minuteStep = 30,
 	weekStartsOn = 1,
 	dayStartHour,
 	dayEndHour,
@@ -109,10 +108,8 @@ export function useWeekView({
 			milliseconds: 0,
 		});
 
-		const dateSteps = eachMinuteOfInterval(
-			{ start, end },
-			{ step: minuteStep },
-		);
+		// 1 time slot per hour
+		const dateSteps = eachHourOfInterval({ start, end });
 
 		const cells = dateSteps.map((date) => ({
 			date: date,

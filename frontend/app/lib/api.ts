@@ -10,14 +10,17 @@ import {
 	type Note,
 	type NoteDataRequest,
 	NoteSchema,
+	type OverviewBucketDto,
+	OverviewBucketDtoSchema,
 	type SensorDataRequestDto,
 	type SensorDataResponseDto,
 	SensorDataResponseDtoSchema,
+	type SensorOverviewDataRequestDto,
 	ThresholdSummarySchema,
 	UserSchema,
 	UserWithStatusSchema,
 } from "./dto";
-import { getStartEnd } from "./queries";
+import { getStartEnd } from "./sensor-query-utils";
 import type { View } from "./views";
 
 const fetchAllUsers = async () => {
@@ -40,9 +43,9 @@ export function usersQueryOptions() {
 }
 
 const fetchSensorData = async (
-	userId: string,
 	sensor: Sensor,
 	sensorDataRequest: SensorDataRequestDto,
+	userId?: string,
 ): Promise<Array<SensorDataResponseDto>> => {
 	const response = await fetchWithUserId(`sensor/${sensor}/${userId}`, {
 		method: "POST",
@@ -57,19 +60,53 @@ const fetchSensorData = async (
 	return SensorDataResponseDtoSchema.array().parseAsync(json);
 };
 
+const fetchSensorOverviewData = async (
+	requests: SensorOverviewDataRequestDto,
+	userId?: string,
+): Promise<Array<OverviewBucketDto>> => {
+	const response = await fetchWithUserId(`sensor/overview/${userId}`, {
+		method: "POST",
+		body: JSON.stringify(requests),
+	});
+
+	if (!response.ok) {
+		throw new Error("Failed to fetch sensor overview data");
+	}
+
+	const json = await response.json();
+	return OverviewBucketDtoSchema.array().parseAsync(json);
+};
+
+export function sensorOverviewQueryOptions({
+	query,
+	userId,
+}: {
+	query: SensorOverviewDataRequestDto;
+	userId?: string;
+}) {
+	return queryOptions({
+		queryKey: [query, userId],
+		queryFn: () => fetchSensorOverviewData(query, userId),
+		staleTime: minutesToMilliseconds(10),
+	});
+}
+
 export function sensorQueryOptions({
 	sensor,
 	query,
 	userId,
+	enabled,
 }: {
 	sensor: Sensor;
 	query: SensorDataRequestDto;
-	userId: string;
+	userId?: string;
+	enabled?: boolean;
 }) {
 	return queryOptions({
 		queryKey: [sensor, query, userId],
-		queryFn: () => fetchSensorData(userId, sensor, query),
+		queryFn: () => fetchSensorData(sensor, query, userId),
 		staleTime: minutesToMilliseconds(10),
+		enabled,
 	});
 }
 
