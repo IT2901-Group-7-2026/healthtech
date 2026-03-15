@@ -13,6 +13,7 @@ import type {
 	GranularityKey,
 	SensorDataRequestDto,
 	SensorOverviewDataRequestDto,
+	SensorTypeField,
 } from "./dto";
 
 function getGranularityFromView(
@@ -44,8 +45,9 @@ function getAggregationFunction(
 	}
 }
 
-// TODO: Create enum for field and give better name
-function getFieldFromSensor(sensor: Sensor): string | undefined {
+function getSensorTypeFieldFromSensor(
+	sensor: Sensor,
+): SensorTypeField | undefined {
 	switch (sensor) {
 		case "dust":
 			return "pm1_twa";
@@ -88,7 +90,7 @@ export function buildSensorQuery(
 	options?: {
 		granularity?: GranularityKey;
 		aggregationFunction?: AggregateFnKey;
-		field?: string;
+		field?: SensorTypeField;
 		usePeakAggregation?: boolean;
 		isOverview?: boolean;
 	},
@@ -101,7 +103,7 @@ export function buildSensorQuery(
 	const func =
 		options?.aggregationFunction ??
 		getAggregationFunction(sensor, options?.usePeakAggregation ?? false);
-	const field = options?.field ?? getFieldFromSensor(sensor);
+	const field = options?.field ?? getSensorTypeFieldFromSensor(sensor);
 
 	const query: SensorDataRequestDto = {
 		startTime,

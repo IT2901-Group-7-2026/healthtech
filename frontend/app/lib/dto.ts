@@ -2,6 +2,8 @@ import { type Sensor, SensorSchema } from "@/features/sensor-picker/sensors";
 import { z } from "zod";
 import { DangerLevelSchema } from "./danger-levels";
 
+// TODO: Split this file into multiple files based on domain
+
 export const granularityEnum = {
 	minute: 0,
 	hour: 1,
@@ -25,7 +27,7 @@ export type SensorDataRequestDto = {
 	endTime: Date;
 	granularity: GranularityKey;
 	function: AggregateFnKey;
-	field?: string;
+	field?: SensorTypeField;
 };
 
 export type SensorOverviewDataRequestDto = Partial<
@@ -160,3 +162,16 @@ export type SensorThresholdSummary = z.infer<
 	typeof SensorThresholdSummarySchema
 >;
 export type ThresholdSummary = z.infer<typeof ThresholdSummarySchema>;
+
+export const SensorTypeFieldSchema = z.enum([
+	"pm1_stel",
+	"pm25_stel",
+	"pm4_stel",
+	"pm10_stel",
+	"pm1_twa",
+	"pm25_twa",
+	"pm4_twa",
+	"pm10_twa",
+]);
+
+export type SensorTypeField = z.infer<typeof SensorTypeFieldSchema>;

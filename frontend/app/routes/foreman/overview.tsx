@@ -70,6 +70,7 @@ export default function ForemanOverview() {
 
 	const { data: users } = useQuery(usersQueryOptions());
 
+	//TODO: Use buildSensorQuery here too
 	const { data: dustTwa1Data } = useQuery(
 		sensorQueryOptions({
 			sensor: "dust",
