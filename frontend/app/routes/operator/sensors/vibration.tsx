@@ -13,7 +13,7 @@ import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
-import type { SensorDataRequestDto } from "@/lib/dto";
+import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
 import {
@@ -21,8 +21,7 @@ import {
 	mapSensorDataToTimeBucketStatuses,
 } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, makeCumulative } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
+import { useQueries } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -39,39 +38,29 @@ export default function Vibration() {
 
 	const sensor: Sensor = "vibration";
 
-	const dayQuery: SensorDataRequestDto = {
-		startTime: new Date(date.setUTCHours(8)),
-		endTime: new Date(date.setUTCHours(16)),
-		granularity: "minute",
-		function: "max",
-	};
-
-	const weekQuery: SensorDataRequestDto = {
-		startTime: startOfWeek(date, { weekStartsOn: 1 }),
-		endTime: endOfWeek(date, { weekStartsOn: 1 }),
+	const query = buildSensorQuery(sensor, view, date);
+	const daySummaryQuery = buildSensorQuery(sensor, view, date, {
 		granularity: "hour",
-		function: "max",
-	};
+	});
 
-	const monthQuery: SensorDataRequestDto = {
-		startTime: startOfMonth(date),
-		endTime: endOfMonth(date),
-		granularity: "day",
-		function: "max",
-	};
+	const useDaySummary = view === "day";
 
-	const query =
-		view === "day" ? dayQuery : view === "week" ? weekQuery : monthQuery;
-
-	const { data, isLoading, isError } = useQuery(
-		sensorQueryOptions({
-			sensor: "vibration",
-			query: {
-				...query,
-				function: "sum",
-			},
-			userId: user.id,
-		}),
+	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries(
+		{
+			queries: [
+				sensorQueryOptions({
+					sensor: sensor,
+					query,
+					userId: user.id,
+				}),
+				sensorQueryOptions({
+					sensor: sensor,
+					query: daySummaryQuery,
+					userId: user.id,
+					enabled: useDaySummary,
+				}),
+			],
+		},
 	);
 
 	const { minY, maxY } = computeYAxisRange(makeCumulative(data) ?? []);
@@ -86,7 +75,9 @@ export default function Vibration() {
 			<div className="flex flex-col gap-4 md:w-1/4">
 				<Summary
 					exposureType="vibration"
-					data={calculateSummaryCounts(data ?? [])}
+					data={calculateSummaryCounts(
+						(useDaySummary ? daySummaryData : data) ?? [],
+					)}
 				/>
 				<DailyNotes />
 			</div>

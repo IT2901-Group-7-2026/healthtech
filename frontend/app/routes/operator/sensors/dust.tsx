@@ -13,7 +13,7 @@ import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
-import type { SensorDataRequestDto } from "@/lib/dto";
+import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
 import {
@@ -21,8 +21,7 @@ import {
 	mapSensorDataToTimeBucketStatuses,
 } from "@/lib/time-bucket-utils";
 import { computeYAxisRange } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
+import { useQueries } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -38,53 +37,44 @@ export default function Dust() {
 
 	const sensor: Sensor = "dust";
 
-	//TODO: Why are these using max instead of avg?
-	const dayQuery: SensorDataRequestDto = {
-		startTime: new Date(date.setUTCHours(8)),
-		endTime: new Date(date.setUTCHours(16)),
-		granularity: "minute",
-		function: "max",
-		field: "pm1_twa",
-	};
-
-	const weekQuery: SensorDataRequestDto = {
-		startTime: startOfWeek(date, { weekStartsOn: 1 }),
-		endTime: endOfWeek(date, { weekStartsOn: 1 }),
+	const query = buildSensorQuery(sensor, view, date);
+	const daySummaryQuery = buildSensorQuery(sensor, view, date, {
 		granularity: "hour",
-		function: "max",
-		field: "pm1_twa",
-	};
+	});
 
-	const monthQuery: SensorDataRequestDto = {
-		startTime: startOfMonth(date),
-		endTime: endOfMonth(date),
-		granularity: "day",
-		function: "max",
-		field: "pm1_twa",
-	};
+	const useDaySummary = view === "day";
 
-	const query =
-		view === "day" ? dayQuery : view === "week" ? weekQuery : monthQuery;
-
-	const { data, isLoading, isError } = useQuery(
-		sensorQueryOptions({
-			sensor: "dust",
-			query,
-			userId: user.id,
-		}),
+	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries(
+		{
+			queries: [
+				sensorQueryOptions({
+					sensor: sensor,
+					query,
+					userId: user.id,
+				}),
+				sensorQueryOptions({
+					sensor: sensor,
+					query: daySummaryQuery,
+					userId: user.id,
+					enabled: useDaySummary,
+				}),
+			],
+		},
 	);
 
 	const { minY, maxY } = computeYAxisRange(data ?? []);
 
-	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], "dust");
+	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor);
 
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex flex-col gap-4 md:w-1/4">
 				<Summary
-					exposureType={"dust"}
+					exposureType={sensor}
 					//TODO: This should really use the hour bucket for the day view, cause if not then the day summary can be misleading.
-					data={calculateSummaryCounts(data ?? [])}
+					data={calculateSummaryCounts(
+						(useDaySummary ? daySummaryData : data) ?? [],
+					)}
 				/>
 				<DailyNotes />
 			</div>

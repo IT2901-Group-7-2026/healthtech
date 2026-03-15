@@ -42,6 +42,7 @@ export const SensorDataResponseDtoSchema = z.object({
 
 export type SensorDataResponseDto = z.infer<typeof SensorDataResponseDtoSchema>;
 
+// TODO: This should (maybe) include peakDangerLevel
 export const OverviewBucketDtoSchema = z.object({
 	time: z.coerce.date(),
 	dangerLevel: DangerLevelSchema,

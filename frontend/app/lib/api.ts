@@ -20,7 +20,7 @@ import {
 	UserSchema,
 	UserWithStatusSchema,
 } from "./dto";
-import { getStartEnd } from "./queries";
+import { getStartEnd } from "./sensor-query-utils";
 import type { View } from "./views";
 
 const fetchAllUsers = async () => {
@@ -95,15 +95,18 @@ export function sensorQueryOptions({
 	sensor,
 	query,
 	userId,
+	enabled,
 }: {
 	sensor: Sensor;
 	query: SensorDataRequestDto;
 	userId: string;
+	enabled?: boolean;
 }) {
 	return queryOptions({
 		queryKey: [sensor, query, userId],
 		queryFn: () => fetchSensorData(userId, sensor, query),
 		staleTime: minutesToMilliseconds(10),
+		enabled,
 	});
 }
 

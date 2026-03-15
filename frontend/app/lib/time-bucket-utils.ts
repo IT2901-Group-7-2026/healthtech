@@ -19,9 +19,9 @@ export function calculateSummaryCounts(
 
 	data.forEach((point) => {
 		const dangerLevel =
-			"dangerLevel" in point
-				? point.dangerLevel
-				: getDangerLevelFromData(point, usePeakData);
+			"peakDangerLevel" in point
+				? getDangerLevelFromData(point, usePeakData)
+				: point.dangerLevel;
 
 		switch (dangerLevel) {
 			case "safe":

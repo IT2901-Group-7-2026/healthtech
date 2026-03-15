@@ -17,9 +17,9 @@ import { sensorQueryOptions } from "@/lib/api";
 import {
 	type Aggregation,
 	Aggregations,
-	type SensorDataRequestDto,
 	type SensorDataResponseDto,
 } from "@/lib/dto";
+import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
 import {
@@ -27,8 +27,7 @@ import {
 	mapSensorDataToTimeBucketStatuses,
 } from "@/lib/time-bucket-utils";
 import { computeYAxisRange } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
+import { useQueries } from "@tanstack/react-query";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -43,51 +42,47 @@ export default function Noise() {
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 
+	const sensor: Sensor = "noise";
+
 	const parseAsAggregation = parseAsStringLiteral(Aggregations);
 
 	const [aggregation, setAggregation] = useQueryState<Aggregation>(
 		"aggregation",
 		parseAsAggregation.withDefault("average"),
 	);
-	const usePeakData = aggregation === "peak";
+	const usePeakAggregation = aggregation === "peak";
 
-	const sensor: Sensor = "noise";
-
-	const dayQuery: SensorDataRequestDto = {
-		startTime: new Date(date.setUTCHours(8)),
-		endTime: new Date(date.setUTCHours(16)),
-		granularity: "minute",
-		function: "avg",
-	};
-
-	const weekQuery: SensorDataRequestDto = {
-		startTime: startOfWeek(date, { weekStartsOn: 1 }),
-		endTime: endOfWeek(date, { weekStartsOn: 1 }),
+	const query = buildSensorQuery(sensor, view, date, {
+		usePeakAggregation,
+	});
+	const daySummaryQuery = buildSensorQuery(sensor, view, date, {
 		granularity: "hour",
-		function: "avg",
-	};
+		usePeakAggregation,
+	});
 
-	const monthQuery: SensorDataRequestDto = {
-		startTime: startOfMonth(date),
-		endTime: endOfMonth(date),
-		granularity: "day",
-		function: "avg",
-	};
+	const useDaySummary = view === "day";
 
-	const query =
-		view === "day" ? dayQuery : view === "week" ? weekQuery : monthQuery;
-
-	const { data, isLoading, isError } = useQuery(
-		sensorQueryOptions({
-			sensor: "noise",
-			query,
-			userId: user.id,
-		}),
+	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries(
+		{
+			queries: [
+				sensorQueryOptions({
+					sensor: sensor,
+					query,
+					userId: user.id,
+				}),
+				sensorQueryOptions({
+					sensor: sensor,
+					query: daySummaryQuery,
+					userId: user.id,
+					enabled: useDaySummary,
+				}),
+			],
+		},
 	);
 
 	// Tighten vertical padding for noise charts so graph fills more of the card
 	const { minY, maxY } = computeYAxisRange(data ?? [], {
-		step: usePeakData ? 130 : undefined,
+		step: usePeakAggregation ? 130 : undefined,
 	});
 
 	if (isLoading) {
@@ -102,16 +97,19 @@ export default function Noise() {
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(
 		data ?? [],
-		"noise",
-		usePeakData,
+		sensor,
+		usePeakAggregation,
 	);
 
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex flex-col gap-4 md:w-1/4">
 				<Summary
-					exposureType="noise"
-					data={calculateSummaryCounts(data ?? [], usePeakData)}
+					exposureType={sensor}
+					data={calculateSummaryCounts(
+						(useDaySummary ? daySummaryData : data) ?? [],
+						usePeakAggregation,
+					)}
 				/>
 				<DailyNotes />
 			</div>
@@ -169,7 +167,7 @@ export default function Noise() {
 								setAggregation={setAggregation}
 							>
 								<ChartLineDefault
-									usePeakData={usePeakData}
+									usePeakData={usePeakAggregation}
 									chartData={data ?? []}
 									chartTitle={date.toLocaleDateString(
 										i18n.language,
@@ -214,14 +212,14 @@ export default function Noise() {
 								>
 									<ThresholdLine
 										y={
-											usePeakData
-												? // biome-ignore lint/style/noNonNullAssertion: If usePeakData is true and peakDangerLevel is null, there is a bug somewhere else
+											usePeakAggregation
+												? // biome-ignore lint/style/noNonNullAssertion: If usePeakAggregation is true and peakDangerLevel is null, there is a bug somewhere else
 													thresholds.noise.peakDanger!
 												: thresholds.noise.danger
 										}
 										dangerLevel="danger"
 									/>
-									{!usePeakData && (
+									{!usePeakAggregation && (
 										<ThresholdLine
 											y={thresholds.noise.warning}
 											dangerLevel="warning"
@@ -275,17 +273,17 @@ const AggregationTabs = ({
 const NoisePageLayout = ({
 	children,
 	data,
-	usePeakData,
+	usePeakAggregation,
 }: {
 	children: React.ReactNode;
 	data: Array<SensorDataResponseDto>;
-	usePeakData?: boolean;
+	usePeakAggregation?: boolean;
 }) => (
 	<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 		<div className="flex flex-col gap-4 md:w-1/4">
 			<Summary
 				exposureType="noise"
-				data={calculateSummaryCounts(data ?? [], usePeakData)}
+				data={calculateSummaryCounts(data ?? [], usePeakAggregation)}
 			/>
 			<DailyNotes />
 		</div>

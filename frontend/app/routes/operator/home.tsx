@@ -15,7 +15,7 @@ import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { getLocale } from "@/i18n/locale";
 import { sensorOverviewQueryOptions } from "@/lib/api";
-import { buildSensorOverviewQuery } from "@/lib/queries";
+import { buildSensorOverviewQuery } from "@/lib/sensor-query-utils";
 import {
 	calculateSummaryCounts,
 	mapOverviewBucketsToChartRows,
@@ -44,21 +44,14 @@ export default function OperatorHome() {
 
 	const { user } = useUser();
 
-	// The overview daily page shows hour granularity for all sensors instead of minute granularity, so we override it here
-	const granularity = view === "day" ? "hour" : undefined;
-
+	// NOTE: If we later add a peak noise switch here it wouldn't work because we don't return peakDangerLevel in the overview query.
 	const {
 		data: overviewBuckets,
 		isLoading,
 		isError,
 	} = useQuery(
 		sensorOverviewQueryOptions({
-			query: buildSensorOverviewQuery(
-				[...sensors],
-				view,
-				date,
-				granularity,
-			),
+			query: buildSensorOverviewQuery([...sensors], view, date),
 			userId: user.id,
 		}),
 	);
@@ -77,17 +70,11 @@ export default function OperatorHome() {
 					>
 						{t(($) => $.today)}
 					</Button>
-					<Button
-						onClick={() => setDate(getPrevDay(date, view))}
-						size={"icon"}
-					>
+					<Button onClick={() => setDate(getPrevDay(date, view))} size={"icon"}>
 						{"<"}
 					</Button>
 					<ViewSelect />
-					<Button
-						onClick={() => setDate(getNextDay(date, view))}
-						size={"icon"}
-					>
+					<Button onClick={() => setDate(getNextDay(date, view))} size={"icon"}>
 						{">"}
 					</Button>
 				</div>
@@ -128,18 +115,14 @@ export default function OperatorHome() {
 										overviewBuckets ?? [],
 									)}
 								/>
-							) : !overviewBuckets ||
-								overviewBuckets.length === 0 ? (
+							) : !overviewBuckets || overviewBuckets.length === 0 ? (
 								<Card className="flex h-24 w-full items-center">
 									<CardTitle>
-										{date.toLocaleDateString(
-											i18n.language,
-											{
-												day: "numeric",
-												month: "long",
-												year: "numeric",
-											},
-										)}
+										{date.toLocaleDateString(i18n.language, {
+											day: "numeric",
+											month: "long",
+											year: "numeric",
+										})}
 									</CardTitle>
 									<p>{t(($) => $.noData)}</p>
 								</Card>
@@ -152,14 +135,11 @@ export default function OperatorHome() {
 									)}
 									startHour={0}
 									endHour={23}
-									chartTitle={date.toLocaleDateString(
-										i18n.language,
-										{
-											day: "numeric",
-											month: "long",
-											year: "numeric",
-										},
-									)}
+									chartTitle={date.toLocaleDateString(i18n.language, {
+										day: "numeric",
+										month: "long",
+										year: "numeric",
+									})}
 									headerRight={
 										<Button
 											onClick={() =>
@@ -169,14 +149,11 @@ export default function OperatorHome() {
 														pdfVibrationChartContainerId,
 														pdfNoiseChartContainerId,
 													],
-													`${date.toLocaleDateString(
-														i18n.language,
-														{
-															day: "numeric",
-															month: "long",
-															year: "numeric",
-														},
-													)}-${user.username}-Exposure-Overview`,
+													`${date.toLocaleDateString(i18n.language, {
+														day: "numeric",
+														month: "long",
+														year: "numeric",
+													})}-${user.username}-Exposure-Overview`,
 													[
 														`Dust Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
 														`Vibration Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
