@@ -126,8 +126,6 @@ export default function Vibration() {
 									},
 								)}
 								unit={t(($) => $.points)}
-								startHour={8}
-								endHour={16}
 								maxY={maxY}
 								minY={minY}
 								lineType="monotone"

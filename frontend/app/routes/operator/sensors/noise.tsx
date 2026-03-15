@@ -178,8 +178,6 @@ export default function Noise() {
 										},
 									)}
 									unit="db (TWA)"
-									startHour={8}
-									endHour={16}
 									maxY={maxY}
 									minY={minY}
 									lineType="monotone"

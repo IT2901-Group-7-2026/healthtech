@@ -118,8 +118,6 @@ export default function Dust() {
 									year: "numeric",
 								})}
 								unit={t(($) => $.dust_y_axis)}
-								startHour={8}
-								endHour={16}
 								maxY={maxY}
 								minY={minY}
 								lineType="monotone"
