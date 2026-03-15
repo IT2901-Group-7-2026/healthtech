@@ -71,7 +71,6 @@ export default function Dust() {
 			<div className="flex flex-col gap-4 md:w-1/4">
 				<Summary
 					exposureType={sensor}
-					//TODO: This should really use the hour bucket for the day view, cause if not then the day summary can be misleading.
 					data={calculateSummaryCounts(
 						(useDaySummary ? daySummaryData : data) ?? [],
 					)}

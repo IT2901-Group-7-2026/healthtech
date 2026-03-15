@@ -75,8 +75,6 @@ export function mapOverviewDataToTimeBucketStatuses(
 	}));
 }
 
-//TODO: Move usePeakData flag to backend
-
 export function mapOverviewBucketsToChartRows(
 	data: Array<OverviewBucketDto>,
 	startHour: number,

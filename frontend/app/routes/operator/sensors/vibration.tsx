@@ -20,7 +20,7 @@ import {
 	calculateSummaryCounts,
 	mapSensorDataToTimeBucketStatuses,
 } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, makeCumulative } from "@/lib/utils";
+import { computeYAxisRange } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
 import { useId } from "react";
@@ -63,7 +63,7 @@ export default function Vibration() {
 		},
 	);
 
-	const { minY, maxY } = computeYAxisRange(makeCumulative(data) ?? []);
+	const { minY, maxY } = computeYAxisRange(data ?? []);
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(
 		data ?? [],
@@ -116,8 +116,7 @@ export default function Vibration() {
 						<div className="mb-2 flex justify-end"></div>
 						<div id={chartContainerId}>
 							<ChartLineDefault
-								//TODO: This should just use data straight from the backend
-								chartData={makeCumulative(data)}
+								chartData={data}
 								chartTitle={date.toLocaleDateString(
 									i18n.language,
 									{

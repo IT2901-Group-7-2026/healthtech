@@ -41,7 +41,7 @@ public static class ThresholdUtils
 
 		foreach (var data in rawSensorData)
 		{
-			// We only use max value for noise thresholds
+			// We only use max value for noise thresholds to calculate peak danger levels
 			double? maxValue = sensorType == SensorType.Noise ? data.MaxValue : null;
 
 			result.Add((data, CalculateDangerLevel(sensorType, data.AvgValue, maxValue)));
