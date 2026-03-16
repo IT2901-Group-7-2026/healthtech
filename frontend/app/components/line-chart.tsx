@@ -81,7 +81,10 @@ export function ChartLineDefault({
 	const getOffset = (y: number) =>
 		`${((getValue(maxData) - y) / (getValue(maxData) - getValue(minData))) * 100}%`;
 
-	const transformedData = chartData.map((item) => ({
+	// change to change data granularity
+	const reducedData = chartData.filter((_, i) => i % 5 === 0);
+
+	const transformedData = reducedData.map((item) => ({
 		time: item.time.getTime(),
 		value: getValue(item),
 	}));
