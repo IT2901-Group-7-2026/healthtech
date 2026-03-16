@@ -12,6 +12,7 @@ import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
+import { downsampleSensorData } from "@/lib/utils";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -81,10 +82,9 @@ export function ChartLineDefault({
 	const getOffset = (y: number) =>
 		`${((getValue(maxData) - y) / (getValue(maxData) - getValue(minData))) * 100}%`;
 
-	// change to change data granularity
-	const reducedData = chartData.filter((_, i) => i % 5 === 0);
+	const downsampledData = downsampleSensorData(sensor, chartData);
 
-	const transformedData = reducedData.map((item) => ({
+	const transformedData = downsampledData.map((item) => ({
 		time: item.time.getTime(),
 		value: getValue(item),
 	}));
