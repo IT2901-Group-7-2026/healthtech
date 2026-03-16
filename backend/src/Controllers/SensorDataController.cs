@@ -26,8 +26,27 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
 			return BadRequest("StartTime must be earlier than EndTime.");
 		}
 
-		var response = await _sensorDataService.GetAggregatedDataAsync(request, userId, sensorType);
-		return Ok(response);
+		try
+		{
+			var response = await _sensorDataService.GetAggregatedDataAsync(
+				request,
+				userId,
+				sensorType
+			);
+			return Ok(response);
+		}
+		catch (ArgumentException ex)
+		{
+			return BadRequest($"The request is invalid: {ex.Message}");
+		}
+		catch (InvalidOperationException ex)
+		{
+			return NotFound($"The requested resource was not found: {ex.Message}");
+		}
+		catch (Exception)
+		{
+			return StatusCode(500, "Internal server error");
+		}
 	}
 
 	[HttpPost("overview/{userId}")]
