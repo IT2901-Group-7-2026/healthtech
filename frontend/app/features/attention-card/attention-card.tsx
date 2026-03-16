@@ -196,7 +196,7 @@ export const AttentionCard = ({
 				</CardContent>
 			</Card>
 
-			{(popupStatus === "warning" || popupStatus === "danger") && (
+			{(popupStatus === "warning" || popupStatus === "danger" || popupStatus === "safe") && (
 				<AtRiskPopup
 					open={selectedStatus !== null}
 					onClose={closePopup}

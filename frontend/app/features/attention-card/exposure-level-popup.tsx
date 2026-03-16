@@ -87,7 +87,7 @@ export function AtRiskPopup({
 	onClose,
 }: {
 	title: string;
-	status: Exclude<DangerLevel, "safe">;
+	status: DangerLevel;
 	open: boolean;
 	onClose: () => void;
 }) {
@@ -98,9 +98,9 @@ export function AtRiskPopup({
 	);
 
 	const exposureTitle =
-		status === "danger"
-			? t((x) => x.exposureLevel.in_danger)
-			: t((x) => x.exposureLevel.warning);
+		status === "danger" ? t((x) => x.exposureLevel.in_danger)
+		: status === "warning" ? t((x) => x.exposureLevel.warning)
+			: t((x) => x.exposureLevel.safe);
 
 	const workers = subordinates.filter((sub) => sub.status.status === status);
 
