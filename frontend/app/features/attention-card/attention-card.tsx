@@ -113,10 +113,15 @@ export const AttentionCard = ({
 			<Card muted className="gap-3">
 				{actionCardHeader}
 
-				<CardContent className="gap-6">
+				<CardContent className="gap-2">
 					<p>
 						{
-							"3 operatører er over grenseverdien i A1, Verdal (placeholder)"
+							"Critical Exposure: 5 operators have exceeded the safe limits."
+						}
+					</p>
+					<p className="mb-5">
+						{
+							"Approaching thresholds: 4 operators are nearing the safe limits."
 						}
 					</p>
 
@@ -136,15 +141,6 @@ export const AttentionCard = ({
 											.danger
 									}
 								>
-									<div className="flex flex-row items-center gap-2">
-										<LocationCard
-											zone="A1"
-											location="Verdal"
-										>
-											<SensorIcon type="noise" />
-											<SensorIcon type="dust" />
-										</LocationCard>
-									</div>
 								</StatCard>
 
 								<StatCard
@@ -160,22 +156,6 @@ export const AttentionCard = ({
 											.warning
 									}
 								>
-									<div className="flex flex-row items-center gap-2">
-										<LocationCard
-											zone="A1"
-											location="Verdal"
-										>
-											<SensorIcon type="dust" />
-										</LocationCard>
-
-										<LocationCard
-											zone="B9"
-											location="Sandsli"
-										>
-											<SensorIcon type="noise" />
-											<SensorIcon type="vibration" />
-										</LocationCard>
-									</div>
 								</StatCard>
 
 								<StatCard
@@ -185,6 +165,7 @@ export const AttentionCard = ({
 											$.foremanDashboard.overview
 												.statCards.safe.label,
 									)}
+									onClick={() => openForStatus("safe")}
 									value={
 										thresholdSummary[selectedSensorKey].safe
 									}
