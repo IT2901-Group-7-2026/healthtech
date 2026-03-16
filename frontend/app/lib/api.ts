@@ -5,28 +5,26 @@ import {
 	useQueryClient,
 } from "@tanstack/react-query";
 import { minutesToMilliseconds } from "date-fns";
+import { fetchWithUserId } from "./api-client";
 import {
 	type Note,
 	type NoteDataRequest,
 	NoteSchema,
+	type OverviewBucketDto,
+	OverviewBucketDtoSchema,
 	type SensorDataRequestDto,
 	type SensorDataResponseDto,
 	SensorDataResponseDtoSchema,
+	type SensorOverviewDataRequestDto,
+	ThresholdSummarySchema,
 	UserSchema,
 	UserWithStatusSchema,
 } from "./dto";
-import { getStartEnd } from "./queries";
+import { getStartEnd } from "./sensor-query-utils";
 import type { View } from "./views";
 
-const baseURL = import.meta.env.VITE_BASE_URL;
-
 const fetchAllUsers = async () => {
-	const response = await fetch(`${baseURL}users`, {
-		method: "GET",
-		headers: {
-			"Content-Type": "application/json",
-		},
-	});
+	const response = await fetchWithUserId("users");
 
 	if (!response.ok) {
 		throw new Error("Failed to fetch users");
@@ -45,15 +43,12 @@ export function usersQueryOptions() {
 }
 
 const fetchSensorData = async (
-	userId: string,
 	sensor: Sensor,
 	sensorDataRequest: SensorDataRequestDto,
+	userId?: string,
 ): Promise<Array<SensorDataResponseDto>> => {
-	const response = await fetch(`${baseURL}sensor/${sensor}/${userId}`, {
+	const response = await fetchWithUserId(`sensor/${sensor}/${userId}`, {
 		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
 		body: JSON.stringify(sensorDataRequest),
 	});
 
@@ -65,19 +60,53 @@ const fetchSensorData = async (
 	return SensorDataResponseDtoSchema.array().parseAsync(json);
 };
 
+const fetchSensorOverviewData = async (
+	requests: SensorOverviewDataRequestDto,
+	userId?: string,
+): Promise<Array<OverviewBucketDto>> => {
+	const response = await fetchWithUserId(`sensor/overview/${userId}`, {
+		method: "POST",
+		body: JSON.stringify(requests),
+	});
+
+	if (!response.ok) {
+		throw new Error("Failed to fetch sensor overview data");
+	}
+
+	const json = await response.json();
+	return OverviewBucketDtoSchema.array().parseAsync(json);
+};
+
+export function sensorOverviewQueryOptions({
+	query,
+	userId,
+}: {
+	query: SensorOverviewDataRequestDto;
+	userId?: string;
+}) {
+	return queryOptions({
+		queryKey: [query, userId],
+		queryFn: () => fetchSensorOverviewData(query, userId),
+		staleTime: minutesToMilliseconds(10),
+	});
+}
+
 export function sensorQueryOptions({
 	sensor,
 	query,
 	userId,
+	enabled,
 }: {
 	sensor: Sensor;
 	query: SensorDataRequestDto;
-	userId: string;
+	userId?: string;
+	enabled?: boolean;
 }) {
 	return queryOptions({
-		queryKey: [sensor, query],
-		queryFn: () => fetchSensorData(userId, sensor, query),
+		queryKey: [sensor, query, userId],
+		queryFn: () => fetchSensorData(sensor, query, userId),
 		staleTime: minutesToMilliseconds(10),
+		enabled,
 	});
 }
 
@@ -85,11 +114,8 @@ export const fetchNoteData = async (
 	noteDataRequest: NoteDataRequest,
 	userId: string,
 ): Promise<Array<Note>> => {
-	const response = await fetch(`${baseURL}notes/${userId}`, {
+	const response = await fetchWithUserId(`notes/${userId}`, {
 		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
 		body: JSON.stringify(noteDataRequest),
 	});
 
@@ -113,7 +139,7 @@ export function notesQueryOptions({
 	const query = getStartEnd(view, selectedDay);
 
 	return queryOptions({
-		queryKey: ["notes", query],
+		queryKey: ["notes", query, userId],
 		queryFn: () => fetchNoteData(query, userId),
 		staleTime: minutesToMilliseconds(10),
 	});
@@ -126,11 +152,8 @@ export const updateNote = async ({
 	note: Note;
 	userId: string;
 }) => {
-	const res = await fetch(`${baseURL}notes/${userId}`, {
+	const res = await fetchWithUserId(`notes/${userId}`, {
 		method: "PUT",
-		headers: {
-			"Content-Type": "application/json",
-		},
 		body: JSON.stringify(note),
 	});
 
@@ -150,11 +173,8 @@ export const createNote = async ({
 	note: Note;
 	userId: string;
 }) => {
-	const res = await fetch(`${baseURL}notes/${userId}/create`, {
+	const res = await fetchWithUserId(`notes/${userId}/create`, {
 		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
 		body: JSON.stringify(note),
 	});
 
@@ -171,26 +191,20 @@ export const fetchSubordinatesQueryOptions = (
 	userId: string,
 	startTime?: Date,
 	endTime?: Date,
-) =>
-	queryOptions({
+) => {
+	const params = new URLSearchParams();
+	if (startTime) {
+		params.append("startTime", startTime.toISOString());
+	}
+	if (endTime) {
+		params.append("endTime", endTime.toISOString());
+	}
+
+	return queryOptions({
 		queryKey: ["user.subordinates", userId, startTime, endTime],
 		queryFn: async () => {
-			const params = new URLSearchParams();
-			if (startTime) {
-				params.append("startTime", startTime.toISOString());
-			}
-			if (endTime) {
-				params.append("endTime", endTime.toISOString());
-			}
-
-			const response = await fetch(
-				`${baseURL}users/${userId}/subordinates?${params.toString()}`,
-				{
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
-					},
-				},
+			const response = await fetchWithUserId(
+				`users/${userId}/subordinates?${params.toString()}`,
 			);
 
 			if (!response.ok) {
@@ -202,18 +216,16 @@ export const fetchSubordinatesQueryOptions = (
 		},
 		staleTime: minutesToMilliseconds(10),
 	});
+};
 
 export const removeSubordinates = async (
 	managerId: string,
 	subordinateIds: Array<string>,
 ) => {
-	const response = await fetch(
-		`${baseURL}users/${managerId}/subordinates/delete`,
+	const response = await fetchWithUserId(
+		`users/${managerId}/subordinates/delete`,
 		{
 			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-			},
 			body: JSON.stringify(subordinateIds),
 		},
 	);
@@ -243,13 +255,10 @@ export const addSubordinates = async (
 	managerId: string,
 	subordinateIds: Array<string>,
 ) => {
-	const response = await fetch(
-		`${baseURL}users/${managerId}/subordinates/create`,
+	const response = await fetchWithUserId(
+		`users/${managerId}/subordinates/create`,
 		{
 			method: "PUT",
-			headers: {
-				"Content-Type": "application/json",
-			},
 			body: JSON.stringify(subordinateIds),
 		},
 	);
@@ -274,3 +283,41 @@ export const useAddSubordinatesMutation = (parentUserId: string) => {
 		},
 	});
 };
+
+export const fetchThresholdSummaryQueryOptions = (
+	managerUserId: string,
+	startTime?: Date,
+	endTime?: Date,
+) =>
+	queryOptions({
+		queryKey: [
+			"user.subordinates.threshold-summary",
+			managerUserId,
+			startTime,
+			endTime,
+		],
+		queryFn: async () => {
+			const params = new URLSearchParams();
+			if (startTime) {
+				params.append("startTime", startTime.toISOString());
+			}
+			if (endTime) {
+				params.append("endTime", endTime.toISOString());
+			}
+
+			const response = await fetchWithUserId(
+				`users/${managerUserId}/subordinates/threshold-summary?${params.toString()}`,
+				{
+					method: "GET",
+				},
+			);
+
+			if (!response.ok) {
+				throw new Error("Failed to fetch threshold summary");
+			}
+
+			const json = await response.json();
+			return ThresholdSummarySchema.parseAsync(json);
+		},
+		staleTime: minutesToMilliseconds(10),
+	});

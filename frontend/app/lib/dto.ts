@@ -1,6 +1,8 @@
-import type { Sensor } from "@/features/sensor-picker/sensors";
+import { type Sensor, SensorSchema } from "@/features/sensor-picker/sensors";
 import { z } from "zod";
 import { DangerLevelSchema } from "./danger-levels";
+
+// TODO: Split this file into multiple files based on domain
 
 export const granularityEnum = {
 	minute: 0,
@@ -25,8 +27,12 @@ export type SensorDataRequestDto = {
 	endTime: Date;
 	granularity: GranularityKey;
 	function: AggregateFnKey;
-	field?: string;
+	field?: SensorTypeField;
 };
+
+export type SensorOverviewDataRequestDto = Partial<
+	Record<Sensor, SensorDataRequestDto>
+>;
 
 export const SensorDataResponseDtoSchema = z.object({
 	time: z.coerce.date(),
@@ -37,6 +43,15 @@ export const SensorDataResponseDtoSchema = z.object({
 });
 
 export type SensorDataResponseDto = z.infer<typeof SensorDataResponseDtoSchema>;
+
+// TODO: This should (maybe) include peakDangerLevel
+export const OverviewBucketDtoSchema = z.object({
+	time: z.coerce.date(),
+	dangerLevel: DangerLevelSchema,
+	sensorDangerLevels: z.partialRecord(SensorSchema, DangerLevelSchema),
+});
+
+export type OverviewBucketDto = z.infer<typeof OverviewBucketDtoSchema>;
 
 export type SensorDataResult = {
 	data: Array<SensorDataResponseDto> | undefined;
@@ -129,3 +144,34 @@ export const createLocationName = (location: Location) =>
 
 export type Aggregation = "average" | "peak";
 export const Aggregations: Array<Aggregation> = ["average", "peak"];
+
+export const SensorThresholdSummarySchema = z.object({
+	safe: z.int().nonnegative(),
+	warning: z.int().nonnegative(),
+	danger: z.int().nonnegative(),
+});
+
+export const ThresholdSummarySchema = z.object({
+	total: SensorThresholdSummarySchema,
+	dust: SensorThresholdSummarySchema,
+	vibration: SensorThresholdSummarySchema,
+	noise: SensorThresholdSummarySchema,
+} satisfies Record<Sensor | "total", unknown>);
+
+export type SensorThresholdSummary = z.infer<
+	typeof SensorThresholdSummarySchema
+>;
+export type ThresholdSummary = z.infer<typeof ThresholdSummarySchema>;
+
+export const SensorTypeFieldSchema = z.enum([
+	"pm1_stel",
+	"pm25_stel",
+	"pm4_stel",
+	"pm10_stel",
+	"pm1_twa",
+	"pm25_twa",
+	"pm4_twa",
+	"pm10_twa",
+]);
+
+export type SensorTypeField = z.infer<typeof SensorTypeFieldSchema>;

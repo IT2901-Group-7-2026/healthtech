@@ -17,7 +17,7 @@ type CalendarPopupProps = {
 	children?: React.ReactNode;
 };
 
-export type CalendarPopupData = Record<Sensor, DangerLevel>;
+export type CalendarPopupData = Partial<Record<Sensor, DangerLevel>>;
 
 export function CalendarPopup({
 	exposureData,

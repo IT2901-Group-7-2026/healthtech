@@ -7,11 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
-import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
-import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { getLocale } from "@/i18n/locale";
@@ -19,22 +17,19 @@ import { sensorQueryOptions } from "@/lib/api";
 import {
 	type Aggregation,
 	Aggregations,
-	type SensorDataRequestDto,
 	type SensorDataResponseDto,
 } from "@/lib/dto";
+import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
-import { computeYAxisRange } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
 import {
-	add,
-	endOfMonth,
-	endOfWeek,
-	startOfMonth,
-	startOfWeek,
-	sub,
-} from "date-fns";
+	calculateSummaryCounts,
+	mapSensorDataToTimeBucketStatuses,
+} from "@/lib/time-bucket-utils";
+import { computeYAxisRange } from "@/lib/utils";
+import { useQueries } from "@tanstack/react-query";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
+import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
@@ -45,6 +40,9 @@ export default function Noise() {
 	const { date } = useDate();
 	const { user } = useUser();
 	const { exportToPDF } = useExportPDF();
+	const chartContainerId = useId();
+
+	const sensor: Sensor = "noise";
 
 	const parseAsAggregation = parseAsStringLiteral(Aggregations);
 
@@ -52,45 +50,37 @@ export default function Noise() {
 		"aggregation",
 		parseAsAggregation.withDefault("average"),
 	);
-	const usePeakData = aggregation === "peak";
+	const usePeakAggregation = aggregation === "peak";
 
-	const sensor: Sensor = "noise";
-
-	const dayQuery: SensorDataRequestDto = {
-		startTime: new Date(date.setUTCHours(8)),
-		endTime: new Date(date.setUTCHours(16)),
-		granularity: "minute",
-		function: "avg",
-	};
-
-	const weekQuery: SensorDataRequestDto = {
-		startTime: startOfWeek(date, { weekStartsOn: 1 }),
-		endTime: endOfWeek(date, { weekStartsOn: 1 }),
+	const query = buildSensorQuery(sensor, view, date, {
+		usePeakAggregation,
+	});
+	const daySummaryQuery = buildSensorQuery(sensor, view, date, {
 		granularity: "hour",
-		function: "avg",
-	};
+		usePeakAggregation,
+	});
 
-	const monthQuery: SensorDataRequestDto = {
-		startTime: sub(startOfMonth(date), { days: 6 }),
-		endTime: add(endOfMonth(date), { days: 6 }),
-		granularity: "day",
-		function: "avg",
-	};
+	const useDaySummary = view === "day";
 
-	const query =
-		view === "day" ? dayQuery : view === "week" ? weekQuery : monthQuery;
-
-	const { data, isLoading, isError } = useQuery(
-		sensorQueryOptions({
-			sensor: "noise",
-			query,
-			userId: user.id,
-		}),
-	);
+	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries({
+		queries: [
+			sensorQueryOptions({
+				sensor,
+				query,
+				userId: user.id,
+			}),
+			sensorQueryOptions({
+				sensor,
+				query: daySummaryQuery,
+				userId: user.id,
+				enabled: useDaySummary,
+			}),
+		],
+	});
 
 	// Tighten vertical padding for noise charts so graph fills more of the card
 	const { minY, maxY } = computeYAxisRange(data ?? [], {
-		step: usePeakData ? 130 : undefined,
+		step: usePeakAggregation ? 130 : undefined,
 	});
 
 	if (isLoading) {
@@ -103,10 +93,22 @@ export default function Noise() {
 		);
 	}
 
+	const calendarData = mapSensorDataToTimeBucketStatuses(
+		data ?? [],
+		sensor,
+		usePeakAggregation,
+	);
+
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex flex-col gap-4 md:w-1/4">
-				<Summary exposureType={"noise"} data={data} />
+				<Summary
+					exposureType={sensor}
+					data={calculateSummaryCounts(
+						(useDaySummary ? daySummaryData : data) ?? [],
+						usePeakAggregation,
+					)}
+				/>
 				<DailyNotes />
 			</div>
 			<div className="flex flex-1 flex-col items-end gap-4">
@@ -126,10 +128,7 @@ export default function Noise() {
 						<CalendarWidget
 							selectedDay={date}
 							selectedAggregation={aggregation}
-							data={
-								mapSensorDataToMonthLists(data ?? [], "noise", usePeakData) ??
-								[]
-							}
+							data={calendarData}
 						/>
 					</AggregationTabs>
 				) : view === "week" ? (
@@ -140,11 +139,10 @@ export default function Noise() {
 						<WeekWidget
 							aggregation={aggregation}
 							locale={getLocale(i18n.language)}
-							dayStartHour={8}
-							dayEndHour={16}
+							dayStartHour={0}
+							dayEndHour={23}
 							weekStartsOn={1}
-							minuteStep={60}
-							events={mapWeekDataToEvents(data ?? [], usePeakData)}
+							data={calendarData}
 						/>
 					</AggregationTabs>
 				) : !data || data.length === 0 ? (
@@ -161,14 +159,13 @@ export default function Noise() {
 				) : (
 					<div className="w-full">
 						<div className="mb-2 flex justify-end"></div>
-						{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
-						<div id="noise-chart-container">
+						<div id={chartContainerId}>
 							<AggregationTabs
 								aggregation={aggregation}
 								setAggregation={setAggregation}
 							>
 								<ChartLineDefault
-									usePeakData={usePeakData}
+									usePeakData={usePeakAggregation}
 									chartData={data ?? []}
 									chartTitle={date.toLocaleDateString(i18n.language, {
 										day: "numeric",
@@ -176,8 +173,6 @@ export default function Noise() {
 										year: "numeric",
 									})}
 									unit="db (TWA)"
-									startHour={8}
-									endHour={16}
 									maxY={maxY}
 									minY={minY}
 									lineType="monotone"
@@ -188,7 +183,7 @@ export default function Noise() {
 											variant="outline"
 											onClick={() =>
 												exportToPDF(
-													"noise-chart-container",
+													chartContainerId,
 													`${date.toLocaleDateString(i18n.language, {
 														day: "numeric",
 														month: "long",
@@ -204,14 +199,14 @@ export default function Noise() {
 								>
 									<ThresholdLine
 										y={
-											usePeakData
-												? // biome-ignore lint/style/noNonNullAssertion: If usePeakData is true and peakDangerLevel is null, there is a bug somewhere else
+											usePeakAggregation
+												? // biome-ignore lint/style/noNonNullAssertion: If usePeakAggregation is true and peakDangerLevel is null, there is a bug somewhere else
 													thresholds.noise.peakDanger!
 												: thresholds.noise.danger
 										}
 										dangerLevel="danger"
 									/>
-									{!usePeakData && (
+									{!usePeakAggregation && (
 										<ThresholdLine
 											y={thresholds.noise.warning}
 											dangerLevel="warning"
@@ -259,13 +254,18 @@ const AggregationTabs = ({
 const NoisePageLayout = ({
 	children,
 	data,
+	usePeakAggregation,
 }: {
 	children: React.ReactNode;
 	data: Array<SensorDataResponseDto>;
+	usePeakAggregation?: boolean;
 }) => (
 	<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 		<div className="flex flex-col gap-4 md:w-1/4">
-			<Summary exposureType="noise" data={data} />
+			<Summary
+				exposureType="noise"
+				data={calculateSummaryCounts(data ?? [], usePeakAggregation)}
+			/>
 			<DailyNotes />
 		</div>
 		<div className="flex flex-1 flex-col items-end gap-4">{children}</div>

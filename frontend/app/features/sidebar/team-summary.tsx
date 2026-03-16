@@ -1,7 +1,7 @@
-import { MapPinIcon, UsersIcon } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader } from "@/components/ui/card.js";
 import { createLocationName } from "@/lib/dto.js";
+import { MapPinIcon, UsersIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useUser } from "../user/user-context.js";
 
 export const TeamSummary = ({

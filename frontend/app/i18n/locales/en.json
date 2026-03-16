@@ -39,7 +39,7 @@
     "vibration": "Vibration",
     "noise": "Noise",
     "allSensors": "All sensors",
-    "all": "Every sensor"
+    "all": "All sensors"
   },
   "line_chart": {
     "danger": "Exposure Limit",
@@ -93,7 +93,7 @@
   "dust": "Dust",
   "vibration": "Vibration",
   "noise": "Noise",
-  "allSensors": "All",
+  "allSensors": "Overview",
   "all": "All sensors",
 
   "sensorSelectPlaceholder": "Sensor",
@@ -112,7 +112,14 @@
     "danger": "An exposure limit was exceeded",
     "openDaily": "See details for information about type of exposure",
     "eventTitle": "{{day}}, from {{start}} to {{end}}",
-    "notifTitle": "Notification received {{date}}"
+    "notifTitle": "Notification received {{date}}",
+    "deleteData": "Delete data",
+    "dataDeleted": "Data successfully deleted from",
+    "to": "to",
+    "from": "from",
+    "select": "select",
+    "date": "date",
+    "invalidDate": "End date must be after start date"
   },
   "profile": {
     "title": "Profile",
@@ -165,7 +172,6 @@
     "overview": {
       "title": "Foreman Overview",
       "statCards": {
-        "total": "Total",
         "danger": {
           "description": "Operators exceeding threshold",
           "label": "In danger",
@@ -182,7 +188,7 @@
           "noOperators": "No operators within limits"
         }
       },
-      "selectUserPlaceholder": "Pick a user",
+      "selectUserPlaceholder": "Select team member",
       "selectDatePlaceholder": "Pick a date"
     },
     "actionCard": {
@@ -193,6 +199,10 @@
     "userStatusChart": {
       "xAxisLabel": "Percentage of exposure limit",
       "noData": "No data available"
+    },
+    "siteMap": {
+      "title": "Site map",
+      "anonymousOperator": "Anonymous operator"
     }
   },
   "user": {

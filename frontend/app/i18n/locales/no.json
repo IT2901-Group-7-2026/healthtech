@@ -39,7 +39,7 @@
     "vibration": "Vibrasjon",
     "noise": "Støy",
     "allSensors": "Alle sensorer",
-    "all": "Hver sensor"
+    "all": "Alle sensorer"
   },
   "line_chart": {
     "danger": "Grenseverdi",
@@ -93,7 +93,7 @@
   "dust": "Støv",
   "vibration": "Vibrasjon",
   "noise": "Støy",
-  "allSensors": "Alle",
+  "allSensors": "Oversikt",
   "all": "Alle sensorer",
 
   "sensorSelectPlaceholder": "Sensor",
@@ -112,7 +112,14 @@
     "danger": "Eksponeringsgrense ble brutt",
     "openDaily": "Se detaljer for informasjon om eksponeringstype",
     "eventTitle": "{{day}}, fra {{start}} til {{end}}",
-    "notifTitle": "Notifikasjon mottatt {{date}}"
+    "notifTitle": "Notifikasjon mottatt {{date}}",
+    "deleteData": "Slett data",
+    "dataDeleted": "Personlig data slettet fra",
+    "to": "til",
+    "from": "fra",
+    "select": "velg",
+    "date": "dato",
+    "invalidDate": "Sluttdato må være etter startdato"
   },
   "profile": {
     "title": "Profil",
@@ -165,7 +172,6 @@
     "overview": {
       "title": "Foreman Oversikt",
       "statCards": {
-        "total": "Totalt",
         "danger": {
           "description": "Operatører som har overskredet grenseverdien",
           "label": "Over grenseverdi",
@@ -182,7 +188,7 @@
           "noOperators": "Ingen innenfor trygge grenseverdier"
         }
       },
-      "selectUserPlaceholder": "Velg en bruker",
+      "selectUserPlaceholder": "Velg et teammedlem",
       "selectDatePlaceholder": "Velg en dato"
     },
     "actionCard": {
@@ -193,6 +199,10 @@
     "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",
       "noData": "Ingen data tilgjengelig"
+    },
+    "siteMap": {
+      "title": "Områdekart",
+      "anonymousOperator": "Anonym operatør"
     }
   },
   "user": {

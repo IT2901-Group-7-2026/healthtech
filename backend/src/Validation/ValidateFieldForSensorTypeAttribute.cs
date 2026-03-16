@@ -52,10 +52,7 @@ public class ValidateFieldForSensorTypeFilter : IActionFilter
 			if (!validFields.Contains(dto.Field.Value))
 			{
 				context.Result = new BadRequestObjectResult(
-					new
-					{
-						error = $"Field '{dto.Field}' is not valid for {sensorType}. Valid fields: {string.Join(", ", validFields)}",
-					}
+					new { error = $"Field '{dto.Field}' is not valid for {sensorType}." }
 				);
 				return;
 			}

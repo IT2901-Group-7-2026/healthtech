@@ -1,5 +1,19 @@
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Card } from "@/components/ui/card";
+import { Form, FormField, FormItem } from "@/components/ui/form";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
+import { useFormatDate } from "@/hooks/use-format-date";
 import type { User } from "@/lib/dto.js";
 import { userRoleToString } from "@/lib/utils.js";
+import { isBefore } from "date-fns";
+import { ChevronDownIcon } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { BasePopup } from "./base-popup";
 
@@ -24,6 +38,48 @@ export function ProfilePopup({
 	const title = t(($) => $.profile.title);
 
 	const tempListOfRegulations = ["Safety boots", "Helmet", "Protective mask"];
+	type FormValues = {
+		fromDate?: Date;
+		toDate?: Date;
+	};
+
+	const form = useForm<FormValues>({
+		defaultValues: {
+			fromDate: undefined,
+			toDate: undefined,
+		},
+		mode: "onChange",
+	});
+
+	const fromDate = form.watch("fromDate");
+	const toDate = form.watch("toDate");
+	const format = useFormatDate();
+
+	const onSubmit = (data: FormValues) => {
+		if (
+			data.fromDate &&
+			data.toDate &&
+			isBefore(data.toDate, data.fromDate)
+		) {
+			form.setError("toDate", {
+				message: t(($) => $.popup.invalidDate),
+			});
+			return;
+		}
+
+		setDeleteText(true);
+
+		setTimeout(() => {
+			setDeleteText(false);
+		}, 15000);
+	};
+
+	const minSelectableDate = new Date(2024, 0, 1);
+	const maxSelectableDate = new Date();
+
+	const [fromCalendarOpen, setFromCalendarOpen] = useState(false);
+	const [toCalendarOpen, setToCalendarOpen] = useState(false);
+	const [deleteText, setDeleteText] = useState(false);
 
 	return (
 		<BasePopup
@@ -90,6 +146,152 @@ export function ProfilePopup({
 						<p>{user.jobDescription}</p>
 					</div>
 				</div>
+				<Card className="p-4">
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(onSubmit)}>
+							<div className="flex flex-col gap-2">
+								<div className="flex flex-wrap items-center gap-2">
+									<Button
+										type="submit"
+										disabled={!(fromDate && toDate)}
+										className="h-8 w-25 text-sm"
+									>
+										{t(($) => $.popup.deleteData)}
+									</Button>
+									{t(($) => $.popup.from)}
+									<FormField
+										control={form.control}
+										name="fromDate"
+										render={({ field }) => (
+											<FormItem>
+												<Popover
+													open={fromCalendarOpen}
+													onOpenChange={
+														setFromCalendarOpen
+													}
+												>
+													<PopoverTrigger asChild>
+														<Button
+															variant={"outline"}
+															data-empty={
+																!field.value
+															}
+															className="h-8 w-25 justify-between text-left font-normal text-sm data-[empty=true]:text-muted-foreground"
+														>
+															{fromDate
+																? format(
+																		fromDate,
+																		"dd.MM.yy",
+																	)
+																: t(
+																		($) =>
+																			$
+																				.popup
+																				.select,
+																	)}
+															<ChevronDownIcon data-icon="inline-end" />
+														</Button>
+													</PopoverTrigger>
+													<PopoverContent
+														className="w-auto p-0"
+														align="start"
+													>
+														<Calendar
+															mode="single"
+															selected={
+																field.value
+															}
+															onSelect={
+																field.onChange
+															}
+															disabled={{
+																before: minSelectableDate,
+																after: maxSelectableDate,
+															}}
+														/>
+													</PopoverContent>
+												</Popover>
+											</FormItem>
+										)}
+									/>
+
+									{t(($) => $.popup.to)}
+									<FormField
+										control={form.control}
+										name="toDate"
+										render={({ field }) => (
+											<FormItem>
+												<Popover
+													open={toCalendarOpen}
+													onOpenChange={
+														setToCalendarOpen
+													}
+												>
+													<PopoverTrigger asChild>
+														<Button
+															variant={"outline"}
+															data-empty={
+																!field.value
+															}
+															className="h-8 w-24 justify-between text-left font-normal text-sm data-[empty=true]:text-muted-foreground"
+														>
+															{toDate
+																? format(
+																		toDate,
+																		"dd.MM.yy",
+																	)
+																: t(
+																		($) =>
+																			$
+																				.popup
+																				.select,
+																	)}
+															<ChevronDownIcon data-icon="inline-end" />
+														</Button>
+													</PopoverTrigger>
+													<PopoverContent
+														className="w-auto p-0"
+														align="start"
+													>
+														<Calendar
+															mode="single"
+															selected={
+																field.value
+															}
+															onSelect={
+																field.onChange
+															}
+															disabled={{
+																before: minSelectableDate,
+																after: maxSelectableDate,
+															}}
+														/>
+													</PopoverContent>
+												</Popover>
+											</FormItem>
+										)}
+									/>
+									{form.formState.errors.toDate && (
+										<div className="text-red-500 text-sm">
+											{
+												form.formState.errors.toDate
+													.message
+											}
+										</div>
+									)}
+									{deleteText && fromDate && toDate && (
+										<div className="text-green-700 text-sm">
+											{t(($) => $.popup.dataDeleted)}{" "}
+											{format(fromDate, "d MMMM yyyy")}{" "}
+											{t(($) => $.popup.to)}{" "}
+											{format(toDate, "d MMMM yyyy")}
+										</div>
+									)}
+								</div>
+							</div>
+						</form>
+					</Form>
+				</Card>
 			</div>
 		</BasePopup>
 	);

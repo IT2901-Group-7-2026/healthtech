@@ -205,7 +205,7 @@ public class ValidateFieldForSensorTypeFilterTests
 			var badRequestResult = context.Result as BadRequestObjectResult;
 			Assert.IsType<BadRequestObjectResult>(badRequestResult);
 			Assert.Equal(
-				$"Field '999' is not valid for {SensorType.Dust}. Valid fields: Pm1_stel, Pm25_stel, Pm4_stel, Pm10_stel",
+				$"Field '999' is not valid for {SensorType.Dust}.",
 				GetErrorMessage(badRequestResult)
 			);
 		}

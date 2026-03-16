@@ -1,15 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import { Bell, House, type LucideIcon, User as UserIcon } from "lucide-react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import {
-	href,
-	NavLink,
-	Outlet,
-	type To,
-	useLocation,
-	useNavigate,
-} from "react-router";
 import { Button } from "@/components/ui/button";
 import {
 	Drawer,
@@ -31,17 +19,27 @@ import { LanguageSelect } from "@/features/navbar/language-select.js";
 import { BellPopup } from "@/features/popups/bell-popup";
 import { usePopup } from "@/features/popups/use-popup";
 import { ProfileBadge } from "@/features/profile/profile-badge";
-import {
-	KARI_NORDMANN_ID,
-	OLA_NORDMANN_ID,
-	useUser,
-} from "@/features/user/user-context";
+import { useUser } from "@/features/user/user-context";
+import { KARI_NORDMANN_ID, OLA_NORDMANN_ID } from "@/features/user/user-utils";
 import { useView } from "@/features/views/use-view";
 import { useIsMobile } from "@/hooks/use-mobile";
 import type { TranslateFn } from "@/i18n/config.js";
 import { usersQueryOptions } from "@/lib/api";
 import type { User } from "@/lib/dto.js";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { Bell, House, type LucideIcon, User as UserIcon } from "lucide-react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+	href,
+	NavLink,
+	Outlet,
+	type To,
+	useLocation,
+	useNavigate,
+} from "react-router";
+import "leaflet/dist/leaflet.css";
 
 const Logo = () => (
 	<svg
