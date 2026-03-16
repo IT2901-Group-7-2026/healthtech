@@ -1,5 +1,6 @@
 using Backend.DTOs;
 using Backend.Models;
+using Backend.Records;
 
 namespace Backend.Utils;
 
@@ -69,5 +70,47 @@ public class SensorUtils
 		}
 
 		return aggregateColumnName;
+	}
+
+	public static List<RawSensorData> CumulateVibrationSumValues(
+		SensorType sensor,
+		AggregationFunction function,
+		List<RawSensorData> rawData
+	)
+	{
+		// Only summed vibration data is cumulative
+		if (sensor != SensorType.Vibration || function != AggregationFunction.Sum)
+		{
+			return rawData;
+		}
+
+		List<RawSensorData> result = [];
+
+		var sortedData = rawData.OrderBy(data => data.Time).ToList();
+		double cumulativeValue = 0;
+		DateOnly? currentDate = null;
+
+		foreach (var data in sortedData)
+		{
+			if (currentDate != DateOnly.FromDateTime(data.Time))
+			{
+				cumulativeValue = 0;
+				currentDate = DateOnly.FromDateTime(data.Time);
+			}
+
+			cumulativeValue += data.Value;
+			result.Add(
+				new RawSensorData(
+					data.Time,
+					cumulativeValue,
+					data.AvgValue,
+					data.MaxValue,
+					data.SumValue,
+					data.UserId
+				)
+			);
+		}
+
+		return result;
 	}
 }
