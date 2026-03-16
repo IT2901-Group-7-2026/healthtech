@@ -202,6 +202,7 @@ export const AttentionCard = ({
 					onClose={closePopup}
 					title="Workers"
 					status={popupStatus}
+					subordinates={subordinates ?? []}
 				/>
 			)}
 		</>
