@@ -1,6 +1,7 @@
 using Backend.DTOs;
 using Backend.Models;
 using Backend.Services;
+using Backend.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
@@ -121,9 +122,13 @@ public class UserController(IUserService _userService, IUserStatusService _userS
 			IncrementBucket(summary["dust"], status.Dust?.dangerLevel);
 			IncrementBucket(summary["vibration"], status.Vibration?.dangerLevel);
 
-			IncrementBucket(summary["total"], status.Noise?.dangerLevel);
-			IncrementBucket(summary["total"], status.Dust?.dangerLevel);
-			IncrementBucket(summary["total"], status.Vibration?.dangerLevel);
+			var highest = ThresholdUtils.GetHighestDangerLevel(
+				status.Noise?.dangerLevel,
+				status.Dust?.dangerLevel,
+				status.Vibration?.dangerLevel
+			);
+
+			IncrementBucket(summary["total"], highest);
 		}
 
 		return Ok(summary);

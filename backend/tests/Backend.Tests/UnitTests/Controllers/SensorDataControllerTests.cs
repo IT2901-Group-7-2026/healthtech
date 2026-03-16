@@ -30,7 +30,13 @@ public class SensorDataControllerTests
 			_mockService = new Mock<ISensorDataService>();
 			_controller = new SensorDataController(_mockService.Object);
 			_mockService
-				.Setup(service => service.GetAggregatedDataAsync(It.IsAny<RequestContext>()))
+				.Setup(service =>
+					service.GetAggregatedDataAsync(
+						It.IsAny<SensorDataRequestDto>(),
+						null,
+						SensorType.Dust
+					)
+				)
 				.ReturnsAsync(new List<SensorDataDto>());
 		}
 
@@ -135,8 +141,17 @@ public class SensorDataControllerTests
 		[Fact]
 		public async Task GetAggregatedData_ReturnsDataList_WhenNoiseDataExists()
 		{
+			Guid userId = Guid.NewGuid();
+			SensorType sensorType = SensorType.Noise;
+
 			_mockService
-				.Setup(service => service.GetAggregatedDataAsync(It.IsAny<RequestContext>()))
+				.Setup(service =>
+					service.GetAggregatedDataAsync(
+						It.IsAny<SensorDataRequestDto>(),
+						userId,
+						sensorType
+					)
+				)
 				.ReturnsAsync(
 					new List<SensorDataDto>
 					{
@@ -160,11 +175,7 @@ public class SensorDataControllerTests
 				(AggregationFunction)0,
 				null
 			);
-			var result = await _controller.GetAggregatedData(
-				request,
-				Guid.NewGuid(),
-				SensorType.Noise
-			);
+			var result = await _controller.GetAggregatedData(request, userId, sensorType);
 			var okResult = result.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okResult);
 
@@ -179,8 +190,17 @@ public class SensorDataControllerTests
 		[Fact]
 		public async Task GetAggregatedData_ReturnsDataList_WhenDustDataExists()
 		{
+			Guid userId = Guid.NewGuid();
+			SensorType sensorType = SensorType.Dust;
+
 			_mockService
-				.Setup(service => service.GetAggregatedDataAsync(It.IsAny<RequestContext>()))
+				.Setup(service =>
+					service.GetAggregatedDataAsync(
+						It.IsAny<SensorDataRequestDto>(),
+						userId,
+						sensorType
+					)
+				)
 				.ReturnsAsync(
 					new List<SensorDataDto>
 					{
@@ -204,11 +224,7 @@ public class SensorDataControllerTests
 				(AggregationFunction)0,
 				Field.Pm10_stel
 			);
-			var result = await _controller.GetAggregatedData(
-				request,
-				Guid.NewGuid(),
-				SensorType.Dust
-			);
+			var result = await _controller.GetAggregatedData(request, userId, sensorType);
 			var okResult = result.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okResult);
 
@@ -223,8 +239,17 @@ public class SensorDataControllerTests
 		[Fact]
 		public async Task GetAggregatedData_ReturnsDataList_WhenVibrationDataExists()
 		{
+			Guid userId = Guid.NewGuid();
+			SensorType sensorType = SensorType.Vibration;
+
 			_mockService
-				.Setup(service => service.GetAggregatedDataAsync(It.IsAny<RequestContext>()))
+				.Setup(service =>
+					service.GetAggregatedDataAsync(
+						It.IsAny<SensorDataRequestDto>(),
+						userId,
+						sensorType
+					)
+				)
 				.ReturnsAsync(
 					new List<SensorDataDto>
 					{
@@ -248,11 +273,7 @@ public class SensorDataControllerTests
 				(AggregationFunction)0,
 				null
 			);
-			var result = await _controller.GetAggregatedData(
-				request,
-				Guid.NewGuid(),
-				SensorType.Vibration
-			);
+			var result = await _controller.GetAggregatedData(request, userId, sensorType);
 			var okResult = result.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okResult);
 
@@ -313,8 +334,17 @@ public class SensorDataControllerTests
 		[Fact]
 		public async Task GetAggregatedData_ReturnsBadRequest_WhenServiceThrowsArgumentException()
 		{
+			Guid userId = Guid.NewGuid();
+			SensorType sensorType = SensorType.Noise;
+
 			_mockService
-				.Setup(service => service.GetAggregatedDataAsync(It.IsAny<RequestContext>()))
+				.Setup(service =>
+					service.GetAggregatedDataAsync(
+						It.IsAny<SensorDataRequestDto>(),
+						userId,
+						sensorType
+					)
+				)
 				.ThrowsAsync(new ArgumentException("Invalid argument"));
 
 			var request = new SensorDataRequestDto(
@@ -325,11 +355,7 @@ public class SensorDataControllerTests
 				null
 			);
 
-			var result = await _controller.GetAggregatedData(
-				request,
-				Guid.NewGuid(),
-				SensorType.Noise
-			);
+			var result = await _controller.GetAggregatedData(request, userId, sensorType);
 			var badRequestResult = result.Result as BadRequestObjectResult;
 
 			Assert.IsType<BadRequestObjectResult>(badRequestResult);
@@ -343,8 +369,17 @@ public class SensorDataControllerTests
 		[Fact]
 		public async Task GetAggregatedData_ReturnsNotFound_WhenServiceThrowsInvalidOperationException()
 		{
+			Guid userId = Guid.NewGuid();
+			SensorType sensorType = SensorType.Noise;
+
 			_mockService
-				.Setup(service => service.GetAggregatedDataAsync(It.IsAny<RequestContext>()))
+				.Setup(service =>
+					service.GetAggregatedDataAsync(
+						It.IsAny<SensorDataRequestDto>(),
+						userId,
+						sensorType
+					)
+				)
 				.ThrowsAsync(new InvalidOperationException("Resource not found"));
 
 			var request = new SensorDataRequestDto(
@@ -355,11 +390,7 @@ public class SensorDataControllerTests
 				null
 			);
 
-			var result = await _controller.GetAggregatedData(
-				request,
-				Guid.NewGuid(),
-				SensorType.Noise
-			);
+			var result = await _controller.GetAggregatedData(request, userId, sensorType);
 			var notFoundResult = result.Result as NotFoundObjectResult;
 
 			Assert.IsType<NotFoundObjectResult>(notFoundResult);
@@ -376,8 +407,17 @@ public class SensorDataControllerTests
 		[Fact]
 		public async Task GetAggregatedData_ReturnsInternalServerError_WhenServiceThrowsException()
 		{
+			Guid userId = Guid.NewGuid();
+			SensorType sensorType = SensorType.Noise;
+
 			_mockService
-				.Setup(service => service.GetAggregatedDataAsync(It.IsAny<RequestContext>()))
+				.Setup(service =>
+					service.GetAggregatedDataAsync(
+						It.IsAny<SensorDataRequestDto>(),
+						userId,
+						sensorType
+					)
+				)
 				.ThrowsAsync(new Exception("Unexpected error"));
 
 			var request = new SensorDataRequestDto(
@@ -388,11 +428,7 @@ public class SensorDataControllerTests
 				null
 			);
 
-			var result = await _controller.GetAggregatedData(
-				request,
-				Guid.NewGuid(),
-				SensorType.Noise
-			);
+			var result = await _controller.GetAggregatedData(request, userId, sensorType);
 			var internalErrorResult = result.Result as ObjectResult;
 
 			Assert.IsType<ObjectResult>(internalErrorResult);
