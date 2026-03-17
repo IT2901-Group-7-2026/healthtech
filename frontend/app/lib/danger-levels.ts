@@ -35,3 +35,18 @@ export const mapDangerLevelToLabel = (dangerLevel: DangerLevel): string =>
 
 export const mapDangerLevelToColor = (dangerLevel: DangerLevel): string =>
 	DangerLevels[dangerLevel].color;
+
+export const dangerlevelStyles = {
+	danger: {
+		bg: "bg-danger",
+		text: "text-danger",
+	},
+	warning: {
+		bg: "bg-warning",
+		text: "text-warning",
+	},
+	safe: {
+		bg: "bg-safe",
+		text: "text-safe",
+	},
+} satisfies Record<DangerLevel, { bg: string; text: string }>;

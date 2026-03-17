@@ -202,7 +202,8 @@
     },
     "siteMap": {
       "title": "Områdekart",
-      "anonymousOperator": "Anonym operatør"
+      "anonymousOperator": "Anonym operatør",
+      "noOperators": "Ingen operatører i bygg"
     }
   },
   "user": {

@@ -202,7 +202,8 @@
     },
     "siteMap": {
       "title": "Site map",
-      "anonymousOperator": "Anonymous operator"
+      "anonymousOperator": "Anonymous operator",
+      "noOperators": "No operators in hall"
     }
   },
   "user": {

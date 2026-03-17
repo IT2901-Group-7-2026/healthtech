@@ -20,6 +20,6 @@ export const DEFAULT_USER: User = {
 		region: "Bergen",
 		city: "Bergen",
 		site: "Aker Solutions Sandsli",
-		building: null,
+		building: "Bygg 1",
 	},
 };

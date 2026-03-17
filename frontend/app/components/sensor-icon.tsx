@@ -26,14 +26,15 @@ const iconConfig: Record<Sensor, { icon: LucideIcon; className: string }> = {
 interface SensorIconProps {
 	type: Sensor;
 	value?: string | number;
+	className?: string;
 }
 
-export const SensorIcon = ({ type, value }: SensorIconProps) => {
+export const SensorIcon = ({ type, value, className }: SensorIconProps) => {
 	const Icon = iconConfig[type].icon;
 
 	return (
 		<div className="flex flex-row items-center gap-1.5">
-			<Badge className={cn("p-1", iconConfig[type].className)}>
+			<Badge className={cn("p-1", iconConfig[type].className, className)}>
 				<Icon className="size-3" />
 			</Badge>
 			{value !== undefined && (
