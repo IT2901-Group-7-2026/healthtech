@@ -67,7 +67,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	const warningThresholdLine = (threshold.warning / threshold.danger) * 100;
 	const dangerThresholdLine = 100;
 
-	const sortedData = [...data].sort((a, b) => b.percent - a.percent);
+	const sortedData = data.toSorted((a, b) => b.percent - a.percent);
 
 	// Split percent into three parts for the stacked bar chart
 	const chartData = sortedData.map((item) => ({

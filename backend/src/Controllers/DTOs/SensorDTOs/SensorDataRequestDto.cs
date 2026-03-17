@@ -52,6 +52,7 @@ public class SensorTypeFieldAttribute(SensorType sensorType) : Attribute
 	public SensorType SensorType { get; } = sensorType;
 }
 
+// TODO: Get rid of this, just use parameters
 public record SensorDataRequestDto(
 	[Required] DateTimeOffset StartTime,
 	[Required] DateTimeOffset EndTime,
