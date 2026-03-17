@@ -215,7 +215,7 @@ export function downsampleSensorData(
 	}
 
 	if (sensor === "dust") {
-		return downsampleDust(data, 20);
+		return downsampleDust(data, 30);
 	}
 
 	return data;
