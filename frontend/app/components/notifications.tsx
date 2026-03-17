@@ -6,7 +6,7 @@ import {
 	ItemMedia,
 	ItemTitle,
 } from "@/components/ui/item";
-import { Icon } from "@/features/icon";
+import { SensorIcon } from "./sensor-icon";
 import { NotificationPopup } from "@/features/popups/notification-popup";
 import { usePopup } from "@/features/popups/use-popup";
 import type { DangerLevel } from "@/lib/danger-levels";
@@ -94,9 +94,7 @@ export function Notifications({
 								size="sm"
 								className="rounded-3xl border-3 border-border bg-background hover:bg-card-highlight"
 							>
-								<ItemMedia variant="default" className="pt-1">
-									<Icon variant={sensor} size="medium" />
-								</ItemMedia>
+								<SensorIcon type={sensor} size="md"/>
 								<ItemContent>
 									<ItemTitle className="line-clamp-1">
 										{t(($) => $[sensor])}
