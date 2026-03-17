@@ -72,13 +72,13 @@ export const AttentionCard = ({
 	const selectedSensorKey = sensor ?? "total";
 	const showActionCard = date ? isToday(date) : false;
 
-	const operatorsInDanger = (subordinates.filter(
-		(subordinate) => (subordinate.status.status === "danger")).length
-	)
+	const operatorsInDanger = subordinates.filter(
+		(subordinate) => subordinate.status.status === "danger",
+	).length;
 
-	const operatorsNearThresholds = (subordinates.filter(
-		(subordinate) => (subordinate.status.status === "warning")).length
-	)
+	const operatorsNearThresholds = subordinates.filter(
+		(subordinate) => subordinate.status.status === "warning",
+	).length;
 
 	const dangerLevelColor =
 		highestDangerLevel !== null
@@ -92,12 +92,16 @@ export const AttentionCard = ({
 
 	const criticalExposureText =
 		highestDangerLevel === "danger"
-			? t(($) => $.foremanDashboard.actionCard.criticalExposureText, {count: operatorsInDanger})
+			? t(($) => $.foremanDashboard.actionCard.criticalExposureText, {
+					count: operatorsInDanger,
+				})
 			: null;
 
 	const approachingThresholdText =
-		highestDangerLevel === "warning" || highestDangerLevel === "danger" 
-			? t(($) => $.foremanDashboard.actionCard.approachingThresholdText, {count: operatorsNearThresholds})
+		highestDangerLevel === "warning" || highestDangerLevel === "danger"
+			? t(($) => $.foremanDashboard.actionCard.approachingThresholdText, {
+					count: operatorsNearThresholds,
+				})
 			: null;
 
 	if (
@@ -131,18 +135,14 @@ export const AttentionCard = ({
 				{actionCardHeader}
 
 				<CardContent className="gap-2">
-					<p>
-						{criticalExposureText}
-					</p>
-					<p className="mb-5">
-						{approachingThresholdText}
-					</p>
+					<p>{criticalExposureText}</p>
+					<p className="mb-5">{approachingThresholdText}</p>
 
 					<div className="grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
 						{!sensor && (
 							<>
 								<StatCard
-								className="text-red-500"
+									className="text-red-500"
 									label={t(
 										($) =>
 											$.foremanDashboard.overview
@@ -153,11 +153,10 @@ export const AttentionCard = ({
 										thresholdSummary[selectedSensorKey]
 											.danger
 									}
-								>
-								</StatCard>
+								></StatCard>
 
 								<StatCard
-								className="text-orange-400"
+									className="text-orange-400"
 									label={t(
 										($) =>
 											$.foremanDashboard.overview
@@ -168,11 +167,10 @@ export const AttentionCard = ({
 										thresholdSummary[selectedSensorKey]
 											.warning
 									}
-								>
-								</StatCard>
+								></StatCard>
 
 								<StatCard
-								className="text-green-600"
+									className="text-green-600"
 									label={t(
 										($) =>
 											$.foremanDashboard.overview
@@ -209,7 +207,9 @@ export const AttentionCard = ({
 				</CardContent>
 			</Card>
 
-			{(popupStatus === "warning" || popupStatus === "danger" || popupStatus === "safe") && (
+			{(popupStatus === "warning" ||
+				popupStatus === "danger" ||
+				popupStatus === "safe") && (
 				<AtRiskPopup
 					open={selectedStatus !== null}
 					onClose={closePopup}
@@ -221,23 +221,3 @@ export const AttentionCard = ({
 		</>
 	);
 };
-
-interface LocationCardProps {
-	zone: string;
-	location: string;
-	children?: React.ReactNode;
-}
-
-const LocationCard = ({ zone, location, children }: LocationCardProps) => (
-	<Card className="min-w-22 gap-2 bg-card-highlight p-2">
-		<div className="flex flex-col">
-			<p className="font-semibold text-muted-foreground text-sm">
-				{zone}
-			</p>
-			<p className="text-muted-foreground text-xs">{location}</p>
-		</div>
-		{children && (
-			<div className="flex flex-row items-center gap-2">{children}</div>
-		)}
-	</Card>
-);

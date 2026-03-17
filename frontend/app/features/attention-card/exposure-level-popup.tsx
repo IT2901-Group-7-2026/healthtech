@@ -93,9 +93,11 @@ export function AtRiskPopup({
 	const { t } = useTranslation();
 
 	const exposureTitle =
-		status === "danger" ? t((x) => x.exposureLevel.in_danger)
-		: status === "warning" ? t((x) => x.exposureLevel.warning)
-			: t((x) => x.exposureLevel.safe);
+		status === "danger"
+			? t((x) => x.exposureLevel.in_danger)
+			: status === "warning"
+				? t((x) => x.exposureLevel.warning)
+				: t((x) => x.exposureLevel.safe);
 
 	const workers = subordinates.filter((sub) => sub.status.status === status);
 
