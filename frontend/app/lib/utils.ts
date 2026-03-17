@@ -104,59 +104,10 @@ export const userRoleToString = (role: User["role"], t: TranslateFn) => {
 	}
 };
 
-function getMinMaxPoints(
-	data: Array<SensorDataResponseDto>,
-	bucketSize: number,
-): Array<SensorDataResponseDto> {
-	const result: Array<SensorDataResponseDto> = [];
-
-	for (let i = 0; i < data.length; i += bucketSize) {
-		const bucket = data.slice(i, i + bucketSize);
-		if (!bucket.length) continue;
-
-		let min = bucket[0];
-		let max = bucket[0];
-
-		for (const item of bucket) {
-			if (item.value < min.value) min = item;
-			if (item.value > max.value) max = item;
-		}
-
-		if (min.time <= max.time) result.push(min, max);
-		else result.push(max, min);
-	}
-
-	return result;
-}
-
 export function downsampleDataPoints(
 	data: Array<SensorDataResponseDto>,
 	bucketSize: number,
 ): Array<SensorDataResponseDto> {
-	const dangerChangePoints: Array<SensorDataResponseDto> = [];
-	const minMaxPoints = getMinMaxPoints(data, bucketSize);
-
-	for (let i = 1; i < data.length; i++) {
-		if (data[i].dangerLevel !== data[i - 1].dangerLevel) {
-			dangerChangePoints.push(data[i]);
-		}
-	}
-
-	const resultSet = new Set<SensorDataResponseDto>(minMaxPoints);
-
-	for (const p of dangerChangePoints) {
-		resultSet.add(p);
-	}
-
-	return Array.from(resultSet).sort(
-		(a, b) => a.time.getTime() - b.time.getTime(),
-	);
-}
-
-function downsampleDust(
-	data: Array<SensorDataResponseDto>,
-	bucketSize: number,
-): Array<SensorDataResponseDto> {
 	const result: Array<SensorDataResponseDto> = [];
 
 	for (let i = 0; i < data.length; i += bucketSize) {
@@ -166,6 +117,7 @@ function downsampleDust(
 		let min = bucket[0];
 		let max = bucket[0];
 
+		//Keep min and max of each bucket
 		for (const item of bucket) {
 			if (item.value < min.value) min = item;
 			if (item.value > max.value) max = item;
@@ -185,13 +137,9 @@ export function downsampleSensorData(
 	sensor: Sensor,
 	data: Array<SensorDataResponseDto>,
 ): Array<SensorDataResponseDto> {
-	if (sensor === "noise") {
-		return downsampleDataPoints(data, 20);
+	if (sensor === "vibration") {
+		return data;
 	}
 
-	if (sensor === "dust") {
-		return downsampleDust(data, 30);
-	}
-
-	return data;
+	return downsampleDataPoints(data, 20);
 }

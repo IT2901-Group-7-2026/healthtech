@@ -11,6 +11,7 @@ import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
+import { downsampleSensorData } from "@/lib/utils";
 import {
 	addHours,
 	endOfDay,
@@ -20,7 +21,6 @@ import {
 	startOfDay,
 	subHours,
 } from "date-fns";
-import { downsampleSensorData } from "@/lib/utils";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import {
