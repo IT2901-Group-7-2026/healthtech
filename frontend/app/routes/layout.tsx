@@ -1,3 +1,4 @@
+import { type IconVariant, SensorIcon } from "@/components/sensor-icon";
 import { Button } from "@/components/ui/button";
 import {
 	DropdownMenu,
