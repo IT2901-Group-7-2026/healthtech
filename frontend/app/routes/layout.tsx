@@ -12,7 +12,6 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ThemeSwitch } from "@/features/dark-mode/theme-switch.js";
 import { useDate } from "@/features/date-picker/use-date";
 import { Icon, type IconVariant } from "@/features/icon";
-import { AkerLogo } from "@/features/navbar/aker-logo.js";
 import { DemoUserSwitchBanner } from "@/features/navbar/demo-user-switch-banner.js";
 import { HamburgerButton } from "@/features/navbar/hamburger-icon.js";
 import { LanguageSelect } from "@/features/navbar/language-select.js";
@@ -190,12 +189,7 @@ export default function Layout() {
 
 	const desktopHeader = (
 		<>
-			<div className="flex items-center gap-4">
-				<div className="w-36 shrink-0 border-r-2 border-r-muted-foreground pr-4">
-					<AkerLogo />
-				</div>
-				<HomeLink />
-			</div>
+			<HomeLink />
 
 			<nav className="flex list-none items-center rounded-full">
 				<NavTabs routes={links} />
@@ -249,13 +243,6 @@ export default function Layout() {
 
 				<main className="m-5 items-center justify-center">
 					<Outlet />
-					{isMobile && (
-						<div className="mt-2 flex w-full justify-center p-4">
-							<div className="w-28 shrink-0 self-center">
-								<AkerLogo sizeOverride="large" />
-							</div>
-						</div>
-					)}
 				</main>
 			</SidebarInset>
 		</SidebarProvider>
