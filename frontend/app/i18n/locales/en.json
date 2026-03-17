@@ -194,7 +194,9 @@
     "actionCard": {
       "safe": "All good!",
       "warning": "Attention may be required!",
-      "danger": "Attention may be required!"
+      "danger": "Attention may be required!",
+      "criticalExposureText" : "Critical Exposure: {{count}} operators have exceeded the safe limits.",
+      "approachingThresholdText" : "Approaching thresholds: {{count}} operators are nearing the safe limits."
     },
     "userStatusChart": {
       "xAxisLabel": "Percentage of exposure limit",

@@ -1,5 +1,4 @@
 import { ExposureRiskCard } from "@/components/exposure-level-card";
-import { SensorIcon } from "@/components/sensor-icon.js";
 import { Card, CardContent, CardHeader } from "@/components/ui/card.js";
 import { Skeleton } from "@/components/ui/skeleton.js";
 import { AtRiskPopup } from "@/features/attention-card/exposure-level-popup.js";
@@ -17,7 +16,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface AttentionCardProps {
-	subordinates?: Array<UserWithStatusDto>;
+	subordinates: Array<UserWithStatusDto>;
 	isSubordinatesLoading?: boolean;
 	thresholdSummary?: ThresholdSummary;
 	isThresholdSummaryLoading?: boolean;
@@ -73,6 +72,14 @@ export const AttentionCard = ({
 	const selectedSensorKey = sensor ?? "total";
 	const showActionCard = date ? isToday(date) : false;
 
+	const operatorsInDanger = (subordinates.filter(
+		(subordinate) => (subordinate.status.status === "danger")).length
+	)
+
+	const operatorsNearThresholds = (subordinates.filter(
+		(subordinate) => (subordinate.status.status === "warning")).length
+	)
+
 	const dangerLevelColor =
 		highestDangerLevel !== null
 			? `text-${mapDangerLevelToColor(highestDangerLevel)}`
@@ -81,6 +88,16 @@ export const AttentionCard = ({
 	const attentionHeaderText =
 		highestDangerLevel !== null
 			? t(($) => $.foremanDashboard.actionCard[highestDangerLevel])
+			: null;
+
+	const criticalExposureText =
+		highestDangerLevel === "danger"
+			? t(($) => $.foremanDashboard.actionCard.criticalExposureText, {count: operatorsInDanger})
+			: null;
+
+	const approachingThresholdText =
+		highestDangerLevel === "warning" || highestDangerLevel === "danger" 
+			? t(($) => $.foremanDashboard.actionCard.approachingThresholdText, {count: operatorsNearThresholds})
 			: null;
 
 	if (
@@ -115,14 +132,10 @@ export const AttentionCard = ({
 
 				<CardContent className="gap-2">
 					<p>
-						{
-							"Critical Exposure: 5 operators have exceeded the safe limits."
-						}
+						{criticalExposureText}
 					</p>
 					<p className="mb-5">
-						{
-							"Approaching thresholds: 4 operators are nearing the safe limits."
-						}
+						{approachingThresholdText}
 					</p>
 
 					<div className="grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">

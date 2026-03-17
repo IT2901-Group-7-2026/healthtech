@@ -230,7 +230,7 @@ export default function ForemanOverview() {
 				</aside>
 				<div className="flex flex-col gap-12 md:w-3/5">
 					<AttentionCard
-						subordinates={subordinates}
+						subordinates={subordinates ?? []}
 						isSubordinatesLoading={isSubordinatesLoading}
 						thresholdSummary={thresholdSummary}
 						isThresholdSummaryLoading={isThresholdSummaryLoading}
