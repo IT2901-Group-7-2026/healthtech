@@ -1,12 +1,14 @@
 import type { Sensor } from "@/lib/sensors.js";
 import { cn } from "@/lib/utils.js";
 import type { ComponentType, SVGProps } from "react";
-type IconType = ComponentType<SVGProps<SVGSVGElement>>;
-import { EarIcon } from "lucide-react";
-import { DustIcon } from "@/components/icons/dust-icon"
-import { VibrationIcon } from "@/components/icons/vibration-icon";
 
-export type IconVariant = "dust" | "noise" | "vibration"
+type IconType = ComponentType<SVGProps<SVGSVGElement>>;
+
+import { DustIcon } from "@/components/icons/dust-icon";
+import { VibrationIcon } from "@/components/icons/vibration-icon";
+import { EarIcon } from "lucide-react";
+
+export type IconVariant = "dust" | "noise" | "vibration";
 
 const iconConfig: Record<Sensor, { icon: IconType; className: string }> = {
 	noise: {
@@ -43,7 +45,13 @@ export const SensorIcon = ({ type, size, className }: SensorIconProps) => {
 	const resolvedSize = size ?? "md";
 
 	return (
-		<div className={cn("rounded-full", iconConfig[type].className, className)}>
+		<div
+			className={cn(
+				"rounded-full",
+				iconConfig[type].className,
+				className,
+			)}
+		>
 			<Icon className={iconSizeClass[resolvedSize]} />
 		</div>
 	);

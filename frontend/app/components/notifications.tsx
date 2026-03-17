@@ -3,10 +3,8 @@ import {
 	ItemContent,
 	ItemDescription,
 	ItemGroup,
-	ItemMedia,
 	ItemTitle,
 } from "@/components/ui/item";
-import { SensorIcon } from "./sensor-icon";
 import { NotificationPopup } from "@/features/popups/notification-popup";
 import { usePopup } from "@/features/popups/use-popup";
 import type { DangerLevel } from "@/lib/danger-levels";
@@ -15,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { Card } from "@/ui/card";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { SensorIcon } from "./sensor-icon";
 
 const notifications: Array<{
 	sensor: Sensor;
@@ -94,7 +93,7 @@ export function Notifications({
 								size="sm"
 								className="rounded-3xl border-3 border-border bg-background hover:bg-card-highlight"
 							>
-								<SensorIcon type={sensor} size="md"/>
+								<SensorIcon type={sensor} size="md" />
 								<ItemContent>
 									<ItemTitle className="line-clamp-1">
 										{t(($) => $[sensor])}

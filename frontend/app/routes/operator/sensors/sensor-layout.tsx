@@ -1,3 +1,4 @@
+import { SensorIcon } from "@/components/sensor-icon";
 import { useDate } from "@/features/date-picker/use-date";
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { useView } from "@/features/views/use-view";
@@ -6,12 +7,11 @@ import { getNextDay, getPrevDay } from "@/lib/utils";
 import { Button } from "@/ui/button";
 import { t } from "i18next";
 import { Outlet, useLocation } from "react-router";
-import { SensorIcon } from "@/components/sensor-icon";
 
 function Title({ sensor }: { sensor: Sensor }) {
 	return (
-		<h1 className="shrink-0 py-2 text-3xl flex gap-3 items-center">
-			<SensorIcon type={sensor} size="md"/>
+		<h1 className="flex shrink-0 items-center gap-3 py-2 text-3xl">
+			<SensorIcon type={sensor} size="md" />
 			{t(($) => $[sensor])}{" "}
 		</h1>
 	);

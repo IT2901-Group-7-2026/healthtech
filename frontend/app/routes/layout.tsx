@@ -1,3 +1,4 @@
+import { type IconVariant, SensorIcon } from "@/components/sensor-icon";
 import { Button } from "@/components/ui/button";
 import {
 	Drawer,
@@ -12,7 +13,6 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ThemeSwitch } from "@/features/dark-mode/theme-switch.js";
 import { useDate } from "@/features/date-picker/use-date";
 import { AkerLogo } from "@/features/navbar/aker-logo.js";
-import { SensorIcon, type IconVariant } from "@/components/sensor-icon";
 import { DemoUserSwitchBanner } from "@/features/navbar/demo-user-switch-banner.js";
 import { HamburgerButton } from "@/features/navbar/hamburger-icon.js";
 import { LanguageSelect } from "@/features/navbar/language-select.js";
