@@ -407,6 +407,7 @@ function NavTabs({
 
 				return (
 					<NavLink
+						end
 						to={{
 							pathname: route.to.toString(),
 							search: `?view=${view}&date=${date.toISOString().split("T")[0]}`,
