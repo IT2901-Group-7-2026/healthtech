@@ -376,13 +376,21 @@ function NavTabs({
 	const { date } = useDate();
 	const location = useLocation();
 
-	const navLinkRefs = useRef<Array<HTMLElement>>([]); // Refs to the nav links
+	const navLinkRefs = useRef<Array<HTMLElement>>([]);
 	const [pillWidth, setPillWidth] = useState<number>();
 	const [pillLeft, setPillLeft] = useState<number>();
 
 	const activeNavIndex = routes.findIndex(
 		(route) => route.to === location.pathname,
 	);
+
+	// update pill whenever the active route changes,
+	useEffect(() => {
+		const el = navLinkRefs.current[activeNavIndex];
+		if (!el) return;
+		setPillWidth(el.offsetWidth);
+		setPillLeft(el.offsetLeft);
+	}, [activeNavIndex]);
 
 	return (
 		<div className="relative mx-auto flex h-11 flex-row rounded-full bg-accent px-2 dark:bg-card">
@@ -392,6 +400,7 @@ function NavTabs({
 			>
 				<span className="h-full w-full rounded-full bg-background shadow-sm" />
 			</span>
+
 			{routes.map((route, i) => {
 				const className = ({ isActive }: { isActive: boolean }) =>
 					cn(
@@ -410,14 +419,7 @@ function NavTabs({
 						key={route.to.toString()}
 						ref={(el) => {
 							if (!el) return;
-
-							// Add the ref to the array
 							navLinkRefs.current[i] = el;
-							// If the current link is the active one, set the pill width and left offset
-							if (i === activeNavIndex) {
-								setPillWidth(el.offsetWidth);
-								setPillLeft(el.offsetLeft);
-							}
 						}}
 						className={className}
 						prefetch="intent"
