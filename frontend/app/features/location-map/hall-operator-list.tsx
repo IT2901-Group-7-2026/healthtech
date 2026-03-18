@@ -65,7 +65,7 @@ export const HallOperatorList = ({
 										key={operator.id}
 										className="text-muted-foreground"
 									>
-										{/* TODO: Link? */}
+										{/* TODO: Link to user stats page */}
 										<TableCell>
 											{operator.username}
 										</TableCell>
@@ -96,11 +96,18 @@ const HallOperatorListItem = ({
 	operator,
 	sensor,
 }: HallOperatorListItemProps) => {
-	const dangerLevel = operator.status[sensor]?.dangerLevel;
+	const { t } = useTranslation();
 
-	//TODO: I18n
+	const dangerLevel = operator.status[sensor]?.dangerLevel ?? "safe";
+	const title = t(
+		($) => $.foremanDashboard.siteMap.operatorSensorStatus[dangerLevel],
+		{
+			sensor: t(($$) => $$[sensor]).toLowerCase(),
+		},
+	);
+
 	return (
-		<TableCell title="I faresone for støy">
+		<TableCell title={title}>
 			<SensorIcon
 				type={sensor}
 				className={cn(dangerlevelStyles[dangerLevel ?? "safe"].bg)}

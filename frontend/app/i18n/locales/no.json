@@ -203,7 +203,12 @@
     "siteMap": {
       "title": "Områdekart",
       "anonymousOperator": "Anonym operatør",
-      "noOperators": "Ingen operatører i bygg"
+      "noOperators": "Ingen operatører i bygg",
+      "operatorSensorStatus": {
+        "danger": "Over grenseverdi for {{sensor}}",
+        "warning": "Nær grenseverdi for {{sensor}}",
+        "safe": "Innenfor grenseverdi for {{sensor}}"
+      }
     }
   },
   "user": {

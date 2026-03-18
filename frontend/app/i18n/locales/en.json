@@ -203,7 +203,12 @@
     "siteMap": {
       "title": "Site map",
       "anonymousOperator": "Anonymous operator",
-      "noOperators": "No operators in hall"
+      "noOperators": "No operators in hall",
+      "operatorSensorStatus": {
+        "danger": "Above exposure limit for {{sensor}}",
+        "warning": "Approaching exposure limit for {{sensor}}",
+        "safe": "Within safe exposure limit for {{sensor}}"
+      }
     }
   },
   "user": {
