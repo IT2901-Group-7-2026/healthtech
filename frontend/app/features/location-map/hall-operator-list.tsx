@@ -107,10 +107,14 @@ const HallOperatorListItem = ({
 	);
 
 	return (
-		<TableCell title={title}>
+		<TableCell title={title} className="items-center">
 			<SensorIcon
 				type={sensor}
-				className={cn(dangerlevelStyles[dangerLevel ?? "safe"].bg)}
+				size="sm"
+				className={cn(
+					"w-fit",
+					dangerlevelStyles[dangerLevel ?? "safe"].bg,
+				)}
 			/>
 		</TableCell>
 	);
