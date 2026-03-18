@@ -15,7 +15,6 @@ i18n.use(LanguageDetector)
 		resources,
 		fallbackLng: "en",
 		load: "languageOnly",
-		debug: import.meta.env.DEV, // Enables debug mode in development
 		supportedLngs: Object.keys(resources),
 
 		// Normally, we want `escapeValue: true` as it ensures that i18next escapes any code in translation messages,
