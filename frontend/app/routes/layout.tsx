@@ -302,8 +302,9 @@ function UserDropdown({
 						</div>
 
 						<div className="inline-flex rounded-full p-1">
-							<button
-								type="button"
+							<Button
+								variant="ghost"
+								size="icon"
 								onClick={() => setTheme("light")}
 								className={cn(
 									"inline-flex cursor-pointer items-center justify-center rounded-full p-2 transition-colors",
@@ -311,9 +312,10 @@ function UserDropdown({
 								)}
 							>
 								<Sun className="size-4" />
-							</button>
-							<button
-								type="button"
+							</Button>
+							<Button
+								variant="ghost"
+								size="icon"
 								onClick={() => setTheme("dark")}
 								className={cn(
 									"inline-flex cursor-pointer items-center justify-center rounded-full p-2 transition-colors",
@@ -321,9 +323,10 @@ function UserDropdown({
 								)}
 							>
 								<Moon className="size-4" />
-							</button>
-							<button
-								type="button"
+							</Button>
+							<Button
+								variant="ghost"
+								size="icon"
 								onClick={() => setTheme("system")}
 								className={cn(
 									"inline-flex cursor-pointer items-center justify-center rounded-full p-2 transition-colors",
@@ -331,7 +334,7 @@ function UserDropdown({
 								)}
 							>
 								<Monitor className="size-4" />
-							</button>
+							</Button>
 						</div>
 					</div>
 
