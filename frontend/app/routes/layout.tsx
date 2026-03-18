@@ -287,7 +287,7 @@ function UserDropdown({
 
 					<DropdownMenuSeparator />
 
-					<div className="flex items-center gap-4 px-2 py-1.5 text-sm">
+					<div className="flex items-center gap-4 pl-2 text-sm">
 						<div className="flex gap-2">
 							<Palette className="size-4 text-muted-foreground" />
 							<span>{t(($) => $.layout.theme)}</span>
