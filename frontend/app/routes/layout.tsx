@@ -24,7 +24,7 @@ import { useView } from "@/features/views/use-view";
 import type { TranslateFn } from "@/i18n/config.js";
 import { usersQueryOptions } from "@/lib/api";
 import type { User } from "@/lib/dto.js";
-import { cn } from "@/lib/utils";
+import { cn, shorthandName } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
 	Bell,
@@ -255,14 +255,6 @@ function UserDropdown({
 
 	if (!user) return null;
 
-	const shorthandName = (() => {
-		const names = user.username.trim().split(/\s+/);
-		if (names.length <= 1) return user.username;
-		const firstInitial = names[0][0].toUpperCase();
-		const lastname = names[names.length - 1];
-		return `${firstInitial}. ${lastname}`;
-	})();
-
 	const currentLanguage = i18n.language || "en";
 
 	return (
@@ -278,7 +270,7 @@ function UserDropdown({
 						</div>
 						<div className="min-w-0 grow text-left leading-tight">
 							<p className="truncate font-medium">
-								{shorthandName}
+								{shorthandName(user.username)}
 							</p>
 							<p className="truncate text-foreground/60 text-xs">
 								{user.location.site}
