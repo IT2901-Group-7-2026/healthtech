@@ -6,7 +6,10 @@ import { Fragment, useRef, useState } from "react";
 import { renderToString } from "react-dom/server";
 import { useTranslation } from "react-i18next";
 import { ImageOverlay, MapContainer, Marker, Polygon } from "react-leaflet";
-import { HallOperatorList } from "./hall-operator-list";
+import {
+	HallOperatorList,
+	HallOperatorListSkeleton,
+} from "./hall-operator-list";
 import { MapUsersBadge } from "./location-map-users-badge";
 import { getCenterPoint, xyToyx } from "./location-map-utils";
 import { useImageSize } from "./use-image-size";
@@ -128,17 +131,25 @@ export function LocationMap({
 				}}
 			>
 				<div className="flex h-full w-full flex-row gap-4">
-					<div className="flex w-2/6 flex-col border-r-2 border-solid pr-2">
-						{halls.map((hall) => (
-							<HallOperatorList
-								key={hall.name}
-								operators={hall.operators}
-								hallName={hall.name}
-								selectedHall={selectedHallName}
-								onOpen={onHallCollapsibleOpen}
-								isLoading={isLoading}
-							/>
-						))}
+					<div className="flex w-2/6 flex-col gap-1 border-r-2 border-solid pr-2">
+						{isLoading ? (
+							<>
+								<HallOperatorListSkeleton />
+								<HallOperatorListSkeleton />
+								<HallOperatorListSkeleton />
+								<HallOperatorListSkeleton />
+							</>
+						) : (
+							halls.map((hall) => (
+								<HallOperatorList
+									key={hall.name}
+									operators={hall.operators}
+									hallName={hall.name}
+									selectedHall={selectedHallName}
+									onOpen={onHallCollapsibleOpen}
+								/>
+							))
+						)}
 					</div>
 					<div className="w-full">
 						<MapContainer

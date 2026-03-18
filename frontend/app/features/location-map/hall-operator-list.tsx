@@ -19,7 +19,6 @@ export interface HallOperatorListProps {
 	hallName: string;
 	selectedHall: string | null;
 	onOpen: (hallName: string | null) => void;
-	isLoading?: boolean;
 }
 
 export const HallOperatorList = ({
@@ -27,7 +26,6 @@ export const HallOperatorList = ({
 	hallName,
 	selectedHall,
 	onOpen,
-	isLoading,
 }: HallOperatorListProps) => {
 	const { t } = useTranslation();
 	const isOpen = selectedHall === hallName;
@@ -42,13 +40,7 @@ export const HallOperatorList = ({
 				<Button variant="ghost" className="group w-full">
 					<p>{hallName}</p>
 
-					<p className="text-muted-foreground">
-						{isLoading ? (
-							<Skeleton className="inline-block h-4 w-6 align-middle" />
-						) : (
-							`(${operators.length})`
-						)}
-					</p>
+					<p className="text-muted-foreground">{`(${operators.length})`}</p>
 
 					<ChevronDownIcon className="ml-auto group-data-[state=open]:rotate-180" />
 				</Button>
@@ -116,3 +108,7 @@ const HallOperatorListItem = ({
 		</TableCell>
 	);
 };
+
+export const HallOperatorListSkeleton = () => (
+	<Skeleton className="h-9 w-full rounded-md bg-zinc-100 dark:bg-accent" />
+);
