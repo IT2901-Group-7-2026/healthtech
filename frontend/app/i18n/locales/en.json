@@ -167,7 +167,9 @@
       },
       "membersCount": "{{count}} operator in team",
       "membersCount_one": "{{count}} operator in team",
-      "membersCount_other": "{{count}} operators in team"
+      "membersCount_other": "{{count}} operators in team",
+      "mapTitle": "Location map",
+      "mapPlaceholder": "Placeholder. Will be moved"
     },
     "overview": {
       "title": "Foreman Overview",

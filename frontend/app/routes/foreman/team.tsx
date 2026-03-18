@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button.js";
 import { Checkbox } from "@/components/ui/checkbox.js";
 import { DataTable } from "@/components/ui/data-table";
+import { LocationMap } from "@/features/location-map/location-map";
 import { useUser } from "@/features/user/user-context";
 import { UserSearch } from "@/features/user/user-search.js";
 import {
@@ -152,50 +153,71 @@ export default function TeamPage() {
 	}
 
 	return (
-		<div className="flex flex-col gap-4">
-			<h1 className="font-bold text-2xl">
-				{t(($) => $.foremanDashboard.team.title)}
-			</h1>
-			<div className="flex items-center gap-2">
-				<UserSearch
-					users={filteredUsers}
-					placeholder={t(($) => $.user.searchPlaceholder)}
-					multiple
-					value={userIdSelection}
-					onValueChange={(value) => {
-						if (value == null || value.length === 0) {
-							setUserIdSelection([]);
-							return;
-						}
+		<div className="flex flex-col gap-8">
+			<div className="flex flex-col gap-4">
+				<h1 className="font-bold text-2xl">
+					{t(($) => $.foremanDashboard.team.title)}
+				</h1>
+				<div className="flex items-center gap-2">
+					<UserSearch
+						users={filteredUsers}
+						placeholder={t(($) => $.user.searchPlaceholder)}
+						multiple
+						value={userIdSelection}
+						onValueChange={(value) => {
+							if (value == null || value.length === 0) {
+								setUserIdSelection([]);
+								return;
+							}
 
-						setUserIdSelection(value);
-					}}
-					disabled={filteredUsers.length === 0}
-					emptyLabel={t(($) => $.noOptions)}
+							setUserIdSelection(value);
+						}}
+						disabled={filteredUsers.length === 0}
+						emptyLabel={t(($) => $.noOptions)}
+					/>
+					<Button
+						onClick={handleAddSubordinates}
+						disabled={userIdSelection.length === 0}
+					>
+						{t(
+							($) =>
+								$.foremanDashboard.team.action.addSubordinate,
+						)}
+					</Button>
+				</div>
+				<DataTable
+					columns={columns}
+					data={subordinates}
+					selectionLabelT={t}
+					state={{ rowSelection }}
+					onRowSelectionChange={setRowSelection}
+					getRowId={(user) => user.id}
 				/>
-				<Button
-					onClick={handleAddSubordinates}
-					disabled={userIdSelection.length === 0}
-				>
-					{t(($) => $.foremanDashboard.team.action.addSubordinate)}
-				</Button>
+				<div>
+					<Button
+						onClick={handleRemoveSubordinates}
+						disabled={Object.keys(rowSelection).length === 0}
+						variant="destructive"
+					>
+						{t(
+							($) =>
+								$.foremanDashboard.team.action
+									.removeSubordinate,
+						)}
+					</Button>
+				</div>
 			</div>
-			<DataTable
-				columns={columns}
-				data={subordinates}
-				selectionLabelT={t}
-				state={{ rowSelection }}
-				onRowSelectionChange={setRowSelection}
-				getRowId={(user) => user.id}
-			/>
-			<div>
-				<Button
-					onClick={handleRemoveSubordinates}
-					disabled={Object.keys(rowSelection).length === 0}
-					variant="destructive"
-				>
-					{t(($) => $.foremanDashboard.team.action.removeSubordinate)}
-				</Button>
+			<div className="flex w-2/3 flex-col gap-4">
+				<h1 className="font-bold text-2xl">
+					{t(($) => $.foremanDashboard.team.mapTitle)}
+				</h1>
+				<p className="text-muted-foreground">
+					{`(${t(($) => $.foremanDashboard.team.mapPlaceholder)})`}
+				</p>
+				<LocationMap
+					operators={subordinates ?? []}
+					isLoading={isSubordinatesLoading}
+				/>
 			</div>
 		</div>
 	);

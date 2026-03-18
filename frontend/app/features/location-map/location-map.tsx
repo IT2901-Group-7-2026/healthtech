@@ -93,7 +93,7 @@ export function LocationMap({
 		);
 	}
 
-	const onHallCollapsibleOpen = (hallName: string | null) => {
+	const onHallCollapsibleClick = (hallName: string | null) => {
 		setSelectedHallName(hallName);
 
 		const hall = halls.find((h) => h.name === hallName);
@@ -146,7 +146,7 @@ export function LocationMap({
 									operators={hall.operators}
 									hallName={hall.name}
 									selectedHall={selectedHallName}
-									onOpen={onHallCollapsibleOpen}
+									onOpenChange={onHallCollapsibleClick}
 								/>
 							))
 						)}

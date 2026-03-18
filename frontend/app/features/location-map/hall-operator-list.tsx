@@ -18,14 +18,14 @@ export interface HallOperatorListProps {
 	operators: Array<UserWithStatusDto>;
 	hallName: string;
 	selectedHall: string | null;
-	onOpen: (hallName: string | null) => void;
+	onOpenChange: (hallName: string | null) => void;
 }
 
 export const HallOperatorList = ({
 	operators,
 	hallName,
 	selectedHall,
-	onOpen,
+	onOpenChange,
 }: HallOperatorListProps) => {
 	const { t } = useTranslation();
 	const isOpen = selectedHall === hallName;
@@ -34,7 +34,7 @@ export const HallOperatorList = ({
 		<Collapsible
 			className="rounded-md"
 			open={isOpen}
-			onOpenChange={(open) => onOpen(open ? hallName : null)}
+			onOpenChange={(open) => onOpenChange(open ? hallName : null)}
 		>
 			<CollapsibleTrigger asChild>
 				<Button variant="ghost" className="group w-full">

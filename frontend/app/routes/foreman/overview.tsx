@@ -20,7 +20,6 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { AttentionCard } from "@/features/attention-card/attention-card.js";
-import { LocationMap } from "@/features/location-map/location-map";
 import { TeamSummary } from "@/features/sidebar/team-summary.js";
 import { useUser } from "@/features/user/user-context";
 import { useFormatDate } from "@/hooks/use-format-date";
@@ -228,12 +227,6 @@ export default function ForemanOverview() {
 					<DailyNotes />
 				</aside>
 				<div className="flex flex-col gap-12 md:w-3/5">
-					{/* TODO: Place somewhere else */}
-					<LocationMap
-						operators={subordinates ?? []}
-						isLoading={isSubordinatesLoading}
-					/>
-
 					<AttentionCard
 						subordinates={subordinates}
 						isSubordinatesLoading={isSubordinatesLoading}

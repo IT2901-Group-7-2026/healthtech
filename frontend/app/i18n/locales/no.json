@@ -167,7 +167,9 @@
       },
       "membersCount": "{{count}} operatør i teamet",
       "membersCount_one": "{{count}} operatør i teamet",
-      "membersCount_other": "{{count}} operatører i teamet"
+      "membersCount_other": "{{count}} operatører i teamet",
+      "mapTitle": "Lokasjonskart",
+      "mapPlaceholder": "Placeholder. Vil bli flyttet"
     },
     "overview": {
       "title": "Foreman Oversikt",
