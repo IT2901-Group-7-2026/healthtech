@@ -1,3 +1,4 @@
+import { SensorIcon } from "@/components/sensor-icon";
 import {
 	Card,
 	CardContent,
@@ -8,6 +9,7 @@ import {
 	type UserStatusData,
 	UserStatusPieChart,
 } from "@/components/users-status-pie-chart";
+import type { Sensor } from "@/features/sensor-picker/sensors";
 import {
 	DANGER_LEVEL_SEVERITY,
 	DangerLevelSchema,
@@ -23,6 +25,7 @@ export type PieChartCardProps = {
 	to: string;
 	label: string;
 	data: UserStatusData;
+	sensorType: Sensor;
 };
 
 export const PieChartCard = ({
@@ -30,6 +33,7 @@ export const PieChartCard = ({
 	to,
 	label,
 	data,
+	sensorType,
 }: PieChartCardProps) => {
 	const { t } = useTranslation();
 
@@ -41,14 +45,14 @@ export const PieChartCard = ({
 				className,
 			)}
 		>
-			<Card hoverable className={className}>
-				<CardHeader>
-					<h2 className="text-xs uppercase tracking-widest dark:text-zinc-400">
+			<Card hoverable className={cn("gap-4", className)}>
+				<CardHeader className="text-sm">
+					<h2 className="flex items-center gap-3 text-sm uppercase tracking-wide">
+						<SensorIcon type={sensorType} size="sm" />
 						{label}
 					</h2>
 				</CardHeader>
-
-				<CardContent className="flex flex-row items-center gap-2">
+				<CardContent className="flex flex-row items-center gap-0">
 					<div className="flex w-1/2 flex-col gap-2 text-xs">
 						{DangerLevelSchema.options
 							.sort(
@@ -57,17 +61,21 @@ export const PieChartCard = ({
 									DANGER_LEVEL_SEVERITY[a],
 							)
 							.map((level) => (
-								<div
-									className="grid grid-cols-[auto_1fr_auto] items-center gap-2"
-									key={level}
-								>
+								<div key={level}>
 									<div
-										className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(level)}`}
-									/>
-									<p className="dark:text-zinc-400">
-										{data[level].label}
-									</p>{" "}
-									<p>{data[level].value}</p>
+										className={`border-l-${mapDangerLevelToColor(level)} border-l-4 pl-1.5`}
+									>
+										<div>
+											<p className="pb-1 text-neutral-500 text-xs dark:text-zinc-400">
+												{data[level].label}
+											</p>
+											<p
+												className={`text-2xl tabular-nums leading-6 text-${mapDangerLevelToColor(level)}`}
+											>
+												{data[level].value}
+											</p>
+										</div>
+									</div>
 								</div>
 							))}
 					</div>

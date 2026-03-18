@@ -244,7 +244,7 @@ export default function ForemanOverview() {
 							userOnClick={(userId) => {}}
 						/>
 					) : (
-						<div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+						<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
 							{/* TODO: add skeleton loading using isThresholdSummaryLoading */}
 							{thresholdSummary !== undefined &&
 								sensors.map((s: Sensor) =>
@@ -293,6 +293,7 @@ export default function ForemanOverview() {
 											label={s}
 											to="/"
 											key={s}
+											sensorType={s}
 										/>
 									) : null,
 								)}
