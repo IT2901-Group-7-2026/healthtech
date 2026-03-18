@@ -25,8 +25,25 @@ SELECT setseed(0.424242);
 \set SANDSLI_ID '22222222-2222-2222-2222-222222222222'
 
 -- Delete existing data to avoid duplicates when reseeding
+DROP MATERIALIZED VIEW IF EXISTS noise_data_hourly;
+DROP MATERIALIZED VIEW IF EXISTS noise_data_daily;
+DROP MATERIALIZED VIEW IF EXISTS noise_data_minutely;
+
+DROP MATERIALIZED VIEW IF EXISTS vibration_data_hourly;
+DROP MATERIALIZED VIEW IF EXISTS vibration_data_daily;
+DROP MATERIALIZED VIEW IF EXISTS vibration_data_minutely;
+
+DROP MATERIALIZED VIEW IF EXISTS dust_data_hourly;
+DROP MATERIALIZED VIEW IF EXISTS dust_data_daily;
+DROP MATERIALIZED VIEW IF EXISTS dust_data_minutely;
+
+TRUNCATE TABLE "VibrationData" RESTART IDENTITY CASCADE;
+TRUNCATE TABLE "NoiseData" RESTART IDENTITY CASCADE;
+TRUNCATE TABLE "DustData" RESTART IDENTITY CASCADE;
+
 DELETE FROM "User";
 DELETE FROM "Location";
+
 
 -- Location
 INSERT INTO "Location" ("Id", "Latitude", "Longitude", "Country", "Region", "City", "Site", "Building")
@@ -162,8 +179,6 @@ FROM (VALUES
 
 -- NOISE DATA
 
-TRUNCATE TABLE "NoiseData" RESTART IDENTITY CASCADE;
-
 -- Create temporary table matching ALL CSV columns
 CREATE TEMP TABLE temp_noise_data (
     Time TIMESTAMP,
@@ -224,9 +239,6 @@ WHERE (
 DROP TABLE temp_noise_data;
 
 -- VIBRATION DATA
-
--- Empty the table before seeding
-TRUNCATE TABLE "VibrationData" RESTART IDENTITY CASCADE;
 
 -- Create temporary table matching ALL CSV columns
 CREATE TEMP TABLE temp_vibration_data (
@@ -314,9 +326,6 @@ AND (
 DROP TABLE temp_vibration_data;
 
 -- DUST DATA
-
--- Empty the table before seeding
-TRUNCATE TABLE "DustData" RESTART IDENTITY CASCADE;
 
 -- Create temporary table matching ALL CSV columns
 CREATE TEMP TABLE temp_dust_data (
@@ -407,19 +416,6 @@ DROP TABLE seed_user_profile;
 SELECT create_hypertable('"NoiseData"', 'Time', if_not_exists => TRUE);
 SELECT create_hypertable('"VibrationData"', 'ConnectedOn', if_not_exists => TRUE);
 SELECT create_hypertable('"DustData"', 'Time', if_not_exists => TRUE);
-
--- Drops the materialized views if they already exist
-DROP MATERIALIZED VIEW IF EXISTS noise_data_hourly;
-DROP MATERIALIZED VIEW IF EXISTS noise_data_daily;
-DROP MATERIALIZED VIEW IF EXISTS noise_data_minutely;
-
-DROP MATERIALIZED VIEW IF EXISTS vibration_data_hourly;
-DROP MATERIALIZED VIEW IF EXISTS vibration_data_daily;
-DROP MATERIALIZED VIEW IF EXISTS vibration_data_minutely;
-
-DROP MATERIALIZED VIEW IF EXISTS dust_data_hourly;
-DROP MATERIALIZED VIEW IF EXISTS dust_data_daily;
-DROP MATERIALIZED VIEW IF EXISTS dust_data_minutely;
 
 -- Time variables
 \set MINUTE_INTERVAL 'INTERVAL ''1 minute'''
