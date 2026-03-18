@@ -394,12 +394,12 @@ function NavTabs({
 
 	return (
 		<div className="relative mx-auto flex h-11 flex-row rounded-full bg-accent px-2 dark:bg-card">
-			<span
+			<div
 				className="absolute top-0 bottom-0 z-10 flex overflow-hidden rounded-full py-1.5 transition-all duration-300"
 				style={{ left: pillLeft, width: pillWidth }}
 			>
 				<span className="h-full w-full rounded-full bg-background shadow-sm" />
-			</span>
+			</div>
 
 			{routes.map((route, i) => {
 				const className = ({ isActive }: { isActive: boolean }) =>
