@@ -77,7 +77,9 @@ function HomeLink() {
 			<div className="text-2xl">
 				<Logo />
 			</div>
-			<span className="hidden text-xl sm:inline-block">{"HealthTech"}</span>
+			<span className="hidden text-xl sm:inline-block">
+				{"HealthTech"}
+			</span>
 		</NavLink>
 	);
 }
