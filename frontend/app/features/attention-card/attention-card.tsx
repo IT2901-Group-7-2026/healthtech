@@ -73,14 +73,6 @@ export const AttentionCard = ({
 	const selectedSensorKey = sensor ?? "total";
 	const showActionCard = date ? isToday(date) : false;
 
-	const operatorsInDanger = subordinates.filter(
-		(subordinate) => subordinate.status.status === "danger",
-	).length;
-
-	const operatorsNearThresholds = subordinates.filter(
-		(subordinate) => subordinate.status.status === "warning",
-	).length;
-
 	const dangerLevelColor =
 		highestDangerLevel !== null
 			? `text-${mapDangerLevelToColor(highestDangerLevel)}`
@@ -93,16 +85,13 @@ export const AttentionCard = ({
 
 	const criticalExposureText =
 		highestDangerLevel === "danger"
-			? t(($) => $.foremanDashboard.actionCard.criticalExposureText, {
-					count: operatorsInDanger,
-				})
+			? t(($) => $.foremanDashboard.actionCard.criticalExposureText
+				)
 			: null;
 
 	const approachingThresholdText =
 		highestDangerLevel === "warning" || highestDangerLevel === "danger"
-			? t(($) => $.foremanDashboard.actionCard.approachingThresholdText, {
-					count: operatorsNearThresholds,
-				})
+			? t(($) => $.foremanDashboard.actionCard.approachingThresholdText)
 			: null;
 
 	if (
@@ -136,8 +125,9 @@ export const AttentionCard = ({
 				{actionCardHeader}
 
 				<CardContent className="gap-2">
-					<p>{criticalExposureText}</p>
-					<p className="mb-5">{approachingThresholdText}</p>
+					<p >{showActionCard && criticalExposureText}</p>
+					<p>{(!showActionCard) && t(($) =>$.foremanDashboard.actionCard.oldData)}</p>
+					<p className="mb-5">{showActionCard && approachingThresholdText}</p>
 
 					<div className="grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
 						{!sensor && (
