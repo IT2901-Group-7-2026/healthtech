@@ -95,7 +95,7 @@ export const LocationSchema = z.object({
 	region: z.string(),
 	city: z.string(),
 	site: z.string(),
-	building: z.string(), //TODO: Make non-nullable in backend, and make sure all operators in demo team is in same location
+	building: z.string().nullable(), //TODO: Make non-nullable in backend, and make sure all operators in demo team is in same location
 });
 
 export type Location = z.infer<typeof LocationSchema>;
