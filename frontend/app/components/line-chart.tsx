@@ -134,7 +134,7 @@ export function ChartLineDefault({
 							right: 12,
 						}}
 					>
-						<CartesianGrid vertical={false} />
+						<CartesianGrid vertical={true} strokeDasharray="3 3" />
 						<XAxis
 							dataKey="time"
 							type="number"
