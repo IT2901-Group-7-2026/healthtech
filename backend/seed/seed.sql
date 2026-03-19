@@ -48,8 +48,8 @@ DELETE FROM "Location";
 -- Location
 INSERT INTO "Location" ("Id", "Latitude", "Longitude", "Country", "Region", "City", "Site", "Building")
 VALUES 
-    (:'VERDAL_ID', 63.78788207165566, 11.440749156413084, 'Norway', 'Trøndelag', 'Verdal', 'Aker Solutions Verdal', 'Bygg 1'),
-    (:'SANDSLI_ID', 60.29278334510331, 5.279473042646057, 'Norway', 'Bergen', 'Bergen', 'Aker Solutions Sandsli', NULL);
+    (:'VERDAL_ID', 63.78788207165566, 11.440749156413084, 'Norway', 'Trøndelag', 'Verdal', 'Aker Solutions Verdal', 'M-hallen'),
+    (:'SANDSLI_ID', 60.29278334510331, 5.279473042646057, 'Norway', 'Bergen', 'Bergen', 'Aker Solutions Sandsli', 'Bygg 1');
 
 -- User
 INSERT INTO "User" ("Id", "Username", "Email", "PasswordHash", "CreatedAt", "JobDescription", "LocationId", "Role")
@@ -68,7 +68,7 @@ VALUES
     :'DEFAULT_PASSWORD_HASH',
     NOW(),
     'Sveiser',
-    :'SANDSLI_ID',
+    :'VERDAL_ID',
     'Operator'),
     (:'PER_ID',
     'Per Hansen',
@@ -76,7 +76,7 @@ VALUES
     :'DEFAULT_PASSWORD_HASH',
     NOW(),
     'Technician',
-    :'SANDSLI_ID',
+    :'VERDAL_ID',
     'Operator'),
     (:'TROND_ID',
     'Trond Pedersen',
@@ -84,7 +84,7 @@ VALUES
     :'DEFAULT_PASSWORD_HASH',
     NOW(),
     'Technician',
-    :'SANDSLI_ID',
+    :'VERDAL_ID',
     'Operator'),
     (:'GJERTRUD_ID',
     'Gjertrud Olsen',
@@ -92,7 +92,7 @@ VALUES
     :'DEFAULT_PASSWORD_HASH',
     NOW(),
     'Technician',
-    :'SANDSLI_ID',
+    :'VERDAL_ID',
     'Operator'),
     (:'KLARA_ID',
     'Klara Johansen',
@@ -100,7 +100,7 @@ VALUES
     :'DEFAULT_PASSWORD_HASH',
     NOW(),
     'Technician',
-    :'SANDSLI_ID',
+    :'VERDAL_ID',
     'Operator'), 
     (:'BIRGIR_ID',
     'Birgir Sigurdsson',
@@ -108,7 +108,7 @@ VALUES
     :'DEFAULT_PASSWORD_HASH',
     NOW(),
     'Technician',
-    :'SANDSLI_ID',
+    :'VERDAL_ID',
     'Operator'),
     (:'TORLEIF_ID',
     'Torleif Eriksen',
@@ -116,7 +116,7 @@ VALUES
     :'DEFAULT_PASSWORD_HASH',
     NOW(),
     'Technician',
-    :'SANDSLI_ID',
+    :'VERDAL_ID',
     'Operator'),
     (:'BJØRNULF_ID',
     'Bjørnulf Knutsen',
@@ -124,7 +124,7 @@ VALUES
     :'DEFAULT_PASSWORD_HASH',
     NOW(),
     'Technician',
-    :'SANDSLI_ID',
+    :'VERDAL_ID',
     'Operator');
 
 -- UserManagers

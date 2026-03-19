@@ -10,6 +10,7 @@ import { EarIcon } from "lucide-react";
 
 export type IconVariant = "dust" | "noise" | "vibration";
 
+// TODO: The icons shouldn't have titles we can't change when using SensorIcon. Vibration (EarIcon) also doesn't have a title
 const iconConfig: Record<Sensor, { icon: IconType; className: string }> = {
 	noise: {
 		icon: EarIcon,

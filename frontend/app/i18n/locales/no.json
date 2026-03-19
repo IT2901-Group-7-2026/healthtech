@@ -169,7 +169,9 @@
       },
       "membersCount": "{{count}} operatør i teamet",
       "membersCount_one": "{{count}} operatør i teamet",
-      "membersCount_other": "{{count}} operatører i teamet"
+      "membersCount_other": "{{count}} operatører i teamet",
+      "mapTitle": "Lokasjonskart",
+      "mapPlaceholder": "Placeholder. Vil bli flyttet"
     },
     "overview": {
       "title": "Foreman Oversikt",
@@ -208,7 +210,13 @@
     },
     "siteMap": {
       "title": "Områdekart",
-      "anonymousOperator": "Anonym operatør"
+      "anonymousOperator": "Anonym operatør",
+      "noOperators": "Ingen operatører i bygg",
+      "operatorSensorStatus": {
+        "danger": "Over grenseverdi for {{sensor}}",
+        "warning": "Nær grenseverdi for {{sensor}}",
+        "safe": "Innenfor grenseverdi for {{sensor}}"
+      }
     }
   },
   "user": {
