@@ -1,11 +1,8 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BasePopup } from "@/features/popups/base-popup";
-import { useUser } from "@/features/user/user-context";
-import { fetchSubordinatesQueryOptions } from "@/lib/api.js";
 import { type DangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto.js";
-import { useQuery } from "@tanstack/react-query";
 import { ArrowRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -85,22 +82,22 @@ export function AtRiskPopup({
 	status,
 	open,
 	onClose,
+	subordinates,
 }: {
 	title: string;
-	status: Exclude<DangerLevel, "safe">;
+	status: DangerLevel;
 	open: boolean;
 	onClose: () => void;
+	subordinates: Array<UserWithStatusDto>;
 }) {
 	const { t } = useTranslation();
-	const { user } = useUser();
-	const { data: subordinates = [] } = useQuery(
-		fetchSubordinatesQueryOptions(user.id),
-	);
 
 	const exposureTitle =
 		status === "danger"
 			? t((x) => x.exposureLevel.in_danger)
-			: t((x) => x.exposureLevel.warning);
+			: status === "warning"
+				? t((x) => x.exposureLevel.warning)
+				: t((x) => x.exposureLevel.safe);
 
 	const workers = subordinates.filter((sub) => sub.status.status === status);
 

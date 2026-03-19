@@ -1,5 +1,4 @@
 import { ExposureRiskCard } from "@/components/exposure-level-card";
-import { SensorIcon } from "@/components/sensor-icon.js";
 import { Card, CardContent, CardHeader } from "@/components/ui/card.js";
 import { Skeleton } from "@/components/ui/skeleton.js";
 import { AtRiskPopup } from "@/features/attention-card/exposure-level-popup.js";
@@ -17,7 +16,7 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 interface AttentionCardProps {
-	subordinates?: Array<UserWithStatusDto>;
+	subordinates: Array<UserWithStatusDto>;
 	isSubordinatesLoading?: boolean;
 	thresholdSummary?: ThresholdSummary;
 	isThresholdSummaryLoading?: boolean;
@@ -28,6 +27,7 @@ export const AttentionCard = ({
 	isSubordinatesLoading,
 	thresholdSummary,
 	isThresholdSummaryLoading,
+	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: we should refactor this
 }: AttentionCardProps) => {
 	const { t } = useTranslation();
 	const [sensor] = useQueryState("sensor", parseAsSensor);
@@ -83,6 +83,16 @@ export const AttentionCard = ({
 			? t(($) => $.foremanDashboard.actionCard[highestDangerLevel])
 			: null;
 
+	const criticalExposureText =
+		highestDangerLevel === "danger"
+			? t(($) => $.foremanDashboard.actionCard.criticalExposureText)
+			: null;
+
+	const approachingThresholdText =
+		highestDangerLevel === "warning"
+			? t(($) => $.foremanDashboard.actionCard.approachingThresholdText)
+			: null;
+
 	if (
 		isThresholdSummaryLoading ||
 		thresholdSummary === undefined ||
@@ -113,17 +123,21 @@ export const AttentionCard = ({
 			<Card muted className="gap-3">
 				{actionCardHeader}
 
-				<CardContent className="gap-6">
-					<p>
-						{
-							"3 operatører er over grenseverdien i A1, Verdal (placeholder)"
-						}
-					</p>
-
-					<div className="grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
+				<CardContent className="gap-2">
+					{showActionCard ? (
+						<>
+							{" "}
+							<p>{criticalExposureText}</p>{" "}
+							<p>{approachingThresholdText}</p>{" "}
+						</>
+					) : (
+						<p>{t(($) => $.foremanDashboard.actionCard.oldData)}</p>
+					)}{" "}
+					<div className="mt-5 grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
 						{!sensor && (
 							<>
 								<StatCard
+									className="text-red-500"
 									label={t(
 										($) =>
 											$.foremanDashboard.overview
@@ -134,19 +148,10 @@ export const AttentionCard = ({
 										thresholdSummary[selectedSensorKey]
 											.danger
 									}
-								>
-									<div className="flex flex-row items-center gap-2">
-										<LocationCard
-											zone="A1"
-											location="Verdal"
-										>
-											<SensorIcon type="noise" />
-											<SensorIcon type="dust" />
-										</LocationCard>
-									</div>
-								</StatCard>
+								></StatCard>
 
 								<StatCard
+									className="text-orange-400"
 									label={t(
 										($) =>
 											$.foremanDashboard.overview
@@ -157,31 +162,16 @@ export const AttentionCard = ({
 										thresholdSummary[selectedSensorKey]
 											.warning
 									}
-								>
-									<div className="flex flex-row items-center gap-2">
-										<LocationCard
-											zone="A1"
-											location="Verdal"
-										>
-											<SensorIcon type="dust" />
-										</LocationCard>
-
-										<LocationCard
-											zone="B9"
-											location="Sandsli"
-										>
-											<SensorIcon type="noise" />
-											<SensorIcon type="vibration" />
-										</LocationCard>
-									</div>
-								</StatCard>
+								></StatCard>
 
 								<StatCard
+									className="text-green-600"
 									label={t(
 										($) =>
 											$.foremanDashboard.overview
 												.statCards.safe.label,
 									)}
+									onClick={() => openForStatus("safe")}
 									value={
 										thresholdSummary[selectedSensorKey].safe
 									}
@@ -212,34 +202,17 @@ export const AttentionCard = ({
 				</CardContent>
 			</Card>
 
-			{(popupStatus === "warning" || popupStatus === "danger") && (
+			{(popupStatus === "warning" ||
+				popupStatus === "danger" ||
+				popupStatus === "safe") && (
 				<AtRiskPopup
 					open={selectedStatus !== null}
 					onClose={closePopup}
 					title="Workers"
 					status={popupStatus}
+					subordinates={subordinates ?? []}
 				/>
 			)}
 		</>
 	);
 };
-
-interface LocationCardProps {
-	zone: string;
-	location: string;
-	children?: React.ReactNode;
-}
-
-const LocationCard = ({ zone, location, children }: LocationCardProps) => (
-	<Card className="min-w-22 gap-2 bg-card-highlight p-2">
-		<div className="flex flex-col">
-			<p className="font-semibold text-muted-foreground text-sm">
-				{zone}
-			</p>
-			<p className="text-muted-foreground text-xs">{location}</p>
-		</div>
-		{children && (
-			<div className="flex flex-row items-center gap-2">{children}</div>
-		)}
-	</Card>
-);

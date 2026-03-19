@@ -196,7 +196,11 @@
     "actionCard": {
       "safe": "Alt er bra!",
       "warning": "Oppmerksomhet anbefales!",
-      "danger": "Oppmerksomhet anbefales!"
+      "danger": "Oppmerksomhet anbefales!",
+      "criticalExposureText": "Operatører over eksponeringsgrensen. Umiddelbar oppfølging anbefales.",
+      "approachingThresholdText": "Operatører nærmer seg eksponeringsgrensen. Vurder forebyggende tiltak.",
+      "safeText": "Operatører er innenfor sikre nivåer. Ingen handling nødvendig akkurat nå.",
+      "oldData": "Du ser på tidligere data."
     },
     "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",

@@ -48,6 +48,9 @@ cd ..
 # Seed the database with sample data
 docker exec -it timescaledb psql -U postgres -d healthtech -f /seed/seed.sql
 
+# Navigate back to the backend directory
+cd backend
+
 # Start the backend either with f5 (if you have the C# extension installed) or with the following command:
 dotnet watch run --project src
 
