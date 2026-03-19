@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { dangerlevelStyles } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import { type Sensor, sensors } from "@/lib/sensors";
 import { cn } from "@/lib/utils";
@@ -111,10 +110,8 @@ const HallOperatorListItem = ({
 			<SensorIcon
 				type={sensor}
 				size="sm"
-				className={cn(
-					"w-fit",
-					dangerlevelStyles[dangerLevel ?? "safe"].bg,
-				)}
+				dangerLevel={dangerLevel ?? "safe"}
+				className={cn("w-fit")}
 			/>
 		</TableCell>
 	);
