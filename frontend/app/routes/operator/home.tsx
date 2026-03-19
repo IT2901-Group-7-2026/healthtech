@@ -105,7 +105,11 @@ export default function OperatorHome() {
 			</div>
 			<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 				<div className="flex flex-col gap-4 md:w-1/4">
-					<Summary exposureType="all" data={everySensorData ?? []} />
+					<Summary
+						exposureType="all"
+						data={everySensorData ?? []}
+						mode="sensor"
+					/>
 					<DailyNotes />
 				</div>
 				<div className="flex flex-1 flex-col gap-1">
