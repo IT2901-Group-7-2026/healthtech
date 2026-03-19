@@ -93,7 +93,11 @@ export function Notifications({
 								size="sm"
 								className="rounded-3xl border-3 border-border bg-background hover:bg-card-highlight"
 							>
-								<SensorIcon type={sensor} size="md" />
+								<SensorIcon
+									type={sensor}
+									size="md"
+									dangerLevel={dangerLevel}
+								/>
 								<ItemContent>
 									<ItemTitle className="line-clamp-1">
 										{t(($) => $[sensor])}
