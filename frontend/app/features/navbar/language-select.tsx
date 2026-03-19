@@ -25,7 +25,7 @@ export const LanguageSelect = ({
 		<SelectTrigger
 			withoutChevron
 			className={cn(
-				"h-9 w-9 border-none bg-transparent p-0 shadow-none focus:ring-0 focus:ring-offset-0",
+				"h-9 w-9 border-none bg-transparent p-0 shadow-none focus:ring-0 focus:ring-offset-0 dark:bg-transparent",
 				"hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
 			)}
 		>

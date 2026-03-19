@@ -1,35 +1,43 @@
-import { type IconVariant, SensorIcon } from "@/components/sensor-icon";
 import { Button } from "@/components/ui/button";
 import {
-	Drawer,
-	DrawerClose,
-	DrawerContent,
-	DrawerDescription,
-	DrawerFooter,
-	DrawerHeader,
-	DrawerTrigger,
-} from "@/components/ui/drawer";
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
+	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { ThemeSwitch } from "@/features/dark-mode/theme-switch.js";
+import { useTheme } from "@/features/dark-mode/use-theme";
 import { useDate } from "@/features/date-picker/use-date";
-import { AkerLogo } from "@/features/navbar/aker-logo.js";
 import { DemoUserSwitchBanner } from "@/features/navbar/demo-user-switch-banner.js";
-import { HamburgerButton } from "@/features/navbar/hamburger-icon.js";
-import { LanguageSelect } from "@/features/navbar/language-select.js";
 import { BellPopup } from "@/features/popups/bell-popup";
+import { ProfilePopup } from "@/features/popups/profile-popup";
 import { usePopup } from "@/features/popups/use-popup";
-import { ProfileBadge } from "@/features/profile/profile-badge";
 import { useUser } from "@/features/user/user-context";
 import { KARI_NORDMANN_ID, OLA_NORDMANN_ID } from "@/features/user/user-utils";
 import { useView } from "@/features/views/use-view";
-import { useIsMobile } from "@/hooks/use-mobile";
 import type { TranslateFn } from "@/i18n/config.js";
 import { usersQueryOptions } from "@/lib/api";
 import type { User } from "@/lib/dto.js";
-import { cn } from "@/lib/utils";
+import { cn, shorthandName } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { Bell, House, type LucideIcon, User as UserIcon } from "lucide-react";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import {
+	Bell,
+	House,
+	Languages,
+	type LucideIcon,
+	Monitor,
+	Moon,
+	Palette,
+	Sun,
+	User as UserIcon,
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	href,
@@ -119,8 +127,6 @@ function getLinks(
 }
 
 export default function Layout() {
-	const isMobile = useIsMobile();
-
 	const { t, i18n } = useTranslation();
 	const {
 		visible: notificationPopupVisible,
@@ -177,25 +183,9 @@ export default function Layout() {
 		}
 	}, [user?.role, location.pathname, navigate, isUserLoading]);
 
-	const mobileHeader = (
-		<div className="flex items-center gap-4">
-			<MobileMenu routes={links}>
-				<DrawerTrigger asChild>
-					<HamburgerButton />
-				</DrawerTrigger>
-			</MobileMenu>
-			<HomeLink />
-		</div>
-	);
-
 	const desktopHeader = (
 		<>
-			<div className="flex items-center gap-4">
-				<div className="w-36 shrink-0 border-r-2 border-r-muted-foreground pr-4">
-					<AkerLogo />
-				</div>
-				<HomeLink />
-			</div>
+			<HomeLink />
 
 			<nav className="flex list-none items-center rounded-full">
 				<NavTabs routes={links} />
@@ -213,31 +203,24 @@ export default function Layout() {
 				/>
 
 				<header className="mx-5 my-2 flex items-center justify-between">
-					{isMobile ? mobileHeader : desktopHeader}
+					{desktopHeader}
 
-					<div className="flex flex-row items-center gap-2">
-						<LanguageSelect i18n={i18n} t={t} />
-
-						<ThemeSwitch />
-
+					<div className="flex flex-row items-center gap-4">
 						<Button
 							variant="ghost"
 							size="icon"
 							onClick={openNotificationPopup}
+							className="cursor-pointer rounded-full"
 						>
-							<Bell className="size-[1.2rem]" />
+							<Bell className="size-5" />
 						</Button>
 
-						{user && (
-							<div className="profile-wrapper">
-								<ProfileBadge
-									user={user}
-									avatarUrl="/userimage.png"
-									users={sortedUsers}
-									setUser={setUser}
-								/>
-							</div>
-						)}
+						<UserDropdown
+							user={user}
+							users={sortedUsers}
+							setUser={setUser}
+							i18n={i18n}
+						/>
 					</div>
 				</header>
 
@@ -249,16 +232,138 @@ export default function Layout() {
 
 				<main className="m-5 items-center justify-center">
 					<Outlet />
-					{isMobile && (
-						<div className="mt-2 flex w-full justify-center p-4">
-							<div className="w-28 shrink-0 self-center">
-								<AkerLogo sizeOverride="large" />
-							</div>
-						</div>
-					)}
 				</main>
 			</SidebarInset>
 		</SidebarProvider>
+	);
+}
+
+function UserDropdown({
+	user,
+	users,
+	setUser,
+	i18n,
+}: {
+	user: User | null;
+	users: Array<User>;
+	setUser: (user: User) => void;
+	i18n: ReturnType<typeof useTranslation>["i18n"];
+}) {
+	const { t } = useTranslation();
+	const { theme, setTheme } = useTheme();
+	const { visible, openPopup, closePopup } = usePopup();
+
+	if (!user) return null;
+
+	const currentLanguage = i18n.language || "en";
+
+	return (
+		<>
+			<DropdownMenu>
+				<DropdownMenuTrigger asChild>
+					<Button
+						variant="ghost"
+						className="h-10 max-w-[14rem] cursor-pointer gap-2 rounded-full pr-3 pl-0"
+					>
+						<div className="flex size-9 items-center justify-center rounded-full bg-primary">
+							<UserIcon className="size-5 text-primary-foreground" />
+						</div>
+						<div className="min-w-0 grow text-left leading-tight">
+							<p className="truncate font-medium">
+								{shorthandName(user.username)}
+							</p>
+							<p className="truncate text-foreground/60 text-xs">
+								{user.location.site}
+							</p>
+						</div>
+					</Button>
+				</DropdownMenuTrigger>
+
+				<DropdownMenuContent align="end" className="" sideOffset={10}>
+					<DropdownMenuItem onSelect={() => openPopup()}>
+						<UserIcon className="size-4" />
+						<span>{t(($) => $.profile.title)}</span>
+					</DropdownMenuItem>
+
+					<DropdownMenuSeparator />
+
+					<div className="flex items-center gap-4 pl-2 text-sm">
+						<div className="flex gap-2">
+							<Palette className="size-4 text-muted-foreground" />
+							<span>{t(($) => $.layout.theme)}</span>
+						</div>
+
+						<div className="inline-flex rounded-full p-1">
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={() => setTheme("light")}
+								className={cn(
+									"inline-flex cursor-pointer items-center justify-center rounded-full p-2 transition-colors",
+									theme === "light" && "bg-accent",
+								)}
+							>
+								<Sun className="size-4" />
+							</Button>
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={() => setTheme("dark")}
+								className={cn(
+									"inline-flex cursor-pointer items-center justify-center rounded-full p-2 transition-colors",
+									theme === "dark" && "bg-accent",
+								)}
+							>
+								<Moon className="size-4" />
+							</Button>
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={() => setTheme("system")}
+								className={cn(
+									"inline-flex cursor-pointer items-center justify-center rounded-full p-2 transition-colors",
+									theme === "system" && "bg-accent",
+								)}
+							>
+								<Monitor className="size-4" />
+							</Button>
+						</div>
+					</div>
+
+					<DropdownMenuSub>
+						<DropdownMenuSubTrigger>
+							<Languages className="mr-2 size-4 text-muted-foreground" />
+							<span>{t(($) => $.layout.language)}</span>
+						</DropdownMenuSubTrigger>
+						<DropdownMenuSubContent className="w-44">
+							<DropdownMenuRadioGroup
+								value={currentLanguage}
+								onValueChange={(value) => {
+									i18n.changeLanguage(value);
+									localStorage.setItem("i18nextLng", value);
+								}}
+							>
+								<DropdownMenuRadioItem value="en">
+									{t(($) => $.english)}
+								</DropdownMenuRadioItem>
+								<DropdownMenuRadioItem value="no">
+									{t(($) => $.norwegian)}
+								</DropdownMenuRadioItem>
+							</DropdownMenuRadioGroup>
+						</DropdownMenuSubContent>
+					</DropdownMenuSub>
+				</DropdownMenuContent>
+			</DropdownMenu>
+
+			<ProfilePopup
+				user={user}
+				avatarSrc="/userimage.png"
+				open={visible}
+				onClose={closePopup}
+				users={users}
+				setUser={setUser}
+			/>
+		</>
 	);
 }
 
@@ -271,7 +376,7 @@ function NavTabs({
 	const { date } = useDate();
 	const location = useLocation();
 
-	const navLinkRefs = useRef<Array<HTMLElement>>([]); // Refs to the nav links
+	const navLinkRefs = useRef<Array<HTMLElement>>([]);
 	const [pillWidth, setPillWidth] = useState<number>();
 	const [pillLeft, setPillLeft] = useState<number>();
 
@@ -279,14 +384,23 @@ function NavTabs({
 		(route) => route.to === location.pathname,
 	);
 
+	// update pill whenever the active route changes,
+	useEffect(() => {
+		const el = navLinkRefs.current[activeNavIndex];
+		if (!el) return;
+		setPillWidth(el.offsetWidth);
+		setPillLeft(el.offsetLeft);
+	}, [activeNavIndex]);
+
 	return (
-		<div className="relative mx-auto flex h-11 flex-row rounded-full bg-[var(--card)] px-2">
-			<span
+		<div className="relative mx-auto flex h-11 flex-row rounded-full bg-accent px-2 dark:bg-card">
+			<div
 				className="absolute top-0 bottom-0 z-10 flex overflow-hidden rounded-full py-1.5 transition-all duration-300"
 				style={{ left: pillLeft, width: pillWidth }}
 			>
-				<span className="h-full w-full rounded-full bg-secondary shadow-sm dark:bg-background" />
-			</span>
+				<span className="h-full w-full rounded-full bg-background shadow-sm" />
+			</div>
+
 			{routes.map((route, i) => {
 				const className = ({ isActive }: { isActive: boolean }) =>
 					cn(
@@ -297,6 +411,7 @@ function NavTabs({
 
 				return (
 					<NavLink
+						end
 						to={{
 							pathname: route.to.toString(),
 							search: `?view=${view}&date=${date.toISOString().split("T")[0]}`,
@@ -304,14 +419,7 @@ function NavTabs({
 						key={route.to.toString()}
 						ref={(el) => {
 							if (!el) return;
-
-							// Add the ref to the array
 							navLinkRefs.current[i] = el;
-							// If the current link is the active one, set the pill width and left offset
-							if (i === activeNavIndex) {
-								setPillWidth(el.offsetWidth);
-								setPillLeft(el.offsetLeft);
-							}
 						}}
 						className={className}
 						prefetch="intent"
@@ -322,97 +430,6 @@ function NavTabs({
 					</NavLink>
 				);
 			})}
-		</div>
-	);
-}
-
-function MobileMenu({
-	routes,
-	children,
-}: {
-	routes: Array<{ label: string; to: To }>;
-	children?: ReactNode;
-}) {
-	const { view } = useView();
-	const { date } = useDate();
-	const {
-		visible: notificationPopupVisible,
-		openPopup: openNotificationPopup,
-		closePopup: closeNotificationPopup,
-	} = usePopup();
-	const { t } = useTranslation();
-
-	const ContextMenuNavLinks = routes.map((route, i) => (
-		<li key={route.to.toString()}>
-			<DrawerClose asChild>
-				<NavLink
-					to={{
-						pathname: route.to.toString(),
-						search: `?view=${view}&date=${date.toISOString().split("T")[0]}`,
-					}}
-					key={route.to.toString()}
-					prefetch="intent"
-					className="text-lg text-primary"
-				>
-					{route.label}
-					{i > 0 && (
-						<SensorIcon
-							type={
-								route.to
-									.toString()
-									.replace("/", "") as IconVariant
-							}
-							className="ml-2"
-						/>
-					)}
-				</NavLink>
-			</DrawerClose>
-		</li>
-	));
-
-	return (
-		<div className="md:hidden">
-			<Drawer>
-				{children}
-				<DrawerContent>
-					<DrawerHeader />
-					<DrawerDescription>
-						<div className="flex items-start justify-between p-6">
-							<ul className="flex w-full flex-col items-start gap-4 text-center">
-								{ContextMenuNavLinks}
-								<li className="separator w-full border-t-2 border-t-slate-200 dark:border-t-slate-700" />
-								<li>
-									<DrawerClose asChild>
-										<button
-											type="button"
-											className="w-full cursor-pointer rounded-xl px-1 hover:bg-card active:bg-card"
-											onClick={openNotificationPopup}
-										>
-											<span className="text-lg text-primary">
-												{t(($) => $.notifications)}
-											</span>
-											<Bell
-												size="small"
-												className="ml-2"
-											/>
-										</button>
-									</DrawerClose>
-								</li>
-							</ul>
-						</div>
-					</DrawerDescription>
-					<DrawerFooter>
-						<DrawerClose>
-							<Button variant="outline">{"Close"}</Button>
-						</DrawerClose>
-					</DrawerFooter>
-				</DrawerContent>
-			</Drawer>
-			<BellPopup
-				open={notificationPopupVisible}
-				onClose={closeNotificationPopup}
-				title={t(($) => $.notifications)}
-			></BellPopup>
 		</div>
 	);
 }
