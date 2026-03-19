@@ -38,19 +38,24 @@ jobs:
 
       - name: Deploy
         env:
-          BACKEND_CONTAINER_NAME: healthtech-backend
-          FRONTEND_CONTAINER_NAME: healthtech-frontend
-          TRAEFIK_CONTAINER_NAME: healthtech-traefik
-          DB_CONTAINER_NAME: healthtech-db
+          FRONTEND_CONTAINER_NAME: healthtech-prd-frontend-1
+          BACKEND_CONTAINER_NAME: healthtech-prd-backend-1
+          TRAEFIK_CONTAINER_NAME: healthtech-prd-traefik-1
+          DB_CONTAINER_NAME: healthtech-prd-db-1
         run: |
           echo "Rebuilding and deploying..."
-          docker compose --env-file ./backend/.env -f docker-compose.prod.yml up --build -d
+          docker compose --env-file ./backend/.env -f docker-compose.prd.yml up --build -d
 
           # Simple health check
           sleep 15
           if [ "$(docker inspect -f '{{.State.Running}}' ${DB_CONTAINER_NAME})" == "false" ]; then
               echo "Database failed to start after 15s. Printing logs:"
               docker logs ${DB_CONTAINER_NAME} | tail -n 20 
+              exit 1
+          fi
+          if [ "$(docker inspect -f '{{.State.Running}}' ${TRAEFIK_CONTAINER_NAME})" == "false" ]; then
+              echo "Traefik failed to start after 15s. Printing logs:"
+              docker logs ${TRAEFIK_CONTAINER_NAME} | tail -n 20 
               exit 1
           fi
           if [ "$(docker inspect -f '{{.State.Running}}' ${BACKEND_CONTAINER_NAME})" == "false" ]; then
@@ -61,11 +66,6 @@ jobs:
           if [ "$(docker inspect -f '{{.State.Running}}' ${FRONTEND_CONTAINER_NAME})" == "false" ]; then
               echo "Frontend failed to start after 15s. Printing logs:"
               docker logs ${FRONTEND_CONTAINER_NAME} | tail -n 20 
-              exit 1
-          fi
-          if [ "$(docker inspect -f '{{.State.Running}}' ${TRAEFIK_CONTAINER_NAME})" == "false" ]; then
-              echo "Traefik failed to start after 15s. Printing logs:"
-              docker logs ${TRAEFIK_CONTAINER_NAME} | tail -n 20 
               exit 1
           fi
 
