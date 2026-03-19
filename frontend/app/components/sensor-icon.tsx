@@ -1,3 +1,4 @@
+import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.js";
 import type { Sensor } from "@/lib/sensors.js";
 import { cn } from "@/lib/utils.js";
 import type { ComponentType, SVGProps } from "react";
@@ -11,18 +12,15 @@ import { EarIcon } from "lucide-react";
 export type IconVariant = "dust" | "noise" | "vibration";
 
 // TODO: The icons shouldn't have titles we can't change when using SensorIcon. Vibration (EarIcon) also doesn't have a title
-const iconConfig: Record<Sensor, { icon: IconType; className: string }> = {
+const iconConfig: Record<Sensor, { icon: IconType }> = {
 	noise: {
 		icon: EarIcon,
-		className: "bg-violet-400/50 dark:bg-violet-600/50",
 	},
 	dust: {
 		icon: DustIcon,
-		className: "bg-teal-400/50 dark:bg-teal-600/50",
 	},
 	vibration: {
 		icon: VibrationIcon,
-		className: "bg-fuchsia-400/50 dark:bg-fuchsia-600/50",
 	},
 };
 
@@ -38,22 +36,38 @@ const iconSizeClass: Record<SensorIconSize, string> = {
 interface SensorIconProps {
 	type: Sensor;
 	size?: SensorIconSize;
+	dangerLevel?: DangerLevel;
 	className?: string;
 }
 
-export const SensorIcon = ({ type, size, className }: SensorIconProps) => {
+const defaultIconContainerClass =
+	"bg-muted text-foreground border border-border";
+
+export const SensorIcon = ({
+	type,
+	size,
+	dangerLevel,
+	className,
+}: SensorIconProps) => {
 	const Icon = iconConfig[type].icon;
-	const resolvedSize = size ?? "md";
+	const resolvedIconSize = size ?? "md";
+	const dangerLevelIconClasses = dangerLevel
+		? cn(
+				dangerlevelStyles[dangerLevel].bgSubtle,
+				dangerlevelStyles[dangerLevel].text,
+				dangerlevelStyles[dangerLevel].border,
+			)
+		: defaultIconContainerClass;
 
 	return (
 		<div
 			className={cn(
-				"rounded-full",
-				iconConfig[type].className,
+				"rounded-full border",
+				dangerLevelIconClasses,
 				className,
 			)}
 		>
-			<Icon className={iconSizeClass[resolvedSize]} />
+			<Icon className={iconSizeClass[resolvedIconSize]} />
 		</div>
 	);
 };
