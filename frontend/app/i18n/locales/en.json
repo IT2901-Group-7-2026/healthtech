@@ -6,7 +6,9 @@
     "home": "Home",
     "team": "Team",
     "statistics": "Statistics",
-    "export": "Export overview as PDF"
+    "export": "Export overview as PDF",
+    "theme": "Theme",
+    "language": "Language"
   },
   "overview": {
     "title": "Overview of the {{view}}",

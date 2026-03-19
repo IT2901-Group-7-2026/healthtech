@@ -1,11 +1,6 @@
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import {
-	LabelList,
-	Pie,
-	PieChart,
-	type PieSectorShapeProps,
-	Sector,
-} from "recharts";
+import { SmileIcon } from "lucide-react";
+import { Pie, PieChart, type PieSectorShapeProps, Sector } from "recharts";
 
 const pieShape = (props: PieSectorShapeProps) => {
 	const colorMap: Record<string, string> = {
@@ -24,8 +19,23 @@ export interface UserStatusData {
 }
 
 export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
+	const allSafe = warning.value === 0 && danger.value === 0 && safe.value > 0;
+
+	if (allSafe) {
+		return (
+			<div className="flex size-30 items-center justify-center rounded-full bg-safe text-white">
+				<div className="flex items-center gap-2">
+					<span className="font-bold text-2xl slashed-zero tabular-nums leading-none">
+						{`${safe.value}/${safe.value}`}
+					</span>
+					<SmileIcon strokeWidth={3} className="size-6" />
+				</div>
+			</div>
+		);
+	}
+
 	return (
-		<ChartContainer config={{}} className="h-35 w-35">
+		<ChartContainer config={{}} className="size-30">
 			<PieChart>
 				<Pie
 					dataKey={"value"}
@@ -33,23 +43,9 @@ export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
 					data={[safe, warning, danger]}
 					labelLine={false}
 					shape={pieShape}
-				>
-					<LabelList
-						dataKey="value"
-						position="inside"
-						formatter={(label) => {
-							// Hide zero-value labels
-							if (typeof label === "number" && label === 0) {
-								return null;
-							}
-
-							return label;
-						}}
-						fill="white"
-						fontSize={14}
-						fontWeight={700}
-					/>
-				</Pie>
+					innerRadius="60%"
+					outerRadius="100%"
+				/>
 				<ChartTooltip
 					content={({ active, payload }) => {
 						if (!(active && payload?.length)) {

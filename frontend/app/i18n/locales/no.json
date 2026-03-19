@@ -6,7 +6,9 @@
     "home": "Hjem",
     "team": "Team",
     "statistics": "Statistikk",
-    "export": "Eksporter oversikt som PDF"
+    "export": "Eksporter oversikt som PDF",
+    "theme": "Fargetema",
+    "language": "Språk"
   },
   "overview": {
     "title": "Oversikt over {{view}}",
