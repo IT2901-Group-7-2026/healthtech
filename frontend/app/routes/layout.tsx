@@ -12,9 +12,9 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useTheme } from "@/features/dark-mode/use-theme";
 import { useDate } from "@/features/date-picker/use-date";
-import { DemoUserSwitchBanner } from "@/features/navbar/demo-user-switch-banner.js";
 import { BellPopup } from "@/features/popups/bell-popup";
 import { ProfilePopup } from "@/features/popups/profile-popup";
 import { usePopup } from "@/features/popups/use-popup";
@@ -23,8 +23,8 @@ import { KARI_NORDMANN_ID, OLA_NORDMANN_ID } from "@/features/user/user-utils";
 import { useView } from "@/features/views/use-view";
 import type { TranslateFn } from "@/i18n/config.js";
 import { usersQueryOptions } from "@/lib/api";
-import type { User } from "@/lib/dto.js";
-import { cn, shorthandName } from "@/lib/utils";
+import { type User, UserRoleSchema } from "@/lib/dto.js";
+import { cn, shorthandName, userRoleToString } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
 	Bell,
@@ -41,6 +41,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	href,
+	Link,
 	NavLink,
 	Outlet,
 	type To,
@@ -196,12 +197,6 @@ export default function Layout() {
 	return (
 		<SidebarProvider defaultOpen={false}>
 			<SidebarInset>
-				<DemoUserSwitchBanner
-					user={user}
-					users={sortedUsers}
-					setUser={setUser}
-				/>
-
 				<header className="mx-5 my-2 flex items-center justify-between">
 					{desktopHeader}
 
@@ -352,6 +347,69 @@ function UserDropdown({
 							</DropdownMenuRadioGroup>
 						</DropdownMenuSubContent>
 					</DropdownMenuSub>
+
+					<DropdownMenuSeparator />
+
+					<div className="rounded-md bg-yellow-100 p-3 dark:bg-amber-950">
+						<p className="font-bold text-sm text-zinc-600 dark:text-zinc-300">
+							{"DEMO"}
+						</p>
+
+						<div className="mt-2 flex gap-2.5">
+							{users.length > 0 ? (
+								Object.keys(UserRoleSchema.enum).map((role) => {
+									const roleValue = role as User["role"];
+									const isActive = user.role === roleValue;
+
+									return (
+										<Button
+											key={role}
+											type="button"
+											className={cn(
+												"flex-1 text-sm text-zinc-600 dark:text-zinc-300",
+												"bg-amber-200 hover:bg-amber-300 dark:bg-amber-900/75 dark:hover:bg-amber-800",
+												isActive &&
+													"bg-amber-300 dark:bg-amber-800",
+											)}
+											onClick={() => {
+												const userWithRole = users.find(
+													(u) => u.role === roleValue,
+												);
+												if (userWithRole)
+													setUser(userWithRole);
+											}}
+										>
+											{userRoleToString(roleValue, t)}
+										</Button>
+									);
+								})
+							) : (
+								<Skeleton className="h-6 w-36 bg-amber-200 dark:bg-amber-900/75" />
+							)}
+						</div>
+
+						{user.role && (
+							<p className="my-2 text-sm text-zinc-600 dark:text-zinc-300">
+								{t(($) => $.demo.currentRole)}{" "}
+								<span className="font-semibold">
+									{userRoleToString(user.role, t)}
+								</span>
+							</p>
+						)}
+
+						<Button
+							type="button"
+							className={cn(
+								"mt-2 w-full text-sm text-zinc-600 dark:text-zinc-300",
+								"bg-amber-200 hover:bg-amber-300 dark:bg-amber-900/75 dark:hover:bg-amber-800",
+							)}
+							asChild
+						>
+							<Link to="/register">
+								{t(($) => $.demo.navigate.toRegister)}
+							</Link>
+						</Button>
+					</div>
 				</DropdownMenuContent>
 			</DropdownMenu>
 
