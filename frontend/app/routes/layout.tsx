@@ -97,11 +97,11 @@ function getLinks(
 			return [
 				{ to: href("/operator"), label: t(($) => $.layout.overview) },
 				{ to: href("/operator/dust"), label: t(($) => $.dust) },
+				{ to: href("/operator/noise"), label: t(($) => $.noise) },
 				{
 					to: href("/operator/vibration"),
 					label: t(($) => $.vibration),
 				},
-				{ to: href("/operator/noise"), label: t(($) => $.noise) },
 			];
 		}
 

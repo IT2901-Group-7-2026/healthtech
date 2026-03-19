@@ -203,8 +203,8 @@ function getSensorSummaryFromOverview(
 	buckets: Array<TimeBucketStatus>,
 ): Record<Sensor, DangerLevel> {
 	const result: Record<Sensor, DangerLevel> = {
-		noise: "safe",
 		dust: "safe",
+		noise: "safe",
 		vibration: "safe",
 	};
 

@@ -145,14 +145,14 @@ export default function ForemanOverview() {
 						<SensorTabsTrigger value="all">
 							{t(($) => $.allSensors)}
 						</SensorTabsTrigger>
-						<SensorTabsTrigger value="vibration">
-							{t(($) => $.vibration)}
+						<SensorTabsTrigger value="dust">
+							{t(($) => $.dust)}
 						</SensorTabsTrigger>
 						<SensorTabsTrigger value="noise">
 							{t(($) => $.noise)}
 						</SensorTabsTrigger>
-						<SensorTabsTrigger value="dust">
-							{t(($) => $.dust)}
+						<SensorTabsTrigger value="vibration">
+							{t(($) => $.vibration)}
 						</SensorTabsTrigger>
 					</TabsList>
 				</Tabs>
