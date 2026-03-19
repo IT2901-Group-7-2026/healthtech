@@ -2,7 +2,6 @@ import { DangerLevels } from "@/lib/danger-levels";
 import type { TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
 import {
-	addHours,
 	type Day,
 	differenceInCalendarDays,
 	getMinutes,
@@ -74,7 +73,7 @@ export function WeekEventGrid({
 					return (
 						<div
 							key={timeBucketStatus.time.toISOString()}
-							className="relative flex transition-all"
+							className="relative"
 							style={{
 								gridRowStart: start,
 								gridRowEnd: end,
@@ -91,15 +90,14 @@ export function WeekEventGrid({
 							<button
 								type="button"
 								className={cn(
-									"absolute inset-1 flex cursor-pointer flex-col overflow-y-auto rounded-md text-xs leading-5 transition",
+									"absolute right-[2px] left-[2px] block cursor-pointer overflow-hidden rounded-[4px] border border-black/10",
+									"transition-[filter,box-shadow] duration-150",
+									"hover:brightness-90",
 									`bg-${DangerLevels[timeBucketStatus.dangerLevel].color}`,
-									"border-t-2 border-t-muted-foreground border-dotted",
-									`${timeBucketStatus.time.getUTCHours() === dayStartHour && "border-t-0"} `,
-									"hover:brightness-85",
 								)}
 								style={{
-									top: paddingTop,
-									bottom: paddingBottom,
+									top: paddingTop + 1,
+									bottom: paddingBottom + 1,
 								}}
 								onClick={() =>
 									handleHourClick(timeBucketStatus)
