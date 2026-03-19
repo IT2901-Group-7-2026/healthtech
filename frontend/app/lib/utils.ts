@@ -142,6 +142,8 @@ export function downsampleSensorData(
 	}
 
 	return downsampleDataPoints(data, 20);
+}
+
 export function shorthandName(name: string): string {
 	if (!name) return "";
 
