@@ -37,7 +37,7 @@ import {
 	Sun,
 	User as UserIcon,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	href,
@@ -385,11 +385,16 @@ function NavTabs({
 	);
 
 	// update pill whenever the active route changes,
-	useEffect(() => {
+	useLayoutEffect(() => {
 		const el = navLinkRefs.current[activeNavIndex];
 		if (!el) return;
-		setPillWidth(el.offsetWidth);
-		setPillLeft(el.offsetLeft);
+
+		const observer = new ResizeObserver(() => {
+			setPillWidth(el.offsetWidth);
+			setPillLeft(el.offsetLeft);
+		});
+		observer.observe(el);
+		return () => observer.disconnect();
 	}, [activeNavIndex]);
 
 	return (
