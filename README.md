@@ -34,7 +34,7 @@ Then run the following commands in the root directory of the project:
 
 ```sh
 # Start the database
-docker compose --env-file ./backend/.env -f docker-compose.dev.yml up -d
+docker compose --env-file ./backend/.env up -d
 
 # Navigate to the backend directory
 cd backend

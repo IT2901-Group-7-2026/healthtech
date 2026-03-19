@@ -1,7 +1,8 @@
+name: healthtech-prd
+
 services:
   traefik:
     image: traefik:v3.0
-    container_name: healthtech-traefik
     restart: unless-stopped
     ports:
       - "80:80"
@@ -11,12 +12,11 @@ services:
     networks:
       - app-network
 
-  timescaledb:
+  db:
     image: timescale/timescaledb:latest-pg17
-    container_name: healthtech-db
     restart: unless-stopped
     env_file:
-      - ./backend/.env
+      - ~/env/backend.env
     volumes:
       - timescale_data:/var/lib/postgresql/data
       - ./backend/seed:/seed
@@ -32,18 +32,17 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: healthtech-backend
     restart: unless-stopped
     depends_on:
-      timescaledb:
+      db:
         condition: service_healthy
-      migrator:
+      db-migrator:
         condition: service_completed_successfully
     env_file:
-      - ./backend/.env
+      - ~/env/backend.env
     environment:
       # We override `Host` to use the docker container name defined above
-      DATABASE_URL: "Host=healthtech-db;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      DATABASE_URL: "Host=db;Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
     networks:
       - app-network
     labels:
@@ -56,10 +55,9 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: healthtech-frontend
     restart: unless-stopped
     env_file:
-      - ./frontend/.env
+      - ~/env/frontend.env
     networks:
       - app-network
     labels:
@@ -69,25 +67,24 @@ services:
       - "traefik.http.routers.frontend.priority=1"
       - "traefik.http.services.frontend.loadbalancer.server.port=3000"
 
-  migrator:
+  db-migrator:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: healthtech-db-migrator
-    entrypoint: ["./efbundle"]
     # "efbundle" is created in backend/Dockerfile and is a self-contained executable for running EF Core migrations
+    entrypoint: ["./efbundle"]
     command:
       [
         "--connection",
-        "Host=timescaledb;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}",
+        "Host=db;Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}",
       ]
     depends_on:
-      timescaledb:
+      db:
         condition: service_healthy
     volumes:
       - ./backend/seed:/seed
     env_file:
-      - ./backend/.env
+      - ~/env/backend.env
     networks:
       - app-network
     restart: "no" # Don't restart after it finishes
