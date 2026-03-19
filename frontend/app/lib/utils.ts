@@ -142,4 +142,15 @@ export function downsampleSensorData(
 	}
 
 	return downsampleDataPoints(data, 20);
+export function shorthandName(name: string): string {
+	if (!name) return "";
+
+	const names = name.trim().split(/\s+/);
+
+	if (names.length <= 1) return name;
+
+	const firstInitial = names[0][0].toUpperCase();
+	const lastname = names[names.length - 1];
+
+	return `${firstInitial}. ${lastname}`;
 }
