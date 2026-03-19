@@ -8,13 +8,21 @@ services:
     env_file:
       - ./backend/.env
     volumes:
-      - timescale_data_dev:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
       - ./backend/seed:/seed
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - app-network
 
 volumes:
-  timescale_data_dev:
+  db_data:
+    name: healthtech-dev-db-data
+
+networks:
+  app-network:
+    name: healthtech-dev-network
+    driver: bridge

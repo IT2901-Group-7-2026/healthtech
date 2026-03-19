@@ -18,7 +18,7 @@ services:
     env_file:
       - ~/env/backend.env
     volumes:
-      - timescale_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
       - ./backend/seed:/seed
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
@@ -90,8 +90,10 @@ services:
     restart: "no" # Don't restart after it finishes
 
 volumes:
-  timescale_data:
+  db_data:
+    name: healthtech-prd-db-data
 
 networks:
   app-network:
+    name: healthtech-prd-network
     driver: bridge
