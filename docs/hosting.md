@@ -64,7 +64,7 @@ docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml up --build
 
 # To kill the app:
 #   docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml down
-# If you also want to kill volumes (the database):
+# If you also want to kill volumes (the database's data):
 #   docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml down -v
 
 # If you run into caching issues, you can try building first, then running:
@@ -101,10 +101,11 @@ rsync -avP -e "ssh -i ./your-key.pem" *.csv ubuntu@<HOST>:~/healthtech/backend/s
 Then, to actually seed the database:
 
 ```bash
+# SSH into your server
+
 cd ~/healthtech
 
-docker exec -it healthtech-db psql -U postgres -d healthtech -f /seed/seed.sql
-
+docker exec -it healthtech-prd-db-1 psql -U postgres -d healthtech -f /seed/seed.sql
 ```
 
 ### Maintenance and logs
