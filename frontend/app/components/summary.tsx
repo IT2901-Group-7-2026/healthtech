@@ -62,6 +62,36 @@ export function Summary({ exposureType, data }: SummaryProps) {
 	};
 	const isMobile = useIsMobile();
 
+	type SensorSummary = Record<Sensor, DangerLevel>;
+
+function getSensorSummary(data: AllSensors): SensorSummary {
+  const result = {} as SensorSummary;
+
+  (Object.keys(data) as Sensor[]).forEach((sensor) => {
+    const sensorData = data[sensor]?.data ?? [];
+
+    let max: DangerLevel = "safe";
+
+    for (const item of sensorData) {
+      if (item.dangerLevel === "danger") {
+        max = "danger";
+        break;
+      }
+      if (item.dangerLevel === "warning") {
+        max = "warning";
+      }
+    }
+
+    result[sensor] = max;
+  });
+
+  return result;
+}
+const sensorSummary =
+  exposureType === "all"
+    ? getSensorSummary(data as AllSensors)
+    : null;
+
 	return (
 		<Card className="w-full gap-0 p-5">
 			<div className="border-b-2 border-b-slate-300 md:pb-2 md:pl-2">
@@ -78,79 +108,23 @@ export function Summary({ exposureType, data }: SummaryProps) {
 					</span>
 				</h4>
 			</div>
-			<div className="exposures-wrapper flex flex-row justify-center gap-4 md:flex-col md:gap-0">
-				{/* Safe */}
-				<div
-					className="flex items-baseline justify-center p-2 md:justify-start"
-					title={DangerLevels.safe.label}
-				>
-					<span
-						className={cn(
-							"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
-							safeColor,
-						)}
-					>
-						{summaryData.safeCount}
-					</span>
-					<span
-						className={cn(
-							"ml-1 text-xs md:ml-2 md:text-sm",
-							safeColor,
-						)}
-					>
-						{isMobile
-							? defaultLabels.safe
-							: summaryLabels.safeLabel}
-					</span>
-				</div>
-				{/* Warning */}
-				<div
-					className="flex items-baseline justify-center p-2 md:justify-start"
-					title={DangerLevels.warning.label}
-				>
-					<span
-						className={cn(
-							"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
-							warningColor,
-						)}
-					>
-						{summaryData.warningCount}
-					</span>
-					<span
-						className={cn(
-							"ml-1 text-xs md:ml-2 md:text-sm",
-							warningColor,
-						)}
-					>
-						{isMobile
-							? defaultLabels.warning
-							: summaryLabels.warningLabel}
-					</span>
-				</div>
-				{/* Danger */}
-				<div
-					className="flex items-baseline justify-center p-2 md:justify-start"
-					title={DangerLevels.danger.label}
-				>
-					<span
-						className={cn(
-							"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
-							dangerColor,
-						)}
-					>
-						{summaryData.dangerCount}
-					</span>
-					<span
-						className={cn(
-							"ml-1 text-xs md:ml-2 md:text-sm",
-							dangerColor,
-						)}
-					>
-						{isMobile
-							? defaultLabels.danger
-							: summaryLabels.dangerLabel}
-					</span>
-				</div>
+			<div className="flex flex-col gap-2 mt-4">
+				{sensorSummary &&
+					Object.entries(sensorSummary).map(([sensor, level]) => {
+					const color = `text-${DangerLevels[level].color}`;
+
+					return (
+						<div
+						key={sensor}
+						className="flex justify-between items-center"
+						>
+						<span className="capitalize">{sensor}</span>
+						<span className={cn("font-bold", color)}>
+							{DangerLevels[level].label}
+						</span>
+						</div>
+					);
+					})}
 			</div>
 		</Card>
 	);
