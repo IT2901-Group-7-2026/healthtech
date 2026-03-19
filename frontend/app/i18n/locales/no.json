@@ -39,7 +39,7 @@
     "vibration": "Vibrasjon",
     "noise": "Støy",
     "allSensors": "Alle sensorer",
-    "all": "Hver sensor",
+    "all": "Alle sensorer",
     "dangerSmiley": "☹ Eksponeringsgrense nådd!",
     "safeSmiley": "☺ Innenfor eksponeringsgrense",
     "warningSmiley": "☹ Nær eksponeringsgrense"
@@ -96,7 +96,7 @@
   "dust": "Støv",
   "vibration": "Vibrasjon",
   "noise": "Støy",
-  "allSensors": "Alle",
+  "allSensors": "Oversikt",
   "all": "Alle sensorer",
 
   "sensorSelectPlaceholder": "Sensor",
@@ -191,7 +191,7 @@
           "noOperators": "Ingen innenfor trygge grenseverdier"
         }
       },
-      "selectUserPlaceholder": "Velg en bruker",
+      "selectUserPlaceholder": "Velg et teammedlem",
       "selectDatePlaceholder": "Velg en dato"
     },
     "actionCard": {

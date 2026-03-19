@@ -6,21 +6,23 @@ import { Summary } from "@/components/summary";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
-import { mapSensorDataToMonthLists } from "@/features/calendar-widget/data-transform";
 import { useDate } from "@/features/date-picker/use-date";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
-import { mapWeekDataToEvents } from "@/features/week-widget/data-transform";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
-import type { SensorDataRequestDto } from "@/lib/dto";
+import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
+import {
+	calculateSummaryCounts,
+	mapSensorDataToTimeBucketStatuses,
+} from "@/lib/time-bucket-utils";
 import { computeYAxisRange } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import { endOfMonth, endOfWeek, startOfMonth, startOfWeek } from "date-fns";
+import { useQueries } from "@tanstack/react-query";
+import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
@@ -28,52 +30,51 @@ export default function Dust() {
 	const { view } = useView();
 	const { date } = useDate();
 	const { t, i18n } = useTranslation();
+	const locale = i18n.language;
 	const { user } = useUser();
 	const { exportToPDF } = useExportPDF();
+	const chartContainerId = useId();
 
 	const sensor: Sensor = "dust";
 
-	const dayQuery: SensorDataRequestDto = {
-		startTime: new Date(date.setUTCHours(8)),
-		endTime: new Date(date.setUTCHours(16)),
-		granularity: "minute",
-		function: "max",
-		field: "pm1_twa",
-	};
-
-	const weekQuery: SensorDataRequestDto = {
-		startTime: startOfWeek(date, { weekStartsOn: 1 }),
-		endTime: endOfWeek(date, { weekStartsOn: 1 }),
+	const query = buildSensorQuery(sensor, view, date);
+	const daySummaryQuery = buildSensorQuery(sensor, view, date, {
 		granularity: "hour",
-		function: "max",
-		field: "pm1_twa",
-	};
+	});
 
-	const monthQuery: SensorDataRequestDto = {
-		startTime: startOfMonth(date),
-		endTime: endOfMonth(date),
-		granularity: "day",
-		function: "max",
-		field: "pm1_twa",
-	};
+	const useDaySummary = view === "day";
 
-	const query =
-		view === "day" ? dayQuery : view === "week" ? weekQuery : monthQuery;
-
-	const { data, isLoading, isError } = useQuery(
-		sensorQueryOptions({
-			sensor: "dust",
-			query,
-			userId: user.id,
-		}),
+	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries(
+		{
+			queries: [
+				sensorQueryOptions({
+					sensor,
+					query,
+					userId: user.id,
+				}),
+				sensorQueryOptions({
+					sensor,
+					query: daySummaryQuery,
+					userId: user.id,
+					enabled: useDaySummary,
+				}),
+			],
+		},
 	);
 
 	const { minY, maxY } = computeYAxisRange(data ?? []);
 
+	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor);
+
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex flex-col gap-4 md:w-1/4">
-				<Summary exposureType={"dust"} data={data} />
+				<Summary
+					exposureType={sensor}
+					data={calculateSummaryCounts(
+						(useDaySummary ? daySummaryData : data) ?? [],
+					)}
+				/>
 				<DailyNotes />
 			</div>
 			<div className="flex flex-1 flex-col items-end gap-4">
@@ -86,25 +87,19 @@ export default function Dust() {
 						<p>{t(($) => $.errorLoadingData)}</p>
 					</Card>
 				) : view === "month" ? (
-					<CalendarWidget
-						selectedDay={date}
-						data={
-							mapSensorDataToMonthLists(data ?? [], "dust") ?? []
-						}
-					/>
+					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
 					<WeekWidget
-						locale={getLocale(i18n.language)}
-						dayStartHour={8}
-						dayEndHour={16}
+						locale={getLocale(locale)}
+						dayStartHour={0}
+						dayEndHour={23}
 						weekStartsOn={1}
-						minuteStep={60}
-						events={mapWeekDataToEvents(data ?? [])}
+						data={calendarData}
 					/>
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">
 						<CardTitle>
-							{date.toLocaleDateString(i18n.language, {
+							{date.toLocaleDateString(locale, {
 								day: "numeric",
 								month: "long",
 								year: "numeric",
@@ -114,21 +109,15 @@ export default function Dust() {
 					</Card>
 				) : (
 					<div className="w-full">
-						{/* biome-ignore lint/correctness/useUniqueElementIds: required for PDF export */}
-						<div id="dust-chart-container">
+						<div id={chartContainerId}>
 							<ChartLineDefault
 								chartData={data ?? []}
-								chartTitle={date.toLocaleDateString(
-									i18n.language,
-									{
-										day: "numeric",
-										month: "long",
-										year: "numeric",
-									},
-								)}
+								chartTitle={date.toLocaleDateString(locale, {
+									day: "numeric",
+									month: "long",
+									year: "numeric",
+								})}
 								unit={t(($) => $.dust_y_axis)}
-								startHour={8}
-								endHour={16}
 								maxY={maxY}
 								minY={minY}
 								lineType="monotone"
@@ -139,16 +128,16 @@ export default function Dust() {
 										variant="outline"
 										onClick={() =>
 											exportToPDF(
-												"dust-chart-container",
+												chartContainerId,
 												`${date.toLocaleDateString(
-													i18n.language,
+													locale,
 													{
 														day: "numeric",
 														month: "long",
 														year: "numeric",
 													},
 												)}-${user.username}-Dust-Exposure-Overview`,
-												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(locale)}`,
 											)
 										}
 									>

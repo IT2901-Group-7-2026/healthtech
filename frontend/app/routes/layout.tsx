@@ -1,3 +1,4 @@
+import { type IconVariant, SensorIcon } from "@/components/sensor-icon";
 import { Button } from "@/components/ui/button";
 import {
 	Drawer,
@@ -11,7 +12,6 @@ import {
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ThemeSwitch } from "@/features/dark-mode/theme-switch.js";
 import { useDate } from "@/features/date-picker/use-date";
-import { Icon, type IconVariant } from "@/features/icon";
 import { AkerLogo } from "@/features/navbar/aker-logo.js";
 import { DemoUserSwitchBanner } from "@/features/navbar/demo-user-switch-banner.js";
 import { HamburgerButton } from "@/features/navbar/hamburger-icon.js";
@@ -356,13 +356,12 @@ function MobileMenu({
 				>
 					{route.label}
 					{i > 0 && (
-						<Icon
-							variant={
+						<SensorIcon
+							type={
 								route.to
 									.toString()
 									.replace("/", "") as IconVariant
 							}
-							size="medium"
 							className="ml-2"
 						/>
 					)}
@@ -392,8 +391,7 @@ function MobileMenu({
 											<span className="text-lg text-primary">
 												{t(($) => $.notifications)}
 											</span>
-											<Icon
-												variant="bell"
+											<Bell
 												size="small"
 												className="ml-2"
 											/>

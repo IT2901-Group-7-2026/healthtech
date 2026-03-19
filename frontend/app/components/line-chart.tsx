@@ -6,12 +6,20 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useTheme } from "@/features/dark-mode/use-theme";
 import { useDate } from "@/features/date-picker/use-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
+import {
+	addHours,
+	endOfDay,
+	getHours,
+	max,
+	min,
+	startOfDay,
+	subHours,
+} from "date-fns";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -19,7 +27,6 @@ import {
 	CartesianGrid,
 	Line,
 	LineChart,
-	ReferenceArea,
 	ReferenceLine,
 	XAxis,
 	YAxis,
@@ -36,8 +43,6 @@ const chartConfig = {
 interface LineChartProps {
 	chartData: Array<SensorDataResponseDto>;
 	chartTitle: string;
-	startHour: number;
-	endHour: number;
 	maxY: number;
 	minY: number;
 	unit: string;
@@ -51,8 +56,6 @@ interface LineChartProps {
 export function ChartLineDefault({
 	chartData,
 	chartTitle,
-	startHour,
-	endHour,
 	maxY,
 	minY,
 	unit,
@@ -63,9 +66,7 @@ export function ChartLineDefault({
 	usePeakData = false,
 }: LineChartProps) {
 	const { date: selectedDay } = useDate();
-
 	const { t } = useTranslation();
-
 	const id = useId();
 
 	const { warning, danger, peakDanger } = thresholds[sensor];
@@ -74,8 +75,25 @@ export function ChartLineDefault({
 	const getValue = (data: SensorDataResponseDto) =>
 		usePeakData ? (data.peakValue ?? data.value) : data.value;
 
-	const maxData = [...chartData].sort((a, b) => getValue(b) - getValue(a))[0];
-	const minData = [...chartData].sort((a, b) => getValue(a) - getValue(b))[0];
+	const maxData = chartData.toSorted((a, b) => getValue(b) - getValue(a))[0];
+	const minData = chartData.toSorted((a, b) => getValue(a) - getValue(b))[0];
+
+	// Set the domain to be from 1 hour before the first data point to 1 hour after the last data point, clamped to the current day
+	const minTime = chartData.toSorted(
+		(a, b) => a.time.getTime() - b.time.getTime(),
+	)[0].time;
+	const maxTime = chartData.toSorted(
+		(a, b) => b.time.getTime() - a.time.getTime(),
+	)[0].time;
+
+	const paddedStart = subHours(minTime, 1);
+	const paddedEnd = addHours(maxTime, 1);
+
+	const clampedStart = max([paddedStart, startOfDay(minTime)]);
+	const clampedEnd = min([paddedEnd, endOfDay(maxTime)]);
+
+	const startHour = getHours(clampedStart);
+	const endHour = getHours(clampedEnd);
 
 	// Used to position color-changes in the graph so the line changes color at threshold boundaries.
 	const getOffset = (y: number) =>
@@ -96,12 +114,6 @@ export function ChartLineDefault({
 		new Date(time).getUTCHours().toString().padStart(2, "0");
 
 	const maxDataDangerLevel = getDangerLevel(maxData, usePeakData);
-
-	const { theme } = useTheme();
-	const color =
-		theme === "dark"
-			? "oklch(90% 0.019 276.296)"
-			: "oklch(35% 0.015 286.067)";
 
 	return (
 		<Card className="w-full">
@@ -194,54 +206,31 @@ export function ChartLineDefault({
 												offset={getOffset(
 													dangerThreshold,
 												)}
-												stopColor={color}
+												stopColor={"var(--danger)"}
 											/>
 											<stop
 												offset={getOffset(
 													dangerThreshold,
 												)}
-												stopColor={color}
+												stopColor={"var(--warning)"}
 											/>
 											<stop
 												offset={getOffset(warning)}
-												stopColor={color}
+												stopColor={"var(--warning)"}
 											/>
 											<stop
 												offset={getOffset(warning)}
-												stopColor={color}
+												stopColor={"var(--safe)"}
 											/>
 											<stop
 												offset="100%"
-												stopColor={color}
+												stopColor={"var(--safe)"}
 											/>
 										</>
 									)
 								)}
 							</linearGradient>
 						</defs>
-						{/* Safe zone */}
-						<ReferenceArea
-							y1={minY}
-							y2={warning}
-							fill="var(--safe)"
-							fillOpacity={0.08}
-						/>
-
-						{/* Warning zone */}
-						<ReferenceArea
-							y1={warning}
-							y2={dangerThreshold}
-							fill="var(--warning)"
-							fillOpacity={0.08}
-						/>
-
-						{/* Danger zone */}
-						<ReferenceArea
-							y1={dangerThreshold}
-							y2={maxY}
-							fill="var(--danger)"
-							fillOpacity={0.08}
-						/>
 						<Line
 							dataKey="value"
 							type={lineType as CurveType}

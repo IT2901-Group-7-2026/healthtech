@@ -5,7 +5,6 @@ import {
 	addDays,
 	addMonths,
 	addWeeks,
-	isSameDay,
 	subDays,
 	subMonths,
 	subWeeks,
@@ -54,30 +53,6 @@ export const getNextDay = (selectedDay: Date, view: View): Date => {
 		),
 	);
 	return utcNextDay;
-};
-
-export const makeCumulative = (
-	data: Array<SensorDataResponseDto> | undefined,
-): Array<SensorDataResponseDto> => {
-	if (!data || data.length === 0) {
-		return [];
-	}
-	let sum = 0;
-	let currentDate = data[0].time;
-	return data.map((point) => {
-		if (!isSameDay(point.time, currentDate)) {
-			sum = 0;
-			currentDate = point.time;
-		}
-		sum += point.value;
-		return {
-			time: point.time,
-			value: sum,
-			dangerLevel: point.dangerLevel,
-			peakValue: point.peakValue,
-			peakDangerLevel: point.peakDangerLevel,
-		};
-	});
 };
 
 export function computeYAxisRange(

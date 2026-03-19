@@ -39,7 +39,7 @@
     "vibration": "Vibration",
     "noise": "Noise",
     "allSensors": "All sensors",
-    "all": "Every sensor",
+    "all": "All sensors",
     "dangerSmiley": "☹ Threshold exceeded",
     "safeSmiley": "☺ Safely within exposure limit",
     "warningSmiley": "☹ Close to exposure limit"
@@ -96,7 +96,7 @@
   "dust": "Dust",
   "vibration": "Vibration",
   "noise": "Noise",
-  "allSensors": "All",
+  "allSensors": "Overview",
   "all": "All sensors",
 
   "sensorSelectPlaceholder": "Sensor",
@@ -191,7 +191,7 @@
           "noOperators": "No operators within limits"
         }
       },
-      "selectUserPlaceholder": "Pick a user",
+      "selectUserPlaceholder": "Select team member",
       "selectDatePlaceholder": "Pick a date"
     },
     "actionCard": {

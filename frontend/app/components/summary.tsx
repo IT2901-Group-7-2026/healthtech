@@ -3,7 +3,7 @@ import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
-import type { AllSensors, SensorDataResponseDto } from "@/lib/dto";
+import type { SummaryCounts, TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
 import { Card } from "@/ui/card";
 import { useTranslation } from "react-i18next";
@@ -12,13 +12,19 @@ type ExposureType = Sensor | "all";
 
 type SummaryProps = {
 	exposureType: ExposureType;
-	data: Array<SensorDataResponseDto> | AllSensors | undefined;
+	data: SummaryCounts;
 	mode?: "count" | "sensor";
+	sensorData?: Array<TimeBucketStatus>;
 };
 
 type SummaryLabel = Record<DangerLevel, string>;
 
-export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
+export function Summary({
+	exposureType,
+	data,
+	mode = "count",
+	sensorData,
+}: SummaryProps) {
 	const { t } = useTranslation();
 	const { view } = useView();
 
@@ -49,11 +55,6 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 			danger: t(($) => $.exposure_summary.redDayText),
 		},
 	};
-	const summaryData: SummaryType = getSummaryData({
-		view,
-		exposureType,
-		data,
-	});
 
 	const summaryLabels = {
 		exposureType: exposureType === "all" ? "Every sensor" : exposureType,
@@ -81,252 +82,140 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 			</div>
 			{mode === "sensor" ? (
 				<div className="mt-4 flex flex-col gap-4">
-					{Object.entries(getSensorSummary(data as AllSensors)).map(
-						([sensor, level]) => {
-							const color = `text-${DangerLevels[level].color}`;
-							const label = t(
-								($) =>
-									$.exposure_summary[
-										`${level}Smiley` as const
-									],
-							);
-							const emoji = label[0];
-							const text = label.slice(1);
+					{Object.entries(
+						getSensorSummaryFromOverview(sensorData ?? []),
+					).map(([sensor, level]) => {
+						const color = `text-${DangerLevels[level].color}`;
+						const label = t(
+							($) =>
+								$.exposure_summary[`${level}Smiley` as const],
+						);
+						const emoji = label[0];
+						const text = label.slice(1);
 
-							return (
-								<div
-									key={sensor}
-									className="flex items-center justify-between"
-								>
-									<div className="capitalize">
-										{t(
-											($) =>
-												$.exposure_summary[
-													sensor as Sensor
-												],
-										)}
-									</div>
-									<div
-										className={cn(
-											"ml-1 text-xs md:ml-2 md:text-sm",
-											color,
-										)}
-									>
-										<span className="mr-1 text-4xl">
-											{emoji}
-										</span>
-										{text}
-									</div>
+						return (
+							<div
+								key={sensor}
+								className="flex items-center justify-between"
+							>
+								<div className="capitalize">
+									{t(
+										($) =>
+											$.exposure_summary[
+												sensor as Sensor
+											],
+									)}
 								</div>
-							);
-						},
-					)}
+								<div
+									className={cn(
+										"ml-1 text-xs md:ml-2 md:text-sm",
+										color,
+									)}
+								>
+									<span className="mr-1 text-4xl">
+										{emoji}
+									</span>
+									{text}
+								</div>
+							</div>
+						);
+					})}
 				</div>
 			) : (
 				<div className="exposures-wrapper flex flex-row justify-center gap-4 md:flex-col md:gap-0">
-					{/* Safe */}
-					<div
-						className="flex items-baseline justify-center p-2 md:justify-start"
-						title={DangerLevels.safe.label}
-					>
-						<div
-							className={cn(
-								"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
-								safeColor,
-							)}
-						>
-							{summaryData.safeCount}
-						</div>
-						<div
-							className={cn(
-								"ml-1 text-xs md:ml-2 md:text-sm",
-								safeColor,
-							)}
-						>
-							{isMobile
+					<SummaryRow
+						count={data.safeCount}
+						label={
+							isMobile
 								? defaultLabels.safe
-								: summaryLabels.safeLabel}
-						</div>
-					</div>
-					{/* Warning */}
-					<div
-						className="flex items-baseline justify-center p-2 md:justify-start"
-						title={DangerLevels.warning.label}
-					>
-						<div
-							className={cn(
-								"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
-								warningColor,
-							)}
-						>
-							{summaryData.warningCount}
-						</div>
-						<div
-							className={cn(
-								"ml-1 text-xs md:ml-2 md:text-sm",
-								warningColor,
-							)}
-						>
-							{isMobile
+								: summaryLabels.safeLabel
+						}
+						hoverTitle={DangerLevels.safe.label}
+						colorClass={safeColor}
+					/>
+					<SummaryRow
+						count={data.warningCount}
+						label={
+							isMobile
 								? defaultLabels.warning
-								: summaryLabels.warningLabel}
-						</div>
-					</div>
-					{/* Danger */}
-					<div
-						className="flex items-baseline justify-center p-2 md:justify-start"
-						title={DangerLevels.danger.label}
-					>
-						<span
-							className={cn(
-								"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
-								dangerColor,
-							)}
-						>
-							{summaryData.dangerCount}
-						</span>
-						<span
-							className={cn(
-								"ml-1 text-xs md:ml-2 md:text-sm",
-								dangerColor,
-							)}
-						>
-							{isMobile
+								: summaryLabels.warningLabel
+						}
+						hoverTitle={DangerLevels.warning.label}
+						colorClass={warningColor}
+					/>
+					<SummaryRow
+						count={data.dangerCount}
+						label={
+							isMobile
 								? defaultLabels.danger
-								: summaryLabels.dangerLabel}
-						</span>
-					</div>
+								: summaryLabels.dangerLabel
+						}
+						hoverTitle={DangerLevels.danger.label}
+						colorClass={dangerColor}
+					/>
 				</div>
 			)}
 		</Card>
 	);
 }
 
-function getSummaryData({
-	view,
-	exposureType,
-	data,
-}: SummaryProps & { view: View }): SummaryType {
-	let summaryData: SummaryType;
-	if (exposureType === "all")
-		summaryData = getSummaryForAll(view, (data as AllSensors) ?? []);
-	else {
-		summaryData = getSingleSummary(
-			view,
-			exposureType,
-			(data as Array<SensorDataResponseDto>) ?? [],
-		);
-	}
-	return summaryData;
+interface SummaryRowProps {
+	count: number;
+	label: string;
+	hoverTitle: string;
+	colorClass: string;
 }
 
-type SummaryType = {
-	safeCount: number;
-	dangerCount: number;
-	warningCount: number;
-};
+const SummaryRow = ({
+	hoverTitle,
+	count,
+	label,
+	colorClass,
+}: SummaryRowProps) => (
+	<div
+		className="flex items-baseline justify-center p-2 md:justify-start"
+		title={hoverTitle}
+	>
+		<p
+			className={cn(
+				"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
+				colorClass,
+			)}
+		>
+			{count}
+		</p>
+		<p className={cn("ml-1 text-xs md:ml-2 md:text-sm", colorClass)}>
+			{label}
+		</p>
+	</div>
+);
 
-const getSingleSummary = (
-	view: View,
-	exposureType: ExposureType,
-	data: Array<SensorDataResponseDto>,
-): SummaryType => {
-	const summaryData = {
-		safeCount: data.filter((d) => d.dangerLevel === "safe").length,
-		dangerCount: data.filter((d) => d.dangerLevel === "danger").length,
-		warningCount: data.filter((d) => d.dangerLevel === "warning").length,
+function getSensorSummaryFromOverview(
+	buckets: Array<TimeBucketStatus>,
+): Record<Sensor, DangerLevel> {
+	const result: Record<Sensor, DangerLevel> = {
+		noise: "safe",
+		dust: "safe",
+		vibration: "safe",
 	};
 
-	// In the 'all' type we use hour granularity instead of minute granularity for the day view, so we don't need to adjust here TODO: This override is a bit messy
-	//TODO: This calculation doesn't work because it assumes perfect data with one entry per minute - related to issue #HLTH-11
-	if (view === "day" && exposureType !== "all") {
-		summaryData.dangerCount = Math.ceil(summaryData.dangerCount / 60);
-		summaryData.warningCount = Math.round(summaryData.warningCount / 60);
-		summaryData.safeCount = Math.floor(summaryData.safeCount / 60);
-	}
+	for (const bucket of buckets) {
+		const sensors = bucket.sensorDangerLevels;
 
-	return summaryData;
-};
+		if (!sensors) continue;
 
-// TODO: Rewrite this method
-const getSummaryForAll = (view: View, data: AllSensors): SummaryType => {
-	if (view === "day") {
-		let allData = Object.entries(data)
-			.map(
-				([, sensorData]) =>
-					data &&
-					getSingleSummary(view, "all", sensorData.data ?? []),
-			)
-			.reduce(
-				(acc: SummaryType, curr) => {
-					if (!curr) return acc;
-					acc.safeCount += curr.safeCount;
-					acc.dangerCount += curr.dangerCount;
-					acc.warningCount += curr.warningCount;
-					return acc;
-				},
-				{ safeCount: 0, dangerCount: 0, warningCount: 0 },
-			);
-		if (!allData)
-			allData = { safeCount: 0, dangerCount: 0, warningCount: 0 };
-		return allData;
-	}
+		(Object.keys(result) as Array<Sensor>).forEach((sensor) => {
+			const level = sensors[sensor];
 
-	//TODO: This will always be a bit wrong because we only show hours 8-16 in the calendar but have more data than that. also we should only remove time duplicates if we're not on day view as that's the only time we show all three sensors at once
+			if (!level) return;
 
-	const timePeriodDangerLevels = new Map<string, DangerLevel>();
-
-	Object.entries(data).forEach(([, sensorData]) => {
-		(sensorData.data ?? []).forEach((item) => {
-			const timeKey = item.time.toISOString();
-			const existingLevel = timePeriodDangerLevels.get(timeKey);
-
-			// Keep the worst danger level for each time period
-			if (
-				!existingLevel ||
-				item.dangerLevel === "danger" ||
-				(item.dangerLevel === "warning" && existingLevel === "safe")
-			) {
-				timePeriodDangerLevels.set(timeKey, item.dangerLevel);
+			if (level === "danger") {
+				result[sensor] = "danger";
+			} else if (level === "warning" && result[sensor] === "safe") {
+				result[sensor] = "warning";
 			}
 		});
-	});
-
-	const summaryData = {
-		safeCount: 0,
-		warningCount: 0,
-		dangerCount: 0,
-	};
-
-	timePeriodDangerLevels.forEach((level) => {
-		if (level === "safe") summaryData.safeCount++;
-		else if (level === "warning") summaryData.warningCount++;
-		else if (level === "danger") summaryData.dangerCount++;
-	});
-
-	return summaryData;
-};
-
-function getSensorSummary(data: AllSensors) {
-	const result = {} as Record<Sensor, DangerLevel>;
-
-	(Object.keys(data) as Array<Sensor>).forEach((sensor) => {
-		const sensorData = data[sensor]?.data ?? [];
-
-		let max: DangerLevel = "safe";
-
-		for (const s of sensorData) {
-			if (s.dangerLevel === "danger") {
-				max = "danger";
-				break;
-			}
-			if (s.dangerLevel === "warning") {
-				max = "warning";
-			}
-		}
-
-		result[sensor] = max;
-	});
+	}
 
 	return result;
 }

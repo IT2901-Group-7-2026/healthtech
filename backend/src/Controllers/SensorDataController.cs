@@ -17,7 +17,7 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
 	[ServiceFilter(typeof(ValidateFieldForSensorTypeFilter))]
 	public async Task<ActionResult<IEnumerable<SensorDataDto>>> GetAggregatedData(
 		[FromBody] SensorDataRequestDto request,
-		[FromRoute] Guid userId,
+		[FromRoute] Guid? userId,
 		[FromRoute] SensorType sensorType
 	)
 	{
@@ -26,7 +26,36 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
 			return BadRequest("StartTime must be earlier than EndTime.");
 		}
 
-		var response = await _sensorDataService.GetAggregatedDataAsync(request, userId, sensorType);
+		try
+		{
+			var response = await _sensorDataService.GetAggregatedDataAsync(
+				request,
+				userId,
+				sensorType
+			);
+			return Ok(response);
+		}
+		catch (ArgumentException ex)
+		{
+			return BadRequest($"The request is invalid: {ex.Message}");
+		}
+		catch (InvalidOperationException ex)
+		{
+			return NotFound($"The requested resource was not found: {ex.Message}");
+		}
+		catch (Exception)
+		{
+			return StatusCode(500, "Internal server error");
+		}
+	}
+
+	[HttpPost("overview/{userId}")]
+	public async Task<ActionResult<IEnumerable<CombinedSensorBucketDto>>> GetOverviewData(
+		[FromBody] Dictionary<SensorType, SensorDataRequestDto> requests,
+		[FromRoute] Guid? userId
+	)
+	{
+		var response = await _sensorDataService.GetOverviewDataAsync(requests, userId);
 		return Ok(response);
 	}
 }

@@ -1,46 +1,69 @@
-# The follow repository secrets are set in the GitHub repository settings:
+# The following repository secrets are set in the GitHub repository settings:
 # - SSH_HOST
 # - SSH_USER
 # - SSH_PRIVATE_KEY
 
 name: Deploy to production
 
-# This creates the button in the Actions tab
+concurrency:
+  group: production-deployment
+  cancel-in-progress: false # Set to false so we don't interrupt a Docker build mid-way
+
 on:
-    workflow_dispatch:
+  # Automatically deploys on new commits to main
+  push:
+    branches:
+      - main
+
+  # Manual deploy button in the actions tab in GitHub
+  workflow_dispatch:
+    inputs:
+      commit_hash:
+        description: "Specific commit hash to deploy (leave blank for latest)"
+        required: false
+        type: string
 
 jobs:
-    run-ci:
-        uses: ./.github/workflows/_backend-ci.yml
+  run-ci:
+    uses: ./.github/workflows/_backend-ci.yml
 
-    deploy:
-        needs: run-ci
-        runs-on: ubuntu-latest
-        steps:
-            - name: Deploy
-              uses: appleboy/ssh-action@v1.0.3
-              with:
-                  host: ${{ secrets.SSH_HOST }}
-                  username: ${{ secrets.SSH_USER }}
-                  key: ${{ secrets.SSH_PRIVATE_KEY }}
-                  port: 22
-                  script: |
-                      set -e # Stop if any command fails
+  deploy:
+    needs: run-ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine target commit
+        id: vars
+        # If manual input is provided, use it. Otherwise, use the commit that triggered this workflow.
+        run: echo "TARGET_COMMIT=${{ inputs.commit_hash || github.sha }}" >> $GITHUB_ENV
 
-                      cd ~/healthtech
+      - name: Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          envs: TARGET_COMMIT # Passes the GitHub Actions env variable to the SSH session
+          script: |
+            set -e # Stop if any command fails
 
-                      echo "Pulling latest changes..."
-                      git pull origin main
+            cd ~/healthtech
 
-                      echo "Rebuilding and deploying..."
-                      docker compose --env-file ./backend/.env -f docker-compose.prod.yml up --build -d
+            echo "Fetching latest changes..."
+            git fetch origin
 
-                      # Wait for the containers to start and check if the backend is running as a simple health check.
-                      sleep 15
-                      if [ "$(docker inspect -f '{{.State.Running}}' healthtech-backend)" == "false" ]; then
-                          echo "Backend failed to start after 15s."
-                          exit 1
-                      fi
+            echo "Checking out commit: $TARGET_COMMIT"
+            git checkout --force $TARGET_COMMIT
 
-                      echo "Cleaning..."
-                      docker image prune -f
+            echo "Rebuilding and deploying..."
+            docker compose --env-file ./backend/.env -f docker-compose.prod.yml up --build -d
+
+            # Wait for the containers to start and check if the backend is running as a simple health check.
+            sleep 15
+            if [ "$(docker inspect -f '{{.State.Running}}' healthtech-backend)" == "false" ]; then
+                echo "Backend failed to start after 15s."
+                exit 1
+            fi
+
+            echo "Cleaning..."
+            docker image prune -f

@@ -10,6 +10,7 @@ import {
 import { getLocale } from "@/i18n/locale";
 import type { DangerLevel } from "@/lib/danger-levels";
 import type { Aggregation } from "@/lib/dto";
+import type { TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import type { CalendarDay, Modifiers } from "react-day-picker";
@@ -18,16 +19,11 @@ import { useDate } from "../date-picker/use-date";
 import { usePopup } from "../popups/use-popup";
 import type { Sensor } from "../sensor-picker/sensors";
 
-export type MonthData = Record<
-	DangerLevel,
-	Partial<Record<Sensor, Array<Date>>>
->;
-
 type CalendarProps = {
 	selectedDay: Date;
 	exposureType?: Sensor;
 	selectedAggregation?: Aggregation;
-	data: MonthData;
+	data: Array<TimeBucketStatus>;
 };
 
 export function CalendarWidget({
@@ -44,38 +40,17 @@ export function CalendarWidget({
 		exposures: CalendarPopupData | null;
 	}>({ day: null, exposures: null });
 
-	const dayKey = (d: Date) => d.toDateString();
+	const safeDays = data
+		.filter((d) => d.dangerLevel === "safe")
+		.map((d) => d.time);
 
-	const safeDaysSet = new Set(Object.values(data.safe).flat().map(dayKey));
-	const warningDaysSet = new Set(
-		Object.values(data.warning).flat().map(dayKey),
-	);
-	const dangerDaysSet = new Set(
-		Object.values(data.danger).flat().map(dayKey),
-	);
+	const warningDays = data
+		.filter((d) => d.dangerLevel === "warning")
+		.map((d) => d.time);
 
-	// Remove duplicates
-	warningDaysSet.forEach((d) => {
-		if (dangerDaysSet.has(d)) warningDaysSet.delete(d);
-	});
-	safeDaysSet.forEach((d) => {
-		if (dangerDaysSet.has(d) || warningDaysSet.has(d))
-			safeDaysSet.delete(d);
-	});
-
-	const safeDays = Array.from(safeDaysSet).map((s) => new Date(s));
-	const warningDays = Array.from(warningDaysSet).map((s) => new Date(s));
-	const dangerDays = Array.from(dangerDaysSet).map((s) => new Date(s));
-
-	const hasData = (list: Array<Date>, d: Date) =>
-		list.some((day) => day.toDateString() === d.toDateString());
-
-	function getDayType(day: Date): Lowercase<DangerLevel> | "none" {
-		if (hasData(safeDays, day)) return "safe";
-		if (hasData(warningDays, day)) return "warning";
-		if (hasData(dangerDays, day)) return "danger";
-		return "none";
-	}
+	const dangerDays = data
+		.filter((d) => d.dangerLevel === "danger")
+		.map((d) => d.time);
 
 	function handleDayClick(clickedDay: Date) {
 		const utcDate = new Date(
@@ -86,36 +61,21 @@ export function CalendarWidget({
 			),
 		);
 		setDate(utcDate);
-		const type = getDayType(clickedDay);
-		if (type === "none") return;
-		const exposureData = getExposureData(clickedDay);
-		setPopupData({ day: clickedDay, exposures: exposureData });
-		openPopup();
-	}
 
-	function getExposureData(clickedDay: Date) {
-		const exposureData: CalendarPopupData = {} as CalendarPopupData;
+		const dayStatus = data.find(
+			(d) => d.time.toDateString() === clickedDay.toDateString(),
+		);
 
-		(Object.keys(data) as Array<DangerLevel>).forEach((dangerKey) => {
-			Object.entries(data[dangerKey]).forEach(([sensor, dates]) => {
-				if (
-					dates.some(
-						(d) => d.toDateString() === clickedDay.toDateString(),
-					)
-				) {
-					//Override lower danger with the higher one
-					const prev = exposureData[sensor as Sensor];
-					if (
-						!prev ||
-						(prev === "safe" && dangerKey !== "safe") ||
-						(prev === "warning" && dangerKey === "danger")
-					) {
-						exposureData[sensor as Sensor] = dangerKey;
-					}
-				}
-			});
+		if (!dayStatus) {
+			return;
+		}
+
+		setPopupData({
+			day: clickedDay,
+			exposures: dayStatus.sensorDangerLevels ?? null,
 		});
-		return exposureData;
+
+		openPopup();
 	}
 
 	return (
@@ -132,8 +92,8 @@ export function CalendarWidget({
 						DayButton: (props) => (
 							<CustomDay
 								{...props}
-								getDayType={getDayType}
 								handleDayClick={handleDayClick}
+								data={data}
 							/>
 						),
 					}}
@@ -172,39 +132,56 @@ export function CalendarWidget({
 	);
 }
 
+function getDayDangerLevel(
+	day: Date,
+	data: Array<TimeBucketStatus>,
+): DangerLevel | null {
+	const dayStatus = data.find(
+		(d) => d.time.toDateString() === day.toDateString(),
+	);
+
+	if (dayStatus) {
+		return dayStatus.dangerLevel;
+	}
+
+	return null;
+}
+
 type CustomDayProps = {
+	data: Array<TimeBucketStatus>;
 	day: CalendarDay;
 	modifiers: Modifiers;
 	className?: string;
-	getDayType: (day: Date) => Lowercase<DangerLevel> | "none";
 	handleDayClick: (day: Date) => void;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 function CustomDay({
+	data,
 	day,
 	className,
-	getDayType,
 	handleDayClick,
 	...buttonProps
 }: CustomDayProps) {
-	const dayDate = day.date;
-	const type = getDayType(dayDate);
+	const dangerLevel = getDayDangerLevel(day.date, data);
+	const disabled = dangerLevel === null;
 
-	let relevantClassname = "cursor-pointer hover:brightness-85";
-	if (type === "safe") relevantClassname = `bg-safe ${relevantClassname}`;
-	else if (type === "warning")
-		relevantClassname = `bg-warning ${relevantClassname}`;
-	else if (type === "danger")
-		relevantClassname = `bg-danger ${relevantClassname}`;
-	else relevantClassname = "noData";
+	let bgClassname = "";
+	if (dangerLevel === "safe") {
+		bgClassname = "bg-safe";
+	} else if (dangerLevel === "warning") {
+		bgClassname = "bg-warning";
+	} else if (dangerLevel === "danger") {
+		bgClassname = "bg-danger";
+	}
 
 	return (
 		<button
 			type="button"
-			disabled={relevantClassname === "noData"}
+			disabled={disabled}
 			className={cn(
 				"h-11/12 w-11/12 rounded-lg",
-				relevantClassname,
+				!disabled && "cursor-pointer hover:brightness-85",
+				bgClassname,
 				className,
 			)}
 			{...buttonProps}
