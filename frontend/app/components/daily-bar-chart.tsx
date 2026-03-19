@@ -80,7 +80,7 @@ export function DailyBarChart({
 			</CardHeader>
 
 			<CardContent>
-				<ChartContainer config={chartConfig}>
+				<ChartContainer config={chartConfig} className="h-100">
 					<BarChart data={chartData} layout="vertical">
 						<XAxis
 							type="number"
@@ -108,7 +108,7 @@ export function DailyBarChart({
 								stackId="a"
 								stroke="var(--muted-foreground)"
 								strokeWidth={1}
-								barSize={180}
+								barSize={80}
 							>
 								{data.map((row, index) => {
 									const hour = Number(key);
