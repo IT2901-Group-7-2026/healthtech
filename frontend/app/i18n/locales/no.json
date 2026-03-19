@@ -40,9 +40,9 @@
     "noise": "Støy",
     "allSensors": "Alle sensorer",
     "all": "Alle sensorer",
-    "dangerSmiley": "☹ Eksponeringsgrense nådd!",
-    "safeSmiley": "☺ Innenfor eksponeringsgrense",
-    "warningSmiley": "☹ Nær eksponeringsgrense"
+    "dangerSmiley": "Eksponeringsgrense nådd!",
+    "safeSmiley": "Innenfor eksponeringsgrense",
+    "warningSmiley": "Nær eksponeringsgrense"
   },
   "line_chart": {
     "danger": "Grenseverdi",

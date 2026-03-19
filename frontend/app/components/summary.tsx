@@ -6,6 +6,7 @@ import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SummaryCounts, TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
 import { Card } from "@/ui/card";
+import { Frown, Meh, Smile } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 type ExposureType = Sensor | "all";
@@ -90,13 +91,20 @@ export function Summary({
 							($) =>
 								$.exposure_summary[`${level}Smiley` as const],
 						);
-						const emoji = label[0];
-						const text = label.slice(1);
+
+						const emoji =
+							level === "danger" ? (
+								<Frown />
+							) : level === "warning" ? (
+								<Meh />
+							) : (
+								<Smile />
+							);
 
 						return (
 							<div
 								key={sensor}
-								className="flex items-center justify-between"
+								className="grid grid-cols-[1fr_140px] items-center"
 							>
 								<div className="capitalize">
 									{t(
@@ -106,16 +114,17 @@ export function Summary({
 											],
 									)}
 								</div>
+
 								<div
 									className={cn(
-										"ml-1 text-xs md:ml-2 md:text-sm",
+										"grid grid-cols-[20px_1fr] items-center gap-1 justify-self-end text-xs md:text-sm",
 										color,
 									)}
 								>
-									<span className="mr-1 text-4xl">
+									<span className="flex justify-center">
 										{emoji}
 									</span>
-									{text}
+									<span>{label}</span>
 								</div>
 							</div>
 						);
