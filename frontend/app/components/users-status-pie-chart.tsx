@@ -26,9 +26,7 @@ export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
 			<div className="flex size-30 items-center justify-center rounded-full bg-safe text-white">
 				<div className="flex items-center gap-2">
 					<span className="font-bold text-2xl slashed-zero tabular-nums leading-none">
-						{safe.value}
-						{"/"}
-						{safe.value}
+						{`${safe.value}/${safe.value}`}
 					</span>
 					<SmileIcon strokeWidth={3} className="size-6" />
 				</div>
