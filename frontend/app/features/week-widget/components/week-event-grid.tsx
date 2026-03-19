@@ -31,32 +31,33 @@ export function WeekEventGrid({
 	dayEndHour,
 }: WeekEventGridProps) {
 	const minuteStep = 60;
+	const rowCount = dayEndHour - dayStartHour + 1;
 
 	return (
 		<div
 			style={{
 				display: "grid",
 				gridTemplateColumns: `repeat(${days.length + 1}, minmax(0, 1fr))`,
-				gridTemplateRows: `repeat(${days[0].cells.length}, minmax(${rowHeight}px, 1fr))`,
+				gridTemplateRows: `repeat(${rowCount}, minmax(${rowHeight}px, 1fr))`,
 			}}
 		>
 			{data
-				.filter(
-					(timeBucketStatus) =>
+				.filter((timeBucketStatus) => {
+					const hour = timeBucketStatus.time.getHours();
+
+					return (
 						isSameWeek(days[0].date, timeBucketStatus.time, {
 							weekStartsOn,
 						}) &&
-						addHours(timeBucketStatus.time, 1).getUTCHours() <=
-							dayEndHour &&
-						timeBucketStatus.time.getUTCHours() >= dayStartHour,
-				)
+						hour >= dayStartHour &&
+						hour < dayEndHour
+					);
+				})
 				.map((timeBucketStatus) => {
-					const start =
-						timeBucketStatus.time.getUTCHours() - dayStartHour + 1;
-					const end =
-						addHours(timeBucketStatus.time, 1).getUTCHours() -
-						dayStartHour +
-						1;
+					const hour = timeBucketStatus.time.getHours();
+					const start = hour - dayStartHour + 1;
+					const end = start + 1;
+
 					const paddingTop =
 						((getMinutes(timeBucketStatus.time) % minuteStep) /
 							minuteStep) *
@@ -64,7 +65,7 @@ export function WeekEventGrid({
 
 					const paddingBottom =
 						(rowHeight -
-							((getMinutes(addHours(timeBucketStatus.time, 1)) %
+							(((getMinutes(timeBucketStatus.time) + minuteStep) %
 								minuteStep) /
 								minuteStep) *
 								rowHeight) %
