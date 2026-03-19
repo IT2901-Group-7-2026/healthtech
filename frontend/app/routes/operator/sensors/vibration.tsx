@@ -72,7 +72,7 @@ export default function Vibration() {
 
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
-			<div className="flex flex-col gap-4 md:w-1/4">
+			<div className="flex flex-col gap-4 md:w-1/5">
 				<Summary
 					exposureType="vibration"
 					data={calculateSummaryCounts(
