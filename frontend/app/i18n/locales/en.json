@@ -197,8 +197,8 @@
       "danger": "Attention may be required!",
       "criticalExposureText": "Operators above the exposure limit. Immediate follow-up recommended.",
       "approachingThresholdText": "Operators approaching the exposure limit. Consider preventive measures.",
-      "safeText" : "Operators are within safe levels. No action needed right now.",
-      "oldData" : "You are viewing old data."
+      "safeText": "Operators are within safe levels. No action needed right now.",
+      "oldData": "You are viewing old data."
     },
     "userStatusChart": {
       "xAxisLabel": "Percentage of exposure limit",

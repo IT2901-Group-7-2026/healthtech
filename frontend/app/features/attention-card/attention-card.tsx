@@ -85,8 +85,7 @@ export const AttentionCard = ({
 
 	const criticalExposureText =
 		highestDangerLevel === "danger"
-			? t(($) => $.foremanDashboard.actionCard.criticalExposureText
-				)
+			? t(($) => $.foremanDashboard.actionCard.criticalExposureText)
 			: null;
 
 	const approachingThresholdText =
@@ -125,9 +124,14 @@ export const AttentionCard = ({
 				{actionCardHeader}
 
 				<CardContent className="gap-2">
-					<p >{showActionCard && criticalExposureText}</p>
-					<p>{(!showActionCard) && t(($) =>$.foremanDashboard.actionCard.oldData)}</p>
-					<p className="mb-5">{showActionCard && approachingThresholdText}</p>
+					<p>{showActionCard && criticalExposureText}</p>
+					<p>
+						{!showActionCard &&
+							t(($) => $.foremanDashboard.actionCard.oldData)}
+					</p>
+					<p className="mb-5">
+						{showActionCard && approachingThresholdText}
+					</p>
 
 					<div className="grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
 						{!sensor && (
