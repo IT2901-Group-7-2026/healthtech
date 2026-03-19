@@ -11,6 +11,7 @@ import {
 } from "date-fns";
 import { twMerge } from "tailwind-merge";
 import type { SensorDataResponseDto, User } from "./dto";
+import type { Sensor } from "./sensors";
 
 export function cn(...inputs: Array<ClassValue>) {
 	return twMerge(clsx(inputs));
@@ -102,6 +103,46 @@ export const userRoleToString = (role: User["role"], t: TranslateFn) => {
 			return role;
 	}
 };
+
+export function downsampleDataPoints(
+	data: Array<SensorDataResponseDto>,
+	bucketSize: number,
+): Array<SensorDataResponseDto> {
+	const result: Array<SensorDataResponseDto> = [];
+
+	for (let i = 0; i < data.length; i += bucketSize) {
+		const bucket = data.slice(i, i + bucketSize);
+		if (!bucket.length) continue;
+
+		let min = bucket[0];
+		let max = bucket[0];
+
+		//Keep min and max of each bucket
+		for (const item of bucket) {
+			if (item.value < min.value) min = item;
+			if (item.value > max.value) max = item;
+		}
+
+		if (min.time < max.time) {
+			result.push(min, max);
+		} else {
+			result.push(max, min);
+		}
+	}
+
+	return result;
+}
+
+export function downsampleSensorData(
+	sensor: Sensor,
+	data: Array<SensorDataResponseDto>,
+): Array<SensorDataResponseDto> {
+	if (sensor === "vibration") {
+		return data;
+	}
+
+	return downsampleDataPoints(data, 20);
+}
 
 export function shorthandName(name: string): string {
 	if (!name) return "";

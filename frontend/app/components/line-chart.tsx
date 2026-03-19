@@ -11,6 +11,7 @@ import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
+import { downsampleSensorData } from "@/lib/utils";
 import {
 	addHours,
 	endOfDay,
@@ -99,7 +100,9 @@ export function ChartLineDefault({
 	const getOffset = (y: number) =>
 		`${((getValue(maxData) - y) / (getValue(maxData) - getValue(minData))) * 100}%`;
 
-	const transformedData = chartData.map((item) => ({
+	const downsampledData = downsampleSensorData(sensor, chartData);
+
+	const transformedData = downsampledData.map((item) => ({
 		time: item.time.getTime(),
 		value: getValue(item),
 	}));
