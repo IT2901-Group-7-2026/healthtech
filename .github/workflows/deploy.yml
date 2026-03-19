@@ -16,11 +16,14 @@ on:
         type: string
 
 jobs:
-  run-ci:
+  frontend-ci:
+    uses: ./.github/workflows/frontend-ci.yml
+
+  backend-ci:
     uses: ./.github/workflows/_backend-ci.yml
 
   deploy:
-    needs: run-ci
+    needs: [frontend-ci, backend-ci]
     runs-on: self-hosted
     steps:
       - name: Pull code
