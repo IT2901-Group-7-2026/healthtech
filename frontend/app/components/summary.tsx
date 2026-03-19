@@ -63,36 +63,6 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 	};
 	const isMobile = useIsMobile();
 
-	type SensorSummary = Record<Sensor, DangerLevel>;
-
-function getSensorSummary(data: AllSensors): SensorSummary {
-  const result = {} as SensorSummary;
-
-  (Object.keys(data) as Sensor[]).forEach((sensor) => {
-    const sensorData = data[sensor]?.data ?? [];
-
-    let max: DangerLevel = "safe";
-
-    for (const item of sensorData) {
-      if (item.dangerLevel === "danger") {
-        max = "danger";
-        break;
-      }
-      if (item.dangerLevel === "warning") {
-        max = "warning";
-      }
-    }
-
-    result[sensor] = max;
-  });
-
-  return result;
-}
-const sensorSummary =
-  exposureType === "all"
-    ? getSensorSummary(data as AllSensors)
-    : null;
-
 	return (
 		<Card className="w-full gap-0 p-5">
 			<div className="border-b-2 border-b-slate-300 md:pb-2 md:pl-2">
