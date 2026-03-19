@@ -89,7 +89,7 @@ export const AttentionCard = ({
 			: null;
 
 	const approachingThresholdText =
-		highestDangerLevel === "warning" || highestDangerLevel === "danger"
+		highestDangerLevel === "warning"
 			? t(($) => $.foremanDashboard.actionCard.approachingThresholdText)
 			: null;
 
@@ -124,16 +124,7 @@ export const AttentionCard = ({
 				{actionCardHeader}
 
 				<CardContent className="gap-2">
-					<p>{showActionCard && criticalExposureText}</p>
-					<p>
-						{!showActionCard &&
-							t(($) => $.foremanDashboard.actionCard.oldData)}
-					</p>
-					<p className="mb-5">
-						{showActionCard && approachingThresholdText}
-					</p>
-
-					<div className="grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
+					{showActionCard ? ( <> <p>{criticalExposureText}</p> <p>{approachingThresholdText}</p> </> ) : ( <p>{t(($) => $.foremanDashboard.actionCard.oldData)}</p> )} <div className="grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3 mt-5">
 						{!sensor && (
 							<>
 								<StatCard
@@ -202,14 +193,12 @@ export const AttentionCard = ({
 				</CardContent>
 			</Card>
 
-			{(popupStatus === "warning" ||
-				popupStatus === "danger" ||
-				popupStatus === "safe") && (
+			{(popupStatus === null) && (
 				<AtRiskPopup
 					open={selectedStatus !== null}
 					onClose={closePopup}
 					title="Workers"
-					status={popupStatus}
+					status={popupStatus ?? "safe"}
 					subordinates={subordinates ?? []}
 				/>
 			)}
