@@ -3,9 +3,10 @@ import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
-import type { SummaryCounts } from "@/lib/time-bucket-types";
+import type { SummaryCounts, TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
 import { Card } from "@/ui/card";
+import { Frown, Meh, Smile } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 type ExposureType = Sensor | "all";
@@ -13,11 +14,18 @@ type ExposureType = Sensor | "all";
 type SummaryProps = {
 	exposureType: ExposureType;
 	data: SummaryCounts;
+	mode?: "count" | "sensor";
+	sensorData?: Array<TimeBucketStatus>;
 };
 
 type SummaryLabel = Record<DangerLevel, string>;
 
-export function Summary({ exposureType, data }: SummaryProps) {
+export function Summary({
+	exposureType,
+	data,
+	mode = "count",
+	sensorData,
+}: SummaryProps) {
 	const { t } = useTranslation();
 	const { view } = useView();
 
@@ -73,36 +81,89 @@ export function Summary({ exposureType, data }: SummaryProps) {
 					</span>
 				</h4>
 			</div>
-			<div className="exposures-wrapper flex flex-row justify-center gap-4 md:flex-col md:gap-0">
-				<SummaryRow
-					count={data.safeCount}
-					label={
-						isMobile ? defaultLabels.safe : summaryLabels.safeLabel
-					}
-					hoverTitle={DangerLevels.safe.label}
-					colorClass={safeColor}
-				/>
-				<SummaryRow
-					count={data.warningCount}
-					label={
-						isMobile
-							? defaultLabels.warning
-							: summaryLabels.warningLabel
-					}
-					hoverTitle={DangerLevels.warning.label}
-					colorClass={warningColor}
-				/>
-				<SummaryRow
-					count={data.dangerCount}
-					label={
-						isMobile
-							? defaultLabels.danger
-							: summaryLabels.dangerLabel
-					}
-					hoverTitle={DangerLevels.danger.label}
-					colorClass={dangerColor}
-				/>
-			</div>
+			{mode === "sensor" ? (
+				<div className="mt-4 flex flex-col gap-4">
+					{Object.entries(
+						getSensorSummaryFromOverview(sensorData ?? []),
+					).map(([sensor, level]) => {
+						const color = `text-${DangerLevels[level].color}`;
+						const label = t(
+							($) =>
+								$.exposure_summary[`${level}Smiley` as const],
+						);
+
+						const emoji =
+							level === "danger" ? (
+								<Frown />
+							) : level === "warning" ? (
+								<Meh />
+							) : (
+								<Smile />
+							);
+
+						return (
+							<div
+								key={sensor}
+								className="grid grid-cols-[1fr_140px] items-center"
+							>
+								<div className="capitalize">
+									{t(
+										($) =>
+											$.exposure_summary[
+												sensor as Sensor
+											],
+									)}
+								</div>
+
+								<div
+									className={cn(
+										"grid grid-cols-[20px_1fr] items-center gap-1 justify-self-end text-xs md:text-sm",
+										color,
+									)}
+								>
+									<span className="flex justify-center">
+										{emoji}
+									</span>
+									<span>{label}</span>
+								</div>
+							</div>
+						);
+					})}
+				</div>
+			) : (
+				<div className="exposures-wrapper flex flex-row justify-center gap-4 md:flex-col md:gap-0">
+					<SummaryRow
+						count={data.safeCount}
+						label={
+							isMobile
+								? defaultLabels.safe
+								: summaryLabels.safeLabel
+						}
+						hoverTitle={DangerLevels.safe.label}
+						colorClass={safeColor}
+					/>
+					<SummaryRow
+						count={data.warningCount}
+						label={
+							isMobile
+								? defaultLabels.warning
+								: summaryLabels.warningLabel
+						}
+						hoverTitle={DangerLevels.warning.label}
+						colorClass={warningColor}
+					/>
+					<SummaryRow
+						count={data.dangerCount}
+						label={
+							isMobile
+								? defaultLabels.danger
+								: summaryLabels.dangerLabel
+						}
+						hoverTitle={DangerLevels.danger.label}
+						colorClass={dangerColor}
+					/>
+				</div>
+			)}
 		</Card>
 	);
 }
@@ -137,3 +198,33 @@ const SummaryRow = ({
 		</p>
 	</div>
 );
+
+function getSensorSummaryFromOverview(
+	buckets: Array<TimeBucketStatus>,
+): Record<Sensor, DangerLevel> {
+	const result: Record<Sensor, DangerLevel> = {
+		noise: "safe",
+		dust: "safe",
+		vibration: "safe",
+	};
+
+	for (const bucket of buckets) {
+		const sensors = bucket.sensorDangerLevels;
+
+		if (!sensors) continue;
+
+		(Object.keys(result) as Array<Sensor>).forEach((sensor) => {
+			const level = sensors[sensor];
+
+			if (!level) return;
+
+			if (level === "danger") {
+				result[sensor] = "danger";
+			} else if (level === "warning" && result[sensor] === "safe") {
+				result[sensor] = "warning";
+			}
+		});
+	}
+
+	return result;
+}

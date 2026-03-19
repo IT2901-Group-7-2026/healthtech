@@ -90,6 +90,8 @@ export default function OperatorHome() {
 					<Summary
 						exposureType="all"
 						data={calculateSummaryCounts(overviewBuckets ?? [])}
+						sensorData={overviewBuckets ?? []}
+						mode="sensor"
 					/>
 					<DailyNotes />
 				</div>
