@@ -77,9 +77,7 @@ function HomeLink() {
 			<div className="text-2xl">
 				<Logo />
 			</div>
-			<span className="hidden text-xl sm:inline-block">
-				{"HealthTech"}
-			</span>
+			<span className="hidden text-xl sm:inline-block">{"HealthTech"}</span>
 		</NavLink>
 	);
 }
@@ -97,11 +95,11 @@ function getLinks(
 			return [
 				{ to: href("/operator"), label: t(($) => $.layout.overview) },
 				{ to: href("/operator/dust"), label: t(($) => $.dust) },
+				{ to: href("/operator/noise"), label: t(($) => $.noise) },
 				{
 					to: href("/operator/vibration"),
 					label: t(($) => $.vibration),
 				},
-				{ to: href("/operator/noise"), label: t(($) => $.noise) },
 			];
 		}
 

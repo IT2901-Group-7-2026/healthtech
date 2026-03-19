@@ -83,82 +83,64 @@ export function Summary({
 			</div>
 			{mode === "sensor" ? (
 				<div className="mt-4 flex flex-col gap-4">
-					{Object.entries(
-						getSensorSummaryFromOverview(sensorData ?? []),
-					).map(([sensor, level]) => {
-						const color = `text-${DangerLevels[level].color}`;
-						const label = t(
-							($) =>
-								$.exposure_summary[`${level}Smiley` as const],
-						);
-
-						const emoji =
-							level === "danger" ? (
-								<Frown />
-							) : level === "warning" ? (
-								<Meh />
-							) : (
-								<Smile />
+					{Object.entries(getSensorSummaryFromOverview(sensorData ?? [])).map(
+						([sensor, level]) => {
+							const color = `text-${DangerLevels[level].color}`;
+							const label = t(
+								($) => $.exposure_summary[`${level}Smiley` as const],
 							);
 
-						return (
-							<div
-								key={sensor}
-								className="grid grid-cols-[1fr_140px] items-center"
-							>
-								<div className="capitalize">
-									{t(
-										($) =>
-											$.exposure_summary[
-												sensor as Sensor
-											],
-									)}
-								</div>
+							const emoji =
+								level === "danger" ? (
+									<Frown />
+								) : level === "warning" ? (
+									<Meh />
+								) : (
+									<Smile />
+								);
 
+							return (
 								<div
-									className={cn(
-										"grid grid-cols-[20px_1fr] items-center gap-1 justify-self-end text-xs md:text-sm",
-										color,
-									)}
+									key={sensor}
+									className="grid grid-cols-[1fr_140px] items-center"
 								>
-									<span className="flex justify-center">
-										{emoji}
-									</span>
-									<span>{label}</span>
+									<div className="capitalize">
+										{t(($) => $.exposure_summary[sensor as Sensor])}
+									</div>
+
+									<div
+										className={cn(
+											"grid grid-cols-[20px_1fr] items-center gap-1 justify-self-end text-xs md:text-sm",
+											color,
+										)}
+									>
+										<span className="flex justify-center">{emoji}</span>
+										<span>{label}</span>
+									</div>
 								</div>
-							</div>
-						);
-					})}
+							);
+						},
+					)}
 				</div>
 			) : (
 				<div className="exposures-wrapper flex flex-row justify-center gap-4 md:flex-col md:gap-0">
 					<SummaryRow
 						count={data.safeCount}
-						label={
-							isMobile
-								? defaultLabels.safe
-								: summaryLabels.safeLabel
-						}
+						label={isMobile ? defaultLabels.safe : summaryLabels.safeLabel}
 						hoverTitle={DangerLevels.safe.label}
 						colorClass={safeColor}
 					/>
 					<SummaryRow
 						count={data.warningCount}
 						label={
-							isMobile
-								? defaultLabels.warning
-								: summaryLabels.warningLabel
+							isMobile ? defaultLabels.warning : summaryLabels.warningLabel
 						}
 						hoverTitle={DangerLevels.warning.label}
 						colorClass={warningColor}
 					/>
 					<SummaryRow
 						count={data.dangerCount}
-						label={
-							isMobile
-								? defaultLabels.danger
-								: summaryLabels.dangerLabel
-						}
+						label={isMobile ? defaultLabels.danger : summaryLabels.dangerLabel}
 						hoverTitle={DangerLevels.danger.label}
 						colorClass={dangerColor}
 					/>
@@ -193,9 +175,7 @@ const SummaryRow = ({
 		>
 			{count}
 		</p>
-		<p className={cn("ml-1 text-xs md:ml-2 md:text-sm", colorClass)}>
-			{label}
-		</p>
+		<p className={cn("ml-1 text-xs md:ml-2 md:text-sm", colorClass)}>{label}</p>
 	</div>
 );
 
@@ -203,8 +183,8 @@ function getSensorSummaryFromOverview(
 	buckets: Array<TimeBucketStatus>,
 ): Record<Sensor, DangerLevel> {
 	const result: Record<Sensor, DangerLevel> = {
-		noise: "safe",
 		dust: "safe",
+		noise: "safe",
 		vibration: "safe",
 	};
 
