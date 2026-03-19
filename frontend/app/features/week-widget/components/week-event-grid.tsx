@@ -2,7 +2,6 @@ import { DangerLevels } from "@/lib/danger-levels";
 import type { TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
 import {
-	addHours,
 	type Day,
 	differenceInCalendarDays,
 	getMinutes,
@@ -31,32 +30,33 @@ export function WeekEventGrid({
 	dayEndHour,
 }: WeekEventGridProps) {
 	const minuteStep = 60;
+	const rowCount = dayEndHour - dayStartHour + 1;
 
 	return (
 		<div
 			style={{
 				display: "grid",
 				gridTemplateColumns: `repeat(${days.length + 1}, minmax(0, 1fr))`,
-				gridTemplateRows: `repeat(${days[0].cells.length}, minmax(${rowHeight}px, 1fr))`,
+				gridTemplateRows: `repeat(${rowCount}, minmax(${rowHeight}px, 1fr))`,
 			}}
 		>
 			{data
-				.filter(
-					(timeBucketStatus) =>
+				.filter((timeBucketStatus) => {
+					const hour = timeBucketStatus.time.getHours();
+
+					return (
 						isSameWeek(days[0].date, timeBucketStatus.time, {
 							weekStartsOn,
 						}) &&
-						addHours(timeBucketStatus.time, 1).getUTCHours() <=
-							dayEndHour &&
-						timeBucketStatus.time.getUTCHours() >= dayStartHour,
-				)
+						hour >= dayStartHour &&
+						hour < dayEndHour
+					);
+				})
 				.map((timeBucketStatus) => {
-					const start =
-						timeBucketStatus.time.getUTCHours() - dayStartHour + 1;
-					const end =
-						addHours(timeBucketStatus.time, 1).getUTCHours() -
-						dayStartHour +
-						1;
+					const hour = timeBucketStatus.time.getHours();
+					const start = hour - dayStartHour + 1;
+					const end = start + 1;
+
 					const paddingTop =
 						((getMinutes(timeBucketStatus.time) % minuteStep) /
 							minuteStep) *
@@ -64,7 +64,7 @@ export function WeekEventGrid({
 
 					const paddingBottom =
 						(rowHeight -
-							((getMinutes(addHours(timeBucketStatus.time, 1)) %
+							(((getMinutes(timeBucketStatus.time) + minuteStep) %
 								minuteStep) /
 								minuteStep) *
 								rowHeight) %
@@ -73,7 +73,7 @@ export function WeekEventGrid({
 					return (
 						<div
 							key={timeBucketStatus.time.toISOString()}
-							className="relative flex transition-all"
+							className="relative"
 							style={{
 								gridRowStart: start,
 								gridRowEnd: end,
@@ -90,15 +90,14 @@ export function WeekEventGrid({
 							<button
 								type="button"
 								className={cn(
-									"absolute inset-1 flex cursor-pointer flex-col overflow-y-auto rounded-md text-xs leading-5 transition",
+									"absolute right-[2px] left-[2px] block cursor-pointer overflow-hidden rounded-[4px] border border-black/10",
+									"transition-[filter,box-shadow] duration-150",
+									"hover:brightness-90",
 									`bg-${DangerLevels[timeBucketStatus.dangerLevel].color}`,
-									"border-t-2 border-t-muted-foreground border-dotted",
-									`${timeBucketStatus.time.getUTCHours() === dayStartHour && "border-t-0"} `,
-									"hover:brightness-85",
 								)}
 								style={{
-									top: paddingTop,
-									bottom: paddingBottom,
+									top: paddingTop + 1,
+									bottom: paddingBottom + 1,
 								}}
 								onClick={() =>
 									handleHourClick(timeBucketStatus)
