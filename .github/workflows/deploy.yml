@@ -1,8 +1,3 @@
-# The following repository secrets are set in the GitHub repository settings:
-# - SSH_HOST
-# - SSH_USER
-# - SSH_PRIVATE_KEY
-
 name: Deploy to production
 
 concurrency:
@@ -10,12 +5,9 @@ concurrency:
   cancel-in-progress: false # Set to false so we don't interrupt a Docker build mid-way
 
 on:
-  # Automatically deploys on new commits to main
   push:
     branches:
       - main
-
-  # Manual deploy button in the actions tab in GitHub
   workflow_dispatch:
     inputs:
       commit_hash:
@@ -29,41 +21,50 @@ jobs:
 
   deploy:
     needs: run-ci
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
-      - name: Determine target commit
-        id: vars
-        # If manual input is provided, use it. Otherwise, use the commit that triggered this workflow.
-        run: echo "TARGET_COMMIT=${{ inputs.commit_hash || github.sha }}" >> $GITHUB_ENV
+      - name: Pull code
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.commit_hash || github.sha }}
+
+      - name: Set up environment
+        run: |
+          cp ~/env/backend.env ./backend/.env
+          cp ~/env/frontend.env ./frontend/.env
 
       - name: Deploy
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          envs: TARGET_COMMIT # Passes the GitHub Actions env variable to the SSH session
-          script: |
-            set -e # Stop if any command fails
+        env:
+          BACKEND_CONTAINER_NAME: healthtech-backend
+          FRONTEND_CONTAINER_NAME: healthtech-frontend
+          TRAEFIK_CONTAINER_NAME: healthtech-traefik
+          DB_CONTAINER_NAME: healthtech-db
+        run: |
+          echo "Rebuilding and deploying..."
+          docker compose --env-file ./backend/.env -f docker-compose.prod.yml up --build -d
 
-            cd ~/healthtech
+          # Simple health check
+          sleep 15
+          if [ "$(docker inspect -f '{{.State.Running}}' ${DB_CONTAINER_NAME})" == "false" ]; then
+              echo "Database failed to start after 15s. Printing logs:"
+              docker logs ${DB_CONTAINER_NAME} | tail -n 20 
+              exit 1
+          fi
+          if [ "$(docker inspect -f '{{.State.Running}}' ${BACKEND_CONTAINER_NAME})" == "false" ]; then
+              echo "Backend failed to start after 15s. Printing logs:"
+              docker logs ${BACKEND_CONTAINER_NAME} | tail -n 20 
+              exit 1
+          fi
+          if [ "$(docker inspect -f '{{.State.Running}}' ${FRONTEND_CONTAINER_NAME})" == "false" ]; then
+              echo "Frontend failed to start after 15s. Printing logs:"
+              docker logs ${FRONTEND_CONTAINER_NAME} | tail -n 20 
+              exit 1
+          fi
+          if [ "$(docker inspect -f '{{.State.Running}}' ${TRAEFIK_CONTAINER_NAME})" == "false" ]; then
+              echo "Traefik failed to start after 15s. Printing logs:"
+              docker logs ${TRAEFIK_CONTAINER_NAME} | tail -n 20 
+              exit 1
+          fi
 
-            echo "Fetching latest changes..."
-            git fetch origin
-
-            echo "Checking out commit: $TARGET_COMMIT"
-            git checkout --force $TARGET_COMMIT
-
-            echo "Rebuilding and deploying..."
-            docker compose --env-file ./backend/.env -f docker-compose.prod.yml up --build -d
-
-            # Wait for the containers to start and check if the backend is running as a simple health check.
-            sleep 15
-            if [ "$(docker inspect -f '{{.State.Running}}' healthtech-backend)" == "false" ]; then
-                echo "Backend failed to start after 15s."
-                exit 1
-            fi
-
-            echo "Cleaning..."
-            docker image prune -f
+          echo "Deployment successful. Cleaning up old images..."
+          docker image prune -f
