@@ -380,9 +380,16 @@ function NavTabs({
 	const [pillWidth, setPillWidth] = useState<number>();
 	const [pillLeft, setPillLeft] = useState<number>();
 
-	const activeNavIndex = routes.findIndex(
-		(route) => route.to === location.pathname,
-	);
+	// finds index of the most specific matching route
+	const activeNavIndex =
+		routes
+			.map((route, i) => ({
+				index: i,
+				match: location.pathname.startsWith(route.to.toString()),
+				length: route.to.toString().length,
+			}))
+			.filter((route) => route.match)
+			.sort((a, b) => b.length - a.length)[0]?.index ?? -1;
 
 	// update pill whenever the active route changes,
 	useEffect(() => {
