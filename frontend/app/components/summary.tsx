@@ -13,11 +13,12 @@ type ExposureType = Sensor | "all";
 type SummaryProps = {
 	exposureType: ExposureType;
 	data: Array<SensorDataResponseDto> | AllSensors | undefined;
+	mode?: "count" | "sensor";
 };
 
 type SummaryLabel = Record<DangerLevel, string>;
 
-export function Summary({ exposureType, data }: SummaryProps) {
+export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 	const { t } = useTranslation();
 	const { view } = useView();
 
@@ -108,24 +109,125 @@ const sensorSummary =
 					</span>
 				</h4>
 			</div>
-			<div className="flex flex-col gap-2 mt-4">
-				{sensorSummary &&
-					Object.entries(sensorSummary).map(([sensor, level]) => {
-					const color = `text-${DangerLevels[level].color}`;
+			{mode === "sensor" ? (
+				<div className="mt-4 flex flex-col gap-4">
+					{Object.entries(getSensorSummary(data as AllSensors)).map(
+						([sensor, level]) => {
+							const color = `text-${DangerLevels[level].color}`;
+							const label = t(
+								($) =>
+									$.exposure_summary[
+										`${level}Smiley` as const
+									],
+							);
+							const emoji = label[0];
+							const text = label.slice(1);
 
-					return (
+							return (
+								<div
+									key={sensor}
+									className="flex items-center justify-between"
+								>
+									<div className="capitalize">
+										{t(
+											($) =>
+												$.exposure_summary[
+													sensor as Sensor
+												],
+										)}
+									</div>
+									<div
+										className={cn(
+											"ml-1 text-xs md:ml-2 md:text-sm",
+											color,
+										)}
+									>
+										<span className="mr-1 text-4xl">
+											{emoji}
+										</span>
+										{text}
+									</div>
+								</div>
+							);
+						},
+					)}
+				</div>
+			) : (
+				<div className="exposures-wrapper flex flex-row justify-center gap-4 md:flex-col md:gap-0">
+					{/* Safe */}
+					<div
+						className="flex items-baseline justify-center p-2 md:justify-start"
+						title={DangerLevels.safe.label}
+					>
 						<div
-						key={sensor}
-						className="flex justify-between items-center"
+							className={cn(
+								"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
+								safeColor,
+							)}
 						>
-						<span className="capitalize">{sensor}</span>
-						<span className={cn("font-bold", color)}>
-							{DangerLevels[level].label}
-						</span>
+							{summaryData.safeCount}
 						</div>
-					);
-					})}
-			</div>
+						<div
+							className={cn(
+								"ml-1 text-xs md:ml-2 md:text-sm",
+								safeColor,
+							)}
+						>
+							{isMobile
+								? defaultLabels.safe
+								: summaryLabels.safeLabel}
+						</div>
+					</div>
+					{/* Warning */}
+					<div
+						className="flex items-baseline justify-center p-2 md:justify-start"
+						title={DangerLevels.warning.label}
+					>
+						<div
+							className={cn(
+								"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
+								warningColor,
+							)}
+						>
+							{summaryData.warningCount}
+						</div>
+						<div
+							className={cn(
+								"ml-1 text-xs md:ml-2 md:text-sm",
+								warningColor,
+							)}
+						>
+							{isMobile
+								? defaultLabels.warning
+								: summaryLabels.warningLabel}
+						</div>
+					</div>
+					{/* Danger */}
+					<div
+						className="flex items-baseline justify-center p-2 md:justify-start"
+						title={DangerLevels.danger.label}
+					>
+						<span
+							className={cn(
+								"w-8 text-right font-bold text-2xl brightness-110 md:text-center",
+								dangerColor,
+							)}
+						>
+							{summaryData.dangerCount}
+						</span>
+						<span
+							className={cn(
+								"ml-1 text-xs md:ml-2 md:text-sm",
+								dangerColor,
+							)}
+						>
+							{isMobile
+								? defaultLabels.danger
+								: summaryLabels.dangerLabel}
+						</span>
+					</div>
+				</div>
+			)}
 		</Card>
 	);
 }
@@ -234,3 +336,27 @@ const getSummaryForAll = (view: View, data: AllSensors): SummaryType => {
 
 	return summaryData;
 };
+
+function getSensorSummary(data: AllSensors) {
+	const result = {} as Record<Sensor, DangerLevel>;
+
+	(Object.keys(data) as Array<Sensor>).forEach((sensor) => {
+		const sensorData = data[sensor]?.data ?? [];
+
+		let max: DangerLevel = "safe";
+
+		for (const s of sensorData) {
+			if (s.dangerLevel === "danger") {
+				max = "danger";
+				break;
+			}
+			if (s.dangerLevel === "warning") {
+				max = "warning";
+			}
+		}
+
+		result[sensor] = max;
+	});
+
+	return result;
+}

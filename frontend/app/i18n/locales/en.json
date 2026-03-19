@@ -39,7 +39,10 @@
     "vibration": "Vibration",
     "noise": "Noise",
     "allSensors": "All sensors",
-    "all": "Every sensor"
+    "all": "Every sensor",
+    "dangerSmiley": "☹ Threshold exceeded",
+    "safeSmiley": "☺ Safely within exposure limit",
+    "warningSmiley": "☹ Close to exposure limit"
   },
   "line_chart": {
     "danger": "Exposure Limit",

@@ -39,7 +39,10 @@
     "vibration": "Vibrasjon",
     "noise": "Støy",
     "allSensors": "Alle sensorer",
-    "all": "Hver sensor"
+    "all": "Hver sensor",
+    "dangerSmiley": "☹ Eksponeringsgrense nådd!",
+    "safeSmiley": "☺ Innenfor eksponeringsgrense",
+    "warningSmiley": "☹ Nær eksponeringsgrense"
   },
   "line_chart": {
     "danger": "Grenseverdi",
