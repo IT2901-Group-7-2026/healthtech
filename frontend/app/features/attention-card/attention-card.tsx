@@ -124,7 +124,16 @@ export const AttentionCard = ({
 				{actionCardHeader}
 
 				<CardContent className="gap-2">
-					{showActionCard ? ( <> <p>{criticalExposureText}</p> <p>{approachingThresholdText}</p> </> ) : ( <p>{t(($) => $.foremanDashboard.actionCard.oldData)}</p> )} <div className="grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3 mt-5">
+					{showActionCard ? (
+						<>
+							{" "}
+							<p>{criticalExposureText}</p>{" "}
+							<p>{approachingThresholdText}</p>{" "}
+						</>
+					) : (
+						<p>{t(($) => $.foremanDashboard.actionCard.oldData)}</p>
+					)}{" "}
+					<div className="mt-5 grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
 						{!sensor && (
 							<>
 								<StatCard
@@ -193,12 +202,14 @@ export const AttentionCard = ({
 				</CardContent>
 			</Card>
 
-			{(popupStatus === null) && (
+			{(popupStatus === "warning" ||
+				popupStatus === "danger" ||
+				popupStatus === "safe") && (
 				<AtRiskPopup
 					open={selectedStatus !== null}
 					onClose={closePopup}
 					title="Workers"
-					status={popupStatus ?? "safe"}
+					status={popupStatus}
 					subordinates={subordinates ?? []}
 				/>
 			)}
