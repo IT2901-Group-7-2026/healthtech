@@ -178,6 +178,9 @@
     },
     "overview": {
       "title": "Foreman Overview",
+      "pieChart" : {
+        "noData" :"No data found for this date"
+      },
       "statCards": {
         "danger": {
           "description": "Operators exceeding threshold",

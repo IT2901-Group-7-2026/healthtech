@@ -52,40 +52,47 @@ export const PieChartCard = ({
 						{label}
 					</h2>
 				</CardHeader>
-				<CardContent className="flex flex-row items-center gap-0">
-					<div className="flex w-1/2 flex-col gap-2 text-xs">
-						{DangerLevelSchema.options
-							.sort(
-								(a, b) =>
-									DANGER_LEVEL_SEVERITY[b] -
-									DANGER_LEVEL_SEVERITY[a],
-							)
-							.map((level) => (
-								<div key={level}>
-									<div
-										className={`border-l-${mapDangerLevelToColor(level)} border-l-4 pl-1.5`}
-									>
-										<div>
-											<p className="pb-1 text-neutral-500 text-xs dark:text-zinc-400">
-												{data[level].label}
-											</p>
-											<p
-												className={`text-2xl tabular-nums leading-6 text-${mapDangerLevelToColor(level)}`}
-											>
-												{data[level].value}
-											</p>
+
+				{data.danger.value !== 0 ||
+				data.safe.value !== 0 ||
+				data.warning.value !== 0 ? (
+					<CardContent className="flex flex-row items-center gap-0">
+						<div className="flex w-1/2 flex-col gap-2 text-xs">
+							{DangerLevelSchema.options
+								.sort(
+									(a, b) => DANGER_LEVEL_SEVERITY[b] - DANGER_LEVEL_SEVERITY[a],
+								)
+								.map((level) => (
+									<div key={level}>
+										<div
+											className={`border-l-${mapDangerLevelToColor(level)} border-l-4 pl-1.5`}
+										>
+											<div>
+												<p className="pb-1 text-neutral-500 text-xs dark:text-zinc-400">
+													{data[level].label}
+												</p>
+												<p
+													className={`text-2xl tabular-nums leading-6 text-${mapDangerLevelToColor(level)}`}
+												>
+													{data[level].value}
+												</p>
+											</div>
 										</div>
 									</div>
-								</div>
-							))}
-					</div>
+								))}
+						</div>
 
-					<UserStatusPieChart
-						safe={data.safe}
-						warning={data.warning}
-						danger={data.danger}
-					/>
-				</CardContent>
+						<UserStatusPieChart
+							safe={data.safe}
+							warning={data.warning}
+							danger={data.danger}
+						/>
+					</CardContent>
+				) : (
+					<CardContent>
+						{t(($) => $.foremanDashboard.overview.pieChart.noData)}
+					</CardContent>
+				)}
 
 				<CardFooter className="gap-1 text-muted-foreground text-xs">
 					<p>{t(($) => $.interactiveCard.viewDetails)}</p>

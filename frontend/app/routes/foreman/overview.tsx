@@ -117,9 +117,7 @@ export default function ForemanOverview() {
 	);
 
 	const { data: thresholdSummary, isLoading: isThresholdSummaryLoading } =
-		useQuery(
-			fetchThresholdSummaryQueryOptions(user.id, startDate, endDate),
-		);
+		useQuery(fetchThresholdSummaryQueryOptions(user.id, startDate, endDate));
 
 	const subordinateCount = subordinates?.length ?? 0;
 	const isUserComboboxDisabled = !users || users.length === 0;
@@ -166,9 +164,7 @@ export default function ForemanOverview() {
 					>
 						<ComboboxInput
 							placeholder={t(
-								($) =>
-									$.foremanDashboard.overview
-										.selectUserPlaceholder,
+								($) => $.foremanDashboard.overview.selectUserPlaceholder,
 							)}
 							showClear
 							disabled={isUserComboboxDisabled}
@@ -178,10 +174,7 @@ export default function ForemanOverview() {
 						<ComboboxContent>
 							<ComboboxList>
 								{(item) => (
-									<ComboboxItem
-										key={item.value}
-										value={item.value}
-									>
+									<ComboboxItem key={item.value} value={item.value}>
 										{item.label}
 									</ComboboxItem>
 								)}
@@ -209,11 +202,7 @@ export default function ForemanOverview() {
 								}}
 								selected={selectedDate}
 								onSelect={(val) =>
-									setDate(
-										val
-											? formatDate(val, "yyyy-MM-dd")
-											: null,
-									)
+									setDate(val ? formatDate(val, "yyyy-MM-dd") : null)
 								}
 								defaultMonth={selectedDate}
 							/>
@@ -245,56 +234,40 @@ export default function ForemanOverview() {
 						<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
 							{/* TODO: add skeleton loading using isThresholdSummaryLoading */}
 							{thresholdSummary !== undefined &&
-								sensors.map((s: Sensor) =>
-									thresholdSummary[s].safe !== 0 ||
-									thresholdSummary[s].warning !== 0 ||
-									thresholdSummary[s].danger !== 0 ? (
-										<PieChartCard
-											data={{
-												safe: {
-													name: "Safe",
-													value: thresholdSummary[s]
-														.safe,
-													label: t(
-														($) =>
-															$.foremanDashboard
-																.overview
-																.statCards.safe
-																.label,
-													),
-												},
-												warning: {
-													name: "Warning",
-													value: thresholdSummary[s]
-														.warning,
-													label: t(
-														($) =>
-															$.foremanDashboard
-																.overview
-																.statCards
-																.warning.label,
-													),
-												},
-												danger: {
-													name: "Danger",
-													value: thresholdSummary[s]
-														.danger,
-													label: t(
-														($) =>
-															$.foremanDashboard
-																.overview
-																.statCards
-																.danger.label,
-													),
-												},
-											}}
-											label={s}
-											to="/"
-											key={s}
-											sensorType={s}
-										/>
-									) : null,
-								)}
+								sensors.map((s: Sensor) => (
+									<PieChartCard
+										data={{
+											safe: {
+												name: "Safe",
+												value: thresholdSummary[s].safe,
+												label: t(
+													($) =>
+														$.foremanDashboard.overview.statCards.safe.label,
+												),
+											},
+											warning: {
+												name: "Warning",
+												value: thresholdSummary[s].warning,
+												label: t(
+													($) =>
+														$.foremanDashboard.overview.statCards.warning.label,
+												),
+											},
+											danger: {
+												name: "Danger",
+												value: thresholdSummary[s].danger,
+												label: t(
+													($) =>
+														$.foremanDashboard.overview.statCards.danger.label,
+												),
+											},
+										}}
+										label={s}
+										to="/"
+										key={s}
+										sensorType={s}
+									/>
+								))}
 						</div>
 					)}
 					{selectedUserId && (
