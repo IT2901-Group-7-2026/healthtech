@@ -70,7 +70,9 @@ export function getHighestDangerLevel(
 			? (operator.status[sensor]?.dangerLevel ?? "safe")
 			: operator.status.status;
 
-		if (DANGER_LEVEL_SEVERITY[level] > DANGER_LEVEL_SEVERITY[highestLevel]) {
+		if (
+			DANGER_LEVEL_SEVERITY[level] > DANGER_LEVEL_SEVERITY[highestLevel]
+		) {
 			highestLevel = level;
 		}
 	});
