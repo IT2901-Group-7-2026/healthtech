@@ -13,6 +13,7 @@ type ExposureType = Sensor | "all";
 
 type SummaryProps = {
 	exposureType: ExposureType;
+	view: View;
 	data: SummaryCounts;
 	mode?: "count" | "sensor";
 	sensorData?: Array<TimeBucketStatus>;
@@ -69,7 +70,7 @@ export function Summary({
 		<Card className="w-full gap-0 p-5">
 			<div className="border-b-2 border-b-slate-300 md:pb-2 md:pl-2">
 				<h2 className="text-center text-xl md:text-left md:text-2xl">
-					{t(($) => $.exposure_summary.title)}
+					{t(($) => $.exposure_summary.title[view])}
 				</h2>
 			</div>
 			<div className="exposure-subheader">

@@ -75,6 +75,7 @@ export default function Vibration() {
 			<div className="flex flex-col gap-4 md:w-1/5">
 				<Summary
 					exposureType="vibration"
+					view={view}
 					data={calculateSummaryCounts(
 						(useDaySummary ? daySummaryData : data) ?? [],
 					)}

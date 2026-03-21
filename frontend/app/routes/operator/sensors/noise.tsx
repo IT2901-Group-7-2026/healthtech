@@ -10,6 +10,7 @@ import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
+import type { View } from "@/features/views/views";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { getLocale } from "@/i18n/locale";
@@ -87,7 +88,11 @@ export default function Noise() {
 
 	if (isLoading) {
 		return (
-			<NoisePageLayout data={data ?? []}>
+			<NoisePageLayout
+				data={data ?? []}
+				view={view}
+				usePeakAggregation={usePeakAggregation}
+			>
 				<Card className="flex h-24 w-full items-center">
 					<p>{t(($) => $.loadingData)}</p>
 				</Card>
@@ -106,6 +111,7 @@ export default function Noise() {
 			<div className="flex flex-col gap-4 md:w-1/5">
 				<Summary
 					exposureType={sensor}
+					view={view}
 					data={calculateSummaryCounts(
 						(useDaySummary ? daySummaryData : data) ?? [],
 						usePeakAggregation,
@@ -271,15 +277,18 @@ const NoisePageLayout = ({
 	children,
 	data,
 	usePeakAggregation,
+	view,
 }: {
 	children: React.ReactNode;
 	data: Array<SensorDataResponseDto>;
 	usePeakAggregation?: boolean;
+	view: View;
 }) => (
 	<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 		<div className="flex flex-col gap-4 md:w-1/5">
 			<Summary
 				exposureType="noise"
+				view={view}
 				data={calculateSummaryCounts(data ?? [], usePeakAggregation)}
 			/>
 			<DailyNotes />
