@@ -42,16 +42,22 @@ export const dangerlevelStyles = {
 	danger: {
 		bg: "bg-danger",
 		text: "text-danger",
+		borderLeft: "border-l-danger",
 	},
 	warning: {
 		bg: "bg-warning",
 		text: "text-warning",
+		borderLeft: "border-l-warning",
 	},
 	safe: {
 		bg: "bg-safe",
 		text: "text-safe",
+		borderLeft: "border-l-safe",
 	},
-} satisfies Record<DangerLevel, { bg: string; text: string }>;
+} satisfies Record<
+	DangerLevel,
+	{ bg: string; text: string; borderLeft: string }
+>;
 
 export function getHighestDangerLevel(
 	operators: Array<UserWithStatusDto>,
@@ -64,9 +70,7 @@ export function getHighestDangerLevel(
 			? (operator.status[sensor]?.dangerLevel ?? "safe")
 			: operator.status.status;
 
-		if (
-			DANGER_LEVEL_SEVERITY[level] > DANGER_LEVEL_SEVERITY[highestLevel]
-		) {
+		if (DANGER_LEVEL_SEVERITY[level] > DANGER_LEVEL_SEVERITY[highestLevel]) {
 			highestLevel = level;
 		}
 	});

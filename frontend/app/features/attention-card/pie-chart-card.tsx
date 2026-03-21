@@ -13,6 +13,7 @@ import type { Sensor } from "@/features/sensor-picker/sensors";
 import {
 	DANGER_LEVEL_SEVERITY,
 	DangerLevelSchema,
+	dangerlevelStyles,
 	mapDangerLevelToColor,
 } from "@/lib/danger-levels";
 import { cn } from "@/lib/utils";
@@ -37,6 +38,28 @@ export const PieChartCard = ({
 }: PieChartCardProps) => {
 	const { t } = useTranslation();
 
+	if (
+		data.danger.value === 0 ||
+		data.warning.value === 0 ||
+		data.safe.value === 0
+	) {
+		return (
+			<Card hoverable className={cn("h-full gap-4", className)}>
+				<CardHeader className="text-sm">
+					<h2 className="flex items-center gap-3 text-sm uppercase tracking-wide">
+						<SensorIcon type={sensorType} size="sm" />
+						{label}
+					</h2>
+				</CardHeader>
+				<CardContent className="h-full">
+					<p className="text-muted-foreground">
+						{t(($) => $.foremanDashboard.overview.pieChart.noData)}
+					</p>
+				</CardContent>
+			</Card>
+		);
+	}
+
 	return (
 		<Link
 			to={to}
@@ -45,7 +68,7 @@ export const PieChartCard = ({
 				className,
 			)}
 		>
-			<Card hoverable className={cn("gap-4", className)}>
+			<Card hoverable className={cn("h-full gap-4", className)}>
 				<CardHeader className="text-sm">
 					<h2 className="flex items-center gap-3 text-sm uppercase tracking-wide">
 						<SensorIcon type={sensorType} size="sm" />
@@ -55,7 +78,7 @@ export const PieChartCard = ({
 				<CardContent className="flex flex-row items-center gap-0">
 					<div className="flex w-1/2 flex-col gap-2 text-xs">
 						{DangerLevelSchema.options
-							.sort(
+							.toSorted(
 								(a, b) =>
 									DANGER_LEVEL_SEVERITY[b] -
 									DANGER_LEVEL_SEVERITY[a],
@@ -63,18 +86,16 @@ export const PieChartCard = ({
 							.map((level) => (
 								<div key={level}>
 									<div
-										className={`border-l-${mapDangerLevelToColor(level)} border-l-4 pl-1.5`}
+										className={`${dangerlevelStyles[level].borderLeft} border-l-4 pl-1.5`}
 									>
-										<div>
-											<p className="pb-1 text-neutral-500 text-xs dark:text-zinc-400">
-												{data[level].label}
-											</p>
-											<p
-												className={`text-2xl tabular-nums leading-6 text-${mapDangerLevelToColor(level)}`}
-											>
-												{data[level].value}
-											</p>
-										</div>
+										<p className="pb-1 text-neutral-500 text-xs dark:text-zinc-400">
+											{data[level].label}
+										</p>
+										<p
+											className={`text-2xl tabular-nums leading-6 text-${mapDangerLevelToColor(level)}`}
+										>
+											{data[level].value}
+										</p>
 									</div>
 								</div>
 							))}
