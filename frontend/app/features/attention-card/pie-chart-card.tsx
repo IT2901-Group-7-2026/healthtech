@@ -79,7 +79,9 @@ export const PieChartCard = ({
 					<div className="flex w-1/2 flex-col gap-2 text-xs">
 						{DangerLevelSchema.options
 							.toSorted(
-								(a, b) => DANGER_LEVEL_SEVERITY[b] - DANGER_LEVEL_SEVERITY[a],
+								(a, b) =>
+									DANGER_LEVEL_SEVERITY[b] -
+									DANGER_LEVEL_SEVERITY[a],
 							)
 							.map((level) => (
 								<div key={level}>
