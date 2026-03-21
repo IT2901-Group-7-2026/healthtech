@@ -67,7 +67,6 @@ export const PieChartCard = ({
 										<div
 											className={`border-l-${mapDangerLevelToColor(level)} border-l-4 pl-1.5`}
 										>
-											<div>
 												<p className="pb-1 text-neutral-500 text-xs dark:text-zinc-400">
 													{data[level].label}
 												</p>
@@ -76,7 +75,6 @@ export const PieChartCard = ({
 												>
 													{data[level].value}
 												</p>
-											</div>
 										</div>
 									</div>
 								))}
