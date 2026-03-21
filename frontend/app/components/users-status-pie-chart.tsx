@@ -21,20 +21,8 @@ export interface UserStatusData {
 export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
 	const allSafe = warning.value === 0 && danger.value === 0 && safe.value > 0;
 
-	if (allSafe) {
-		return (
-			<div className="flex size-30 items-center justify-center rounded-full bg-safe text-white">
-				<div className="flex items-center gap-2">
-					<span className="font-bold text-2xl slashed-zero tabular-nums leading-none">
-						{`${safe.value}/${safe.value}`}
-					</span>
-					<SmileIcon strokeWidth={3} className="size-6" />
-				</div>
-			</div>
-		);
-	}
-
 	return (
+		<div className="relative size-30">
 		<ChartContainer config={{}} className="size-30">
 			<PieChart>
 				<Pie
@@ -71,5 +59,11 @@ export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
 				/>
 			</PieChart>
 		</ChartContainer>
+				{allSafe ? (
+				<div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+					<SmileIcon strokeWidth={3} className="size-6 text-safe" />
+				</div>
+			) : null}
+		</div>
 	);
 }
