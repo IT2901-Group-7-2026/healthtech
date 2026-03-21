@@ -52,4 +52,7 @@ export const dangerlevelStyles = {
 		text: "text-safe",
 		borderLeft: "border-l-safe",
 	},
-} satisfies Record<DangerLevel, { bg: string; text: string; borderLeft: string }>;
+} satisfies Record<
+	DangerLevel,
+	{ bg: string; text: string; borderLeft: string }
+>;
