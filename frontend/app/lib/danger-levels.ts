@@ -40,13 +40,16 @@ export const dangerlevelStyles = {
 	danger: {
 		bg: "bg-danger",
 		text: "text-danger",
+		border: "border-l-danger",
 	},
 	warning: {
 		bg: "bg-warning",
 		text: "text-warning",
+		border: "border-l-warning",
 	},
 	safe: {
 		bg: "bg-safe",
 		text: "text-safe",
+		border: "border-l-safe",
 	},
-} satisfies Record<DangerLevel, { bg: string; text: string }>;
+} satisfies Record<DangerLevel, { bg: string; text: string; border: string }>;
