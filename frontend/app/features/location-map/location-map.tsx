@@ -1,11 +1,19 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+	dangerlevelStyles,
+	getHighestDangerLevel,
+	mapDangerLevelToColor,
+} from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import L, { type LatLngBoundsExpression, type PathOptions } from "leaflet";
+import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { Fragment, useRef, useState } from "react";
 import { renderToString } from "react-dom/server";
 import { useTranslation } from "react-i18next";
 import { ImageOverlay, MapContainer, Marker, Polygon } from "react-leaflet";
+import { type Sensor, sensors } from "../sensor-picker/sensors";
 import {
 	HallOperatorList,
 	HallOperatorListSkeleton,
@@ -43,6 +51,22 @@ export function LocationMap({
 		parseAsStringLiteral(["all", ...sensors]).withDefault("all"),
 	);
 
+	const highestDangerLevel = getHighestDangerLevel(
+		operators,
+		sensor === "all" ? null : sensor,
+	);
+
+	// To avoid combining danger levels from multiple sensors when "all" is selected, we use a default color
+	const hallOverlayColor =
+		sensor === "all"
+			? "#2563eb"
+			: `var(--${mapDangerLevelToColor(highestDangerLevel)})`;
+
+	const markerColor =
+		sensor === "all"
+			? "bg-teal-700"
+			: dangerlevelStyles[highestDangerLevel].bg;
+
 	// TODO: Data for prototype
 	const halls: Array<Hall> = [
 		{
@@ -55,24 +79,24 @@ export function LocationMap({
 				xyToyx(170, 70),
 			],
 			baseStyle: {
-				color: "#2563eb",
+				color: hallOverlayColor,
 				weight: 2,
 				opacity: 1,
-				fillColor: "#3b82f6",
+				fillColor: hallOverlayColor,
 				fillOpacity: 0.2,
 			},
 			hoverStyle: {
-				color: "#2563eb",
+				color: hallOverlayColor,
 				weight: 2,
 				opacity: 1,
-				fillColor: "#3b82f6",
+				fillColor: hallOverlayColor,
 				fillOpacity: 0.3,
 			},
 			selectedStyle: {
-				color: "#2563eb",
+				color: hallOverlayColor,
 				weight: 3,
 				opacity: 1,
-				fillColor: "#3b82f6",
+				fillColor: hallOverlayColor,
 				fillOpacity: 0.3,
 			},
 		},

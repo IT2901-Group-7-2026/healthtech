@@ -1,5 +1,7 @@
+import type { Sensor } from "@/features/sensor-picker/sensors";
 import { t } from "i18next";
 import z from "zod";
+import type { UserWithStatusDto } from "./dto";
 
 export const DANGER_LEVEL_SEVERITY: Record<DangerLevel, number> = {
 	danger: 2,
@@ -50,3 +52,24 @@ export const dangerlevelStyles = {
 		text: "text-safe",
 	},
 } satisfies Record<DangerLevel, { bg: string; text: string }>;
+
+export function getHighestDangerLevel(
+	operators: Array<UserWithStatusDto>,
+	sensor: Sensor | null,
+): DangerLevel {
+	let highestLevel: DangerLevel = "safe";
+
+	operators.forEach((operator) => {
+		const level = sensor
+			? (operator.status[sensor]?.dangerLevel ?? "safe")
+			: operator.status.status;
+
+		if (
+			DANGER_LEVEL_SEVERITY[level] > DANGER_LEVEL_SEVERITY[highestLevel]
+		) {
+			highestLevel = level;
+		}
+	});
+
+	return highestLevel;
+}
