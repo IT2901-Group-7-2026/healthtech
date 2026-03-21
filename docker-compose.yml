@@ -1,0 +1,28 @@
+name: healthtech-dev
+
+services:
+  db:
+    image: timescale/timescaledb:latest-pg17
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./backend/seed:/seed
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+    name: healthtech-dev-db-data
+
+networks:
+  app-network:
+    name: healthtech-dev-network
+    driver: bridge

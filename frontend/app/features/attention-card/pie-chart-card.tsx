@@ -13,6 +13,7 @@ import type { Sensor } from "@/features/sensor-picker/sensors";
 import {
 	DANGER_LEVEL_SEVERITY,
 	DangerLevelSchema,
+	dangerlevelStyles,
 	mapDangerLevelToColor,
 } from "@/lib/danger-levels";
 import { cn } from "@/lib/utils";
@@ -83,7 +84,7 @@ export const PieChartCard = ({
 							.map((level) => (
 								<div key={level}>
 									<div
-										className={`border-l-${mapDangerLevelToColor(level)} border-l-4 pl-1.5`}
+										className={`${dangerlevelStyles[level].borderLeft} border-l-4 pl-1.5`}
 									>
 										<p className="pb-1 text-neutral-500 text-xs dark:text-zinc-400">
 											{data[level].label}

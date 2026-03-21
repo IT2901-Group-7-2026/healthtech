@@ -71,6 +71,7 @@ export default function Dust() {
 			<div className="flex flex-col gap-4 md:w-1/5">
 				<Summary
 					exposureType={sensor}
+					view={view}
 					data={calculateSummaryCounts(
 						(useDaySummary ? daySummaryData : data) ?? [],
 					)}

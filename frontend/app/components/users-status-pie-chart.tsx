@@ -1,5 +1,4 @@
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { SmileIcon } from "lucide-react";
 import { Pie, PieChart, type PieSectorShapeProps, Sector } from "recharts";
 
 const pieShape = (props: PieSectorShapeProps) => {
@@ -19,21 +18,6 @@ export interface UserStatusData {
 }
 
 export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
-	const allSafe = warning.value === 0 && danger.value === 0 && safe.value > 0;
-
-	if (allSafe) {
-		return (
-			<div className="flex size-30 items-center justify-center rounded-full bg-safe text-white">
-				<div className="flex items-center gap-2">
-					<span className="font-bold text-2xl slashed-zero tabular-nums leading-none">
-						{`${safe.value}/${safe.value}`}
-					</span>
-					<SmileIcon strokeWidth={3} className="size-6" />
-				</div>
-			</div>
-		);
-	}
-
 	return (
 		<ChartContainer config={{}} className="size-30">
 			<PieChart>
