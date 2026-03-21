@@ -45,7 +45,7 @@ export const PieChartCard = ({
 				className,
 			)}
 		>
-			<Card hoverable className={cn("gap-4", className)}>
+			<Card hoverable className={cn("gap-4 h-full", className)}>
 				<CardHeader className="text-sm">
 					<h2 className="flex items-center gap-3 text-sm uppercase tracking-wide">
 						<SensorIcon type={sensorType} size="sm" />
@@ -89,7 +89,7 @@ export const PieChartCard = ({
 						/>
 					</CardContent>
 				) : (
-					<CardContent>
+					<CardContent className="h-full">
 						{t(($) => $.foremanDashboard.overview.pieChart.noData)}
 					</CardContent>
 				)}
