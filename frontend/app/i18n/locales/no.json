@@ -178,6 +178,9 @@
     },
     "overview": {
       "title": "Foreman Oversikt",
+      "pieChart": {
+        "noData": "Ingen data funnet for denne datoen"
+      },
       "statCards": {
         "danger": {
           "description": "Operatører som har overskredet grenseverdien",
