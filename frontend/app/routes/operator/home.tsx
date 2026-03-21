@@ -10,7 +10,7 @@ import { useDate } from "@/features/date-picker/use-date";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
-import { ViewSelect } from "@/features/views/view-select";
+import { ViewPicker } from "@/features/views/view-picker";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { getLocale } from "@/i18n/locale";
@@ -34,7 +34,6 @@ export default function OperatorHome() {
 	const { t, i18n } = useTranslation();
 
 	const { view } = useView();
-	const translatedView = t(($) => $.overview[view]);
 	const { date, setDate } = useDate();
 	const { exportMultipleToPDF } = useExportPDF();
 
@@ -58,37 +57,33 @@ export default function OperatorHome() {
 
 	return (
 		<div className="flex w-full flex-col items-center md:items-start">
-			<div className="mb-4 flex w-full flex-col items-start gap-2 md:mb-0 md:flex-row md:justify-between">
-				<h1 className="p-2 text-3xl">
-					{t(($) => $.overview.title, { view: translatedView })}
-				</h1>
-				<div className="flex flex-row gap-4">
-					<Button
-						onClick={() => setDate(new Date())}
-						size={"icon"}
-						className="px-8"
-					>
-						{t(($) => $.today)}
-					</Button>
-					<Button
-						onClick={() => setDate(getPrevDay(date, view))}
-						size={"icon"}
-					>
-						{"<"}
-					</Button>
-					<ViewSelect />
-					<Button
-						onClick={() => setDate(getNextDay(date, view))}
-						size={"icon"}
-					>
-						{">"}
-					</Button>
-				</div>
+			<div className="mb-2 flex w-full flex-row justify-end gap-4">
+				<Button
+					onClick={() => setDate(new Date())}
+					size={"icon"}
+					className="px-8"
+				>
+					{t(($) => $.today)}
+				</Button>
+				<Button
+					onClick={() => setDate(getPrevDay(date, view))}
+					size={"icon"}
+				>
+					{"<"}
+				</Button>
+				<ViewPicker />
+				<Button
+					onClick={() => setDate(getNextDay(date, view))}
+					size={"icon"}
+				>
+					{">"}
+				</Button>
 			</div>
 			<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 				<div className="flex flex-col gap-4 md:w-1/5">
 					<Summary
 						exposureType="all"
+						view={view}
 						data={calculateSummaryCounts(overviewBuckets ?? [])}
 						sensorData={overviewBuckets ?? []}
 						mode="sensor"
