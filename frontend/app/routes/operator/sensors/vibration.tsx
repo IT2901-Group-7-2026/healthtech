@@ -113,7 +113,6 @@ export default function Vibration() {
 					</Card>
 				) : (
 					<div className="w-full">
-						<div className="mb-2 flex justify-end"></div>
 						<div id={chartContainerId}>
 							<ChartLineDefault
 								chartData={data}
