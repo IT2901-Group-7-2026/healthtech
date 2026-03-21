@@ -56,29 +56,7 @@ export default function OperatorHome() {
 	);
 
 	return (
-		<div className="flex w-full flex-col items-center md:items-start">
-			<div className="mb-2 flex w-full flex-row justify-end gap-4">
-				<Button
-					onClick={() => setDate(new Date())}
-					size={"icon"}
-					className="px-8"
-				>
-					{t(($) => $.today)}
-				</Button>
-				<Button
-					onClick={() => setDate(getPrevDay(date, view))}
-					size={"icon"}
-				>
-					{"<"}
-				</Button>
-				<ViewPicker />
-				<Button
-					onClick={() => setDate(getNextDay(date, view))}
-					size={"icon"}
-				>
-					{">"}
-				</Button>
-			</div>
+		<>
 			<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 				<div className="flex flex-col gap-4 md:w-1/5">
 					<Summary
@@ -206,6 +184,6 @@ export default function OperatorHome() {
 					<Noise />
 				</div>
 			</div>
-		</div>
+		</>
 	);
 }
