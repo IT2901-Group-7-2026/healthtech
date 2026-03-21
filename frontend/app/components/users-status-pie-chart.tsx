@@ -1,5 +1,4 @@
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { SmileIcon } from "lucide-react";
 import { Pie, PieChart, type PieSectorShapeProps, Sector } from "recharts";
 
 const pieShape = (props: PieSectorShapeProps) => {
@@ -19,44 +18,42 @@ export interface UserStatusData {
 }
 
 export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
-	const allSafe = warning.value === 0 && danger.value === 0 && safe.value > 0;
-
 	return (
-			<ChartContainer config={{}} className="size-30">
-				<PieChart>
-					<Pie
-						dataKey={"value"}
-						isAnimationActive={false}
-						data={[safe, warning, danger]}
-						labelLine={false}
-						shape={pieShape}
-						innerRadius="60%"
-						outerRadius="100%"
-					/>
-					<ChartTooltip
-						content={({ active, payload }) => {
-							if (!(active && payload?.length)) {
-								return null;
-							}
+		<ChartContainer config={{}} className="size-30">
+			<PieChart>
+				<Pie
+					dataKey={"value"}
+					isAnimationActive={false}
+					data={[safe, warning, danger]}
+					labelLine={false}
+					shape={pieShape}
+					innerRadius="60%"
+					outerRadius="100%"
+				/>
+				<ChartTooltip
+					content={({ active, payload }) => {
+						if (!(active && payload?.length)) {
+							return null;
+						}
 
-							const label = payload[0].name;
-							const value = payload[0].value;
+						const label = payload[0].name;
+						const value = payload[0].value;
 
-							return (
-								<div className="grid min-w-[8rem] gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
-									<div className="flex items-center justify-between gap-2">
-										<span className="text-muted-foreground">
-											{label}
-										</span>
-										<span className="font-medium font-mono text-foreground tabular-nums">
-											{value}
-										</span>
-									</div>
+						return (
+							<div className="grid min-w-[8rem] gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
+								<div className="flex items-center justify-between gap-2">
+									<span className="text-muted-foreground">
+										{label}
+									</span>
+									<span className="font-medium font-mono text-foreground tabular-nums">
+										{value}
+									</span>
 								</div>
-							);
-						}}
-					/>
-				</PieChart>
-			</ChartContainer>
+							</div>
+						);
+					}}
+				/>
+			</PieChart>
+		</ChartContainer>
 	);
 }
