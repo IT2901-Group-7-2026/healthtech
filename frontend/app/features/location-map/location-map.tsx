@@ -59,7 +59,7 @@ export function LocationMap({
 	// To avoid combining danger levels from multiple sensors when "all" is selected, we use a default color
 	const hallOverlayColor =
 		sensor === "all"
-			? "#2563eb"
+			? "var(--color-blue-600)"
 			: `var(--${mapDangerLevelToColor(highestDangerLevel)})`;
 
 	const markerColor =
