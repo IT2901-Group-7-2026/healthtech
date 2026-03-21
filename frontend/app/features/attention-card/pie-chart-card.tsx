@@ -64,7 +64,7 @@ export const PieChartCard = ({
 							.map((level) => (
 								<div key={level}>
 									<div
-										className={`${dangerlevelStyles[level].border} border-l-4 pl-1.5`}
+										className={`${dangerlevelStyles[level].borderLeft} border-l-4 pl-1.5`}
 									>
 										<div>
 											<p className="pb-1 text-neutral-500 text-xs dark:text-zinc-400">
