@@ -160,7 +160,6 @@ export default function Noise() {
 					</Card>
 				) : (
 					<div className="w-full">
-						<div className="mb-2 flex justify-end"></div>
 						<div id={chartContainerId}>
 							<AggregationTabs
 								aggregation={aggregation}
