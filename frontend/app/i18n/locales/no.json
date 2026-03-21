@@ -178,7 +178,7 @@
     },
     "overview": {
       "title": "Foreman Oversikt",
-      "pieChart" : {
+      "pieChart": {
         "noData": "Ingen data funnet for denne datoen"
       },
       "statCards": {

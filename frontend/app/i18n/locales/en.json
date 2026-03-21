@@ -178,8 +178,8 @@
     },
     "overview": {
       "title": "Foreman Overview",
-      "pieChart" : {
-        "noData" :"No data found for this date"
+      "pieChart": {
+        "noData": "No data found for this date"
       },
       "statCards": {
         "danger": {

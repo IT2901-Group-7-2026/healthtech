@@ -45,7 +45,7 @@ export const PieChartCard = ({
 				className,
 			)}
 		>
-			<Card hoverable className={cn("gap-4 h-full", className)}>
+			<Card hoverable className={cn("h-full gap-4", className)}>
 				<CardHeader className="text-sm">
 					<h2 className="flex items-center gap-3 text-sm uppercase tracking-wide">
 						<SensorIcon type={sensorType} size="sm" />
@@ -60,7 +60,9 @@ export const PieChartCard = ({
 						<div className="flex w-1/2 flex-col gap-2 text-xs">
 							{DangerLevelSchema.options
 								.sort(
-									(a, b) => DANGER_LEVEL_SEVERITY[b] - DANGER_LEVEL_SEVERITY[a],
+									(a, b) =>
+										DANGER_LEVEL_SEVERITY[b] -
+										DANGER_LEVEL_SEVERITY[a],
 								)
 								.map((level) => (
 									<div key={level}>
