@@ -15,6 +15,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export interface HallOperatorListProps {
+	sensor: Sensor | "all";
 	operators: Array<UserWithStatusDto>;
 	hallName: string;
 	selectedHall: string | null;
@@ -22,6 +23,7 @@ export interface HallOperatorListProps {
 }
 
 export const HallOperatorList = ({
+	sensor,
 	operators,
 	hallName,
 	selectedHall,
@@ -69,13 +71,20 @@ export const HallOperatorList = ({
 										<TableCell>
 											{operator.username}
 										</TableCell>
-										{sensors.map((sensor) => (
+										{sensor === "all" ? (
+											sensors.map((s) => (
+												<HallOperatorListItem
+													key={s}
+													operator={operator}
+													sensor={s}
+												/>
+											))
+										) : (
 											<HallOperatorListItem
-												key={sensor}
 												operator={operator}
 												sensor={sensor}
 											/>
-										))}
+										)}
 									</TableRow>
 								);
 							})
