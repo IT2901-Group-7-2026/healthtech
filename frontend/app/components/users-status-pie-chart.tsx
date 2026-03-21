@@ -23,43 +23,43 @@ export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
 
 	return (
 		<div className="relative size-30">
-		<ChartContainer config={{}} className="size-30">
-			<PieChart>
-				<Pie
-					dataKey={"value"}
-					isAnimationActive={false}
-					data={[safe, warning, danger]}
-					labelLine={false}
-					shape={pieShape}
-					innerRadius="60%"
-					outerRadius="100%"
-				/>
-				<ChartTooltip
-					content={({ active, payload }) => {
-						if (!(active && payload?.length)) {
-							return null;
-						}
+			<ChartContainer config={{}} className="size-30">
+				<PieChart>
+					<Pie
+						dataKey={"value"}
+						isAnimationActive={false}
+						data={[safe, warning, danger]}
+						labelLine={false}
+						shape={pieShape}
+						innerRadius="60%"
+						outerRadius="100%"
+					/>
+					<ChartTooltip
+						content={({ active, payload }) => {
+							if (!(active && payload?.length)) {
+								return null;
+							}
 
-						const label = payload[0].name;
-						const value = payload[0].value;
+							const label = payload[0].name;
+							const value = payload[0].value;
 
-						return (
-							<div className="grid min-w-[8rem] gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
-								<div className="flex items-center justify-between gap-2">
-									<span className="text-muted-foreground">
-										{label}
-									</span>
-									<span className="font-medium font-mono text-foreground tabular-nums">
-										{value}
-									</span>
+							return (
+								<div className="grid min-w-[8rem] gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
+									<div className="flex items-center justify-between gap-2">
+										<span className="text-muted-foreground">
+											{label}
+										</span>
+										<span className="font-medium font-mono text-foreground tabular-nums">
+											{value}
+										</span>
+									</div>
 								</div>
-							</div>
-						);
-					}}
-				/>
-			</PieChart>
-		</ChartContainer>
-				{allSafe ? (
+							);
+						}}
+					/>
+				</PieChart>
+			</ChartContainer>
+			{allSafe ? (
 				<div className="pointer-events-none absolute inset-0 flex items-center justify-center">
 					<SmileIcon strokeWidth={3} className="size-6 text-safe" />
 				</div>
