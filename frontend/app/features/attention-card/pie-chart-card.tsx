@@ -39,8 +39,8 @@ export const PieChartCard = ({
 	const { t } = useTranslation();
 
 	if (
-		data.danger.value === 0 ||
-		data.warning.value === 0 ||
+		data.danger.value === 0 &&
+		data.warning.value === 0 &&
 		data.safe.value === 0
 	) {
 		return (
