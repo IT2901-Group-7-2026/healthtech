@@ -7,6 +7,7 @@ import {
 	ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
+import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
@@ -69,6 +70,7 @@ export function ChartLineDefault({
 	const { date: selectedDay } = useDate();
 	const { t } = useTranslation();
 	const id = useId();
+	const formatDate = useFormatDate();
 
 	const { warning, danger, peakDanger } = thresholds[sensor];
 	const dangerThreshold = usePeakData && peakDanger ? peakDanger : danger;
@@ -113,8 +115,7 @@ export function ChartLineDefault({
 		return date.getTime();
 	});
 
-	const formatTime = (time: number) =>
-		new Date(time).getUTCHours().toString().padStart(2, "0");
+	const formatTime = (time: number) => formatDate(new Date(time), "HH:mm");
 
 	const maxDataDangerLevel = getDangerLevel(maxData, usePeakData);
 

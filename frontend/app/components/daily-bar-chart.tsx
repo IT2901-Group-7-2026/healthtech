@@ -5,6 +5,7 @@ import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { sensors } from "@/features/sensor-picker/sensors";
+import { useFormatDate } from "@/hooks/use-format-date";
 import type { OverviewChartRow } from "@/lib/time-bucket-types";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -48,6 +49,7 @@ export function DailyBarChart({
 	const { t } = useTranslation();
 	const { date } = useDate();
 	const navigate = useNavigate();
+	const formatDate = useFormatDate();
 
 	const totalHours = endHour - startHour + 1;
 	const hours = Array.from({ length: totalHours }, (_, i) => startHour + i);
@@ -72,6 +74,11 @@ export function DailyBarChart({
 		(_, i) => i * HOUR_BLOCK_SIZE,
 	);
 
+	const formatTime = (value: number) => {
+		const hour = startHour + value / HOUR_BLOCK_SIZE;
+		return formatDate(new Date().setHours(hour, 0, 0, 0), "HH:mm");
+	};
+
 	return (
 		<Card className="w-full">
 			<CardHeader className="flex flex-row items-center justify-between">
@@ -86,9 +93,7 @@ export function DailyBarChart({
 							type="number"
 							domain={[0, domainMax]}
 							ticks={ticks}
-							tickFormatter={(value) =>
-								`${startHour + value / HOUR_BLOCK_SIZE}:00`
-							}
+							tickFormatter={formatTime}
 						/>
 						<YAxis
 							dataKey="sensor"
