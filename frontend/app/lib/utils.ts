@@ -145,14 +145,22 @@ export function downsampleSensorData(
 }
 
 export function shorthandName(name: string): string {
-	if (!name) return "";
+	if (!name) {
+		return "";
+	}
 
 	const names = name.trim().split(/\s+/);
 
-	if (names.length <= 1) return name;
+	if (names.length <= 1) {
+		return name;
+	}
 
 	const firstInitial = names[0][0].toUpperCase();
 	const lastname = names[names.length - 1];
 
 	return `${firstInitial}. ${lastname}`;
+}
+
+export function capitalize(str: string): string {
+	return str.charAt(0).toUpperCase() + str.slice(1);
 }
