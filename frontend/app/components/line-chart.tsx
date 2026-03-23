@@ -120,8 +120,8 @@ export function ChartLineDefault({
 
 	return (
 		<Card className="w-full">
-			<CardHeader className="flex flex-row items-center justify-between">
-				<CardTitle>{chartTitle}</CardTitle>
+			<CardHeader className="mb-4 flex flex-row items-center justify-between">
+				<CardTitle className="text-base">{chartTitle}</CardTitle>
 				{headerRight}
 			</CardHeader>
 			<CardContent>
@@ -143,22 +143,30 @@ export function ChartLineDefault({
 							tickLine={false}
 							axisLine={false}
 							tickMargin={2}
+							tick={{
+								className: "text-base",
+							}}
 							label={{
 								value: t(($) => $.time),
 								position: "insideBottom",
 								offset: 0,
+								className: "text-base",
 							}}
 						/>
 						<YAxis
 							dataKey="value"
 							tickLine={false}
 							axisLine={false}
+							tick={{
+								className: "text-base",
+							}}
 							domain={[minY, maxY]}
 							label={{
 								value: unit,
 								position: "inside",
-								offset: -5,
+								dx: -32,
 								angle: -90,
+								className: "text-lg mr-4",
 							}}
 						/>
 						<ChartTooltip
@@ -293,9 +301,11 @@ export function ThresholdLine({
 				value: lineLabel,
 				position: "left",
 				fill: color,
-				offset: 10,
-				dy: -12,
+				offset: 64,
+				dy: -20,
 				fontSize: "75%",
+				textAnchor: "start",
+				className: "text-base",
 			}}
 		/>
 	);

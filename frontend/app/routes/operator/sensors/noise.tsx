@@ -251,7 +251,7 @@ const AggregationTabs = ({
 
 	return (
 		<span className="relative w-full">
-			<div className="absolute top-2 left-2 rounded border">
+			<div className="absolute -top-11 rounded border">
 				<Tabs
 					value={aggregation}
 					onValueChange={(value) =>
