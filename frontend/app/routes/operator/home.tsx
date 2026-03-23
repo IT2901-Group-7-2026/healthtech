@@ -10,7 +10,6 @@ import { useDate } from "@/features/date-picker/use-date";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
-import { ViewPicker } from "@/features/views/view-picker";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { getLocale } from "@/i18n/locale";
@@ -21,7 +20,6 @@ import {
 	mapOverviewBucketsToChartRows,
 	mapOverviewDataToTimeBucketStatuses,
 } from "@/lib/time-bucket-utils";
-import { getNextDay, getPrevDay } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -34,7 +32,7 @@ export default function OperatorHome() {
 	const { t, i18n } = useTranslation();
 
 	const { view } = useView();
-	const { date, setDate } = useDate();
+	const { date } = useDate();
 	const { exportMultipleToPDF } = useExportPDF();
 
 	const pdfDustChartContainerId = useId();
