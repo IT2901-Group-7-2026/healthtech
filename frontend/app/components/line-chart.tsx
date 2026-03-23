@@ -121,7 +121,7 @@ export function ChartLineDefault({
 	return (
 		<Card className="w-full">
 			<CardHeader className="mb-4 flex flex-row items-center justify-between">
-				<CardTitle className="text-base">{chartTitle}</CardTitle>
+				<CardTitle>{chartTitle}</CardTitle>
 				{headerRight}
 			</CardHeader>
 			<CardContent>
@@ -145,12 +145,14 @@ export function ChartLineDefault({
 							tickMargin={2}
 							tick={{
 								className: "text-base",
+								fill: "var(--color-muted-foreground)",
 							}}
 							label={{
 								value: t(($) => $.time),
 								position: "insideBottom",
 								offset: 0,
 								className: "text-base",
+								fill: "var(--color-muted-foreground)",
 							}}
 						/>
 						<YAxis
@@ -159,6 +161,7 @@ export function ChartLineDefault({
 							axisLine={false}
 							tick={{
 								className: "text-base",
+								fill: "var(--color-muted-foreground)",
 							}}
 							domain={[minY, maxY]}
 							label={{
@@ -167,6 +170,7 @@ export function ChartLineDefault({
 								dx: -32,
 								angle: -90,
 								className: "text-lg mr-4",
+								fill: "var(--color-muted-foreground)",
 							}}
 						/>
 						<ChartTooltip
