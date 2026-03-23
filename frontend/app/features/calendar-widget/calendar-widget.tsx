@@ -80,7 +80,7 @@ export function CalendarWidget({
 
 	return (
 		<>
-			<Card className="w-full">
+			<Card className="mr-auto w-full max-w-2xl">
 				<Calendar
 					locale={getLocale(i18n.language)}
 					month={selectedDay}
@@ -102,14 +102,16 @@ export function CalendarWidget({
 						warning: warningDays,
 						danger: dangerDays,
 					}}
-					className="w-full bg-transparent font-bold text-foreground [--cell-size:--spacing(6)] sm:[--cell-size:--spacing(10)] md:[--cell-size:--spacing(12)]"
+					className="w-full bg-transparent font-bold text-foreground [--cell-size:2.25rem] sm:[--cell-size:2.75rem] md:[--cell-size:3rem]"
+					classNames={{
+						week: "mt-3 gap-3 flex w-full",
+					}}
 					captionLayout="label"
 					buttonVariant="default"
 					mode="single"
 				/>
 			</Card>
 
-			{/* interaction popup window */}
 			{popupData.day && (
 				<CalendarPopup
 					title={popupData.day.toLocaleDateString(i18n.language, {
@@ -179,7 +181,7 @@ function CustomDay({
 			type="button"
 			disabled={disabled}
 			className={cn(
-				"h-11/12 w-11/12 rounded-lg",
+				"h-full w-full rounded-lg",
 				!disabled && "cursor-pointer hover:brightness-85",
 				bgClassname,
 				className,
