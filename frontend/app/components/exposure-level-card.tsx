@@ -30,7 +30,7 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 		<Link
 			//TODO: change routing to the subs individual page
 			to={`/`}
-			className="group h-full w-full flex-1 basis-64 rounded-2xl"
+			className="group h-fit w-full flex-1 basis-64 rounded-2xl"
 		>
 			<Card hoverable>
 				<CardHeader>
