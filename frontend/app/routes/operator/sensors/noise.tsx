@@ -81,11 +81,6 @@ export default function Noise() {
 		},
 	);
 
-	// Tighten vertical padding for noise charts so graph fills more of the card
-	const { minY, maxY } = computeYAxisRange(data ?? [], {
-		step: usePeakAggregation ? 130 : undefined,
-	});
-
 	if (isLoading) {
 		return (
 			<NoisePageLayout
@@ -98,6 +93,22 @@ export default function Noise() {
 				</Card>
 			</NoisePageLayout>
 		);
+	}
+
+	const maxValue = data
+		? Math.max(
+				...data.map((d) =>
+					usePeakAggregation && d.peakValue ? d.peakValue : d.value,
+				),
+			)
+		: 0;
+
+	const minY = 0;
+	let maxY = 150;
+	if (maxValue > maxY) {
+		maxY = computeYAxisRange(data ?? [], {
+			step: usePeakAggregation ? 130 : undefined,
+		}).maxY;
 	}
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(
