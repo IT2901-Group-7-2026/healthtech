@@ -10,10 +10,10 @@ import { Outlet, useLocation } from "react-router";
 
 function Title({ sensor }: { sensor: Sensor }) {
 	return (
-		<h1 className="flex shrink-0 items-center gap-3 py-2 text-3xl">
+		<div className="flex shrink-0 items-center gap-3 py-2">
 			<SensorIcon type={sensor} size="lg" />
-			{t(($) => $[sensor])}{" "}
-		</h1>
+			<h1 className="text-3xl">{t(($) => $[sensor])} </h1>
+		</div>
 	);
 }
 

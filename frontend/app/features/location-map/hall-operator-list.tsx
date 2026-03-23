@@ -9,7 +9,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { UserWithStatusDto } from "@/lib/dto";
 import { type Sensor, sensors } from "@/lib/sensors";
-import { cn } from "@/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -111,7 +110,7 @@ const HallOperatorListItem = ({
 				type={sensor}
 				size="sm"
 				dangerLevel={dangerLevel ?? "safe"}
-				className={cn("w-fit")}
+				className="w-fit"
 			/>
 		</TableCell>
 	);

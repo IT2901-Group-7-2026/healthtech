@@ -12,16 +12,10 @@ import { EarIcon } from "lucide-react";
 export type IconVariant = "dust" | "noise" | "vibration";
 
 // TODO: The icons shouldn't have titles we can't change when using SensorIcon. Vibration (EarIcon) also doesn't have a title
-const iconConfig: Record<Sensor, { icon: IconType }> = {
-	noise: {
-		icon: EarIcon,
-	},
-	dust: {
-		icon: DustIcon,
-	},
-	vibration: {
-		icon: VibrationIcon,
-	},
+const iconConfig: Record<Sensor, IconType> = {
+	noise: EarIcon,
+	dust: DustIcon,
+	vibration: VibrationIcon,
 };
 
 type SensorIconSize = "sm" | "md" | "lg" | "xl";
@@ -49,7 +43,7 @@ export const SensorIcon = ({
 	dangerLevel,
 	className,
 }: SensorIconProps) => {
-	const Icon = iconConfig[type].icon;
+	const Icon = iconConfig[type];
 	const resolvedIconSize = size ?? "md";
 	const dangerLevelIconClasses = dangerLevel
 		? cn(
