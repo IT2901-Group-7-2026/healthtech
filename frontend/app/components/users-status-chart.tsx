@@ -114,6 +114,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 						margin={{
 							bottom: 32,
 							top: 24,
+							left: 12,
 						}}
 						maxBarSize={48}
 					>
@@ -134,6 +135,12 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 								),
 								position: "insideBottom",
 								offset: -24,
+								className: "text-base",
+								fill: "var(--color-muted-foreground)",
+							}}
+							tick={{
+								className: "text-base",
+								fill: "var(--color-muted-foreground)",
 							}}
 						/>
 						<YAxis
@@ -141,8 +148,10 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 							dataKey="name"
 							tickLine={false}
 							axisLine={false}
-							width={90}
 							tickFormatter={(v) => `${v}`}
+							tick={{
+								fill: "var(--color-muted-foreground)",
+							}}
 						/>
 						<ReferenceLine
 							x={warningThresholdLine}
@@ -154,6 +163,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 								position: "insideTopRight",
 								dy: -16,
 								fill: "var(--warning)",
+								className: "text-base",
 							}}
 						/>
 						<ReferenceLine
@@ -166,6 +176,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 								position: "insideTopLeft",
 								dy: -16,
 								fill: "var(--danger)",
+								className: "text-base",
 							}}
 						/>
 						<ChartTooltip
