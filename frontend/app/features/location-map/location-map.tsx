@@ -1,11 +1,19 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+	dangerlevelStyles,
+	getHighestDangerLevel,
+	mapDangerLevelToColor,
+} from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import L, { type LatLngBoundsExpression, type PathOptions } from "leaflet";
+import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { Fragment, useRef, useState } from "react";
 import { renderToString } from "react-dom/server";
 import { useTranslation } from "react-i18next";
 import { ImageOverlay, MapContainer, Marker, Polygon } from "react-leaflet";
+import { type Sensor, sensors } from "../sensor-picker/sensors";
 import {
 	HallOperatorList,
 	HallOperatorListSkeleton,
@@ -38,6 +46,27 @@ export function LocationMap({
 	const { t } = useTranslation();
 	const mapRef = useRef<L.Map | null>(null);
 
+	const [sensor, setSensor] = useQueryState(
+		"mapSensor",
+		parseAsStringLiteral(["all", ...sensors]).withDefault("all"),
+	);
+
+	const highestDangerLevel = getHighestDangerLevel(
+		operators,
+		sensor === "all" ? null : sensor,
+	);
+
+	// To avoid combining danger levels from multiple sensors when "all" is selected, we use a default color
+	const hallOverlayColor =
+		sensor === "all"
+			? "var(--color-blue-600)"
+			: `var(--${mapDangerLevelToColor(highestDangerLevel)})`;
+
+	const markerColor =
+		sensor === "all"
+			? "bg-teal-700"
+			: dangerlevelStyles[highestDangerLevel].bg;
+
 	// TODO: Data for prototype
 	const halls: Array<Hall> = [
 		{
@@ -50,24 +79,24 @@ export function LocationMap({
 				xyToyx(170, 70),
 			],
 			baseStyle: {
-				color: "#2563eb",
+				color: hallOverlayColor,
 				weight: 2,
 				opacity: 1,
-				fillColor: "#3b82f6",
+				fillColor: hallOverlayColor,
 				fillOpacity: 0.2,
 			},
 			hoverStyle: {
-				color: "#2563eb",
+				color: hallOverlayColor,
 				weight: 2,
 				opacity: 1,
-				fillColor: "#3b82f6",
+				fillColor: hallOverlayColor,
 				fillOpacity: 0.3,
 			},
 			selectedStyle: {
-				color: "#2563eb",
+				color: hallOverlayColor,
 				weight: 3,
 				opacity: 1,
-				fillColor: "#3b82f6",
+				fillColor: hallOverlayColor,
 				fillOpacity: 0.3,
 			},
 		},
@@ -125,11 +154,7 @@ export function LocationMap({
 					{t(($) => $.foremanDashboard.siteMap.title)}
 				</h2>
 			</CardHeader>
-			<CardContent
-				style={{
-					aspectRatio: `${imageSize.width} / ${imageSize.height}`,
-				}}
-			>
+			<CardContent>
 				<div className="flex h-full w-full flex-row gap-4">
 					<div className="flex w-2/6 flex-col gap-1 border-r-2 border-solid pr-2">
 						{isLoading ? (
@@ -143,6 +168,7 @@ export function LocationMap({
 							halls.map((hall) => (
 								<HallOperatorList
 									key={hall.name}
+									sensor={sensor}
 									operators={hall.operators}
 									hallName={hall.name}
 									selectedHall={selectedHallName}
@@ -152,74 +178,102 @@ export function LocationMap({
 						)}
 					</div>
 					<div className="w-full">
-						<MapContainer
-							ref={mapRef}
-							crs={L.CRS.Simple}
-							bounds={bounds}
-							maxBounds={bounds}
-							maxBoundsViscosity={1.0}
-							minZoom={-1}
-							maxZoom={2}
-							zoomSnap={0}
+						<Tabs
+							value={sensor}
+							onValueChange={(value) =>
+								setSensor(value as Sensor | "all")
+							}
+							className="mb-4"
+						>
+							<TabsList variant="line">
+								<TabsTrigger value="all">
+									{t(($) => $.allSensors)}
+								</TabsTrigger>
+								{sensors.map((s) => (
+									<TabsTrigger key={s} value={s}>
+										{t(($) => $[s])}
+									</TabsTrigger>
+								))}
+							</TabsList>
+						</Tabs>
+						<div
 							style={{
-								height: "100%",
-								width: "100%",
-								background: "var(--card-background)",
-								userSelect: "none",
+								aspectRatio: `${imageSize.width} / ${imageSize.height}`,
 							}}
 						>
-							<ImageOverlay url={imageUrl} bounds={bounds} />
-							{halls.map((hall) => (
-								<Fragment key={hall.name}>
-									<Polygon
-										pathOptions={
-											selectedHallName === hall.name
-												? hall.selectedStyle
-												: hall.baseStyle
-										}
-										positions={hall.positions}
-										eventHandlers={{
-											click: () =>
-												hallOverlayOnClick(hall.name),
-											mouseover: (e) => {
-												if (
-													selectedHallName !==
-													hall.name
-												) {
-													e.target.setStyle(
-														hall.hoverStyle,
-													);
-												}
-											},
-											mouseout: (e) => {
-												if (
-													selectedHallName !==
-													hall.name
-												) {
-													e.target.setStyle(
-														hall.baseStyle,
-													);
-												}
-											},
-										}}
-									/>
-									<Marker
-										position={getCenterPoint(
-											hall.positions,
-										)}
-										icon={createUsersIcon(
-											hall.operators.length,
-											"bg-teal-700",
-											isLoading,
-										)}
-										eventHandlers={{
-											click: () =>
-												hallOverlayOnClick(hall.name),
-										}}
-									/>
-								</Fragment>
-							))}
-						</MapContainer>
+							<MapContainer
+								ref={mapRef}
+								crs={L.CRS.Simple}
+								bounds={bounds}
+								maxBounds={bounds}
+								maxBoundsViscosity={1.0}
+								minZoom={-1}
+								maxZoom={2}
+								zoomSnap={0}
+								style={{
+									height: "100%",
+									width: "100%",
+									background: "var(--card-background)",
+									userSelect: "none",
+								}}
+							>
+								<ImageOverlay url={imageUrl} bounds={bounds} />
+								{halls.map((hall) => (
+									<Fragment key={hall.name}>
+										<Polygon
+											pathOptions={
+												selectedHallName === hall.name
+													? hall.selectedStyle
+													: hall.baseStyle
+											}
+											positions={hall.positions}
+											eventHandlers={{
+												click: () =>
+													hallOverlayOnClick(
+														hall.name,
+													),
+												mouseover: (e) => {
+													if (
+														selectedHallName !==
+														hall.name
+													) {
+														e.target.setStyle(
+															hall.hoverStyle,
+														);
+													}
+												},
+												mouseout: (e) => {
+													if (
+														selectedHallName !==
+														hall.name
+													) {
+														e.target.setStyle(
+															hall.baseStyle,
+														);
+													}
+												},
+											}}
+										/>
+										<Marker
+											position={getCenterPoint(
+												hall.positions,
+											)}
+											icon={createUsersIcon(
+												hall.operators.length,
+												markerColor,
+												isLoading,
+											)}
+											eventHandlers={{
+												click: () =>
+													hallOverlayOnClick(
+														hall.name,
+													),
+											}}
+										/>
+									</Fragment>
+								))}
+							</MapContainer>
+						</div>
 					</div>
 				</div>
 			</CardContent>

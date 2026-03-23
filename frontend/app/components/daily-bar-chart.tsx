@@ -82,7 +82,7 @@ export function DailyBarChart({
 	return (
 		<Card className="w-full">
 			<CardHeader className="flex flex-row items-center justify-between">
-				<CardTitle>{chartTitle}</CardTitle>
+				<CardTitle className="text-base">{chartTitle}</CardTitle>
 				{headerRight}
 			</CardHeader>
 
@@ -94,6 +94,11 @@ export function DailyBarChart({
 							domain={[0, domainMax]}
 							ticks={ticks}
 							tickFormatter={formatTime}
+							tick={{
+								className: "text-base",
+								fill: "var(--color-muted-foreground)",
+								dy: 4,
+							}}
 						/>
 						<YAxis
 							dataKey="sensor"
@@ -104,6 +109,10 @@ export function DailyBarChart({
 							tickFormatter={(value) =>
 								t(($) => $.overview[value as Sensor])
 							}
+							tick={{
+								className: "text-base",
+								fill: "var(--color-muted-foreground)",
+							}}
 						/>
 
 						{hourKeys.map((key) => (

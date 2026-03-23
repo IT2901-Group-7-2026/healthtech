@@ -63,7 +63,13 @@ export default function Vibration() {
 		},
 	);
 
-	const { minY, maxY } = computeYAxisRange(data ?? []);
+	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
+
+	const minY = 0;
+	let maxY = 450;
+	if (maxValue > maxY) {
+		maxY = computeYAxisRange(data ?? []).maxY;
+	}
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(
 		data ?? [],
