@@ -1,21 +1,9 @@
-import {
-	CircleDashedIcon,
-	Frown,
-	FrownIcon,
-	Meh,
-	MehIcon,
-	Smile,
-	SmileIcon,
-} from "lucide-react";
-import type { ReactNode } from "react";
-import { useTranslation } from "react-i18next";
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
-	compareDangerLevels,
 	type DangerLevel,
 	DangerLevels,
 	isHigherSeverity,
@@ -23,6 +11,9 @@ import {
 import type { SummaryCounts, TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/ui/card";
+import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
+import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 import { SensorIcon } from "./sensor-icon.js";
 
 type ExposureType = Sensor | "all";
@@ -37,6 +28,7 @@ type SummaryProps = {
 
 type SummaryLabel = Record<DangerLevel, string>;
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: bruh
 export function Summary({
 	exposureType,
 	data,
@@ -109,19 +101,29 @@ export function Summary({
 			<CardContent className="exposures-wrapper flex flex-row justify-center gap-4 md:flex-col md:gap-0">
 				<SummaryRow
 					count={data.safeCount}
-					label={isMobile ? defaultLabels.safe : summaryLabels.safeLabel}
+					label={
+						isMobile ? defaultLabels.safe : summaryLabels.safeLabel
+					}
 					hoverTitle={DangerLevels.safe.label}
 					colorClass={safeColor}
 				/>
 				<SummaryRow
 					count={data.warningCount}
-					label={isMobile ? defaultLabels.warning : summaryLabels.warningLabel}
+					label={
+						isMobile
+							? defaultLabels.warning
+							: summaryLabels.warningLabel
+					}
 					hoverTitle={DangerLevels.warning.label}
 					colorClass={warningColor}
 				/>
 				<SummaryRow
 					count={data.dangerCount}
-					label={isMobile ? defaultLabels.danger : summaryLabels.dangerLabel}
+					label={
+						isMobile
+							? defaultLabels.danger
+							: summaryLabels.dangerLabel
+					}
 					hoverTitle={DangerLevels.danger.label}
 					colorClass={dangerColor}
 				/>
@@ -147,8 +149,11 @@ export function Summary({
 						const Emoji = getEmoji(level);
 
 						return (
-							<div key={sensor} className="flex justify-between items-center">
-								<div className="flex grow items-center gap-3 min-w-0">
+							<div
+								key={sensor}
+								className="flex items-center justify-between"
+							>
+								<div className="flex min-w-0 grow items-center gap-3">
 									<SensorIcon
 										type={sensor}
 										size="sm"
@@ -156,16 +161,16 @@ export function Summary({
 										className="shrink-0"
 									/>
 
-									<div className="flex flex-col min-w-0 grow">
+									<div className="flex min-w-0 grow flex-col">
 										<p
-											className="text-sm text-foreground truncate"
+											className="truncate text-foreground text-sm"
 											title={label}
 										>
 											{label}
 										</p>
 
 										<p
-											className="text-xs truncate"
+											className="truncate text-xs"
 											style={{ color }}
 											title={description}
 										>
@@ -223,13 +228,15 @@ const SummaryRow = ({
 		>
 			{count}
 		</p>
-		<p className={cn("ml-1 text-xs md:ml-2 md:text-sm", colorClass)}>{label}</p>
+		<p className={cn("ml-1 text-xs md:ml-2 md:text-sm", colorClass)}>
+			{label}
+		</p>
 	</div>
 );
 
 function getSensorSummaryFromOverview(
 	buckets: Array<TimeBucketStatus>,
-): [Sensor, DangerLevel | null][] {
+): Array<[Sensor, DangerLevel | null]> {
 	const result: Record<Sensor, DangerLevel | null> = {
 		dust: null,
 		noise: null,
@@ -251,7 +258,10 @@ function getSensorSummaryFromOverview(
 				return;
 			}
 
-			const isNewMoreSevere = isHigherSeverity(currentSeverity, newSeverity);
+			const isNewMoreSevere = isHigherSeverity(
+				currentSeverity,
+				newSeverity,
+			);
 
 			if (isNewMoreSevere) {
 				result[currentSensor] = newSeverity;
@@ -259,7 +269,7 @@ function getSensorSummaryFromOverview(
 		});
 	}
 
-	return Object.entries(result) as [Sensor, DangerLevel | null][];
+	return Object.entries(result) as Array<[Sensor, DangerLevel | null]>;
 }
 
 function getEmoji(dangerLevel: DangerLevel | null) {

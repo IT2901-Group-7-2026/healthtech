@@ -1,6 +1,6 @@
+import type { Sensor } from "@/features/sensor-picker/sensors";
 import { t } from "i18next";
 import z from "zod";
-import type { Sensor } from "@/features/sensor-picker/sensors";
 import type { UserWithStatusDto } from "./dto";
 
 export const DANGER_LEVEL_SEVERITY: Record<DangerLevel, number> = {
@@ -36,9 +36,7 @@ export const compareDangerLevels = (
 export const isHigherSeverity = (
 	a: DangerLevel | null,
 	b: DangerLevel | null,
-): boolean => {
-	return compareDangerLevels(a, b) < 0;
-};
+): boolean => compareDangerLevels(a, b) < 0;
 
 type DangerLevelInfo = {
 	label: string;
@@ -106,7 +104,9 @@ export function getHighestDangerLevel(
 			? (operator.status[sensor]?.dangerLevel ?? "safe")
 			: operator.status.status;
 
-		if (DANGER_LEVEL_SEVERITY[level] > DANGER_LEVEL_SEVERITY[highestLevel]) {
+		if (
+			DANGER_LEVEL_SEVERITY[level] > DANGER_LEVEL_SEVERITY[highestLevel]
+		) {
 			highestLevel = level;
 		}
 	});
