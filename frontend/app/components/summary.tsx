@@ -137,37 +137,39 @@ export function Summary({
 								? `var(--${DangerLevels[level].color})`
 								: undefined;
 
-						const label = t(($) =>
+						const description = t(($) =>
 							level
 								? $.exposure_summary[`${level}Smiley` as const]
 								: $.exposure_summary.noData,
 						);
 
-						const Emoji =
-							level === "danger"
-								? FrownIcon
-								: level === "warning"
-									? MehIcon
-									: level === "safe"
-										? SmileIcon
-										: CircleDashedIcon;
+						const label = t(($) => $[sensor]);
+						const Emoji = getEmoji(level);
 
 						return (
 							<div key={sensor} className="flex justify-between items-center">
-								<div className="flex grow items-center gap-3">
+								<div className="flex grow items-center gap-3 min-w-0">
 									<SensorIcon
 										type={sensor}
 										size="sm"
 										dangerLevel={level ?? undefined}
+										className="shrink-0"
 									/>
 
-									<div className="flex flex-col">
-										<p className="text-sm text-foreground">
-											{t(($) => $[sensor])}
+									<div className="flex flex-col min-w-0 grow">
+										<p
+											className="text-sm text-foreground truncate"
+											title={label}
+										>
+											{label}
 										</p>
 
-										<p className="text-xs" style={{ color }}>
-											{label}
+										<p
+											className="text-xs truncate"
+											style={{ color }}
+											title={description}
+										>
+											{description}
 										</p>
 									</div>
 								</div>
@@ -258,4 +260,20 @@ function getSensorSummaryFromOverview(
 	}
 
 	return Object.entries(result) as [Sensor, DangerLevel | null][];
+}
+
+function getEmoji(dangerLevel: DangerLevel | null) {
+	if (dangerLevel === "danger") {
+		return FrownIcon;
+	}
+
+	if (dangerLevel === "warning") {
+		return MehIcon;
+	}
+
+	if (dangerLevel === "safe") {
+		return SmileIcon;
+	}
+
+	return CircleDashedIcon;
 }
