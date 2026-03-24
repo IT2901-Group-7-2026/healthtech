@@ -7,10 +7,8 @@ import {
 } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { dangerlevelStyles } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import { type Sensor, sensors } from "@/lib/sensors";
-import { cn } from "@/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -120,10 +118,8 @@ const HallOperatorListItem = ({
 			<SensorIcon
 				type={sensor}
 				size="sm"
-				className={cn(
-					"w-fit",
-					dangerlevelStyles[dangerLevel ?? "safe"].bg,
-				)}
+				dangerLevel={dangerLevel ?? "safe"}
+				className="w-fit"
 			/>
 		</TableCell>
 	);

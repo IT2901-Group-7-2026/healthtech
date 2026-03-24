@@ -41,22 +41,30 @@ export const mapDangerLevelToColor = (dangerLevel: DangerLevel): string =>
 export const dangerlevelStyles = {
 	danger: {
 		bg: "bg-danger",
-		text: "text-danger",
-		borderLeft: "border-l-danger",
+		bgSubtle: "bg-danger-subtle",
+		text: "text-danger-text",
+		border: "border-danger-border",
 	},
 	warning: {
 		bg: "bg-warning",
-		text: "text-warning",
-		borderLeft: "border-l-warning",
+		bgSubtle: "bg-warning-subtle",
+		text: "text-warning-text",
+		border: "border-warning-border",
 	},
 	safe: {
 		bg: "bg-safe",
-		text: "text-safe",
-		borderLeft: "border-l-safe",
+		bgSubtle: "bg-safe-subtle",
+		text: "text-safe-text",
+		border: "border-safe-border",
 	},
 } satisfies Record<
 	DangerLevel,
-	{ bg: string; text: string; borderLeft: string }
+	{
+		bg: string;
+		bgSubtle: string;
+		text: string;
+		border: string;
+	}
 >;
 
 export function getHighestDangerLevel(
