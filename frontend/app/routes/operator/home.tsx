@@ -23,7 +23,7 @@ import {
 } from "@/lib/time-bucket-utils";
 import { getNextDay, getPrevDay } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { useId } from "react";
+import { useId, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import Dust from "./sensors/dust";
 import Noise from "./sensors/noise";
@@ -53,6 +53,30 @@ export default function OperatorHome() {
 			query: buildSensorOverviewQuery([...sensors], view, date),
 			userId: user.id,
 		}),
+	);
+
+	function getHourDomainFromBuckets(buckets: typeof overviewBuckets) {
+		if (!buckets || buckets.length === 0) {
+			return { minHour: 0, maxHour: 23 };
+		}
+
+		let minHour = 23;
+		let maxHour = 0;
+
+		for (const bucket of buckets) {
+			const hour = new Date(bucket.time).getUTCHours();
+
+			if (hour < minHour) minHour = hour;
+			if (hour > maxHour) maxHour = hour;
+		}
+
+		return { minHour, maxHour };
+	}
+
+	// useMemo for performance
+	const { minHour, maxHour } = useMemo(
+		() => getHourDomainFromBuckets(overviewBuckets ?? []),
+		[overviewBuckets],
 	);
 
 	return (
@@ -115,11 +139,11 @@ export default function OperatorHome() {
 								<DailyBarChart
 									data={mapOverviewBucketsToChartRows(
 										overviewBuckets ?? [],
-										0,
-										23,
+										minHour,
+										maxHour,
 									)}
-									startHour={0}
-									endHour={23}
+									startHour={minHour}
+									endHour={maxHour}
 									chartTitle={date.toLocaleDateString(
 										i18n.language,
 										{
