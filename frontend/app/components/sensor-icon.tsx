@@ -1,13 +1,13 @@
+import type { ComponentType, SVGProps } from "react";
 import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.js";
 import type { Sensor } from "@/lib/sensors.js";
 import { cn } from "@/lib/utils.js";
-import type { ComponentType, SVGProps } from "react";
 
 type IconType = ComponentType<SVGProps<SVGSVGElement>>;
 
+import { EarIcon } from "lucide-react";
 import { DustIcon } from "@/components/icons/dust-icon";
 import { VibrationIcon } from "@/components/icons/vibration-icon";
-import { EarIcon } from "lucide-react";
 
 export type IconVariant = "dust" | "noise" | "vibration";
 
@@ -18,9 +18,10 @@ const iconConfig: Record<Sensor, IconType> = {
 	vibration: VibrationIcon,
 };
 
-type SensorIconSize = "sm" | "md" | "lg" | "xl";
+type SensorIconSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 const iconSizeClass: Record<SensorIconSize, string> = {
+	xs: "p-1 size-6",
 	sm: "p-1.5 size-8",
 	md: "p-[0.4rem] size-9",
 	lg: "p-[0.6rem] size-12",
@@ -56,7 +57,7 @@ export const SensorIcon = ({
 	return (
 		<div
 			className={cn(
-				"rounded-full border",
+				"h-fit w-fit rounded-full border",
 				dangerLevelIconClasses,
 				className,
 			)}

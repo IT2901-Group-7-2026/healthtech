@@ -31,9 +31,9 @@
   },
   "exposure_summary": {
     "title": {
-      "day": "Dagens eksponering",
-      "week": "Ukens eksponering",
-      "month": "Månedens eksponering"
+      "day": "Eksponering for {{day}}",
+      "week": "Eksponering for uke {{week}}",
+      "month": "Eksponering for {{month}}"
     },
     "greenHourText": "Timer med trygg mengde eksponering",
     "greenDayText": "Dager med trygg mengde eksponering",
@@ -41,14 +41,10 @@
     "orangeDayText": "Dager nær eksponeringsgrensen",
     "redHourText": "Timer over eksponeringsgrensen",
     "redDayText": "Dager over eksponeringsgrensen",
-    "dust": "Støv",
-    "vibration": "Vibrasjon",
-    "noise": "Støy",
-    "allSensors": "Alle sensorer",
-    "all": "Alle sensorer",
-    "dangerSmiley": "Eksponeringsgrense nådd!",
-    "safeSmiley": "Innenfor eksponeringsgrense",
-    "warningSmiley": "Nær eksponeringsgrense"
+    "dangerSmiley": "Farlige nivåer",
+    "safeSmiley": "OK",
+    "warningSmiley": "Nær farlige nivåer",
+    "noData": "Ingen data"
   },
   "line_chart": {
     "danger": "Grenseverdi",

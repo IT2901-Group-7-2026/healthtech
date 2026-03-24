@@ -31,9 +31,9 @@
   },
   "exposure_summary": {
     "title": {
-      "day": "Daily exposure summary",
-      "week": "Weekly exposure summary",
-      "month": "Monthly exposure summary"
+      "day": "Exposure for {{day}}",
+      "week": "Exposure for week {{week}}",
+      "month": "Exposure for {{month}}"
     },
     "greenHourText": "Hours with safe amount of exposure",
     "greenDayText": "Days with safe amount of exposure",
@@ -41,14 +41,10 @@
     "orangeDayText": "Days close to exposure limit",
     "redHourText": "Hours above exposure limit",
     "redDayText": "Days above exposure limit",
-    "dust": "Dust",
-    "vibration": "Vibration",
-    "noise": "Noise",
-    "allSensors": "All sensors",
-    "all": "All sensors",
-    "dangerSmiley": "Threshold exceeded",
-    "safeSmiley": "Safely within exposure limit",
-    "warningSmiley": "Close to exposure limit"
+    "dangerSmiley": "Dangerous levels",
+    "safeSmiley": "OK",
+    "warningSmiley": "Near dangerous levels",
+    "noData": "No data"
   },
   "line_chart": {
     "danger": "Exposure Limit",
