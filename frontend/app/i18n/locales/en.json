@@ -30,7 +30,11 @@
     "title": "Noise exposure"
   },
   "exposure_summary": {
-    "title": "Exposure summary",
+    "title": {
+      "day": "Daily exposure summary",
+      "week": "Weekly exposure summary",
+      "month": "Monthly exposure summary"
+    },
     "greenHourText": "Hours with safe amount of exposure",
     "greenDayText": "Days with safe amount of exposure",
     "orangeHourText": "Hours close to exposure limit",
@@ -178,6 +182,9 @@
     },
     "overview": {
       "title": "Foreman Overview",
+      "pieChart": {
+        "noData": "No data found for this date"
+      },
       "statCards": {
         "danger": {
           "description": "Operators exceeding threshold",

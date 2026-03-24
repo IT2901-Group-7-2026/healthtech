@@ -30,7 +30,11 @@
     "title": "Støyeksponering"
   },
   "exposure_summary": {
-    "title": "Eksponeringer",
+    "title": {
+      "day": "Dagens eksponering",
+      "week": "Ukens eksponering",
+      "month": "Månedens eksponering"
+    },
     "greenHourText": "Timer med trygg mengde eksponering",
     "greenDayText": "Dager med trygg mengde eksponering",
     "orangeHourText": "Timer nær eksponeringsgrensen",
@@ -178,6 +182,9 @@
     },
     "overview": {
       "title": "Foreman Oversikt",
+      "pieChart": {
+        "noData": "Ingen data funnet for denne datoen"
+      },
       "statCards": {
         "danger": {
           "description": "Operatører som har overskredet grenseverdien",
