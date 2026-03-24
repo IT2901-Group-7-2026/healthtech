@@ -375,8 +375,9 @@ function UserDropdown({
 												const userWithRole = users.find(
 													(u) => u.role === roleValue,
 												);
-												if (userWithRole)
+												if (userWithRole) {
 													setUser(userWithRole);
+												}
 											}}
 										>
 											{userRoleToString(roleValue, t)}
