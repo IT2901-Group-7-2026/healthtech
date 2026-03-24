@@ -1,13 +1,20 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
+import { useFormatDate } from "@/hooks/use-format-date.js";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
+import {
+	type DangerLevel,
+	DangerLevels,
+	isHigherSeverity,
+} from "@/lib/danger-levels";
 import type { SummaryCounts, TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
-import { Card } from "@/ui/card";
-import { Frown, Meh, Smile } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@/ui/card";
+import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import { SensorIcon } from "./sensor-icon.js";
 
 type ExposureType = Sensor | "all";
 
@@ -21,14 +28,17 @@ type SummaryProps = {
 
 type SummaryLabel = Record<DangerLevel, string>;
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: bruh
 export function Summary({
 	exposureType,
 	data,
 	mode = "count",
 	sensorData,
 }: SummaryProps) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const { view } = useView();
+	const isMobile = useIsMobile();
+	const formatDate = useFormatDate();
 
 	const safeColor = "text-safe";
 	const warningColor = "text-warning";
@@ -64,107 +74,131 @@ export function Summary({
 		warningLabel: viewLabelConfig[view].warning || defaultLabels.warning,
 		dangerLabel: viewLabelConfig[view].danger || defaultLabels.danger,
 	};
-	const isMobile = useIsMobile();
 
-	return (
-		<Card className="w-full gap-0 p-5">
-			<div className="border-b-2 border-b-slate-300 md:pb-2 md:pl-2">
-				<h2 className="text-center text-xl md:text-left md:text-2xl">
-					{t(($) => $.exposure_summary.title[view])}
-				</h2>
-			</div>
-			<div className="exposure-subheader">
-				<h4 className="text-center text-slate-400 text-sm md:text-right">
-					<span>
-						{exposureType
-							? t(($) => $.exposure_summary[exposureType])
-							: t(($) => $.exposure_summary.allSensors)}
-					</span>
-				</h4>
-			</div>
-			{mode === "sensor" ? (
-				<div className="mt-4 flex flex-col gap-4">
-					{Object.entries(
-						getSensorSummaryFromOverview(sensorData ?? []),
-					).map(([sensor, level]) => {
-						const color = `text-${DangerLevels[level].color}`;
-						const label = t(
-							($) =>
-								$.exposure_summary[`${level}Smiley` as const],
+	let summaryTitle = "";
+
+	if (view === "month") {
+		summaryTitle = t(($) => $.exposure_summary.title.month, {
+			month: formatDate(new Date(), "MMMM"),
+		});
+	} else if (view === "week") {
+		summaryTitle = t(($) => $.exposure_summary.title.week, {
+			week: formatDate(new Date(), "w"),
+		});
+	} else {
+		summaryTitle = t(($) => $.exposure_summary.title.day, {
+			day: formatDate(
+				new Date(),
+				i18n.language === "en" ? "MMMM do, yyyy" : "dd. MMMM yyyy",
+			),
+		});
+	}
+
+	let content: ReactNode;
+
+	if (mode === "count") {
+		content = (
+			<CardContent className="exposures-wrapper flex flex-row justify-center gap-4 md:flex-col md:gap-0">
+				<SummaryRow
+					count={data.safeCount}
+					label={
+						isMobile ? defaultLabels.safe : summaryLabels.safeLabel
+					}
+					hoverTitle={DangerLevels.safe.label}
+					colorClass={safeColor}
+				/>
+				<SummaryRow
+					count={data.warningCount}
+					label={
+						isMobile
+							? defaultLabels.warning
+							: summaryLabels.warningLabel
+					}
+					hoverTitle={DangerLevels.warning.label}
+					colorClass={warningColor}
+				/>
+				<SummaryRow
+					count={data.dangerCount}
+					label={
+						isMobile
+							? defaultLabels.danger
+							: summaryLabels.dangerLabel
+					}
+					hoverTitle={DangerLevels.danger.label}
+					colorClass={dangerColor}
+				/>
+			</CardContent>
+		);
+	} else {
+		content = (
+			<CardContent className="gap-5">
+				{getSensorSummaryFromOverview(sensorData ?? []).map(
+					([sensor, level]) => {
+						const color =
+							level !== null
+								? `var(--${DangerLevels[level].color})`
+								: undefined;
+
+						const description = t(($) =>
+							level
+								? $.exposure_summary[`${level}Smiley` as const]
+								: $.exposure_summary.noData,
 						);
 
-						const emoji =
-							level === "danger" ? (
-								<Frown />
-							) : level === "warning" ? (
-								<Meh />
-							) : (
-								<Smile />
-							);
+						const label = t(($) => $[sensor]);
+						const Emoji = getEmoji(level);
 
 						return (
 							<div
 								key={sensor}
-								className="grid grid-cols-[1fr_140px] items-center"
+								className="flex items-center justify-between"
 							>
-								<div className="capitalize">
-									{t(
-										($) =>
-											$.exposure_summary[
-												sensor as Sensor
-											],
-									)}
+								<div className="flex min-w-0 grow items-center gap-3">
+									<SensorIcon
+										type={sensor}
+										size="sm"
+										dangerLevel={level ?? undefined}
+										className="shrink-0"
+									/>
+
+									<div className="flex min-w-0 grow flex-col">
+										<p
+											className="truncate text-foreground text-sm"
+											title={label}
+										>
+											{label}
+										</p>
+
+										<p
+											className="truncate text-xs"
+											style={{ color }}
+											title={description}
+										>
+											{description}
+										</p>
+									</div>
 								</div>
 
-								<div
-									className={cn(
-										"grid grid-cols-[20px_1fr] items-center gap-1 justify-self-end text-xs md:text-sm",
-										color,
-									)}
-								>
-									<span className="flex justify-center">
-										{emoji}
-									</span>
-									<span>{label}</span>
+								<div className="w-fit">
+									<Emoji size="1.25rem" style={{ color }} />
 								</div>
 							</div>
 						);
-					})}
-				</div>
-			) : (
-				<div className="exposures-wrapper flex flex-row justify-center gap-4 md:flex-col md:gap-0">
-					<SummaryRow
-						count={data.safeCount}
-						label={
-							isMobile
-								? defaultLabels.safe
-								: summaryLabels.safeLabel
-						}
-						hoverTitle={DangerLevels.safe.label}
-						colorClass={safeColor}
-					/>
-					<SummaryRow
-						count={data.warningCount}
-						label={
-							isMobile
-								? defaultLabels.warning
-								: summaryLabels.warningLabel
-						}
-						hoverTitle={DangerLevels.warning.label}
-						colorClass={warningColor}
-					/>
-					<SummaryRow
-						count={data.dangerCount}
-						label={
-							isMobile
-								? defaultLabels.danger
-								: summaryLabels.dangerLabel
-						}
-						hoverTitle={DangerLevels.danger.label}
-						colorClass={dangerColor}
-					/>
-				</div>
-			)}
+					},
+				)}
+			</CardContent>
+		);
+	}
+
+	return (
+		<Card muted className="w-full gap-0 p-5">
+			<CardHeader>
+				<h2 className="text-muted-foreground text-xs uppercase tracking-wider">
+					{summaryTitle}
+				</h2>
+			</CardHeader>
+
+			<CardContent className="gap-5">{content}</CardContent>
 		</Card>
 	);
 }
@@ -202,30 +236,54 @@ const SummaryRow = ({
 
 function getSensorSummaryFromOverview(
 	buckets: Array<TimeBucketStatus>,
-): Record<Sensor, DangerLevel> {
-	const result: Record<Sensor, DangerLevel> = {
-		dust: "safe",
-		noise: "safe",
-		vibration: "safe",
+): Array<[Sensor, DangerLevel | null]> {
+	const result: Record<Sensor, DangerLevel | null> = {
+		dust: null,
+		noise: null,
+		vibration: null,
 	};
 
 	for (const bucket of buckets) {
-		const sensors = bucket.sensorDangerLevels;
+		const sensorSeverityLevels = bucket.sensorDangerLevels;
 
-		if (!sensors) continue;
+		if (!sensorSeverityLevels) {
+			continue;
+		}
 
-		(Object.keys(result) as Array<Sensor>).forEach((sensor) => {
-			const level = sensors[sensor];
+		(Object.keys(result) as Array<Sensor>).forEach((currentSensor) => {
+			const currentSeverity = result[currentSensor];
+			const newSeverity = sensorSeverityLevels[currentSensor];
 
-			if (!level) return;
+			if (newSeverity == null) {
+				return;
+			}
 
-			if (level === "danger") {
-				result[sensor] = "danger";
-			} else if (level === "warning" && result[sensor] === "safe") {
-				result[sensor] = "warning";
+			const isNewMoreSevere = isHigherSeverity(
+				currentSeverity,
+				newSeverity,
+			);
+
+			if (isNewMoreSevere) {
+				result[currentSensor] = newSeverity;
 			}
 		});
 	}
 
-	return result;
+	return Object.entries(result) as Array<[Sensor, DangerLevel | null]>;
+}
+
+function getEmoji(dangerLevel: DangerLevel | null) {
+	if (dangerLevel === "danger") {
+		return FrownIcon;
+	}
+
+	if (dangerLevel === "warning") {
+		return MehIcon;
+	}
+
+	if (dangerLevel === "safe") {
+		return SmileIcon;
+	}
+
+	return CircleDashedIcon;
 }

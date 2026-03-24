@@ -12,6 +12,32 @@ export const DANGER_LEVEL_SEVERITY: Record<DangerLevel, number> = {
 export const DangerLevelSchema = z.enum(["safe", "warning", "danger"]);
 export type DangerLevel = z.infer<typeof DangerLevelSchema>;
 
+/** Is "a" higher severity than "b"? */
+export const compareDangerLevels = (
+	a: DangerLevel | null,
+	b: DangerLevel | null,
+): number => {
+	if (a === null && b === null) {
+		return 0;
+	}
+
+	if (a === null) {
+		return -1;
+	}
+
+	if (b === null) {
+		return 1;
+	}
+
+	return DANGER_LEVEL_SEVERITY[a] - DANGER_LEVEL_SEVERITY[b];
+};
+
+/** Is "b" higher severity than "a"? */
+export const isHigherSeverity = (
+	a: DangerLevel | null,
+	b: DangerLevel | null,
+): boolean => compareDangerLevels(a, b) < 0;
+
 type DangerLevelInfo = {
 	label: string;
 	color: string;

@@ -18,9 +18,10 @@ const iconConfig: Record<Sensor, IconType> = {
 	vibration: VibrationIcon,
 };
 
-type SensorIconSize = "sm" | "md" | "lg" | "xl";
+type SensorIconSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 const iconSizeClass: Record<SensorIconSize, string> = {
+	xs: "p-1 size-6",
 	sm: "p-1.5 size-8",
 	md: "p-[0.4rem] size-9",
 	lg: "p-[0.6rem] size-12",
@@ -56,7 +57,7 @@ export const SensorIcon = ({
 	return (
 		<div
 			className={cn(
-				"rounded-full border",
+				"h-fit w-fit rounded-full border",
 				dangerLevelIconClasses,
 				className,
 			)}
