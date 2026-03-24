@@ -7,6 +7,7 @@ import type { Sensor } from "@/features/sensor-picker/sensors";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useFormatDate } from "@/hooks/use-format-date";
 import type { OverviewChartRow } from "@/lib/time-bucket-types";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts";
@@ -56,12 +57,28 @@ export function DailyBarChart({
 
 	const chartData = generateChartData(startHour, endHour);
 
+	const utcOffsetHours = useMemo(() => {
+		const utcNoon = new Date(
+			Date.UTC(
+				date.getFullYear(),
+				date.getMonth(),
+				date.getDate(),
+				12,
+				0,
+				0,
+				0,
+			),
+		);
+
+		return Number(formatDate(utcNoon, "H")) - 12;
+	}, [date, formatDate]);
+
 	// Empty hour blocks
 	const chartConfig: ChartConfig = Object.fromEntries(
 		hours.map((hour) => [
 			hour.toString(),
 			{
-				label: `${hour}:00`,
+				label: `${String(hour).padStart(2, "0")}:00`,
 				color: "var(--card)",
 			},
 		]),
@@ -75,8 +92,8 @@ export function DailyBarChart({
 	);
 
 	const formatTime = (value: number) => {
-		const hour = startHour + value / HOUR_BLOCK_SIZE;
-		return formatDate(new Date().setHours(hour, 0, 0, 0), "HH:mm");
+		const hour = (startHour + value / HOUR_BLOCK_SIZE) % 24;
+		return `${String(hour).padStart(2, "0")}:00`;
 	};
 
 	return (
@@ -125,9 +142,13 @@ export function DailyBarChart({
 								barSize={80}
 							>
 								{data.map((row, index) => {
-									const hour = Number(key);
+									const localHour = Number(key);
+									const utcHour =
+										(((localHour - utcOffsetHours) % 24) +
+											24) %
+										24;
 									const dangerLevel =
-										row.dangerLevelByHour[hour];
+										row.dangerLevelByHour[utcHour];
 									let color = chartConfig[key].color;
 
 									if (dangerLevel === "danger") {
@@ -155,7 +176,7 @@ export function DailyBarChart({
 											onClick={() =>
 												navigate({
 													pathname: row.sensor,
-													search: `?view=Day&date=${date.toISOString().split("T")[0]}`,
+													search: `?view=Day&date=${formatDate(date, "yyyy-MM-dd")}`,
 												})
 											}
 										/>
