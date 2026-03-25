@@ -1,36 +1,67 @@
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
-import type { Sensor } from "@/features/sensor-picker/sensors";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useFormatDate } from "@/hooks/use-format-date";
 import type { OverviewChartRow } from "@/lib/time-bucket-types";
-import { useMemo } from "react";
+import { cn } from "@/lib/utils.js";
+import { setHours, startOfDay } from "date-fns";
+import { Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
-import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts";
+import { Link } from "react-router";
+import { SensorIcon } from "./sensor-icon.js";
 
-const HOUR_BLOCK_SIZE = 10;
+const CELL_SIZE = 10;
+const CELL_SIZE_CN = "size-10";
 
-// Creates a record per sensor, where each record contains a key for each hour in the day and the size of the block to render
-function generateChartData(
-	startHour: number,
-	endHour: number,
-): Array<Record<string, string>> {
-	const hourEntries = Array.from(
-		{ length: endHour - startHour + 1 },
-		(_, i) => [String(startHour + i), HOUR_BLOCK_SIZE],
+const STICKY = "sticky left-0 z-10 bg-card pl-4";
+
+const getCellAppearance = (dangerLevel: string | null) => {
+	const baseClasses = cn(
+		CELL_SIZE_CN,
+		"block rounded-lg border transition-all",
 	);
 
-	const hourData = Object.fromEntries(hourEntries);
+	const clickableClasses =
+		"border-transparent hover:brightness-90 active:scale-[0.98] active:brightness-90";
 
-	return sensors.map((sensor) => ({
-		sensor,
-		...hourData,
-	}));
-}
+	switch (dangerLevel) {
+		case "danger":
+			return {
+				className: cn(
+					baseClasses,
+					clickableClasses,
+					"bg-danger text-danger-text",
+				),
+				isClickable: true,
+			};
+		case "warning":
+			return {
+				className: cn(
+					baseClasses,
+					clickableClasses,
+					"bg-warning text-warning-text",
+				),
+				isClickable: true,
+			};
+		case "safe":
+			return {
+				className: cn(
+					baseClasses,
+					clickableClasses,
+					"bg-safe text-safe-text",
+				),
+				isClickable: true,
+			};
+		default:
+			return {
+				className: cn(
+					baseClasses,
+					"cursor-default border-muted-foreground/20 bg-card text-muted-foreground/50",
+				),
+				isClickable: false,
+			};
+	}
+};
 
 interface DailyBarChartProps {
 	data: Array<OverviewChartRow>;
@@ -49,143 +80,131 @@ export function DailyBarChart({
 }: DailyBarChartProps) {
 	const { t } = useTranslation();
 	const { date } = useDate();
-	const navigate = useNavigate();
 	const formatDate = useFormatDate();
 
 	const totalHours = endHour - startHour + 1;
-	const hours = Array.from({ length: totalHours }, (_, i) => startHour + i);
 
-	const chartData = generateChartData(startHour, endHour);
-
-	const utcOffsetHours = useMemo(() => {
-		const utcNoon = new Date(
-			Date.UTC(
-				date.getFullYear(),
-				date.getMonth(),
-				date.getDate(),
-				12,
-				0,
-				0,
-				0,
-			),
-		);
-
-		return Number(formatDate(utcNoon, "H")) - 12;
-	}, [date, formatDate]);
-
-	// Empty hour blocks
-	const chartConfig: ChartConfig = Object.fromEntries(
-		hours.map((hour) => [
-			hour.toString(),
-			{
-				label: `${String(hour).padStart(2, "0")}:00`,
-				color: "var(--card)",
-			},
-		]),
+	const hours = useMemo(
+		() => Array.from({ length: totalHours }, (_, i) => startHour + i),
+		[startHour, totalHours],
 	);
 
-	const hourKeys = hours.map(String);
-	const domainMax = totalHours * HOUR_BLOCK_SIZE;
-	const ticks = Array.from(
-		{ length: totalHours + 1 },
-		(_, i) => i * HOUR_BLOCK_SIZE,
+	const hourData = useMemo(() => {
+		const baseDate = startOfDay(date);
+
+		return hours.reduce<
+			Record<number, { timeLabel: string; utcHour: number }>
+		>((acc, hour) => {
+			const hourDate = setHours(baseDate, hour);
+
+			acc[hour] = {
+				timeLabel: formatDate(hourDate, "HH:mm"),
+				utcHour: hourDate.getUTCHours(),
+			};
+
+			return acc;
+		}, {});
+	}, [hours, date, formatDate]);
+
+	const dateQueryParam = useMemo(
+		() => formatDate(date, "yyyy-MM-dd"),
+		[date, formatDate],
 	);
 
-	const formatTime = (value: number) => {
-		const hour = (startHour + value / HOUR_BLOCK_SIZE) % 24;
-		return `${String(hour).padStart(2, "0")}:00`;
-	};
+	const dataBySensor = useMemo(
+		() =>
+			data.reduce<Record<string, OverviewChartRow>>((acc, row) => {
+				acc[row.sensor] = row;
+				return acc;
+			}, {}),
+		[data],
+	);
 
 	return (
-		<Card className="w-full">
-			<CardHeader className="flex flex-row items-center justify-between">
+		<Card className="px-0">
+			<CardHeader className="flex flex-row items-center justify-between px-4">
 				<CardTitle className="text-base">{chartTitle}</CardTitle>
 				{headerRight}
 			</CardHeader>
 
 			<CardContent>
-				<ChartContainer config={chartConfig} className="h-100">
-					<BarChart data={chartData} layout="vertical">
-						<XAxis
-							type="number"
-							domain={[0, domainMax]}
-							ticks={ticks}
-							tickFormatter={formatTime}
-							tick={{
-								className: "text-base",
-								fill: "var(--color-muted-foreground)",
-								dy: 4,
-							}}
-						/>
-						<YAxis
-							dataKey="sensor"
-							type="category"
-							tickLine={false}
-							axisLine={false}
-							width={80}
-							tickFormatter={(value) =>
-								t(($) => $.overview[value as Sensor])
-							}
-							tick={{
-								className: "text-base",
-								fill: "var(--color-muted-foreground)",
-							}}
-						/>
+				<div className="min-w-0 overflow-x-auto">
+					<div
+						className="grid w-max gap-x-1.5 gap-y-3 pr-4"
+						style={{
+							gridTemplateColumns: `auto repeat(${totalHours}, calc(var(--spacing) * ${CELL_SIZE}))`,
+						}}
+					>
+						{/* Empty cell in top-left */}
+						<div className={STICKY} />
 
-						{hourKeys.map((key) => (
-							<Bar
-								key={key}
-								dataKey={key}
-								stackId="a"
-								stroke="var(--muted-foreground)"
-								strokeWidth={1}
-								barSize={80}
+						{/* Header row */}
+						{hours.map((hour) => (
+							<div
+								key={`header-${hour}`}
+								className="text-center text-[0.675rem] text-muted-foreground"
 							>
-								{data.map((row, index) => {
-									const localHour = Number(key);
-									const utcHour =
-										(((localHour - utcOffsetHours) % 24) +
-											24) %
-										24;
-									const dangerLevel =
-										row.dangerLevelByHour[utcHour];
-									let color = chartConfig[key].color;
+								{hourData[hour].timeLabel}
+							</div>
+						))}
 
-									if (dangerLevel === "danger") {
-										color = "var(--danger)";
-									} else if (dangerLevel === "warning") {
-										color = "var(--warning)";
-									} else if (dangerLevel === "safe") {
-										color = "var(--safe)";
-									}
+						{/* Data rows */}
+						{sensors.map((sensor) => {
+							const rowData = dataBySensor[sensor];
 
-									if (color === "var(--card)") {
+							return (
+								<Fragment key={sensor}>
+									{/* Label for y-axis */}
+									<div
+										className={cn(
+											STICKY,
+											"flex items-center gap-2 pr-4 text-muted-foreground text-sm",
+										)}
+									>
+										<SensorIcon type={sensor} size="xs" />
+										<p>{t(($) => $.overview[sensor])}</p>
+									</div>
+
+									{/* Hourly grid cells */}
+									{hours.map((localHour) => {
+										const { timeLabel, utcHour } =
+											hourData[localHour];
+										const dangerLevel =
+											rowData?.dangerLevelByHour?.[
+												utcHour
+											];
+
+										const { className, isClickable } =
+											getCellAppearance(dangerLevel);
+
+										if (!isClickable) {
+											return (
+												<div
+													key={`${sensor}-${localHour}`}
+													className={className}
+													aria-hidden="true"
+												/>
+											);
+										}
+
 										return (
-											<Cell
-												key={`cell-${index}-${key}`}
-												fill={color}
+											<Link
+												key={`${sensor}-${localHour}`}
+												to={{
+													pathname: sensor,
+													search: `?view=Day&date=${dateQueryParam}`,
+												}}
+												title={`${timeLabel} - ${dangerLevel}`}
+												className={className}
+												aria-label={`View ${sensor} data for ${timeLabel}`}
 											/>
 										);
-									}
-
-									return (
-										<Cell
-											key={`cell-${index}-${key}`}
-											fill={color}
-											className="cursor-pointer hover:brightness-90 active:brightness-90"
-											onClick={() =>
-												navigate({
-													pathname: row.sensor,
-													search: `?view=Day&date=${formatDate(date, "yyyy-MM-dd")}`,
-												})
-											}
-										/>
-									);
-								})}
-							</Bar>
-						))}
-					</BarChart>
-				</ChartContainer>
+									})}
+								</Fragment>
+							);
+						})}
+					</div>
+				</div>
 			</CardContent>
 		</Card>
 	);
