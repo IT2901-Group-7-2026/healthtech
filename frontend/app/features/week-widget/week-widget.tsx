@@ -1,6 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { WeeklyPopup } from "@/features/popups/weekly-popup";
 import { useFormatDate } from "@/hooks/use-format-date.js";
+import type { TZDate } from "@/lib/date";
 import type { Aggregation } from "@/lib/dto";
 import type { TimeBucketStatus } from "@/lib/time-bucket-types";
 import { DialogDescription } from "@radix-ui/react-dialog";
@@ -21,9 +22,9 @@ interface WeekWidgetProps {
 	dayEndHour?: number;
 	locale?: Locale;
 	rowHeight?: number;
-	isDisabledCell?: (date: Date) => boolean;
-	isDisabledDay?: (date: Date) => boolean;
-	isDisabledWeek?: (startDayOfWeek: Date) => boolean;
+	isDisabledCell?: (date: TZDate) => boolean;
+	isDisabledDay?: (date: TZDate) => boolean;
+	isDisabledWeek?: (startDayOfWeek: TZDate) => boolean;
 	data: Array<TimeBucketStatus>;
 	onCellClick?: (cell: Cell) => void;
 	aggregation?: Aggregation;

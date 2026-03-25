@@ -1,4 +1,5 @@
 import { useFormatDate } from "@/hooks/use-format-date";
+import type { TZDate } from "@/lib/date";
 import { capitalize } from "@/lib/utils";
 import {
 	Select,
@@ -41,7 +42,7 @@ export function ViewPicker() {
 
 function formatSelectedView(
 	view: View,
-	date: Date,
+	date: TZDate,
 	locale: string,
 	formatDate: ReturnType<typeof useFormatDate>,
 ) {

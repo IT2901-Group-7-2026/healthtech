@@ -4,6 +4,7 @@ import { useDate } from "@/features/date-picker/use-date";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { useFormatDate } from "@/hooks/use-format-date.js";
+import { TIMEZONE } from "@/i18n/locale";
 import { createNote, notesQueryOptions, updateNote } from "@/lib/api";
 import type { Note } from "@/lib/dto";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -47,11 +48,17 @@ export const DailyNotes = ({
 	});
 
 	const [todayNote, setTodayNote] = useState<Note | null>(
-		data ? (data.find((note) => isSameDay(note.time, date)) ?? null) : null,
+		data
+			? (data.find((note) =>
+					isSameDay(note.time, date, { in: TIMEZONE }),
+				) ?? null)
+			: null,
 	);
 
 	const [showTextArea, setShowTextArea] = useState<boolean>(
-		data ? !data.some((note) => isSameDay(note.time, date)) : true,
+		data
+			? !data.some((note) => isSameDay(note.time, date, { in: TIMEZONE }))
+			: true,
 	);
 
 	const handleEdit = () => {
@@ -60,7 +67,11 @@ export const DailyNotes = ({
 
 	const handleSubmit = () => {
 		if (todayNote !== null && todayNote.note !== "" && data) {
-			if (data.some((note) => isSameDay(note.time, date))) {
+			if (
+				data.some((note) =>
+					isSameDay(note.time, date, { in: TIMEZONE }),
+				)
+			) {
 				mutateUpdateNote({ note: todayNote, userId: user.id });
 			} else {
 				mutateCreateNote({ note: todayNote, userId: user.id });
@@ -72,7 +83,9 @@ export const DailyNotes = ({
 	useEffect(() => {
 		if (data) {
 			const foundNote =
-				data.find((note) => isSameDay(note.time, date)) ?? null;
+				data.find((note) =>
+					isSameDay(note.time, date, { in: TIMEZONE }),
+				) ?? null;
 			setTodayNote(foundNote);
 			setShowTextArea(!foundNote);
 		}
@@ -125,8 +138,11 @@ export const DailyNotes = ({
 					) : (
 						<p>
 							{
-								data?.find((note) => isSameDay(note.time, date))
-									?.note
+								data?.find((note) =>
+									isSameDay(note.time, date, {
+										in: TIMEZONE,
+									}),
+								)?.note
 							}
 						</p>
 					)}
@@ -174,6 +190,7 @@ export const DailyNotes = ({
 							? data
 									.filter((note) =>
 										isSameWeek(date, note.time, {
+											in: TIMEZONE,
 											weekStartsOn: 1,
 										}),
 									)
@@ -218,7 +235,11 @@ export const DailyNotes = ({
 				<ul>
 					{data
 						? data
-								.filter((note) => isSameMonth(date, note.time))
+								.filter((note) =>
+									isSameMonth(date, note.time, {
+										in: TIMEZONE,
+									}),
+								)
 								.sort(
 									(n1, n2) =>
 										n1.time.getTime() - n2.time.getTime(),

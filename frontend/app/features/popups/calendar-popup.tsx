@@ -1,5 +1,6 @@
 import { BasePopup } from "@/features/popups/base-popup";
 import type { DangerLevel } from "@/lib/danger-levels";
+import type { TZDate } from "@/lib/date";
 import type { Aggregation } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { cn } from "@/lib/utils";
@@ -9,7 +10,7 @@ import { Card } from "../../components/ui/card";
 
 type CalendarPopupProps = {
 	title: string;
-	selectedDate: Date;
+	selectedDate: TZDate;
 	selectedAggregation?: Aggregation;
 	exposureData?: CalendarPopupData | null;
 	open: boolean;

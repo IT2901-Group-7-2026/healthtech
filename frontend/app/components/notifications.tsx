@@ -7,10 +7,13 @@ import {
 } from "@/components/ui/item";
 import { NotificationPopup } from "@/features/popups/notification-popup";
 import { usePopup } from "@/features/popups/use-popup";
+import { TIMEZONE } from "@/i18n/locale";
 import type { DangerLevel } from "@/lib/danger-levels";
 import type { Sensor } from "@/lib/sensors";
 import { cn } from "@/lib/utils";
 import { Card } from "@/ui/card";
+import { TZDate } from "@date-fns/tz";
+import { formatDate } from "date-fns";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SensorIcon } from "./sensor-icon";
@@ -18,36 +21,36 @@ import { SensorIcon } from "./sensor-icon";
 const notifications: Array<{
 	sensor: Sensor;
 	dangerLevel: DangerLevel;
-	date: Date;
+	date: TZDate;
 }> = [
 	{
 		sensor: "noise",
 		dangerLevel: "warning",
 		// "18.11 9.41" → 18 November 2024, 09:41
-		date: new Date(2024, 10, 18, 9, 41),
+		date: new TZDate(2024, 10, 18, 9, 41, "Europe/Oslo"),
 	},
 	{
 		sensor: "vibration",
 		dangerLevel: "danger",
 		// "12.05 14.04" → 12 May 2025, 14:04
-		date: new Date(2025, 4, 12, 14, 4),
+		date: new TZDate(2025, 4, 12, 14, 4, "Europe/Oslo"),
 	},
 	{
 		sensor: "dust",
 		dangerLevel: "warning",
 		// "17.02 8.53" → 17 February 2025, 08:53
-		date: new Date(2025, 1, 17, 8, 53),
+		date: new TZDate(2025, 1, 17, 8, 53, "Europe/Oslo"),
 	},
 	{
 		sensor: "dust",
 		dangerLevel: "warning",
 		// "20.02 8.54" → 20 February 2025, 08:54
-		date: new Date(2025, 1, 20, 8, 54),
+		date: new TZDate(2025, 1, 20, 8, 54, "Europe/Oslo"),
 	},
 ];
 
 type NotifData = {
-	date: Date;
+	date: TZDate;
 	sensor: Sensor;
 	dangerLevel: DangerLevel;
 };
@@ -152,12 +155,5 @@ export function Notifications({
 	);
 }
 
-// Parses Date objects into the previous string format of dd.mm hh.mm
-function formatNotificationDate(date: Date): string {
-	const day = String(date.getDate()).padStart(2, "0");
-	const month = String(date.getMonth() + 1).padStart(2, "0");
-	const hour = String(date.getHours()).padStart(2, "0");
-	const minute = String(date.getMinutes()).padStart(2, "0");
-
-	return `${day}.${month} ${hour}.${minute}`;
-}
+const formatNotificationDate = (date: TzDate): string =>
+	formatDate(date, "dd.MM HH.mm", { in: TIMEZONE });
