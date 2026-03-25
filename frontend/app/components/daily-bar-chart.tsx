@@ -4,6 +4,7 @@ import { sensors } from "@/features/sensor-picker/sensors";
 import { useFormatDate } from "@/hooks/use-format-date";
 import type { OverviewChartRow } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils.js";
+import { setHours, startOfDay } from "date-fns";
 import { Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -13,9 +14,6 @@ const CELL_SIZE = 10;
 const CELL_SIZE_CN = "size-10";
 
 const STICKY = "sticky left-0 z-10 bg-card pl-4";
-
-const getUtcHour = (localHour: number, offsetHours: number): number =>
-	(((localHour - offsetHours) % 24) + 24) % 24;
 
 const getCellAppearance = (dangerLevel: string | null) => {
 	const baseClasses = cn(
@@ -91,18 +89,23 @@ export function DailyBarChart({
 		[startHour, totalHours],
 	);
 
-	const formattedHours = useMemo(
-		() =>
-			hours.reduce<Record<number, string>>((acc, hour) => {
-				const hourDate = new Date(date);
-				hourDate.setHours(hour, 0, 0, 0);
-				acc[hour] = formatDate(hourDate, "HH:mm");
-				return acc;
-			}, {}),
-		[hours, date, formatDate],
-	);
+	const hourData = useMemo(() => {
+		const baseDate = startOfDay(date);
 
-	// Memoize the query param date so we aren't calling date-fns on every single grid cell
+		return hours.reduce<
+			Record<number, { timeLabel: string; utcHour: number }>
+		>((acc, hour) => {
+			const hourDate = setHours(baseDate, hour);
+
+			acc[hour] = {
+				timeLabel: formatDate(hourDate, "HH:mm"),
+				utcHour: hourDate.getUTCHours(),
+			};
+
+			return acc;
+		}, {});
+	}, [hours, date, formatDate]);
+
 	const dateQueryParam = useMemo(
 		() => formatDate(date, "yyyy-MM-dd"),
 		[date, formatDate],
@@ -116,21 +119,6 @@ export function DailyBarChart({
 			}, {}),
 		[data],
 	);
-
-	const utcOffsetHours = useMemo(() => {
-		const utcNoon = new Date(
-			Date.UTC(
-				date.getFullYear(),
-				date.getMonth(),
-				date.getDate(),
-				12,
-				0,
-				0,
-				0,
-			),
-		);
-		return Number(formatDate(utcNoon, "H")) - 12;
-	}, [date, formatDate]);
 
 	return (
 		<Card className="px-0">
@@ -156,7 +144,7 @@ export function DailyBarChart({
 								key={`header-${hour}`}
 								className="text-center text-[0.675rem] text-muted-foreground"
 							>
-								{formattedHours[hour]}
+								{hourData[hour].timeLabel}
 							</div>
 						))}
 
@@ -179,12 +167,8 @@ export function DailyBarChart({
 
 									{/* Hourly grid cells */}
 									{hours.map((localHour) => {
-										const timeLabel =
-											formattedHours[localHour];
-										const utcHour = getUtcHour(
-											localHour,
-											utcOffsetHours,
-										);
+										const { timeLabel, utcHour } =
+											hourData[localHour];
 										const dangerLevel =
 											rowData?.dangerLevelByHour?.[
 												utcHour
