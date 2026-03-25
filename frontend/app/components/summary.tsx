@@ -8,6 +8,7 @@ import {
 	DangerLevels,
 	isHigherSeverity,
 } from "@/lib/danger-levels";
+import { now } from "@/lib/date";
 import type { SummaryCounts, TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/ui/card";
@@ -76,19 +77,20 @@ export function Summary({
 	};
 
 	let summaryTitle = "";
+	const currentDate = now();
 
 	if (view === "month") {
 		summaryTitle = t(($) => $.exposure_summary.title.month, {
-			month: formatDate(new Date(), "MMMM"),
+			month: formatDate(currentDate, "MMMM"),
 		});
 	} else if (view === "week") {
 		summaryTitle = t(($) => $.exposure_summary.title.week, {
-			week: formatDate(new Date(), "w"),
+			week: formatDate(currentDate, "w"),
 		});
 	} else {
 		summaryTitle = t(($) => $.exposure_summary.title.day, {
 			day: formatDate(
-				new Date(),
+				currentDate,
 				i18n.language === "en" ? "MMMM do, yyyy" : "dd. MMMM yyyy",
 			),
 		});

@@ -6,6 +6,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import { useFormatDate } from "@/hooks/use-format-date.js";
+import type { TZDate } from "@/lib/date";
 import { t } from "i18next";
 import { NavLink } from "react-router";
 
@@ -13,7 +15,7 @@ type BasePopupProps = {
 	title: string;
 	open: boolean;
 	onClose: () => void;
-	relevantDate: Date | null;
+	relevantDate: TZDate | null;
 	selectedAggregation?: string;
 	navOverride?: string;
 	pathname?: string;
@@ -30,39 +32,47 @@ export function BasePopup({
 	pathname,
 	children,
 }: BasePopupProps) {
+	const formatDate = useFormatDate();
+	let search = navOverride;
+
+	if (!search && relevantDate) {
+		const date = formatDate(relevantDate, "yyyy-MM-dd");
+		search = `?view=Day&date=${date}`;
+
+		if (selectedAggregation) {
+			search += `&aggregation=${selectedAggregation}`;
+		}
+	}
+
 	return (
 		<Dialog open={open} onOpenChange={onClose}>
+			<DialogHeader>
+				<DialogTitle className="font-bold text-xl">{title}</DialogTitle>
+			</DialogHeader>
+
 			<DialogContent className="w-full max-w-6xl">
-				<DialogHeader>
-					<DialogTitle className="font-bold text-xl">
-						{title}
-					</DialogTitle>
-				</DialogHeader>
-
 				{children}
-
-				<DialogFooter>
-					{relevantDate && (
-						<Button
-							variant="default"
-							className="cursor-pointer"
-							onClick={onClose}
-						>
-							<NavLink
-								to={{
-									pathname: pathname ? pathname : "",
-									search: navOverride
-										? navOverride
-										: `?view=Day&date=${relevantDate.toISOString().split("T")[0]}${selectedAggregation ? `&aggregation=${selectedAggregation}` : ""}`,
-								}}
-								prefetch="intent"
-							>
-								{t(($) => $.popup.toDay)}
-							</NavLink>
-						</Button>
-					)}
-				</DialogFooter>
 			</DialogContent>
+
+			{relevantDate && (
+				<DialogFooter>
+					<Button
+						variant="default"
+						className="cursor-pointer"
+						onClick={onClose}
+					>
+						<NavLink
+							to={{
+								pathname: pathname ?? "",
+								search,
+							}}
+							prefetch="intent"
+						>
+							{t(($) => $.popup.toDay)}
+						</NavLink>
+					</Button>
+				</DialogFooter>
+			)}
 		</Dialog>
 	);
 }
