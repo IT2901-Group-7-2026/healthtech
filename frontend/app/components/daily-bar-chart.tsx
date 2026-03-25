@@ -1,12 +1,12 @@
-import { Fragment, useMemo } from "react";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useDate } from "@/features/date-picker/use-date";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useFormatDate } from "@/hooks/use-format-date";
 import type { OverviewChartRow } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils.js";
+import { Fragment, useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import { SensorIcon } from "./sensor-icon.js";
 
 const CELL_SIZE = 10;
@@ -14,9 +14,8 @@ const CELL_SIZE_CN = "size-10";
 
 const STICKY = "sticky left-0 z-10 bg-card pl-4";
 
-const getUtcHour = (localHour: number, offsetHours: number): number => {
-	return (((localHour - offsetHours) % 24) + 24) % 24;
-};
+const getUtcHour = (localHour: number, offsetHours: number): number =>
+	(((localHour - offsetHours) % 24) + 24) % 24;
 
 const getCellAppearance = (dangerLevel: string | null) => {
 	const baseClasses = cn(
@@ -48,14 +47,18 @@ const getCellAppearance = (dangerLevel: string | null) => {
 			};
 		case "safe":
 			return {
-				className: cn(baseClasses, clickableClasses, "bg-safe text-safe-text"),
+				className: cn(
+					baseClasses,
+					clickableClasses,
+					"bg-safe text-safe-text",
+				),
 				isClickable: true,
 			};
 		default:
 			return {
 				className: cn(
 					baseClasses,
-					"border-muted-foreground/20 bg-card cursor-default text-muted-foreground/50",
+					"cursor-default border-muted-foreground/20 bg-card text-muted-foreground/50",
 				),
 				isClickable: false,
 			};
@@ -88,14 +91,16 @@ export function DailyBarChart({
 		[startHour, totalHours],
 	);
 
-	const formattedHours = useMemo(() => {
-		return hours.reduce<Record<number, string>>((acc, hour) => {
-			const hourDate = new Date(date);
-			hourDate.setHours(hour, 0, 0, 0);
-			acc[hour] = formatDate(hourDate, "HH:mm");
-			return acc;
-		}, {});
-	}, [hours, date, formatDate]);
+	const formattedHours = useMemo(
+		() =>
+			hours.reduce<Record<number, string>>((acc, hour) => {
+				const hourDate = new Date(date);
+				hourDate.setHours(hour, 0, 0, 0);
+				acc[hour] = formatDate(hourDate, "HH:mm");
+				return acc;
+			}, {}),
+		[hours, date, formatDate],
+	);
 
 	// Memoize the query param date so we aren't calling date-fns on every single grid cell
 	const dateQueryParam = useMemo(
@@ -103,12 +108,14 @@ export function DailyBarChart({
 		[date, formatDate],
 	);
 
-	const dataBySensor = useMemo(() => {
-		return data.reduce<Record<string, OverviewChartRow>>((acc, row) => {
-			acc[row.sensor] = row;
-			return acc;
-		}, {});
-	}, [data]);
+	const dataBySensor = useMemo(
+		() =>
+			data.reduce<Record<string, OverviewChartRow>>((acc, row) => {
+				acc[row.sensor] = row;
+				return acc;
+			}, {}),
+		[data],
+	);
 
 	const utcOffsetHours = useMemo(() => {
 		const utcNoon = new Date(
@@ -135,7 +142,7 @@ export function DailyBarChart({
 			<CardContent>
 				<div className="min-w-0 overflow-x-auto">
 					<div
-						className="grid gap-x-1.5 gap-y-3 w-max pr-4"
+						className="grid w-max gap-x-1.5 gap-y-3 pr-4"
 						style={{
 							gridTemplateColumns: `auto repeat(${totalHours}, calc(var(--spacing) * ${CELL_SIZE}))`,
 						}}
@@ -163,7 +170,7 @@ export function DailyBarChart({
 									<div
 										className={cn(
 											STICKY,
-											"flex items-center gap-2 pr-4 text-sm text-muted-foreground",
+											"flex items-center gap-2 pr-4 text-muted-foreground text-sm",
 										)}
 									>
 										<SensorIcon type={sensor} size="xs" />
@@ -172,9 +179,16 @@ export function DailyBarChart({
 
 									{/* Hourly grid cells */}
 									{hours.map((localHour) => {
-										const timeLabel = formattedHours[localHour];
-										const utcHour = getUtcHour(localHour, utcOffsetHours);
-										const dangerLevel = rowData?.dangerLevelByHour?.[utcHour];
+										const timeLabel =
+											formattedHours[localHour];
+										const utcHour = getUtcHour(
+											localHour,
+											utcOffsetHours,
+										);
+										const dangerLevel =
+											rowData?.dangerLevelByHour?.[
+												utcHour
+											];
 
 										const { className, isClickable } =
 											getCellAppearance(dangerLevel);

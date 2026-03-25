@@ -1,8 +1,5 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { useQuery } from "@tanstack/react-query";
-import { useId } from "react";
-import { useTranslation } from "react-i18next";
 import { DailyBarChart } from "@/components/daily-bar-chart";
 import { DailyNotes } from "@/components/daily-notes";
 import { Summary } from "@/components/summary";
@@ -23,6 +20,9 @@ import {
 	mapOverviewBucketsToChartRows,
 	mapOverviewDataToTimeBucketStatuses,
 } from "@/lib/time-bucket-utils";
+import { useQuery } from "@tanstack/react-query";
+import { useId } from "react";
+import { useTranslation } from "react-i18next";
 import Dust from "./sensors/dust";
 import Noise from "./sensors/noise";
 import Vibration from "./sensors/vibration";
@@ -56,7 +56,7 @@ export default function OperatorHome() {
 	return (
 		<>
 			<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
-				<div className="flex flex-col gap-4 w-1/4 shrink-0">
+				<div className="flex w-1/4 shrink-0 flex-col gap-4">
 					<Summary
 						exposureType="all"
 						view={view}
@@ -67,7 +67,7 @@ export default function OperatorHome() {
 					<DailyNotes />
 				</div>
 
-				<div className="flex flex-col gap-4 min-w-0 w-full">
+				<div className="flex w-full min-w-0 flex-col gap-4">
 					{isLoading ? (
 						<Card className="flex h-24 w-full items-center">
 							<p>{t(($) => $.loadingData)}</p>
@@ -79,7 +79,9 @@ export default function OperatorHome() {
 					) : view === "month" ? (
 						<CalendarWidget
 							selectedDay={date}
-							data={mapOverviewDataToTimeBucketStatuses(overviewBuckets ?? [])}
+							data={mapOverviewDataToTimeBucketStatuses(
+								overviewBuckets ?? [],
+							)}
 						/>
 					) : view === "week" ? (
 						<WeekWidget
@@ -87,7 +89,9 @@ export default function OperatorHome() {
 							dayStartHour={0}
 							dayEndHour={23}
 							weekStartsOn={1}
-							data={mapOverviewDataToTimeBucketStatuses(overviewBuckets ?? [])}
+							data={mapOverviewDataToTimeBucketStatuses(
+								overviewBuckets ?? [],
+							)}
 						/>
 					) : !overviewBuckets || overviewBuckets.length === 0 ? (
 						<Card className="flex h-24 w-full items-center">
@@ -102,7 +106,11 @@ export default function OperatorHome() {
 						</Card>
 					) : (
 						<DailyBarChart
-							data={mapOverviewBucketsToChartRows(overviewBuckets ?? [], 0, 23)}
+							data={mapOverviewBucketsToChartRows(
+								overviewBuckets ?? [],
+								0,
+								23,
+							)}
 							startHour={0}
 							endHour={23}
 							chartTitle={date.toLocaleDateString(i18n.language, {
@@ -119,11 +127,14 @@ export default function OperatorHome() {
 												pdfVibrationChartContainerId,
 												pdfNoiseChartContainerId,
 											],
-											`${date.toLocaleDateString(i18n.language, {
-												day: "numeric",
-												month: "long",
-												year: "numeric",
-											})}-${user.username}-Exposure-Overview`,
+											`${date.toLocaleDateString(
+												i18n.language,
+												{
+													day: "numeric",
+													month: "long",
+													year: "numeric",
+												},
+											)}-${user.username}-Exposure-Overview`,
 											[
 												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
 												`Vibration Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
