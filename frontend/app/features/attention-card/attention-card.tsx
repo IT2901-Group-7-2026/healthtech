@@ -3,15 +3,17 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card.js";
 import { Skeleton } from "@/components/ui/skeleton.js";
 import { AtRiskPopup } from "@/features/attention-card/exposure-level-popup.js";
 import { StatCard } from "@/features/attention-card/stat-card";
+import { TIMEZONE } from "@/i18n/locale";
 import {
 	type DangerLevel,
 	mapDangerLevelToColor,
 } from "@/lib/danger-levels.js";
+import { now, parseAsTZDate, today } from "@/lib/date";
 import type { ThresholdSummary, UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor } from "@/lib/sensors.js";
 import { cn } from "@/lib/utils";
-import { formatDate, isToday } from "date-fns";
-import { parseAsString, useQueryState } from "nuqs";
+import { isSameDay } from "date-fns";
+import { useQueryState } from "nuqs";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -33,7 +35,7 @@ export const AttentionCard = ({
 	const [sensor] = useQueryState("sensor", parseAsSensor);
 	const [date] = useQueryState(
 		"filterDate",
-		parseAsString.withDefault(formatDate(new Date(), "yyyy-MM-dd")),
+		parseAsTZDate.withDefault(today()),
 	);
 
 	const [selectedStatus, setSelectedStatus] = useState<DangerLevel | null>(
@@ -71,7 +73,9 @@ export const AttentionCard = ({
 	}, [thresholdSummary, subordinates]);
 
 	const selectedSensorKey = sensor ?? "total";
-	const showActionCard = date ? isToday(date) : false;
+	const showActionCard = date
+		? isSameDay(date, now(), { in: TIMEZONE })
+		: false;
 
 	const dangerLevelColor =
 		highestDangerLevel !== null

@@ -1,8 +1,9 @@
+import type { TZDate } from "@date-fns/tz";
 import { createContext, useContext } from "react";
 
 type ContextValue = {
-	date: Date;
-	setDate: (date: Date) => void;
+	date: TZDate;
+	setDate: (date: TZDate) => void;
 };
 
 export const DateContext = createContext<ContextValue | null>(null);

@@ -2,6 +2,8 @@ import { tz } from "@date-fns/tz";
 import type { Locale } from "date-fns";
 import { enGB, nb } from "date-fns/locale";
 
+export const TIMEZONE_NAME = "Europe/Oslo" as const;
+
 export const getLocale = (i18nLanguage: string): Locale => {
 	switch (i18nLanguage) {
 		case "no": {
@@ -18,4 +20,4 @@ export const getLocale = (i18nLanguage: string): Locale => {
 	}
 };
 
-export const TIMEZONE = tz("Europe/Oslo");
+export const TIMEZONE = tz(TIMEZONE_NAME);

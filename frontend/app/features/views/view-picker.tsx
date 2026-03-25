@@ -7,6 +7,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
+import type { TZDate } from "@date-fns/tz";
 import { endOfWeek, startOfWeek } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { useDate } from "../date-picker/use-date";
@@ -41,7 +42,7 @@ export function ViewPicker() {
 
 function formatSelectedView(
 	view: View,
-	date: Date,
+	date: TZDate,
 	locale: string,
 	formatDate: ReturnType<typeof useFormatDate>,
 ) {

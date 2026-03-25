@@ -8,8 +8,10 @@ import {
 	PopoverTrigger,
 } from "@/components/ui/popover";
 import { useFormatDate } from "@/hooks/use-format-date";
+import { now, toTZDate } from "@/lib/date";
 import type { User } from "@/lib/dto.js";
 import { userRoleToString } from "@/lib/utils.js";
+import { TZDate } from "@date-fns/tz";
 import { isBefore } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
@@ -39,8 +41,8 @@ export function ProfilePopup({
 
 	const tempListOfRegulations = ["Safety boots", "Helmet", "Protective mask"];
 	type FormValues = {
-		fromDate?: Date;
-		toDate?: Date;
+		fromDate?: TZDate;
+		toDate?: TZDate;
 	};
 
 	const form = useForm<FormValues>({
@@ -74,8 +76,8 @@ export function ProfilePopup({
 		}, 15000);
 	};
 
-	const minSelectableDate = new Date(2024, 0, 1);
-	const maxSelectableDate = new Date();
+	const minSelectableDate = new TZDate(2024, 0, 1, "Europe/Oslo");
+	const maxSelectableDate = now();
 
 	const [fromCalendarOpen, setFromCalendarOpen] = useState(false);
 	const [toCalendarOpen, setToCalendarOpen] = useState(false);
@@ -201,8 +203,14 @@ export function ProfilePopup({
 															selected={
 																field.value
 															}
-															onSelect={
-																field.onChange
+															onSelect={(value) =>
+																field.onChange(
+																	value
+																		? toTZDate(
+																				value,
+																			)
+																		: undefined,
+																)
 															}
 															disabled={{
 																before: minSelectableDate,
@@ -258,8 +266,14 @@ export function ProfilePopup({
 															selected={
 																field.value
 															}
-															onSelect={
-																field.onChange
+															onSelect={(value) =>
+																field.onChange(
+																	value
+																		? toTZDate(
+																				value,
+																			)
+																		: undefined,
+																)
 															}
 															disabled={{
 																before: minSelectableDate,
