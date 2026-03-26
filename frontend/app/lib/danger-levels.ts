@@ -1,7 +1,7 @@
-import type { Sensor } from "@/features/sensor-picker/sensors";
+import { type Sensor } from "@/features/sensor-picker/sensors.ts";
 import { t } from "i18next";
 import z from "zod";
-import type { UserWithStatusDto } from "./dto";
+import { type UserWithStatusDto } from "./dto.ts";
 
 export const DANGER_LEVEL_SEVERITY: Record<DangerLevel, number> = {
 	danger: 2,

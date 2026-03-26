@@ -1,22 +1,22 @@
-import { SensorIcon } from "@/components/sensor-icon";
+import { SensorIcon } from "@/components/sensor-icon.tsx";
 import {
 	Card,
 	CardContent,
 	CardFooter,
 	CardHeader,
-} from "@/components/ui/card";
+} from "@/components/ui/card.tsx";
 import {
 	type UserStatusData,
 	UserStatusPieChart,
-} from "@/components/users-status-pie-chart";
-import type { Sensor } from "@/features/sensor-picker/sensors";
+} from "@/components/users-status-pie-chart.tsx";
+import { type Sensor } from "@/features/sensor-picker/sensors.ts";
 import {
 	DANGER_LEVEL_SEVERITY,
 	DangerLevelSchema,
 	dangerlevelStyles,
 	mapDangerLevelToColor,
-} from "@/lib/danger-levels";
-import { cn } from "@/lib/utils";
+} from "@/lib/danger-levels.ts";
+import { cn } from "@/lib/utils.ts";
 import { ArrowRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";

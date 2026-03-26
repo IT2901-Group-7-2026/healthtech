@@ -1,31 +1,31 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { DailyBarChart } from "@/components/daily-bar-chart";
-import { DailyNotes } from "@/components/daily-notes";
-import { Summary } from "@/components/summary";
-import { Button } from "@/components/ui/button";
-import { Card, CardTitle } from "@/components/ui/card";
-import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
-import { useDate } from "@/features/date-picker/use-date";
-import { sensors } from "@/features/sensor-picker/sensors";
-import { useUser } from "@/features/user/user-context";
-import { useView } from "@/features/views/use-view";
-import { WeekWidget } from "@/features/week-widget/week-widget";
-import { useExportPDF } from "@/hooks/use-export-pdf";
-import { getLocale } from "@/i18n/locale";
-import { sensorOverviewQueryOptions } from "@/lib/api";
-import { buildSensorOverviewQuery } from "@/lib/sensor-query-utils";
+import { DailyBarChart } from "@/components/daily-bar-chart.tsx";
+import { DailyNotes } from "@/components/daily-notes.tsx";
+import { Summary } from "@/components/summary.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { Card, CardTitle } from "@/components/ui/card.tsx";
+import { CalendarWidget } from "@/features/calendar-widget/calendar-widget.tsx";
+import { useDate } from "@/features/date-picker/use-date.ts";
+import { sensors } from "@/features/sensor-picker/sensors.ts";
+import { useUser } from "@/features/user/user-context.tsx";
+import { useView } from "@/features/views/use-view.ts";
+import { WeekWidget } from "@/features/week-widget/week-widget.tsx";
+import { useExportPDF } from "@/hooks/use-export-pdf.ts";
+import { getLocale } from "@/i18n/locale.ts";
+import { sensorOverviewQueryOptions } from "@/lib/api.ts";
+import { buildSensorOverviewQuery } from "@/lib/sensor-query-utils.ts";
 import {
 	calculateSummaryCounts,
 	mapOverviewBucketsToChartRows,
 	mapOverviewDataToTimeBucketStatuses,
-} from "@/lib/time-bucket-utils";
+} from "@/lib/time-bucket-utils.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
-import Dust from "./sensors/dust";
-import Noise from "./sensors/noise";
-import Vibration from "./sensors/vibration";
+import Dust from "./sensors/dust.tsx";
+import Noise from "./sensors/noise.tsx";
+import Vibration from "./sensors/vibration.tsx";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function OperatorHome() {

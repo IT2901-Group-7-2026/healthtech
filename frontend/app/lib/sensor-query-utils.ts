@@ -1,5 +1,5 @@
-import type { Sensor } from "@/features/sensor-picker/sensors";
-import type { View } from "@/features/views/views";
+import { type Sensor } from "@/features/sensor-picker/sensors.ts";
+import { type View } from "@/features/views/views.ts";
 import {
 	endOfDay,
 	endOfMonth,
@@ -8,13 +8,13 @@ import {
 	startOfMonth,
 	startOfWeek,
 } from "date-fns";
-import type {
-	AggregateFnKey,
-	GranularityKey,
-	SensorDataRequestDto,
-	SensorOverviewDataRequestDto,
-	SensorTypeField,
-} from "./dto";
+import {
+	type AggregateFnKey,
+	type GranularityKey,
+	type SensorDataRequestDto,
+	type SensorOverviewDataRequestDto,
+	type SensorTypeField,
+} from "./dto.ts";
 
 function getGranularityFromView(
 	view: View,

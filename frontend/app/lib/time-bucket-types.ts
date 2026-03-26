@@ -1,5 +1,5 @@
-import type { DangerLevel } from "./danger-levels";
-import type { Sensor } from "./sensors";
+import { type DangerLevel } from "./danger-levels.ts";
+import { type Sensor } from "./sensors.ts";
 
 export type OverviewChartRow = {
 	sensor: Sensor;

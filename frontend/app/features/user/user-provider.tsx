@@ -1,7 +1,7 @@
-import type { User } from "@/lib/dto.js";
+import { type User } from "@/lib/dto.ts";
 import { type ReactNode, useEffect, useState } from "react";
-import { UserContext } from "./user-context";
-import { DEFAULT_USER, USER_STORAGE_KEY } from "./user-utils";
+import { UserContext } from "./user-context.tsx";
+import { DEFAULT_USER, USER_STORAGE_KEY } from "./user-utils.ts";
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
 	const [user, setUserState] = useState<User>(DEFAULT_USER);

@@ -1,5 +1,5 @@
-import { Notifications } from "@/components/notifications";
-import { BasePopup } from "./base-popup";
+import { Notifications } from "@/components/notifications.tsx";
+import { BasePopup } from "./base-popup.tsx";
 
 export function BellPopup({
 	title,

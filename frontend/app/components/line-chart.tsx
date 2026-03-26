@@ -1,18 +1,26 @@
 "use client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card.tsx";
 import {
 	type ChartConfig,
 	ChartContainer,
 	ChartTooltip,
 	ChartTooltipContent,
-} from "@/components/ui/chart";
-import { useDate } from "@/features/date-picker/use-date";
-import { useFormatDate } from "@/hooks/use-format-date";
-import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
-import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
-import type { Sensor } from "@/lib/sensors";
-import { thresholds } from "@/lib/thresholds";
-import { downsampleSensorData } from "@/lib/utils";
+} from "@/components/ui/chart.tsx";
+import { useDate } from "@/features/date-picker/use-date.ts";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { type DangerLevel, DangerLevels } from "@/lib/danger-levels.ts";
+import {
+	type SensorDataResponseDto,
+	type UserSensorStatusDto,
+} from "@/lib/dto.ts";
+import { type Sensor } from "@/lib/sensors.ts";
+import { thresholds } from "@/lib/thresholds.ts";
+import { downsampleSensorData } from "@/lib/utils.ts";
 import {
 	addHours,
 	endOfDay,
@@ -33,7 +41,7 @@ import {
 	XAxis,
 	YAxis,
 } from "recharts";
-import type { CurveType } from "recharts/types/shape/Curve";
+import { type CurveType } from "recharts/types/shape/Curve";
 
 const chartConfig = {
 	desktop: {

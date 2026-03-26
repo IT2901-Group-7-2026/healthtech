@@ -1,26 +1,26 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
 import {
 	dangerlevelStyles,
 	getHighestDangerLevel,
 	mapDangerLevelToColor,
-} from "@/lib/danger-levels";
-import type { UserWithStatusDto } from "@/lib/dto";
+} from "@/lib/danger-levels.ts";
+import { type UserWithStatusDto } from "@/lib/dto.ts";
 import L, { type LatLngBoundsExpression, type PathOptions } from "leaflet";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { Fragment, useRef, useState } from "react";
 import { renderToString } from "react-dom/server";
 import { useTranslation } from "react-i18next";
 import { ImageOverlay, MapContainer, Marker, Polygon } from "react-leaflet";
-import { type Sensor, sensors } from "../sensor-picker/sensors";
+import { type Sensor, sensors } from "../sensor-picker/sensors.ts";
 import {
 	HallOperatorList,
 	HallOperatorListSkeleton,
-} from "./hall-operator-list";
-import { MapUsersBadge } from "./location-map-users-badge";
-import { getCenterPoint, xyToyx } from "./location-map-utils";
-import { useImageSize } from "./use-image-size";
+} from "./hall-operator-list.tsx";
+import { MapUsersBadge } from "./location-map-users-badge.tsx";
+import { getCenterPoint, xyToyx } from "./location-map-utils.ts";
+import { useImageSize } from "./use-image-size.tsx";
 
 type Hall = {
 	name: string;

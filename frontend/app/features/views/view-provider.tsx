@@ -1,7 +1,7 @@
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import type { ReactNode } from "react";
-import { ViewContext } from "./use-view";
-import { views } from "./views";
+import { type ReactNode } from "react";
+import { ViewContext } from "./use-view.ts";
+import { views } from "./views.ts";
 
 const parseAsView = parseAsStringLiteral(views);
 

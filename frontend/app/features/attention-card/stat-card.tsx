@@ -1,7 +1,7 @@
-import { Card, CardContent, CardFooter } from "@/components/ui/card.js";
-import { cn } from "@/lib/utils.js";
+import { Card, CardContent, CardFooter } from "@/components/ui/card.tsx";
+import { cn } from "@/lib/utils.ts";
 import { ArrowRightIcon } from "lucide-react";
-import type { PropsWithChildren } from "react";
+import { type PropsWithChildren } from "react";
 import { useTranslation } from "react-i18next";
 
 export type StatCardProps = PropsWithChildren & {

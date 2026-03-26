@@ -1,11 +1,11 @@
-import type { Sensor } from "@/features/sensor-picker/sensors";
+import { type Sensor } from "@/features/sensor-picker/sensors.ts";
 import {
 	queryOptions,
 	useMutation,
 	useQueryClient,
 } from "@tanstack/react-query";
 import { minutesToMilliseconds } from "date-fns";
-import { fetchWithUserId } from "./api-client";
+import { fetchWithUserId } from "./api-client.ts";
 import {
 	type Note,
 	type NoteDataRequest,
@@ -19,9 +19,9 @@ import {
 	ThresholdSummarySchema,
 	UserSchema,
 	UserWithStatusSchema,
-} from "./dto";
-import { getStartEnd } from "./sensor-query-utils";
-import type { View } from "./views";
+} from "./dto.ts";
+import { getStartEnd } from "./sensor-query-utils.ts";
+import { type View } from "./views.ts";
 
 const fetchAllUsers = async () => {
 	const response = await fetchWithUserId("users");

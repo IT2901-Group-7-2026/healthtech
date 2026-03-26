@@ -7,7 +7,9 @@ const inlineSvgColors = (svg: SVGSVGElement) => {
 	const rootStyles = getComputedStyle(document.documentElement);
 
 	const resolveColor = (value: string) => {
-		if (!value.startsWith("var(")) return value;
+		if (!value.startsWith("var(")) {
+			return value;
+		}
 		const varName = value.replace(/var\((--.*?)\)/, "$1");
 		return rootStyles.getPropertyValue(varName).trim() || value;
 	};
@@ -17,9 +19,15 @@ const inlineSvgColors = (svg: SVGSVGElement) => {
 		const stroke = el.getAttribute("stroke");
 		const stopColor = el.getAttribute("stop-color");
 
-		if (fill) el.setAttribute("fill", resolveColor(fill));
-		if (stroke) el.setAttribute("stroke", resolveColor(stroke));
-		if (stopColor) el.setAttribute("stop-color", resolveColor(stopColor));
+		if (fill) {
+			el.setAttribute("fill", resolveColor(fill));
+		}
+		if (stroke) {
+			el.setAttribute("stroke", resolveColor(stroke));
+		}
+		if (stopColor) {
+			el.setAttribute("stop-color", resolveColor(stopColor));
+		}
 	});
 };
 
@@ -48,7 +56,9 @@ const svgToCanvas = async (svg: SVGSVGElement) => {
 	canvas.height = rect.height * SCALE;
 
 	const ctx = canvas.getContext("2d");
-	if (!ctx) return null;
+	if (!ctx) {
+		return null;
+	}
 
 	ctx.scale(SCALE, SCALE);
 	ctx.drawImage(img, 0, 0);
@@ -60,10 +70,14 @@ const svgToCanvas = async (svg: SVGSVGElement) => {
 
 const elementToCanvas = async (elementId: string) => {
 	const container = document.getElementById(elementId);
-	if (!container) return null;
+	if (!container) {
+		return null;
+	}
 
 	const svg = container.querySelector("svg");
-	if (!svg) return null;
+	if (!svg) {
+		return null;
+	}
 
 	return svgToCanvas(svg);
 };
@@ -72,7 +86,9 @@ export const useExportPDF = () => {
 	const exportToPDF = useCallback(
 		async (elementId: string, fileName: string, title: string) => {
 			const canvas = await elementToCanvas(elementId);
-			if (!canvas) return;
+			if (!canvas) {
+				return;
+			}
 
 			const titleHeight = 40;
 
@@ -118,7 +134,9 @@ export const useExportPDF = () => {
 
 			for (let i = 0; i < elementIds.length; i++) {
 				const canvas = await elementToCanvas(elementIds[i]);
-				if (!canvas) continue;
+				if (!canvas) {
+					continue;
+				}
 
 				const imgData = canvas.toDataURL("image/png", 1.0);
 

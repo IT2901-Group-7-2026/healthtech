@@ -1,12 +1,12 @@
-import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.js";
-import type { Sensor } from "@/lib/sensors.js";
-import { cn } from "@/lib/utils.js";
-import type { ComponentType, SVGProps } from "react";
+import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.ts";
+import { type Sensor } from "@/lib/sensors.ts";
+import { cn } from "@/lib/utils.ts";
+import { type ComponentType, type SVGProps } from "react";
 
 type IconType = ComponentType<SVGProps<SVGSVGElement>>;
 
-import { DustIcon } from "@/components/icons/dust-icon";
-import { VibrationIcon } from "@/components/icons/vibration-icon";
+import { DustIcon } from "@/components/icons/dust-icon.tsx";
+import { VibrationIcon } from "@/components/icons/vibration-icon.tsx";
 import { EarIcon } from "lucide-react";
 
 export type IconVariant = "dust" | "noise" | "vibration";

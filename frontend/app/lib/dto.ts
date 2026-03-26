@@ -1,6 +1,6 @@
-import { type Sensor, SensorSchema } from "@/features/sensor-picker/sensors";
+import { type Sensor, SensorSchema } from "@/features/sensor-picker/sensors.ts";
 import { z } from "zod";
-import { DangerLevelSchema } from "./danger-levels";
+import { DangerLevelSchema } from "./danger-levels.ts";
 
 // TODO: Split this file into multiple files based on domain
 

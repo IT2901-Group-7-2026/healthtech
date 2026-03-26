@@ -1,14 +1,19 @@
-import { SensorIcon } from "@/components/sensor-icon";
-import { Button } from "@/components/ui/button";
+import { SensorIcon } from "@/components/sensor-icon.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import {
 	Collapsible,
 	CollapsibleContent,
 	CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import type { UserWithStatusDto } from "@/lib/dto";
-import { type Sensor, sensors } from "@/lib/sensors";
+} from "@/components/ui/collapsible.tsx";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableRow,
+} from "@/components/ui/table.tsx";
+import { type UserWithStatusDto } from "@/lib/dto.ts";
+import { type Sensor, sensors } from "@/lib/sensors.ts";
 import { ChevronDownIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 

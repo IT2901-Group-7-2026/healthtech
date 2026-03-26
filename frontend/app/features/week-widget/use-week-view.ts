@@ -1,5 +1,5 @@
-import { useDate } from "@/features/date-picker/use-date";
-import { getFormatOptions, useFormatDate } from "@/hooks/use-format-date.js";
+import { useDate } from "@/features/date-picker/use-date.ts";
+import { getFormatOptions, useFormatDate } from "@/hooks/use-format-date.ts";
 import { tz } from "@date-fns/tz";
 import {
 	addDays,

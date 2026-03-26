@@ -1,11 +1,11 @@
-import type { DangerLevel } from "./danger-levels";
-import type { OverviewBucketDto, SensorDataResponseDto } from "./dto";
-import { type Sensor, sensors } from "./sensors";
-import type {
-	OverviewChartRow,
-	SummaryCounts,
-	TimeBucketStatus,
-} from "./time-bucket-types";
+import { type DangerLevel } from "./danger-levels.ts";
+import { type OverviewBucketDto, type SensorDataResponseDto } from "./dto.ts";
+import { type Sensor, sensors } from "./sensors.ts";
+import {
+	type OverviewChartRow,
+	type SummaryCounts,
+	type TimeBucketStatus,
+} from "./time-bucket-types.ts";
 
 export function calculateSummaryCounts(
 	data: Array<SensorDataResponseDto> | Array<OverviewBucketDto>,
@@ -89,7 +89,9 @@ export function mapOverviewBucketsToChartRows(
 
 		data.forEach((bucket) => {
 			const hour = bucket.time.getUTCHours();
-			if (hour < startHour || hour > endHour) return;
+			if (hour < startHour || hour > endHour) {
+				return;
+			}
 
 			dangerLevelByHour[hour] = bucket.sensorDangerLevels[sensor] ?? null;
 		});

@@ -1,8 +1,16 @@
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { BasePopup } from "@/features/popups/base-popup";
-import { type DangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
-import type { UserWithStatusDto } from "@/lib/dto.js";
+import { Card, CardContent, CardFooter } from "@/components/ui/card.tsx";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableRow,
+} from "@/components/ui/table.tsx";
+import { BasePopup } from "@/features/popups/base-popup.tsx";
+import {
+	type DangerLevel,
+	mapDangerLevelToColor,
+} from "@/lib/danger-levels.ts";
+import { type UserWithStatusDto } from "@/lib/dto.ts";
 import { ArrowRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -18,7 +26,9 @@ const getExposureBadges = (
 	];
 
 	return exposures.filter(({ data }) => {
-		if (!data) return false;
+		if (!data) {
+			return false;
+		}
 
 		if (popupStatus === "danger") {
 			return data.dangerLevel === "danger";

@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button.tsx";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -10,21 +10,24 @@ import {
 	DropdownMenuSubContent,
 	DropdownMenuSubTrigger,
 	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useTheme } from "@/features/dark-mode/use-theme";
-import { useDate } from "@/features/date-picker/use-date";
-import { BellPopup } from "@/features/popups/bell-popup";
-import { ProfilePopup } from "@/features/popups/profile-popup";
-import { usePopup } from "@/features/popups/use-popup";
-import { useUser } from "@/features/user/user-context";
-import { KARI_NORDMANN_ID, OLA_NORDMANN_ID } from "@/features/user/user-utils";
-import { useView } from "@/features/views/use-view";
-import type { TranslateFn } from "@/i18n/config.js";
-import { usersQueryOptions } from "@/lib/api";
-import { type User, UserRoleSchema } from "@/lib/dto.js";
-import { cn, shorthandName, userRoleToString } from "@/lib/utils";
+} from "@/components/ui/dropdown-menu.tsx";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar.tsx";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { useTheme } from "@/features/dark-mode/use-theme.ts";
+import { useDate } from "@/features/date-picker/use-date.ts";
+import { BellPopup } from "@/features/popups/bell-popup.tsx";
+import { ProfilePopup } from "@/features/popups/profile-popup.tsx";
+import { usePopup } from "@/features/popups/use-popup.ts";
+import { useUser } from "@/features/user/user-context.tsx";
+import {
+	KARI_NORDMANN_ID,
+	OLA_NORDMANN_ID,
+} from "@/features/user/user-utils.ts";
+import { useView } from "@/features/views/use-view.ts";
+import { type TranslateFn } from "@/i18n/config.ts";
+import { usersQueryOptions } from "@/lib/api.ts";
+import { type User, UserRoleSchema } from "@/lib/dto.ts";
+import { cn, shorthandName, userRoleToString } from "@/lib/utils.ts";
 import { useQuery } from "@tanstack/react-query";
 import {
 	Bell,
@@ -248,7 +251,9 @@ function UserDropdown({
 	const { theme, setTheme } = useTheme();
 	const { visible, openPopup, closePopup } = usePopup();
 
-	if (!user) return null;
+	if (!user) {
+		return null;
+	}
 
 	const currentLanguage = i18n.language || "en";
 
@@ -446,7 +451,9 @@ function NavTabs({
 	// update pill whenever the active route changes,
 	useLayoutEffect(() => {
 		const el = navLinkRefs.current[activeNavIndex];
-		if (!el) return;
+		if (!el) {
+			return;
+		}
 
 		const observer = new ResizeObserver(() => {
 			setPillWidth(el.offsetWidth);
@@ -482,7 +489,9 @@ function NavTabs({
 						}}
 						key={route.to.toString()}
 						ref={(el) => {
-							if (!el) return;
+							if (!el) {
+								return;
+							}
 							navLinkRefs.current[i] = el;
 						}}
 						className={className}

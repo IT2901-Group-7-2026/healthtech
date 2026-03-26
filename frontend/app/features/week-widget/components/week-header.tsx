@@ -1,5 +1,5 @@
-import { Button } from "@/ui/button";
-import type { ReactNode } from "react";
+import { Button } from "@/ui/button.tsx";
+import { type ReactNode } from "react";
 
 export function WeekHeader({
 	title,

@@ -1,44 +1,44 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { DailyNotes } from "@/components/daily-notes.js";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Card } from "@/components/ui/card";
+import { DailyNotes } from "@/components/daily-notes.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { Calendar } from "@/components/ui/calendar.tsx";
+import { Card } from "@/components/ui/card.tsx";
 import {
 	Combobox,
 	ComboboxContent,
 	ComboboxInput,
 	ComboboxItem,
 	ComboboxList,
-} from "@/components/ui/combobox";
-import { DustChart } from "@/components/ui/dust-chart";
+} from "@/components/ui/combobox.tsx";
+import { DustChart } from "@/components/ui/dust-chart.tsx";
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-} from "@/components/ui/popover";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UserStatusChart } from "@/components/users-status-chart";
-import { AttentionCard } from "@/features/attention-card/attention-card.js";
-import { TeamSummary } from "@/features/sidebar/team-summary.js";
-import { useUser } from "@/features/user/user-context";
-import { useFormatDate } from "@/hooks/use-format-date";
+} from "@/components/ui/popover.tsx";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
+import { UserStatusChart } from "@/components/users-status-chart.tsx";
+import { AttentionCard } from "@/features/attention-card/attention-card.tsx";
+import { TeamSummary } from "@/features/sidebar/team-summary.tsx";
+import { useUser } from "@/features/user/user-context.tsx";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
 import {
 	fetchSubordinatesQueryOptions,
 	fetchThresholdSummaryQueryOptions,
 	sensorQueryOptions,
 	usersQueryOptions,
-} from "@/lib/api.js";
-import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
-import { thresholds } from "@/lib/thresholds";
+} from "@/lib/api.ts";
+import { buildSensorQuery } from "@/lib/sensor-query-utils.ts";
+import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors.ts";
+import { thresholds } from "@/lib/thresholds.ts";
 import { useQuery } from "@tanstack/react-query";
 import { addWeeks, endOfDay, parseISO, startOfDay } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { PieChartCard } from "../../features/attention-card/pie-chart-card";
+import { PieChartCard } from "../../features/attention-card/pie-chart-card.tsx";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function ForemanOverview() {

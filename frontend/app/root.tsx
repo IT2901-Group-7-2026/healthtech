@@ -1,4 +1,4 @@
-import { ThemeProvider } from "@/features/dark-mode/theme-provider";
+import { ThemeProvider } from "@/features/dark-mode/theme-provider.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { setDefaultOptions } from "date-fns";
@@ -11,12 +11,12 @@ import {
 	Scripts,
 	ScrollRestoration,
 } from "react-router";
-import type { Route } from "./+types/root";
+import { type Route } from "./+types/root";
 import "./app.css";
-import { DateProvider } from "./features/date-picker/date-provider";
-import { UserProvider } from "./features/user/user-provider.js";
-import { ViewProvider } from "./features/views/view-provider";
-import "./i18n/config";
+import { DateProvider } from "./features/date-picker/date-provider.tsx";
+import { UserProvider } from "./features/user/user-provider.tsx";
+import { ViewProvider } from "./features/views/view-provider.tsx";
+import "./i18n/config.ts";
 
 setDefaultOptions({ weekStartsOn: 1 }); // Monday
 

@@ -1,9 +1,9 @@
-import { SignupForm } from "@/components/signup-form.js";
-import { Button } from "@/components/ui/button.js";
-import { useUser } from "@/features/user/user-context.js";
-import { usersQueryOptions } from "@/lib/api.js";
-import { type User, UserRoleSchema } from "@/lib/dto.js";
-import { userRoleToString } from "@/lib/utils.js";
+import { SignupForm } from "@/components/signup-form.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { useUser } from "@/features/user/user-context.tsx";
+import { usersQueryOptions } from "@/lib/api.ts";
+import { type User, UserRoleSchema } from "@/lib/dto.ts";
+import { userRoleToString } from "@/lib/utils.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";

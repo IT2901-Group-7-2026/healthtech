@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils.ts";
 import { getUnixTime } from "date-fns";
-import type { TimeSlotSegments } from "../types";
+import { type TimeSlotSegments } from "../types.ts";
 
 export function WeekDaysHeader({ days }: { days: TimeSlotSegments }) {
 	return (

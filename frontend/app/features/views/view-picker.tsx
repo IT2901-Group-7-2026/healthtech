@@ -1,18 +1,17 @@
-import { useFormatDate } from "@/hooks/use-format-date";
-import { capitalize } from "@/lib/utils";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { capitalize } from "@/lib/utils.ts";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/ui/select";
+} from "@/ui/select.tsx";
 import { endOfWeek, startOfWeek } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { useDate } from "../date-picker/use-date";
-import { useView } from "./use-view";
-import type { View } from "./utils";
-import { views } from "./utils";
+import { useDate } from "../date-picker/use-date.ts";
+import { useView } from "./use-view.ts";
+import { type View, views } from "./utils.ts";
 
 export function ViewPicker() {
 	const formatDate = useFormatDate();

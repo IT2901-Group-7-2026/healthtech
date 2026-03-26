@@ -1,18 +1,18 @@
 /** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: <I prefer this over sending functions as props> */
 
-import { useDate } from "@/features/date-picker/use-date";
-import { useUser } from "@/features/user/user-context";
-import { useView } from "@/features/views/use-view";
-import { useFormatDate } from "@/hooks/use-format-date.js";
-import { createNote, notesQueryOptions, updateNote } from "@/lib/api";
-import type { Note } from "@/lib/dto";
+import { useDate } from "@/features/date-picker/use-date.ts";
+import { useUser } from "@/features/user/user-context.tsx";
+import { useView } from "@/features/views/use-view.ts";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { createNote, notesQueryOptions, updateNote } from "@/lib/api.ts";
+import { type Note } from "@/lib/dto.ts";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isSameDay, isSameMonth, isSameWeek } from "date-fns";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "./ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
-import { Textarea } from "./ui/textarea";
+import { Button } from "./ui/button.tsx";
+import { Card, CardContent, CardFooter, CardHeader } from "./ui/card.tsx";
+import { Textarea } from "./ui/textarea.tsx";
 
 export const DailyNotes = ({
 	popUpOverride = false,

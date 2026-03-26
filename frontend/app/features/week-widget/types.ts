@@ -1,5 +1,5 @@
-import type { DangerLevel } from "@/lib/danger-levels";
-import type { useWeekView } from "./use-week-view";
+import { type DangerLevel } from "@/lib/danger-levels.ts";
+import { type useWeekView } from "./use-week-view.ts";
 
 export type TimeSlotSegments = ReturnType<
 	typeof useWeekView

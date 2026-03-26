@@ -1,4 +1,4 @@
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart.tsx";
 import { Pie, PieChart, type PieSectorShapeProps, Sector } from "recharts";
 
 const pieShape = (props: PieSectorShapeProps) => {

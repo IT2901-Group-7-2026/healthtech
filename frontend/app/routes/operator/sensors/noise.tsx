@@ -1,33 +1,33 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { DailyNotes } from "@/components/daily-notes";
-import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
-import { Summary } from "@/components/summary";
-import { Button } from "@/components/ui/button";
-import { Card, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
-import { useDate } from "@/features/date-picker/use-date";
-import { useUser } from "@/features/user/user-context";
-import { useView } from "@/features/views/use-view";
-import type { View } from "@/features/views/views";
-import { WeekWidget } from "@/features/week-widget/week-widget";
-import { useExportPDF } from "@/hooks/use-export-pdf";
-import { getLocale } from "@/i18n/locale";
-import { sensorQueryOptions } from "@/lib/api";
+import { DailyNotes } from "@/components/daily-notes.tsx";
+import { ChartLineDefault, ThresholdLine } from "@/components/line-chart.tsx";
+import { Summary } from "@/components/summary.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { Card, CardTitle } from "@/components/ui/card.tsx";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
+import { CalendarWidget } from "@/features/calendar-widget/calendar-widget.tsx";
+import { useDate } from "@/features/date-picker/use-date.ts";
+import { useUser } from "@/features/user/user-context.tsx";
+import { useView } from "@/features/views/use-view.ts";
+import { type View } from "@/features/views/views.ts";
+import { WeekWidget } from "@/features/week-widget/week-widget.tsx";
+import { useExportPDF } from "@/hooks/use-export-pdf.ts";
+import { getLocale } from "@/i18n/locale.ts";
+import { sensorQueryOptions } from "@/lib/api.ts";
 import {
 	type Aggregation,
 	Aggregations,
 	type SensorDataResponseDto,
-} from "@/lib/dto";
-import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import type { Sensor } from "@/lib/sensors";
-import { thresholds } from "@/lib/thresholds";
+} from "@/lib/dto.ts";
+import { buildSensorQuery } from "@/lib/sensor-query-utils.ts";
+import { type Sensor } from "@/lib/sensors.ts";
+import { thresholds } from "@/lib/thresholds.ts";
 import {
 	calculateSummaryCounts,
 	mapSensorDataToTimeBucketStatuses,
-} from "@/lib/time-bucket-utils";
-import { computeYAxisRange } from "@/lib/utils";
+} from "@/lib/time-bucket-utils.ts";
+import { computeYAxisRange } from "@/lib/utils.ts";
 import { useQueries } from "@tanstack/react-query";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useId } from "react";

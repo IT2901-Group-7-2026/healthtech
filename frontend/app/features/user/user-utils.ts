@@ -1,4 +1,4 @@
-import type { User } from "@/lib/dto";
+import { type User } from "@/lib/dto.ts";
 
 export const USER_STORAGE_KEY = "demo_user_id" as const;
 

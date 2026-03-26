@@ -1,12 +1,16 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
-import { useDate } from "@/features/date-picker/use-date";
-import type { Sensor } from "@/features/sensor-picker/sensors";
-import { sensors } from "@/features/sensor-picker/sensors";
-import { useFormatDate } from "@/hooks/use-format-date";
-import type { OverviewChartRow } from "@/lib/time-bucket-types";
+import {
+	Card,
+	CardContent,
+	CardHeader,
+	CardTitle,
+} from "@/components/ui/card.tsx";
+import { type ChartConfig, ChartContainer } from "@/components/ui/chart.tsx";
+import { useDate } from "@/features/date-picker/use-date.ts";
+import { type Sensor, sensors } from "@/features/sensor-picker/sensors.ts";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { type OverviewChartRow } from "@/lib/time-bucket-types.ts";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";

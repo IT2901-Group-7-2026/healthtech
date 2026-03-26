@@ -1,6 +1,6 @@
 import { parseAsIsoDate, useQueryState } from "nuqs";
-import type { ReactNode } from "react";
-import { DateContext } from "./use-date";
+import { type ReactNode } from "react";
+import { DateContext } from "./use-date.ts";
 
 export function DateProvider({ children }: { children: ReactNode }) {
 	const [date, setDate] = useQueryState<Date>(

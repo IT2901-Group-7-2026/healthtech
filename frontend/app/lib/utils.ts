@@ -1,5 +1,5 @@
-import type { View } from "@/features/views/views";
-import type { TranslateFn } from "@/i18n/config.js";
+import { type View } from "@/features/views/views.ts";
+import { type TranslateFn } from "@/i18n/config.ts";
 import { type ClassValue, clsx } from "clsx";
 import {
 	addDays,
@@ -10,8 +10,8 @@ import {
 	subWeeks,
 } from "date-fns";
 import { twMerge } from "tailwind-merge";
-import type { SensorDataResponseDto, User } from "./dto";
-import type { Sensor } from "./sensors";
+import { type SensorDataResponseDto, type User } from "./dto.ts";
+import { type Sensor } from "./sensors.ts";
 
 export function cn(...inputs: Array<ClassValue>) {
 	return twMerge(clsx(inputs));
@@ -112,15 +112,21 @@ export function downsampleDataPoints(
 
 	for (let i = 0; i < data.length; i += bucketSize) {
 		const bucket = data.slice(i, i + bucketSize);
-		if (!bucket.length) continue;
+		if (!bucket.length) {
+			continue;
+		}
 
 		let min = bucket[0];
 		let max = bucket[0];
 
 		//Keep min and max of each bucket
 		for (const item of bucket) {
-			if (item.value < min.value) min = item;
-			if (item.value > max.value) max = item;
+			if (item.value < min.value) {
+				min = item;
+			}
+			if (item.value > max.value) {
+				max = item;
+			}
 		}
 
 		if (min.time < max.time) {

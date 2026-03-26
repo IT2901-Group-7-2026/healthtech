@@ -1,23 +1,23 @@
 /** biome-ignore-all lint/correctness/noNestedComponentDefinitions: CustomDay is intentionally defined inside CalendarView for prop access. */
 
-import { Calendar } from "@/components/ui/calendar";
-import { Card } from "@/components/ui/card";
-import { DialogDescription } from "@/components/ui/dialog";
+import { Calendar } from "@/components/ui/calendar.tsx";
+import { Card } from "@/components/ui/card.tsx";
+import { DialogDescription } from "@/components/ui/dialog.tsx";
 import {
 	CalendarPopup,
 	type CalendarPopupData,
-} from "@/features/popups/calendar-popup";
-import { getLocale } from "@/i18n/locale";
-import type { DangerLevel } from "@/lib/danger-levels";
-import type { Aggregation } from "@/lib/dto";
-import type { TimeBucketStatus } from "@/lib/time-bucket-types";
-import { cn } from "@/lib/utils";
+} from "@/features/popups/calendar-popup.tsx";
+import { getLocale } from "@/i18n/locale.ts";
+import { type DangerLevel } from "@/lib/danger-levels.ts";
+import { type Aggregation } from "@/lib/dto.ts";
+import { type TimeBucketStatus } from "@/lib/time-bucket-types.ts";
+import { cn } from "@/lib/utils.ts";
 import { useState } from "react";
-import type { CalendarDay, Modifiers } from "react-day-picker";
+import { type CalendarDay, type Modifiers } from "react-day-picker";
 import { useTranslation } from "react-i18next";
-import { useDate } from "../date-picker/use-date";
-import { usePopup } from "../popups/use-popup";
-import type { Sensor } from "../sensor-picker/sensors";
+import { useDate } from "../date-picker/use-date.ts";
+import { usePopup } from "../popups/use-popup.ts";
+import { type Sensor } from "../sensor-picker/sensors.ts";
 
 type CalendarProps = {
 	selectedDay: Date;

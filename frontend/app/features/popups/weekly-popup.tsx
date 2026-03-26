@@ -1,8 +1,8 @@
-import { Card } from "@/components/ui/card";
-import type { Aggregation } from "@/lib/dto";
-import type { TimeBucketStatus } from "@/lib/time-bucket-types";
+import { Card } from "@/components/ui/card.tsx";
+import { type Aggregation } from "@/lib/dto.ts";
+import { type TimeBucketStatus } from "@/lib/time-bucket-types.ts";
 import { t } from "i18next";
-import { BasePopup } from "./base-popup";
+import { BasePopup } from "./base-popup.tsx";
 
 interface WeeklyPopupProps {
 	title: string;

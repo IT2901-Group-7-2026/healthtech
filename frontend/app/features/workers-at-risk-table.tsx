@@ -4,13 +4,18 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+} from "@/components/ui/card.tsx";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableRow,
+} from "@/components/ui/table.tsx";
 import {
 	DANGER_LEVEL_SEVERITY,
 	mapDangerLevelToColor,
-} from "@/lib/danger-levels";
-import type { UserWithStatusDto } from "@/lib/dto";
+} from "@/lib/danger-levels.ts";
+import { type UserWithStatusDto } from "@/lib/dto.ts";
 import { ArrowRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";

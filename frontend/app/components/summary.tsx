@@ -1,20 +1,23 @@
-import type { Sensor } from "@/features/sensor-picker/sensors";
-import { useView } from "@/features/views/use-view";
-import type { View } from "@/features/views/views";
-import { useFormatDate } from "@/hooks/use-format-date.js";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { type Sensor } from "@/features/sensor-picker/sensors.ts";
+import { useView } from "@/features/views/use-view.ts";
+import { type View } from "@/features/views/views.ts";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { useIsMobile } from "@/hooks/use-mobile.ts";
 import {
 	type DangerLevel,
 	DangerLevels,
 	isHigherSeverity,
-} from "@/lib/danger-levels";
-import type { SummaryCounts, TimeBucketStatus } from "@/lib/time-bucket-types";
-import { cn } from "@/lib/utils";
-import { Card, CardContent, CardHeader } from "@/ui/card";
+} from "@/lib/danger-levels.ts";
+import {
+	type SummaryCounts,
+	type TimeBucketStatus,
+} from "@/lib/time-bucket-types.ts";
+import { cn } from "@/lib/utils.ts";
+import { Card, CardContent, CardHeader } from "@/ui/card.tsx";
 import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
-import type { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { SensorIcon } from "./sensor-icon.js";
+import { SensorIcon } from "./sensor-icon.tsx";
 
 type ExposureType = Sensor | "all";
 

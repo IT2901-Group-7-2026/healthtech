@@ -1,15 +1,15 @@
-import { ExposureRiskCard } from "@/components/exposure-level-card";
-import { Card, CardContent, CardHeader } from "@/components/ui/card.js";
-import { Skeleton } from "@/components/ui/skeleton.js";
-import { AtRiskPopup } from "@/features/attention-card/exposure-level-popup.js";
-import { StatCard } from "@/features/attention-card/stat-card";
+import { ExposureRiskCard } from "@/components/exposure-level-card.tsx";
+import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { AtRiskPopup } from "@/features/attention-card/exposure-level-popup.tsx";
+import { StatCard } from "@/features/attention-card/stat-card.tsx";
 import {
 	type DangerLevel,
 	mapDangerLevelToColor,
-} from "@/lib/danger-levels.js";
-import type { ThresholdSummary, UserWithStatusDto } from "@/lib/dto.js";
-import { parseAsSensor } from "@/lib/sensors.js";
-import { cn } from "@/lib/utils";
+} from "@/lib/danger-levels.ts";
+import { type ThresholdSummary, type UserWithStatusDto } from "@/lib/dto.ts";
+import { parseAsSensor } from "@/lib/sensors.ts";
+import { cn } from "@/lib/utils.ts";
 import { formatDate, isToday } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
 import { useMemo, useState } from "react";

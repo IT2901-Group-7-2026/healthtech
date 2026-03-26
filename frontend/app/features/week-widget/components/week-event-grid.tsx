@@ -1,6 +1,6 @@
-import { DangerLevels } from "@/lib/danger-levels";
-import type { TimeBucketStatus } from "@/lib/time-bucket-types";
-import { cn } from "@/lib/utils";
+import { DangerLevels } from "@/lib/danger-levels.ts";
+import { type TimeBucketStatus } from "@/lib/time-bucket-types.ts";
+import { cn } from "@/lib/utils.ts";
 import {
 	type Day,
 	differenceInCalendarDays,
@@ -8,7 +8,7 @@ import {
 	isSameWeek,
 	startOfWeek,
 } from "date-fns";
-import type { TimeSlotSegments } from "../types";
+import { type TimeSlotSegments } from "../types.ts";
 
 interface WeekEventGridProps {
 	days: TimeSlotSegments;

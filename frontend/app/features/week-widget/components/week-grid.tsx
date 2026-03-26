@@ -1,7 +1,7 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils.ts";
 import { getMinutes, getUnixTime } from "date-fns";
-import type { ReactNode } from "react";
-import type { Cell, TimeSlotSegments } from "../types";
+import { type ReactNode } from "react";
+import { type Cell, type TimeSlotSegments } from "../types.ts";
 
 export function WeekGrid({
 	days,

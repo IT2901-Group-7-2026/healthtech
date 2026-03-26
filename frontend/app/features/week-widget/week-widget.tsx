@@ -1,19 +1,19 @@
-import { Card } from "@/components/ui/card";
-import { WeeklyPopup } from "@/features/popups/weekly-popup";
-import { useFormatDate } from "@/hooks/use-format-date.js";
-import type { Aggregation } from "@/lib/dto";
-import type { TimeBucketStatus } from "@/lib/time-bucket-types";
+import { Card } from "@/components/ui/card.tsx";
+import { WeeklyPopup } from "@/features/popups/weekly-popup.tsx";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { type Aggregation } from "@/lib/dto.ts";
+import { type TimeBucketStatus } from "@/lib/time-bucket-types.ts";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { addHours, type Day, type Locale } from "date-fns";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { usePopup } from "../popups/use-popup";
-import { WeekDaysHeader } from "./components/week-days-header";
-import { WeekEventGrid } from "./components/week-event-grid";
-import { WeekGrid } from "./components/week-grid";
-import { WeekHeader } from "./components/week-header";
-import type { Cell } from "./types";
-import { useWeekView } from "./use-week-view";
+import { usePopup } from "../popups/use-popup.ts";
+import { WeekDaysHeader } from "./components/week-days-header.tsx";
+import { WeekEventGrid } from "./components/week-event-grid.tsx";
+import { WeekGrid } from "./components/week-grid.tsx";
+import { WeekHeader } from "./components/week-header.tsx";
+import { type Cell } from "./types.ts";
+import { useWeekView } from "./use-week-view.ts";
 
 interface WeekWidgetProps {
 	weekStartsOn?: Day;

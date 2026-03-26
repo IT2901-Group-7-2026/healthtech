@@ -4,11 +4,16 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import type { Sensor } from "@/features/sensor-picker/sensors";
-import { mapDangerLevelToColor } from "@/lib/danger-levels";
-import type { UserWithStatusDto } from "@/lib/dto";
+} from "@/components/ui/card.tsx";
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableRow,
+} from "@/components/ui/table.tsx";
+import { type Sensor } from "@/features/sensor-picker/sensors.ts";
+import { mapDangerLevelToColor } from "@/lib/danger-levels.ts";
+import { type UserWithStatusDto } from "@/lib/dto.ts";
 import { ArrowRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";

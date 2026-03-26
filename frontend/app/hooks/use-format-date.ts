@@ -1,4 +1,4 @@
-import { getLocale, TIMEZONE } from "@/i18n/locale.js";
+import { getLocale, TIMEZONE } from "@/i18n/locale.ts";
 import { type FormatOptions, formatDate, type Locale } from "date-fns";
 import { useTranslation } from "react-i18next";
 

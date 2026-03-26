@@ -1,4 +1,4 @@
-import { BasePopup } from "./base-popup";
+import { BasePopup } from "./base-popup.tsx";
 
 export function NotificationPopup({
 	title,

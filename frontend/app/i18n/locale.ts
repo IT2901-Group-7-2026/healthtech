@@ -1,5 +1,5 @@
 import { tz } from "@date-fns/tz";
-import type { Locale } from "date-fns";
+import { type Locale } from "date-fns";
 import { enGB, nb } from "date-fns/locale";
 
 export const getLocale = (i18nLanguage: string): Locale => {

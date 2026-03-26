@@ -4,16 +4,16 @@ import {
 	ItemDescription,
 	ItemGroup,
 	ItemTitle,
-} from "@/components/ui/item";
-import { NotificationPopup } from "@/features/popups/notification-popup";
-import { usePopup } from "@/features/popups/use-popup";
-import type { DangerLevel } from "@/lib/danger-levels";
-import type { Sensor } from "@/lib/sensors";
-import { cn } from "@/lib/utils";
-import { Card } from "@/ui/card";
+} from "@/components/ui/item.tsx";
+import { NotificationPopup } from "@/features/popups/notification-popup.tsx";
+import { usePopup } from "@/features/popups/use-popup.ts";
+import { type DangerLevel } from "@/lib/danger-levels.ts";
+import { type Sensor } from "@/lib/sensors.ts";
+import { cn } from "@/lib/utils.ts";
+import { Card } from "@/ui/card.tsx";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SensorIcon } from "./sensor-icon";
+import { SensorIcon } from "./sensor-icon.tsx";
 
 const notifications: Array<{
 	sensor: Sensor;

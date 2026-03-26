@@ -1,11 +1,11 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import type { Sensor } from "@/features/sensor-picker/sensors";
-import type { UserWithStatusDto } from "@/lib/dto";
-import { thresholds } from "@/lib/thresholds";
-import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card.tsx";
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart.tsx";
+import { type Sensor } from "@/features/sensor-picker/sensors.ts";
+import { type UserWithStatusDto } from "@/lib/dto.ts";
+import { thresholds } from "@/lib/thresholds.ts";
+import { cn } from "@/lib/utils.ts";
 import { useTranslation } from "react-i18next";
 import {
 	Bar,

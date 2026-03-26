@@ -1,21 +1,21 @@
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Card } from "@/components/ui/card";
-import { Form, FormField, FormItem } from "@/components/ui/form";
+import { Button } from "@/components/ui/button.tsx";
+import { Calendar } from "@/components/ui/calendar.tsx";
+import { Card } from "@/components/ui/card.tsx";
+import { Form, FormField, FormItem } from "@/components/ui/form.tsx";
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-} from "@/components/ui/popover";
-import { useFormatDate } from "@/hooks/use-format-date";
-import type { User } from "@/lib/dto.js";
-import { userRoleToString } from "@/lib/utils.js";
+} from "@/components/ui/popover.tsx";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { type User } from "@/lib/dto.ts";
+import { userRoleToString } from "@/lib/utils.ts";
 import { isBefore } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { BasePopup } from "./base-popup";
+import { BasePopup } from "./base-popup.tsx";
 
 interface ProfilePopupProps {
 	user: User;

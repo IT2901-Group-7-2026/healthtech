@@ -1,11 +1,11 @@
-import { BasePopup } from "@/features/popups/base-popup";
-import type { DangerLevel } from "@/lib/danger-levels";
-import type { Aggregation } from "@/lib/dto";
-import type { Sensor } from "@/lib/sensors";
-import { cn } from "@/lib/utils";
+import { BasePopup } from "@/features/popups/base-popup.tsx";
+import { type DangerLevel } from "@/lib/danger-levels.ts";
+import { type Aggregation } from "@/lib/dto.ts";
+import { type Sensor } from "@/lib/sensors.ts";
+import { cn } from "@/lib/utils.ts";
 import { t } from "i18next";
-import { DailyNotes } from "../../components/daily-notes";
-import { Card } from "../../components/ui/card";
+import { DailyNotes } from "../../components/daily-notes.tsx";
+import { Card } from "../../components/ui/card.tsx";
 
 type CalendarPopupProps = {
 	title: string;

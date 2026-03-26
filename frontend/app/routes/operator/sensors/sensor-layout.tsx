@@ -1,8 +1,8 @@
-import { useDate } from "@/features/date-picker/use-date";
-import { useView } from "@/features/views/use-view";
-import { ViewPicker } from "@/features/views/view-picker";
-import { getNextDay, getPrevDay } from "@/lib/utils";
-import { Button } from "@/ui/button";
+import { useDate } from "@/features/date-picker/use-date.ts";
+import { useView } from "@/features/views/use-view.ts";
+import { ViewPicker } from "@/features/views/view-picker.tsx";
+import { getNextDay, getPrevDay } from "@/lib/utils.ts";
+import { Button } from "@/ui/button.tsx";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router";
 
