@@ -25,18 +25,23 @@
     "rules": {
       "recommended": true,
       "complexity": {
-        "noExcessiveCognitiveComplexity": "info", // avoid too complex functions
+        "noExcessiveCognitiveComplexity": "info",
+        "noExtraBooleanCast": "error",
+        "useOptionalChain": "error",
         "useSimplifiedLogicExpression": "error",
-        "useWhile": "error"
+        "useWhile": "error",
+        "useArrowFunction": "error"
       },
       "correctness": {
-        "noNodejsModules": "error", // No nodejs in SPA
+        "noConstructorReturn": "error",
+        "noNodejsModules": "error",
         "noReactPropAssignments": "error",
         "noUndeclaredDependencies": "error",
-        "noUndeclaredVariables": "error"
+        "noUndeclaredVariables": "error",
+        "useImportExtensions": "error"
       },
       "nursery": {
-        "noJsxLiterals": "error", // nicer for i18n
+        "noJsxLiterals": "error",
         "noShadow": "error",
         "noUnnecessaryConditions": "error",
         "useConsistentArrowReturn": "error",
@@ -54,24 +59,33 @@
         "noDefaultExport": "off",
         "noNegationElse": "error",
         "noParameterAssign": "error",
-        "noProcessEnv": "error", // No nodejs in SPA
-        "noYodaExpression": "error",
+        "noProcessEnv": "error",
         "noUselessElse": "error",
+        "noYodaExpression": "error",
         "useCollapsedElseIf": "error",
         "useConsistentArrayType": {
-          // readability & consistency
           "level": "error",
           "options": {
             "syntax": "generic"
           }
         },
+        "useConst": "error",
         "useDefaultParameterLast": "error",
         "useFilenamingConvention": {
           "level": "error",
           "options": {
             "filenameCases": ["kebab-case", "snake_case"]
           }
-        }
+        },
+        "useImportType": {
+          "level": "error",
+          "options": {
+            "style": "inlineType"
+          }
+        },
+        "useNodejsImportProtocol": "error",
+        "useTemplate": "error",
+        "useBlockStatements": "error"
       },
       "suspicious": {
         "noAlert": "error",
@@ -80,13 +94,21 @@
           "options": {
             "allow": ["assert", "error", "info", "warn"]
           }
-        }
+        },
+        "noDoubleEquals": {
+          "level": "error",
+          "options": {
+            "ignoreNull": true
+          }
+        },
+        "noVar": "error"
       }
     }
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "double"
+      "quoteStyle": "double",
+      "quoteProperties": "asNeeded"
     }
   },
   "json": {
