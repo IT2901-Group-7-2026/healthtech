@@ -4,39 +4,72 @@ import { type Sensor, sensors } from "./sensors";
 import type {
 	OverviewChartRow,
 	SummaryCounts,
+	SummaryLevelCounts,
 	TimeBucketStatus,
 } from "./time-bucket-types";
 
 export function calculateSummaryCounts(
 	data: Array<SensorDataResponseDto> | Array<OverviewBucketDto>,
+	sensor?: Sensor,
 	usePeakDangerLevel?: boolean,
 ): SummaryCounts {
 	const summary: SummaryCounts = {
-		safeCount: 0,
-		warningCount: 0,
-		dangerCount: 0,
+		...createEmptyLevelCounts(),
+		bySensor: {
+			noise: createEmptyLevelCounts(),
+			dust: createEmptyLevelCounts(),
+			vibration: createEmptyLevelCounts(),
+		},
 	};
 
-	data.forEach((point) => {
+	for (const point of data) {
 		const dangerLevel =
 			"peakDangerLevel" in point
 				? getDangerLevelFromData(point, usePeakDangerLevel)
 				: point.dangerLevel;
 
-		switch (dangerLevel) {
-			case "safe":
-				summary.safeCount += 1;
-				break;
-			case "warning":
-				summary.warningCount += 1;
-				break;
-			case "danger":
-				summary.dangerCount += 1;
-				break;
+		incrementLevelCount(summary, dangerLevel);
+
+		if ("sensorDangerLevels" in point) {
+			for (const currentSensor of sensors) {
+				incrementLevelCount(
+					summary.bySensor[currentSensor],
+					point.sensorDangerLevels[currentSensor],
+				);
+			}
+		} else if (sensor) {
+			incrementLevelCount(summary.bySensor[sensor], dangerLevel);
 		}
-	});
+	}
 
 	return summary;
+}
+
+function createEmptyLevelCounts(): SummaryLevelCounts {
+	return {
+		safeCount: 0,
+		warningCount: 0,
+		dangerCount: 0,
+	};
+}
+
+function incrementLevelCount(
+	counts: SummaryLevelCounts,
+	level: DangerLevel | null | undefined,
+) {
+	switch (level) {
+		case "safe":
+			counts.safeCount += 1;
+			break;
+		case "warning":
+			counts.warningCount += 1;
+			break;
+		case "danger":
+			counts.dangerCount += 1;
+			break;
+		default:
+			break;
+	}
 }
 
 export function getDangerLevelFromData(
