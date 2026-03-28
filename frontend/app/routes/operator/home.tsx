@@ -61,7 +61,6 @@ export default function OperatorHome() {
 						exposureType="all"
 						view={view}
 						data={calculateSummaryCounts(overviewBuckets ?? [])}
-						sensorData={overviewBuckets ?? []}
 						mode="sensor"
 					/>
 					<DailyNotes />

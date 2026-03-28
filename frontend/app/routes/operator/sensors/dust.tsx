@@ -80,6 +80,7 @@ export default function Dust() {
 					view={view}
 					data={calculateSummaryCounts(
 						(useDaySummary ? daySummaryData : data) ?? [],
+						sensor,
 					)}
 				/>
 				<DailyNotes />
