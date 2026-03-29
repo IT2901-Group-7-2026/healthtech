@@ -9,9 +9,13 @@ import {
 import { useDate } from "@/features/date-picker/use-date";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
-import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
+import type {
+	SensorDataResponseDto,
+	SensorTypeField,
+	UserSensorStatusDto,
+} from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
-import { thresholds } from "@/lib/thresholds";
+import { getThreshold } from "@/lib/thresholds";
 import { downsampleSensorData } from "@/lib/utils";
 import {
 	addHours,
@@ -53,6 +57,7 @@ interface LineChartProps {
 	sensor: Sensor;
 	headerRight?: React.ReactNode;
 	usePeakData?: boolean;
+	dustField?: SensorTypeField;
 }
 
 export function ChartLineDefault({
@@ -66,13 +71,14 @@ export function ChartLineDefault({
 	sensor,
 	headerRight,
 	usePeakData = false,
+	dustField,
 }: LineChartProps) {
 	const { date: selectedDay } = useDate();
 	const { t } = useTranslation();
 	const id = useId();
 	const formatDate = useFormatDate();
 
-	const { warning, danger, peakDanger } = thresholds[sensor];
+	const { warning, danger, peakDanger } = getThreshold(sensor, dustField);
 	const dangerThreshold = usePeakData && peakDanger ? peakDanger : danger;
 
 	const getValue = (data: SensorDataResponseDto) =>
