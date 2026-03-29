@@ -1,3 +1,4 @@
+using Backend.DTOs;
 using Backend.Models;
 using Backend.Records;
 
@@ -8,7 +9,11 @@ public static class ThresholdUtils
 	public static IEnumerable<(
 		RawSensorData data,
 		(DangerLevel dangerLevel, DangerLevel? peakDangerLevel) dangerLevels
-	)> CalculateDangerLevels(SensorType sensorType, IEnumerable<RawSensorData> rawSensorData)
+	)> CalculateDangerLevels(
+		SensorType sensorType,
+		IEnumerable<RawSensorData> rawSensorData,
+		Field? field = null
+	)
 	{
 		var result =
 			new List<(
@@ -33,7 +38,7 @@ public static class ThresholdUtils
 
 				cumulativeValue += data.SumValue;
 
-				result.Add((data, CalculateDangerLevel(sensorType, cumulativeValue, null)));
+				result.Add((data, CalculateDangerLevel(sensorType, cumulativeValue, null, field)));
 			}
 
 			return result;
@@ -44,7 +49,7 @@ public static class ThresholdUtils
 			// We only use max value for noise thresholds to calculate peak danger levels
 			double? maxValue = sensorType == SensorType.Noise ? data.MaxValue : null;
 
-			result.Add((data, CalculateDangerLevel(sensorType, data.AvgValue, maxValue)));
+			result.Add((data, CalculateDangerLevel(sensorType, data.AvgValue, maxValue, field)));
 		}
 
 		return result;
@@ -53,10 +58,11 @@ public static class ThresholdUtils
 	public static (DangerLevel dangerLevel, DangerLevel? peakDangerLevel) CalculateDangerLevel(
 		SensorType sensorType,
 		double value,
-		double? maxValue
+		double? maxValue,
+		Field? field = null
 	)
 	{
-		Threshold threshold = Threshold.GetThresholdForSensorType(sensorType);
+		Threshold threshold = Threshold.GetThresholdForSensorTypeAndField(sensorType, field);
 
 		DangerLevel dangerLevel = DangerLevel.Safe;
 		DangerLevel? peakDangerLevel = null;

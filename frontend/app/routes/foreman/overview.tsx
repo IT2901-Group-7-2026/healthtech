@@ -31,7 +31,7 @@ import {
 } from "@/lib/api.js";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
-import { thresholds } from "@/lib/thresholds";
+import { getThreshold } from "@/lib/thresholds";
 import { useQuery } from "@tanstack/react-query";
 import { addWeeks, endOfDay, parseISO, startOfDay } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
@@ -123,6 +123,9 @@ export default function ForemanOverview() {
 
 	const subordinateCount = subordinates?.length ?? 0;
 	const isUserComboboxDisabled = !users || users.length === 0;
+	const dustThreshold = getThreshold("dust");
+	const dustPm25TwaThreshold = getThreshold("dust", "pm25_twa");
+	const dustPm10TwaThreshold = getThreshold("dust", "pm10_twa");
 
 	//TODO: Update card links to point to stats page
 
@@ -295,7 +298,7 @@ export default function ForemanOverview() {
 								<DustChart
 									label="PM1 TWA"
 									value={dustTwa1Data[0].value}
-									thresholdValue={thresholds.dust.danger}
+									thresholdValue={dustThreshold.danger}
 								/>
 							)}
 
@@ -303,7 +306,7 @@ export default function ForemanOverview() {
 								<DustChart
 									label="PM2.5 TWA"
 									value={dustTwa25Data[0].value}
-									thresholdValue={thresholds.dust.danger}
+									thresholdValue={dustPm25TwaThreshold.danger}
 								/>
 							)}
 
@@ -311,7 +314,7 @@ export default function ForemanOverview() {
 								<DustChart
 									label="PM10 TWA"
 									value={dustTwa10Data[0].value}
-									thresholdValue={thresholds.dust.danger}
+									thresholdValue={dustPm10TwaThreshold.danger}
 								/>
 							)}
 						</div>

@@ -22,7 +22,7 @@ import {
 } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
-import { thresholds } from "@/lib/thresholds";
+import { getThreshold } from "@/lib/thresholds";
 import {
 	calculateSummaryCounts,
 	mapSensorDataToTimeBucketStatuses,
@@ -52,6 +52,7 @@ export default function Noise() {
 		parseAsAggregation.withDefault("average"),
 	);
 	const usePeakAggregation = aggregation === "peak";
+	const noiseThreshold = getThreshold(sensor);
 
 	const query = buildSensorQuery(sensor, view, date, {
 		usePeakAggregation,
@@ -228,14 +229,14 @@ export default function Noise() {
 										y={
 											usePeakAggregation
 												? // biome-ignore lint/style/noNonNullAssertion: If usePeakAggregation is true and peakDangerLevel is null, there is a bug somewhere else
-													thresholds.noise.peakDanger!
-												: thresholds.noise.danger
+													noiseThreshold.peakDanger!
+												: noiseThreshold.danger
 										}
 										dangerLevel="danger"
 									/>
 									{!usePeakAggregation && (
 										<ThresholdLine
-											y={thresholds.noise.warning}
+											y={noiseThreshold.warning}
 											dangerLevel="warning"
 										/>
 									)}
