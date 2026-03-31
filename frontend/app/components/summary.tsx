@@ -4,6 +4,7 @@ import type { View } from "@/features/views/views";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
+import { now } from "@/lib/date";
 import { sensors } from "@/lib/sensors.js";
 import type { SummaryCounts } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
@@ -67,19 +68,20 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 	};
 
 	let summaryTitle = "";
+	const currentDate = now();
 
 	if (view === "month") {
 		summaryTitle = t(($) => $.exposure_summary.title.month, {
-			month: formatDate(new Date(), "MMMM"),
+			month: formatDate(currentDate, "MMMM"),
 		});
 	} else if (view === "week") {
 		summaryTitle = t(($) => $.exposure_summary.title.week, {
-			week: formatDate(new Date(), "w"),
+			week: formatDate(currentDate, "w"),
 		});
 	} else {
 		summaryTitle = t(($) => $.exposure_summary.title.day, {
 			day: formatDate(
-				new Date(),
+				currentDate,
 				i18n.language === "en" ? "MMMM do, yyyy" : "dd. MMMM yyyy",
 			),
 		});

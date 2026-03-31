@@ -1,3 +1,4 @@
+import type { TZDate } from "@date-fns/tz";
 import type { DangerLevel } from "./danger-levels";
 import type { Sensor } from "./sensors";
 
@@ -7,7 +8,7 @@ export type OverviewChartRow = {
 };
 
 export type TimeBucketStatus = {
-	time: Date;
+	time: TZDate;
 	dangerLevel: DangerLevel;
 	sensorDangerLevels?: Partial<Record<Sensor, DangerLevel>>;
 };
