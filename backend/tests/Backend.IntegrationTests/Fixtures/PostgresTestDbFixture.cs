@@ -1,5 +1,6 @@
 using Backend.Middleware;
 using Backend.Models;
+using Backend.Services;
 using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
 
@@ -21,8 +22,6 @@ public sealed class PostgresTestDbFixture : IAsyncLifetime
 	public async Task InitializeAsync()
 	{
 		await _container.StartAsync();
-
-		await using var context = CreateDbContext();
 		await ResetDatabaseAsync();
 	}
 
@@ -48,6 +47,9 @@ public sealed class PostgresTestDbFixture : IAsyncLifetime
 
 		await context.Database.EnsureDeletedAsync();
 		await context.Database.MigrateAsync();
+
+		DatabaseSeeder seeder = new();
+		await seeder.SeedDataAsync(context, CancellationToken.None);
 	}
 
 	public SignedInUserContext CreateOperatorContext()

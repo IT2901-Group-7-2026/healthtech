@@ -5,7 +5,6 @@ namespace Backend.Services;
 
 public class DatabaseSeeder
 {
-	private static readonly Guid PerId = Guid.Parse("aaa3801e-f3ff-4b0c-9692-56e7505e9c31");
 	private static readonly Guid TrondId = Guid.Parse("bbb3801e-f3ff-4b0c-9692-56e7505e9c31");
 	private static readonly Guid GjertrudId = Guid.Parse("ccc3801e-f3ff-4b0c-9692-56e7505e9c32");
 	private static readonly Guid KlaraId = Guid.Parse("ccc3801e-f3ff-4b0c-9692-56e7505e9c33");
@@ -75,7 +74,7 @@ public class DatabaseSeeder
 			},
 			new User
 			{
-				Id = PerId,
+				Id = SeedIds.PerId,
 				Username = "Per Hansen",
 				Email = "per.hansen@aker.com",
 				PasswordHash = DefaultPasswordHash,
@@ -155,7 +154,7 @@ public class DatabaseSeeder
 		List<(Guid ManagerId, Guid SubordinateId)> seedUserManagers =
 		[
 			(SeedIds.OlaId, SeedIds.KariId),
-			(SeedIds.OlaId, PerId),
+			(SeedIds.OlaId, SeedIds.PerId),
 			(SeedIds.OlaId, TrondId),
 			(SeedIds.OlaId, GjertrudId),
 			(SeedIds.OlaId, KlaraId),
