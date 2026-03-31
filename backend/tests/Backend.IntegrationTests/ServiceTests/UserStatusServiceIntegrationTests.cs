@@ -7,55 +7,14 @@ namespace Backend.IntegrationTests.ServiceTests;
 
 [Collection(PostgresTestDbCollection.Name)]
 public sealed class UserStatusServiceIntegrationTests(PostgresTestDbFixture fixture)
+	: IntegrationTestBase(fixture)
 {
-	private static async Task<Guid> InsertTestUserAsync(AppDbContext context)
-	{
-		bool hasLocation = await context.Location.AnyAsync(l =>
-			l.Id == PostgresTestDbFixture.VerdalLocationId
-		);
-
-		if (!hasLocation)
-		{
-			context.Location.Add(
-				new Location
-				{
-					Id = PostgresTestDbFixture.VerdalLocationId,
-					Latitude = 63.787882f,
-					Longitude = 11.440749f,
-					Country = "Norway",
-					Region = "Trondelag",
-					City = "Verdal",
-					Site = "Test Site",
-					Building = "Test Building",
-					Users = [],
-				}
-			);
-		}
-
-		Guid userId = Guid.NewGuid();
-		context.User.Add(
-			new User
-			{
-				Id = userId,
-				Username = $"status-test-{userId:N}",
-				Email = $"status-test-{userId:N}@example.com",
-				PasswordHash = "testpassword",
-				CreatedAt = DateTime.UtcNow,
-				Role = UserRole.Operator,
-				LocationId = PostgresTestDbFixture.VerdalLocationId,
-			}
-		);
-
-		await context.SaveChangesAsync();
-		return userId;
-	}
-
 	[Fact]
 	public async Task GetStatusForUsersInRange_ReturnsUserStatuses()
 	{
-		await using var context = fixture.CreateDbContext();
-		var service = new UserStatusService(context, fixture.CreateOperatorContext());
-		Guid userId = await InsertTestUserAsync(context);
+		await using var context = Fixture.CreateDbContext();
+		var service = new UserStatusService(context, Fixture.CreateOperatorContext());
+		Guid userId = SeedIds.KariId;
 
 		DateTime start = new(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 		DateTime end = new(2026, 1, 2, 0, 0, 0, DateTimeKind.Utc);
@@ -74,9 +33,8 @@ public sealed class UserStatusServiceIntegrationTests(PostgresTestDbFixture fixt
 	[Fact]
 	public async Task GetStatusForUsersInRange_EmptyUserIds_ReturnsEmpty()
 	{
-		await using var context = fixture.CreateDbContext();
-		var service = new UserStatusService(context, fixture.CreateOperatorContext());
-		_ = await InsertTestUserAsync(context);
+		await using var context = Fixture.CreateDbContext();
+		var service = new UserStatusService(context, Fixture.CreateOperatorContext());
 
 		DateTime start = new(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 		DateTime end = new(2026, 1, 2, 0, 0, 0, DateTimeKind.Utc);
