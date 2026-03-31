@@ -2,6 +2,35 @@ import { DEFAULT_USER, USER_STORAGE_KEY } from "@/features/user/user-utils";
 
 const baseURL = import.meta.env.VITE_BASE_URL;
 
+function normalizeDatesToUtc(value: unknown): unknown {
+	if (value instanceof Date) {
+		return new Date(value.getTime()).toISOString();
+	}
+
+	if (Array.isArray(value)) {
+		return value.map((item) => normalizeDatesToUtc(item));
+	}
+
+	if (value !== null && typeof value === "object") {
+		return Object.fromEntries(
+			Object.entries(value).map(([key, nestedValue]) => [
+				key,
+				normalizeDatesToUtc(nestedValue),
+			]),
+		);
+	}
+
+	return value;
+}
+
+export function toUtcJsonBody(value: unknown): string {
+	return JSON.stringify(normalizeDatesToUtc(value));
+}
+
+export function toUtcISOString(value: Date): string {
+	return new Date(value.getTime()).toISOString();
+}
+
 function getSignedInUserId(): string {
 	try {
 		const stored = localStorage.getItem(USER_STORAGE_KEY);

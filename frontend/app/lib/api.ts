@@ -6,7 +6,7 @@ import {
 	useQueryClient,
 } from "@tanstack/react-query";
 import { minutesToMilliseconds } from "date-fns";
-import { fetchWithUserId } from "./api-client";
+import { fetchWithUserId, toUtcISOString, toUtcJsonBody } from "./api-client";
 import {
 	type Note,
 	type NoteDataRequest,
@@ -50,7 +50,7 @@ const fetchSensorData = async (
 ): Promise<Array<SensorDataResponseDto>> => {
 	const response = await fetchWithUserId(`sensor/${sensor}/${userId}`, {
 		method: "POST",
-		body: JSON.stringify(sensorDataRequest),
+		body: toUtcJsonBody(sensorDataRequest),
 	});
 
 	if (!response.ok) {
@@ -67,7 +67,7 @@ const fetchSensorOverviewData = async (
 ): Promise<Array<OverviewBucketDto>> => {
 	const response = await fetchWithUserId(`sensor/overview/${userId}`, {
 		method: "POST",
-		body: JSON.stringify(requests),
+		body: toUtcJsonBody(requests),
 	});
 
 	if (!response.ok) {
@@ -117,7 +117,7 @@ export const fetchNoteData = async (
 ): Promise<Array<Note>> => {
 	const response = await fetchWithUserId(`notes/${userId}`, {
 		method: "POST",
-		body: JSON.stringify(noteDataRequest),
+		body: toUtcJsonBody(noteDataRequest),
 	});
 
 	if (!response.ok) {
@@ -155,7 +155,7 @@ export const updateNote = async ({
 }) => {
 	const res = await fetchWithUserId(`notes/${userId}`, {
 		method: "PUT",
-		body: JSON.stringify(note),
+		body: toUtcJsonBody(note),
 	});
 
 	if (!res.ok) {
@@ -176,7 +176,7 @@ export const createNote = async ({
 }) => {
 	const res = await fetchWithUserId(`notes/${userId}/create`, {
 		method: "POST",
-		body: JSON.stringify(note),
+		body: toUtcJsonBody(note),
 	});
 
 	if (!res.ok) {
@@ -195,10 +195,10 @@ export const fetchSubordinatesQueryOptions = (
 ) => {
 	const params = new URLSearchParams();
 	if (startTime) {
-		params.append("startTime", startTime.toISOString());
+		params.append("startTime", toUtcISOString(startTime));
 	}
 	if (endTime) {
-		params.append("endTime", endTime.toISOString());
+		params.append("endTime", toUtcISOString(endTime));
 	}
 
 	return queryOptions({
@@ -227,7 +227,7 @@ export const removeSubordinates = async (
 		`users/${managerId}/subordinates/delete`,
 		{
 			method: "PUT",
-			body: JSON.stringify(subordinateIds),
+			body: toUtcJsonBody(subordinateIds),
 		},
 	);
 
@@ -260,7 +260,7 @@ export const addSubordinates = async (
 		`users/${managerId}/subordinates/create`,
 		{
 			method: "PUT",
-			body: JSON.stringify(subordinateIds),
+			body: toUtcJsonBody(subordinateIds),
 		},
 	);
 
@@ -300,10 +300,10 @@ export const fetchThresholdSummaryQueryOptions = (
 		queryFn: async () => {
 			const params = new URLSearchParams();
 			if (startTime) {
-				params.append("startTime", startTime.toISOString());
+				params.append("startTime", toUtcISOString(startTime));
 			}
 			if (endTime) {
-				params.append("endTime", endTime.toISOString());
+				params.append("endTime", toUtcISOString(endTime));
 			}
 
 			const response = await fetchWithUserId(
