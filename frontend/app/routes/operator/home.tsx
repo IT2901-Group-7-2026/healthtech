@@ -79,7 +79,9 @@ export default function OperatorHome() {
 					) : view === "month" ? (
 						<CalendarWidget
 							selectedDay={date}
-							data={mapOverviewDataToTimeBucketStatuses(overviewBuckets ?? [])}
+							data={mapOverviewDataToTimeBucketStatuses(
+								overviewBuckets ?? [],
+							)}
 						/>
 					) : view === "week" ? (
 						<WeekWidget
@@ -87,7 +89,9 @@ export default function OperatorHome() {
 							dayStartHour={0}
 							dayEndHour={23}
 							weekStartsOn={1}
-							data={mapOverviewDataToTimeBucketStatuses(overviewBuckets ?? [])}
+							data={mapOverviewDataToTimeBucketStatuses(
+								overviewBuckets ?? [],
+							)}
 						/>
 					) : !overviewBuckets || overviewBuckets.length === 0 ? (
 						<Card className="flex h-24 w-full items-center">
@@ -102,7 +106,11 @@ export default function OperatorHome() {
 						</Card>
 					) : (
 						<DailyBarChart
-							data={mapOverviewBucketsToChartRows(overviewBuckets ?? [], 0, 23)}
+							data={mapOverviewBucketsToChartRows(
+								overviewBuckets ?? [],
+								0,
+								23,
+							)}
 							startHour={0}
 							endHour={23}
 							chartTitle={date.toLocaleDateString(i18n.language, {
@@ -119,11 +127,14 @@ export default function OperatorHome() {
 												pdfVibrationChartContainerId,
 												pdfNoiseChartContainerId,
 											],
-											`${date.toLocaleDateString(i18n.language, {
-												day: "numeric",
-												month: "long",
-												year: "numeric",
-											})}-${user.username}-Exposure-Overview`,
+											`${date.toLocaleDateString(
+												i18n.language,
+												{
+													day: "numeric",
+													month: "long",
+													year: "numeric",
+												},
+											)}-${user.username}-Exposure-Overview`,
 											[
 												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
 												`Vibration Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,

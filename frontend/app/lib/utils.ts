@@ -10,11 +10,11 @@ import {
 	subMonths,
 	subWeeks,
 } from "date-fns";
+import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
+import type { DangerLevel } from "./danger-levels";
 import type { SensorDataResponseDto, User } from "./dto";
 import type { Sensor } from "./sensors";
-import type { DangerLevel } from "./danger-levels";
-import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
 
 export function cn(...inputs: Array<ClassValue>) {
 	return twMerge(clsx(inputs));
@@ -67,8 +67,14 @@ export function computeYAxisRange(
 		return { minY: 0, maxY: step };
 	}
 
-	const max = data.reduce((m, c) => (c.value > m ? c.value : m), data[0].value);
-	const min = data.reduce((m, c) => (c.value < m ? c.value : m), data[0].value);
+	const max = data.reduce(
+		(m, c) => (c.value > m ? c.value : m),
+		data[0].value,
+	);
+	const min = data.reduce(
+		(m, c) => (c.value < m ? c.value : m),
+		data[0].value,
+	);
 
 	const maxY = Math.ceil(max / step) * step + topPadding;
 	const minY = Math.floor((min - bottomPadding) / step) * step;

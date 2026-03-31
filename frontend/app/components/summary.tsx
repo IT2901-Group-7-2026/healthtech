@@ -93,19 +93,29 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 			<CardContent className="exposures-wrapper flex flex-row justify-center gap-4 md:flex-col md:gap-0">
 				<SummaryRow
 					count={data.safeCount}
-					label={isMobile ? defaultLabels.safe : summaryLabels.safeLabel}
+					label={
+						isMobile ? defaultLabels.safe : summaryLabels.safeLabel
+					}
 					hoverTitle={DangerLevels.safe.label}
 					colorClass={safeColor}
 				/>
 				<SummaryRow
 					count={data.warningCount}
-					label={isMobile ? defaultLabels.warning : summaryLabels.warningLabel}
+					label={
+						isMobile
+							? defaultLabels.warning
+							: summaryLabels.warningLabel
+					}
 					hoverTitle={DangerLevels.warning.label}
 					colorClass={warningColor}
 				/>
 				<SummaryRow
 					count={data.dangerCount}
-					label={isMobile ? defaultLabels.danger : summaryLabels.dangerLabel}
+					label={
+						isMobile
+							? defaultLabels.danger
+							: summaryLabels.dangerLabel
+					}
 					hoverTitle={DangerLevels.danger.label}
 					colorClass={dangerColor}
 				/>
@@ -126,7 +136,9 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 
 					const description = t(($) =>
 						highestLevel
-							? $.exposure_summary[`${highestLevel}Smiley` as const]
+							? $.exposure_summary[
+									`${highestLevel}Smiley` as const
+								]
 							: $.exposure_summary.noData,
 					);
 
@@ -134,7 +146,10 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 					const Emoji = getEmoji(highestLevel);
 
 					return (
-						<div key={sensor} className="flex items-center justify-between">
+						<div
+							key={sensor}
+							className="flex items-center justify-between"
+						>
 							<div className="flex min-w-0 grow items-center gap-3">
 								<SensorIcon
 									type={sensor}
@@ -144,7 +159,10 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 								/>
 
 								<div className="flex min-w-0 grow flex-col">
-									<p className="truncate text-foreground text-sm" title={label}>
+									<p
+										className="truncate text-foreground text-sm"
+										title={label}
+									>
 										{label}
 									</p>
 
@@ -206,7 +224,9 @@ const SummaryRow = ({
 		>
 			{count}
 		</p>
-		<p className={cn("ml-1 text-xs md:ml-2 md:text-sm", colorClass)}>{label}</p>
+		<p className={cn("ml-1 text-xs md:ml-2 md:text-sm", colorClass)}>
+			{label}
+		</p>
 	</div>
 );
 
