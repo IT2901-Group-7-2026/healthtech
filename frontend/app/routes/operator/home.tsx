@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
-import { LiveStatusOverviewCard } from "@/features/live-status/live-status-overview-card";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
