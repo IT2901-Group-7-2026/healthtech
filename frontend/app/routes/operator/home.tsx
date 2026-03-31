@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
+import { LiveStatusOverviewCard } from "@/features/live-status/live-status-overview-card";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
@@ -68,6 +69,15 @@ export default function OperatorHome() {
 				</div>
 
 				<div className="flex w-full min-w-0 flex-col gap-4">
+					{/* TODO: move LiveStatusOverviewCard to live page */}
+					<LiveStatusOverviewCard
+						thresholdValues={{
+							dust: "safe",
+							noise: "danger",
+							vibration: "warning",
+						}}
+					/>
+
 					{isLoading ? (
 						<Card className="flex h-24 w-full items-center">
 							<p>{t(($) => $.loadingData)}</p>
