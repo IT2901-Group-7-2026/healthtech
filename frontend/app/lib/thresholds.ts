@@ -1,4 +1,5 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
+import type { SensorTypeField } from "@/lib/dto";
 
 type Threshold = {
 	warning: number;
@@ -6,7 +7,7 @@ type Threshold = {
 	peakDanger: number | null;
 };
 
-export const thresholds: Record<Sensor, Threshold> = {
+const thresholds: Record<Sensor, Threshold> = {
 	dust: {
 		warning: 15,
 		danger: 30,
@@ -23,3 +24,27 @@ export const thresholds: Record<Sensor, Threshold> = {
 		peakDanger: null,
 	},
 };
+
+const dustThresholdOverrides: Partial<Record<SensorTypeField, Threshold>> = {
+	pm25_twa: {
+		warning: 15,
+		danger: 30,
+		peakDanger: null,
+	},
+	pm10_twa: {
+		warning: 30,
+		danger: 30,
+		peakDanger: null,
+	},
+};
+
+export function getThreshold(
+	sensor: Sensor,
+	dustField?: SensorTypeField | null,
+): Threshold {
+	if (sensor === "dust" && dustField) {
+		return dustThresholdOverrides[dustField] ?? thresholds.dust;
+	}
+
+	return thresholds[sensor];
+}

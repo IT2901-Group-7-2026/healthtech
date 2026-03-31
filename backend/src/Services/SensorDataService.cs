@@ -104,7 +104,8 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 
 		var dataWithDangerLevels = ThresholdUtils.CalculateDangerLevels(
 			sensorType,
-			dataWithCumulatedSensorSumValues
+			dataWithCumulatedSensorSumValues,
+			request.Field
 		);
 
 		var result = dataWithDangerLevels.Select(item => new SensorDataDto
