@@ -1,4 +1,5 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
+import type { TZDate } from "@date-fns/tz";
 import {
 	queryOptions,
 	useMutation,
@@ -133,7 +134,7 @@ export function notesQueryOptions({
 	userId,
 }: {
 	view: View;
-	selectedDay: Date;
+	selectedDay: TZDate;
 	userId: string;
 }) {
 	const query = getStartEnd(view, selectedDay);
@@ -189,8 +190,8 @@ export const createNote = async ({
 
 export const fetchSubordinatesQueryOptions = (
 	userId: string,
-	startTime?: Date,
-	endTime?: Date,
+	startTime?: TZDate,
+	endTime?: TZDate,
 ) => {
 	const params = new URLSearchParams();
 	if (startTime) {
@@ -286,8 +287,8 @@ export const useAddSubordinatesMutation = (parentUserId: string) => {
 
 export const fetchThresholdSummaryQueryOptions = (
 	managerUserId: string,
-	startTime?: Date,
-	endTime?: Date,
+	startTime?: TZDate,
+	endTime?: TZDate,
 ) =>
 	queryOptions({
 		queryKey: [

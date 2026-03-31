@@ -1,3 +1,4 @@
+import { now } from "@/lib/date";
 import type { User } from "@/lib/dto";
 
 export const USER_STORAGE_KEY = "demo_user_id" as const;
@@ -11,7 +12,7 @@ export const DEFAULT_USER: User = {
 	email: "kari.nordmann@aker.com",
 	role: "operator",
 	jobDescription: "Sveiser",
-	createdAt: new Date(),
+	createdAt: now(),
 	location: {
 		id: "22222222-2222-2222-2222-222222222222",
 		latitude: 60.29278334510331,

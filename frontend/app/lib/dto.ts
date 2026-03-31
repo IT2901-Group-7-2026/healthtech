@@ -1,4 +1,6 @@
 import { type Sensor, SensorSchema } from "@/features/sensor-picker/sensors";
+import { tzDateSchema } from "@/lib/date";
+import type { TZDate } from "@date-fns/tz";
 import { z } from "zod";
 import { DangerLevelSchema } from "./danger-levels";
 
@@ -23,8 +25,8 @@ export type AggregateFnKey = keyof typeof aggregateFnEnum;
 export type AggregateFnValue = keyof (typeof aggregateFnEnum)[AggregateFnKey];
 
 export type SensorDataRequestDto = {
-	startTime: Date;
-	endTime: Date;
+	startTime: TZDate;
+	endTime: TZDate;
 	granularity: GranularityKey;
 	function: AggregateFnKey;
 	field?: SensorTypeField;
@@ -35,7 +37,7 @@ export type SensorOverviewDataRequestDto = Partial<
 >;
 
 export const SensorDataResponseDtoSchema = z.object({
-	time: z.coerce.date(),
+	time: tzDateSchema,
 	value: z.number(),
 	peakValue: z.number().nullable(),
 	dangerLevel: DangerLevelSchema,
@@ -46,7 +48,7 @@ export type SensorDataResponseDto = z.infer<typeof SensorDataResponseDtoSchema>;
 
 // TODO: This should (maybe) include peakDangerLevel
 export const OverviewBucketDtoSchema = z.object({
-	time: z.coerce.date(),
+	time: tzDateSchema,
 	dangerLevel: DangerLevelSchema,
 	sensorDangerLevels: z.partialRecord(SensorSchema, DangerLevelSchema),
 });
@@ -69,14 +71,14 @@ export type AllSensorData = {
 
 export const NoteSchema = z.object({
 	note: z.string(),
-	time: z.coerce.date(),
+	time: tzDateSchema,
 });
 
 export type Note = z.infer<typeof NoteSchema>;
 
 export type NoteDataRequest = {
-	startTime: Date;
-	endTime: Date;
+	startTime: TZDate;
+	endTime: TZDate;
 };
 export const UserRoleSchema = z.enum(["operator", "foreman"]);
 
@@ -105,7 +107,7 @@ export const UserSchema = z.object({
 	username: z.string(),
 	email: z.email(),
 	jobDescription: z.string().nullable(),
-	createdAt: z.coerce.date(),
+	createdAt: tzDateSchema,
 	role: UserRoleSchema,
 	location: LocationSchema,
 });
