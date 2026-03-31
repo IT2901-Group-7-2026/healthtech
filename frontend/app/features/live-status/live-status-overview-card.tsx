@@ -9,7 +9,7 @@ import { getEmoji } from "@/lib/utils";
 import { t } from "i18next";
 
 interface LiveStatusOverviewCardProps {
-	thresholdValues: {
+	sensorDangerLevels: {
 		dust: DangerLevel;
 		noise: DangerLevel;
 		vibration: DangerLevel;
@@ -17,12 +17,12 @@ interface LiveStatusOverviewCardProps {
 }
 
 export const LiveStatusOverviewCard = ({
-	thresholdValues,
+	sensorDangerLevels,
 }: LiveStatusOverviewCardProps) => (
 	<Card>
 		<div className="grid grid-cols-3 gap-4">
 			{sensors.map((sensor) => {
-				const dangerLevel = thresholdValues[sensor];
+				const dangerLevel = sensorDangerLevels[sensor];
 				const Icon = getEmoji(dangerLevel);
 
 				return (
