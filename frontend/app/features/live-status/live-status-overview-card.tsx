@@ -5,8 +5,8 @@ import {
 	mapDangerLevelToLabel,
 } from "@/lib/danger-levels";
 import { sensors } from "@/lib/sensors";
+import { getEmoji } from "@/lib/utils";
 import { t } from "i18next";
-import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
 
 interface LiveStatusOverviewCardProps {
 	thresholdValues: {
@@ -14,22 +14,6 @@ interface LiveStatusOverviewCardProps {
 		noise: DangerLevel;
 		vibration: DangerLevel;
 	};
-}
-
-function getEmoji(dangerLevel: DangerLevel | null) {
-	if (dangerLevel === "danger") {
-		return FrownIcon;
-	}
-
-	if (dangerLevel === "warning") {
-		return MehIcon;
-	}
-
-	if (dangerLevel === "safe") {
-		return SmileIcon;
-	}
-
-	return CircleDashedIcon;
 }
 
 export const LiveStatusOverviewCard = ({

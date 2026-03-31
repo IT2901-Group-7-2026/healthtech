@@ -13,6 +13,8 @@ import {
 import { twMerge } from "tailwind-merge";
 import type { SensorDataResponseDto, User } from "./dto";
 import type { Sensor } from "./sensors";
+import type { DangerLevel } from "./danger-levels";
+import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
 
 export function cn(...inputs: Array<ClassValue>) {
 	return twMerge(clsx(inputs));
@@ -65,14 +67,8 @@ export function computeYAxisRange(
 		return { minY: 0, maxY: step };
 	}
 
-	const max = data.reduce(
-		(m, c) => (c.value > m ? c.value : m),
-		data[0].value,
-	);
-	const min = data.reduce(
-		(m, c) => (c.value < m ? c.value : m),
-		data[0].value,
-	);
+	const max = data.reduce((m, c) => (c.value > m ? c.value : m), data[0].value);
+	const min = data.reduce((m, c) => (c.value < m ? c.value : m), data[0].value);
 
 	const maxY = Math.ceil(max / step) * step + topPadding;
 	const minY = Math.floor((min - bottomPadding) / step) * step;
@@ -151,4 +147,20 @@ export function shorthandName(name: string): string {
 
 export function capitalize(str: string): string {
 	return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function getEmoji(dangerLevel: DangerLevel | null) {
+	if (dangerLevel === "danger") {
+		return FrownIcon;
+	}
+
+	if (dangerLevel === "warning") {
+		return MehIcon;
+	}
+
+	if (dangerLevel === "safe") {
+		return SmileIcon;
+	}
+
+	return CircleDashedIcon;
 }
