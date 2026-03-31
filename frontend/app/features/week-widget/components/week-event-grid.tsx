@@ -1,3 +1,4 @@
+import { TIMEZONE } from "@/i18n/locale";
 import { DangerLevels } from "@/lib/danger-levels";
 import type { TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
@@ -46,6 +47,7 @@ export function WeekEventGrid({
 
 					return (
 						isSameWeek(days[0].date, timeBucketStatus.time, {
+							in: TIMEZONE,
 							weekStartsOn,
 						}) &&
 						hour >= dayStartHour &&
@@ -81,8 +83,10 @@ export function WeekEventGrid({
 									differenceInCalendarDays(
 										timeBucketStatus.time,
 										startOfWeek(timeBucketStatus.time, {
+											in: TIMEZONE,
 											weekStartsOn,
 										}),
+										{ in: TIMEZONE },
 									) + 2,
 								gridColumnEnd: "span 1",
 							}}

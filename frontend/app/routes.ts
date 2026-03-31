@@ -14,6 +14,7 @@ export default [
 			route("/operator/noise", "routes/operator/sensors/noise.tsx"),
 			route("/operator/", "routes/operator/home.tsx"),
 		]),
+		route("/operator/live", "routes/operator/live.tsx"),
 		route("/foreman/team", "routes/foreman/team.tsx"),
 	]),
 	route("/register", "routes/register.tsx"),

@@ -1,5 +1,6 @@
 import type { View } from "@/features/views/views";
 import type { TranslateFn } from "@/i18n/config.js";
+import type { TZDate } from "@date-fns/tz";
 import { type ClassValue, clsx } from "clsx";
 import {
 	addDays,
@@ -17,8 +18,8 @@ export function cn(...inputs: Array<ClassValue>) {
 	return twMerge(clsx(inputs));
 }
 
-export const getPrevDay = (selectedDay: Date, view: View): Date => {
-	let prevDay: Date;
+export const getPrevDay = (selectedDay: TZDate, view: View): TZDate => {
+	let prevDay: TZDate;
 	if (view === "day") {
 		prevDay = subDays(selectedDay, 1);
 	} else if (view === "week") {
@@ -26,18 +27,12 @@ export const getPrevDay = (selectedDay: Date, view: View): Date => {
 	} else {
 		prevDay = subMonths(selectedDay, 1);
 	}
-	const utcPrevDay = new Date(
-		Date.UTC(
-			prevDay.getUTCFullYear(),
-			prevDay.getUTCMonth(),
-			prevDay.getUTCDate(),
-		),
-	);
-	return utcPrevDay;
+
+	return prevDay;
 };
 
-export const getNextDay = (selectedDay: Date, view: View): Date => {
-	let nextDay: Date;
+export const getNextDay = (selectedDay: TZDate, view: View): TZDate => {
+	let nextDay: TZDate;
 	if (view === "day") {
 		nextDay = addDays(selectedDay, 1);
 	} else if (view === "week") {
@@ -46,14 +41,7 @@ export const getNextDay = (selectedDay: Date, view: View): Date => {
 		nextDay = addMonths(selectedDay, 1);
 	}
 
-	const utcNextDay = new Date(
-		Date.UTC(
-			nextDay.getUTCFullYear(),
-			nextDay.getUTCMonth(),
-			nextDay.getUTCDate(),
-		),
-	);
-	return utcNextDay;
+	return nextDay;
 };
 
 export function computeYAxisRange(

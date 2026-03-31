@@ -9,9 +9,14 @@ import {
 import { useDate } from "@/features/date-picker/use-date";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
-import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
+import { toTZDate } from "@/lib/date";
+import type {
+	SensorDataResponseDto,
+	SensorTypeField,
+	UserSensorStatusDto,
+} from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
-import { thresholds } from "@/lib/thresholds";
+import { getThreshold } from "@/lib/thresholds";
 import { downsampleSensorData } from "@/lib/utils";
 import {
 	addHours,
@@ -53,6 +58,7 @@ interface LineChartProps {
 	sensor: Sensor;
 	headerRight?: React.ReactNode;
 	usePeakData?: boolean;
+	dustField?: SensorTypeField;
 }
 
 export function ChartLineDefault({
@@ -66,13 +72,14 @@ export function ChartLineDefault({
 	sensor,
 	headerRight,
 	usePeakData = false,
+	dustField,
 }: LineChartProps) {
 	const { date: selectedDay } = useDate();
 	const { t } = useTranslation();
 	const id = useId();
 	const formatDate = useFormatDate();
 
-	const { warning, danger, peakDanger } = thresholds[sensor];
+	const { warning, danger, peakDanger } = getThreshold(sensor, dustField);
 	const dangerThreshold = usePeakData && peakDanger ? peakDanger : danger;
 
 	const getValue = (data: SensorDataResponseDto) =>
@@ -110,12 +117,12 @@ export function ChartLineDefault({
 	}));
 
 	const ticks = Array.from({ length: endHour - startHour + 1 }, (_, i) => {
-		const date = new Date(selectedDay);
-		date.setUTCHours(startHour + i);
+		const date = toTZDate(selectedDay);
+		date.setHours(startHour + i, 0, 0, 0);
 		return date.getTime();
 	});
 
-	const formatTime = (time: number) => formatDate(new Date(time), "HH:mm");
+	const formatTime = (time: number) => formatDate(toTZDate(time), "HH:mm");
 
 	const maxDataDangerLevel = getDangerLevel(maxData, usePeakData);
 

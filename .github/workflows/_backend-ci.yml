@@ -23,13 +23,13 @@ jobs:
         run: dotnet tool restore
 
       - name: Restore dependencies
-        run: dotnet restore src/backend.csproj
+        run: dotnet restore backend.sln
 
       - name: Check formatting
         run: dotnet csharpier check .
 
       - name: Build
-        run: dotnet build src/backend.csproj --no-restore
+        run: dotnet build backend.sln --no-restore
 
       - name: Test
-        run: dotnet test src/backend.csproj --no-build --verbosity normal
+        run: dotnet test backend.sln --no-build --verbosity normal
