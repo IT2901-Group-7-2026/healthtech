@@ -9,6 +9,7 @@ import {
 import { useDate } from "@/features/date-picker/use-date";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
+import { toTZDate } from "@/lib/date";
 import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { thresholds } from "@/lib/thresholds";
@@ -110,12 +111,12 @@ export function ChartLineDefault({
 	}));
 
 	const ticks = Array.from({ length: endHour - startHour + 1 }, (_, i) => {
-		const date = new Date(selectedDay);
-		date.setUTCHours(startHour + i);
+		const date = toTZDate(selectedDay);
+		date.setHours(startHour + i, 0, 0, 0);
 		return date.getTime();
 	});
 
-	const formatTime = (time: number) => formatDate(new Date(time), "HH:mm");
+	const formatTime = (time: number) => formatDate(toTZDate(time), "HH:mm");
 
 	const maxDataDangerLevel = getDangerLevel(maxData, usePeakData);
 

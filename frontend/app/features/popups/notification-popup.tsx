@@ -1,3 +1,4 @@
+import type { TZDate } from "@date-fns/tz";
 import { BasePopup } from "./base-popup";
 
 export function NotificationPopup({
@@ -9,7 +10,7 @@ export function NotificationPopup({
 	children,
 }: {
 	title: string;
-	relevantDate: Date;
+	relevantDate: TZDate;
 	open: boolean;
 	onClose: () => void;
 	pathname?: string;

@@ -1,6 +1,8 @@
 import { useDate } from "@/features/date-picker/use-date";
 import { getFormatOptions, useFormatDate } from "@/hooks/use-format-date.js";
-import { tz } from "@date-fns/tz";
+import { TIMEZONE } from "@/i18n/locale";
+import { today, toTZDate } from "@/lib/date";
+import type { TZDate } from "@date-fns/tz";
 import {
 	addDays,
 	addWeeks,
@@ -14,11 +16,10 @@ import {
 	isToday,
 	type Locale,
 	set,
-	startOfDay,
 	startOfWeek,
 } from "date-fns";
 
-const getViewTitle = (firstDay: Date, lastDay: Date, locale?: Locale) => {
+const getViewTitle = (firstDay: TZDate, lastDay: TZDate, locale?: Locale) => {
 	const options = getFormatOptions(locale);
 
 	if (isSameMonth(firstDay, lastDay)) {
@@ -44,9 +45,9 @@ interface WeekViewOptions {
 	dayEndHour?: number;
 	weekStartsOn?: Day;
 	locale?: Locale;
-	isDisabledCell?: (date: Date) => boolean;
-	isDisabledDay?: (date: Date) => boolean;
-	isDisabledWeek?: (startDayOfWeek: Date) => boolean;
+	isDisabledCell?: (date: TZDate) => boolean;
+	isDisabledDay?: (date: TZDate) => boolean;
+	isDisabledWeek?: (startDayOfWeek: TZDate) => boolean;
 }
 
 export function useWeekView({
@@ -82,8 +83,7 @@ export function useWeekView({
 	};
 
 	const selectCurrentWeek = () => {
-		const today = startOfDay(new Date());
-		const startOfCurrentWeek = startOfWeek(today, { weekStartsOn });
+		const startOfCurrentWeek = startOfWeek(today(), { weekStartsOn });
 
 		setSelectedDay(startOfCurrentWeek);
 	};
@@ -91,7 +91,7 @@ export function useWeekView({
 	const daysInWeek = eachDayOfInterval({
 		start: startOfWeek(selectedDay, { weekStartsOn }),
 		end: addDays(startOfWeek(selectedDay, { weekStartsOn }), 6),
-	});
+	}).map(toTZDate);
 
 	const timeSlotSegments = daysInWeek.map((day) => {
 		const start = set(day, {
@@ -109,7 +109,7 @@ export function useWeekView({
 		});
 
 		// 1 time slot per hour
-		const dateSteps = eachHourOfInterval({ start, end });
+		const dateSteps = eachHourOfInterval({ start, end }).map(toTZDate);
 
 		const cells = dateSteps.map((date) => ({
 			date: date,
@@ -121,7 +121,7 @@ export function useWeekView({
 
 		return {
 			date: day,
-			isToday: isToday(day),
+			isToday: isToday(day, { in: TIMEZONE }),
 			name: formatDate(day, "EEEE"),
 			shortName: formatDate(day, "EEE"),
 			dayOfMonth: formatDate(day, "d"),
@@ -140,7 +140,7 @@ export function useWeekView({
 	}
 
 	const viewTitle = getViewTitle(firstDay, lastDay, locale);
-	const weekNumber = getWeek(firstDay, { in: tz("Europe/Oslo") });
+	const weekNumber = getWeek(firstDay, { in: TIMEZONE });
 
 	return {
 		selectNextWeek,
