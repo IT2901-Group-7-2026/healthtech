@@ -1,4 +1,5 @@
 import { DailyNotes } from "@/components/daily-notes";
+import { LiveStatusOverviewCard } from "@/features/live-status/live-status-overview-card";
 
 export default function OperatorLiveView() {
 	return (
@@ -7,7 +8,15 @@ export default function OperatorLiveView() {
 				<DailyNotes />
 			</div>
 
-			<div className="flex w-full min-w-0 flex-col gap-4"></div>
+			<div className="flex w-full min-w-0 flex-col gap-4">
+				<LiveStatusOverviewCard
+					thresholdValues={{
+						dust: "safe",
+						noise: "danger",
+						vibration: "warning",
+					}}
+				/>
+			</div>
 		</div>
 	);
 }
