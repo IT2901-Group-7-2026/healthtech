@@ -20,124 +20,6 @@ SELECT setseed(0.424242);
 
 \set DEFAULT_PASSWORD_HASH '$2a$11$QXVHkr6TQC8gJvh5P4GFzOYc.HyZA3FxDC3/BghAM3hODQVAoWwwi' -- hashed 'password123'
 
--- Location ID variables
-\set VERDAL_ID '11111111-1111-1111-1111-111111111111'
-\set SANDSLI_ID '22222222-2222-2222-2222-222222222222'
-
--- Delete existing data to avoid duplicates when reseeding
-DROP MATERIALIZED VIEW IF EXISTS noise_data_hourly;
-DROP MATERIALIZED VIEW IF EXISTS noise_data_daily;
-DROP MATERIALIZED VIEW IF EXISTS noise_data_minutely;
-
-DROP MATERIALIZED VIEW IF EXISTS vibration_data_hourly;
-DROP MATERIALIZED VIEW IF EXISTS vibration_data_daily;
-DROP MATERIALIZED VIEW IF EXISTS vibration_data_minutely;
-
-DROP MATERIALIZED VIEW IF EXISTS dust_data_hourly;
-DROP MATERIALIZED VIEW IF EXISTS dust_data_daily;
-DROP MATERIALIZED VIEW IF EXISTS dust_data_minutely;
-
-TRUNCATE TABLE "VibrationData" RESTART IDENTITY CASCADE;
-TRUNCATE TABLE "NoiseData" RESTART IDENTITY CASCADE;
-TRUNCATE TABLE "DustData" RESTART IDENTITY CASCADE;
-
-DELETE FROM "User";
-DELETE FROM "Location";
-
-
--- Location
-INSERT INTO "Location" ("Id", "Latitude", "Longitude", "Country", "Region", "City", "Site", "Building")
-VALUES 
-    (:'VERDAL_ID', 63.78788207165566, 11.440749156413084, 'Norway', 'Trøndelag', 'Verdal', 'Aker Solutions Verdal', 'M-hallen'),
-    (:'SANDSLI_ID', 60.29278334510331, 5.279473042646057, 'Norway', 'Bergen', 'Bergen', 'Aker Solutions Sandsli', 'Bygg 1');
-
--- User
-INSERT INTO "User" ("Id", "Username", "Email", "PasswordHash", "CreatedAt", "JobDescription", "LocationId", "Role")
-VALUES 
-    (:'OLA_ID', 
-    'Ola Nordmann', 
-    'ola.nordmann@aker.com',
-    :'DEFAULT_PASSWORD_HASH',
-    NOW(),
-    'Formann for bygg 1',
-    :'VERDAL_ID',
-    'Foreman'),
-    (:'KARI_ID',
-    'Kari Nordmann',
-    'kari.nordmann@aker.com',
-    :'DEFAULT_PASSWORD_HASH',
-    NOW(),
-    'Sveiser',
-    :'VERDAL_ID',
-    'Operator'),
-    (:'PER_ID',
-    'Per Hansen',
-    'per.hansen@aker.com',
-    :'DEFAULT_PASSWORD_HASH',
-    NOW(),
-    'Technician',
-    :'VERDAL_ID',
-    'Operator'),
-    (:'TROND_ID',
-    'Trond Pedersen',
-    'trond.pedersen@aker.com',
-    :'DEFAULT_PASSWORD_HASH',
-    NOW(),
-    'Technician',
-    :'VERDAL_ID',
-    'Operator'),
-    (:'GJERTRUD_ID',
-    'Gjertrud Olsen',
-    'gjertrud.olsen@aker.com',
-    :'DEFAULT_PASSWORD_HASH',
-    NOW(),
-    'Technician',
-    :'VERDAL_ID',
-    'Operator'),
-    (:'KLARA_ID',
-    'Klara Johansen',
-    'klara.johansen@aker.com',
-    :'DEFAULT_PASSWORD_HASH',
-    NOW(),
-    'Technician',
-    :'VERDAL_ID',
-    'Operator'), 
-    (:'BIRGIR_ID',
-    'Birgir Sigurdsson',
-    'birgir.sigurdsson@aker.com',
-    :'DEFAULT_PASSWORD_HASH',
-    NOW(),
-    'Technician',
-    :'VERDAL_ID',
-    'Operator'),
-    (:'TORLEIF_ID',
-    'Torleif Eriksen',
-    'torleif.eriksen@aker.com',
-    :'DEFAULT_PASSWORD_HASH',
-    NOW(),
-    'Technician',
-    :'VERDAL_ID',
-    'Operator'),
-    (:'BJØRNULF_ID',
-    'Bjørnulf Knutsen',
-    'bjornul.knutsen@aker.com',
-    :'DEFAULT_PASSWORD_HASH',
-    NOW(),
-    'Technician',
-    :'VERDAL_ID',
-    'Operator');
-
--- UserManagers
-INSERT INTO "UserManagers" ("ManagersId", "SubordinatesId")
-VALUES
-    (:'OLA_ID', :'KARI_ID'),
-    (:'OLA_ID', :'PER_ID'),
-    (:'OLA_ID', :'TROND_ID'),
-    (:'OLA_ID', :'GJERTRUD_ID'),
-    (:'OLA_ID', :'KLARA_ID'),
-    (:'OLA_ID', :'BIRGIR_ID'),
-    (:'OLA_ID', :'TORLEIF_ID'),
-    (:'OLA_ID', :'BJØRNULF_ID');
 
 
 -- Randomized multiplier and jitter values for each user and sensor for fixtures
@@ -167,6 +49,7 @@ SELECT
 
 -- We don't include Kari in the randomization, as she should have the original values from the CSVs
 FROM (VALUES
+    (:'OLA_ID'::uuid),
     (:'PER_ID'::uuid),
     (:'TROND_ID'::uuid),
     (:'GJERTRUD_ID'::uuid),
@@ -410,12 +293,6 @@ AND (
 DROP TABLE temp_dust_data;
 
 DROP TABLE seed_user_profile;
-
-
--- Transforms the tables into hypertables if their not already
-SELECT create_hypertable('"NoiseData"', 'Time', if_not_exists => TRUE);
-SELECT create_hypertable('"VibrationData"', 'ConnectedOn', if_not_exists => TRUE);
-SELECT create_hypertable('"DustData"', 'Time', if_not_exists => TRUE);
 
 -- Refresh materialized views after seeding so aggregated queries are up to date.
 REFRESH MATERIALIZED VIEW noise_data_minutely;
