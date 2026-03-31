@@ -1,3 +1,6 @@
+import type { TZDate } from "@date-fns/tz";
+import { endOfWeek, startOfWeek } from "date-fns";
+import { useTranslation } from "react-i18next";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { capitalize } from "@/lib/utils";
 import {
@@ -7,9 +10,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/ui/select";
-import type { TZDate } from "@date-fns/tz";
-import { endOfWeek, startOfWeek } from "date-fns";
-import { useTranslation } from "react-i18next";
 import { useDate } from "../date-picker/use-date";
 import { useView } from "./use-view";
 import type { View } from "./utils";
@@ -24,12 +24,10 @@ export function ViewPicker() {
 
 	return (
 		<Select value={view} onValueChange={(value: View) => setView(value)}>
-			<SelectTrigger className="w-57">
-				<SelectValue>
-					{formatSelectedView(view, date, locale, formatDate)}
-				</SelectValue>
+			<SelectTrigger className="w-32">
+				<SelectValue>{t(($) => $[view])}</SelectValue>
 			</SelectTrigger>
-			<SelectContent className="w-57">
+			<SelectContent>
 				{views.map((v: View) => (
 					<SelectItem key={v} value={v}>
 						{t(($) => $[v])}

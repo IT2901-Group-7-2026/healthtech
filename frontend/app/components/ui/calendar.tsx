@@ -4,11 +4,15 @@ import {
 	ChevronRightIcon,
 } from "lucide-react";
 import * as React from "react";
-import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker";
+import {
+	type DayButton,
+	DayPicker,
+	getDefaultClassNames,
+} from "react-day-picker";
 import { useTranslation } from "react-i18next";
-
 import { Button, buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useFormatDate } from "@/hooks/use-format-date.js";
+import { capitalize, cn } from "@/lib/utils";
 
 function Calendar({
 	className,
@@ -23,10 +27,12 @@ function Calendar({
 	buttonVariant?: React.ComponentProps<typeof Button>["variant"];
 }) {
 	const { t } = useTranslation();
+	const formatDate = useFormatDate();
 	const defaultClassNames = getDefaultClassNames();
 
 	return (
 		<DayPicker
+			startMonth={new Date(2015, 0)}
 			showOutsideDays={showOutsideDays}
 			className={cn(
 				"bg-background group/calendar p-3 [--cell-size:--spacing(8)] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
@@ -41,8 +47,9 @@ function Calendar({
 			}
 			captionLayout={captionLayout}
 			formatters={{
-				formatMonthDropdown: (date) =>
-					date.toLocaleString("default", { month: "short" }),
+				formatMonthDropdown: (date) => capitalize(formatDate(date, "MMMM")),
+				formatCaption: (date) => capitalize(formatDate(date, "MMMM yyyy")),
+				formatWeekdayName: (date) => capitalize(formatDate(date, "EEEEEE")),
 				...formatters,
 			}}
 			classNames={{
