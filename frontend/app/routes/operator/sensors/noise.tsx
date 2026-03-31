@@ -125,6 +125,7 @@ export default function Noise() {
 					view={view}
 					data={calculateSummaryCounts(
 						(useDaySummary ? daySummaryData : data) ?? [],
+						sensor,
 						usePeakAggregation,
 					)}
 				/>
@@ -300,7 +301,11 @@ const NoisePageLayout = ({
 			<Summary
 				exposureType="noise"
 				view={view}
-				data={calculateSummaryCounts(data ?? [], usePeakAggregation)}
+				data={calculateSummaryCounts(
+					data ?? [],
+					"noise",
+					usePeakAggregation,
+				)}
 			/>
 			<DailyNotes />
 		</div>
