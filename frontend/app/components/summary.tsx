@@ -3,12 +3,10 @@ import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import { useIsMobile } from "@/hooks/use-mobile";
-import {
-	type DangerLevel,
-	DangerLevels,
-	isHigherSeverity,
-} from "@/lib/danger-levels";
-import type { SummaryCounts, TimeBucketStatus } from "@/lib/time-bucket-types";
+import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
+import { now } from "@/lib/date";
+import { sensors } from "@/lib/sensors.js";
+import type { SummaryCounts } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/ui/card";
 import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
@@ -23,18 +21,12 @@ type SummaryProps = {
 	view: View;
 	data: SummaryCounts;
 	mode?: "count" | "sensor";
-	sensorData?: Array<TimeBucketStatus>;
 };
 
 type SummaryLabel = Record<DangerLevel, string>;
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: bruh
-export function Summary({
-	exposureType,
-	data,
-	mode = "count",
-	sensorData,
-}: SummaryProps) {
+export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 	const { t, i18n } = useTranslation();
 	const { view } = useView();
 	const isMobile = useIsMobile();
@@ -76,19 +68,20 @@ export function Summary({
 	};
 
 	let summaryTitle = "";
+	const currentDate = now();
 
 	if (view === "month") {
 		summaryTitle = t(($) => $.exposure_summary.title.month, {
-			month: formatDate(new Date(), "MMMM"),
+			month: formatDate(currentDate, "MMMM"),
 		});
 	} else if (view === "week") {
 		summaryTitle = t(($) => $.exposure_summary.title.week, {
-			week: formatDate(new Date(), "w"),
+			week: formatDate(currentDate, "w"),
 		});
 	} else {
 		summaryTitle = t(($) => $.exposure_summary.title.day, {
 			day: formatDate(
-				new Date(),
+				currentDate,
 				i18n.language === "en" ? "MMMM do, yyyy" : "dd. MMMM yyyy",
 			),
 		});
@@ -132,60 +125,64 @@ export function Summary({
 	} else {
 		content = (
 			<CardContent className="gap-5">
-				{getSensorSummaryFromOverview(sensorData ?? []).map(
-					([sensor, level]) => {
-						const color =
-							level !== null
-								? `var(--${DangerLevels[level].color})`
-								: undefined;
+				{sensors.map((sensor) => {
+					const sensorSummary = data.bySensor[sensor];
 
-						const description = t(($) =>
-							level
-								? $.exposure_summary[`${level}Smiley` as const]
-								: $.exposure_summary.noData,
-						);
+					const highestLevel = getHighestLevel(sensorSummary);
 
-						const label = t(($) => $[sensor]);
-						const Emoji = getEmoji(level);
+					const color =
+						highestLevel !== null
+							? `var(--${DangerLevels[highestLevel].color})`
+							: undefined;
 
-						return (
-							<div
-								key={sensor}
-								className="flex items-center justify-between"
-							>
-								<div className="flex min-w-0 grow items-center gap-3">
-									<SensorIcon
-										type={sensor}
-										size="sm"
-										dangerLevel={level ?? undefined}
-										className="shrink-0"
-									/>
+					const description = t(($) =>
+						highestLevel
+							? $.exposure_summary[
+									`${highestLevel}Smiley` as const
+								]
+							: $.exposure_summary.noData,
+					);
 
-									<div className="flex min-w-0 grow flex-col">
-										<p
-											className="truncate text-foreground text-sm"
-											title={label}
-										>
-											{label}
-										</p>
+					const label = t(($) => $[sensor]);
+					const Emoji = getEmoji(highestLevel);
 
-										<p
-											className="truncate text-xs"
-											style={{ color }}
-											title={description}
-										>
-											{description}
-										</p>
-									</div>
-								</div>
+					return (
+						<div
+							key={sensor}
+							className="flex items-center justify-between"
+						>
+							<div className="flex min-w-0 grow items-center gap-3">
+								<SensorIcon
+									type={sensor}
+									size="sm"
+									dangerLevel={highestLevel ?? undefined}
+									className="shrink-0"
+								/>
 
-								<div className="w-fit">
-									<Emoji size="1.25rem" style={{ color }} />
+								<div className="flex min-w-0 grow flex-col">
+									<p
+										className="truncate text-foreground text-sm"
+										title={label}
+									>
+										{label}
+									</p>
+
+									<p
+										className="truncate text-xs"
+										style={{ color }}
+										title={description}
+									>
+										{description}
+									</p>
 								</div>
 							</div>
-						);
-					},
-				)}
+
+							<div className="w-fit">
+								<Emoji size="1.25rem" style={{ color }} />
+							</div>
+						</div>
+					);
+				})}
 			</CardContent>
 		);
 	}
@@ -234,44 +231,6 @@ const SummaryRow = ({
 	</div>
 );
 
-function getSensorSummaryFromOverview(
-	buckets: Array<TimeBucketStatus>,
-): Array<[Sensor, DangerLevel | null]> {
-	const result: Record<Sensor, DangerLevel | null> = {
-		dust: null,
-		noise: null,
-		vibration: null,
-	};
-
-	for (const bucket of buckets) {
-		const sensorSeverityLevels = bucket.sensorDangerLevels;
-
-		if (!sensorSeverityLevels) {
-			continue;
-		}
-
-		(Object.keys(result) as Array<Sensor>).forEach((currentSensor) => {
-			const currentSeverity = result[currentSensor];
-			const newSeverity = sensorSeverityLevels[currentSensor];
-
-			if (newSeverity == null) {
-				return;
-			}
-
-			const isNewMoreSevere = isHigherSeverity(
-				currentSeverity,
-				newSeverity,
-			);
-
-			if (isNewMoreSevere) {
-				result[currentSensor] = newSeverity;
-			}
-		});
-	}
-
-	return Object.entries(result) as Array<[Sensor, DangerLevel | null]>;
-}
-
 function getEmoji(dangerLevel: DangerLevel | null) {
 	if (dangerLevel === "danger") {
 		return FrownIcon;
@@ -286,4 +245,28 @@ function getEmoji(dangerLevel: DangerLevel | null) {
 	}
 
 	return CircleDashedIcon;
+}
+
+function getHighestLevel({
+	dangerCount,
+	warningCount,
+	safeCount,
+}: {
+	dangerCount: number;
+	warningCount: number;
+	safeCount: number;
+}) {
+	if (dangerCount > 0) {
+		return "danger";
+	}
+
+	if (warningCount > 0) {
+		return "warning";
+	}
+
+	if (safeCount > 0) {
+		return "safe";
+	}
+
+	return null;
 }

@@ -85,6 +85,7 @@ export default function Vibration() {
 					view={view}
 					data={calculateSummaryCounts(
 						(useDaySummary ? daySummaryData : data) ?? [],
+						sensor,
 					)}
 				/>
 				<DailyNotes />
