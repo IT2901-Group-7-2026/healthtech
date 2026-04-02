@@ -142,8 +142,8 @@ export default function OperatorHome() {
 										minHour,
 										maxHour,
 									)}
-									startHour={minHour}
-									endHour={maxHour}
+									startHour={minHour-1}
+									endHour={maxHour+1}
 									chartTitle={date.toLocaleDateString(
 										i18n.language,
 										{
