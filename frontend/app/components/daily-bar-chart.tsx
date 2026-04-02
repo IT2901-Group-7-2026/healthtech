@@ -8,7 +8,7 @@ import { sensors } from "@/features/sensor-picker/sensors";
 import type { OverviewChartRow } from "@/lib/time-bucket-types";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { Bar, BarChart, CartesianGrid, Cell, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts";
 
 const HOUR_BLOCK_SIZE = 10;
 
@@ -82,12 +82,6 @@ export function DailyBarChart({
 			<CardContent>
 				<ChartContainer config={chartConfig} className="h-100">
 					<BarChart data={chartData} layout="vertical">
-						  <CartesianGrid
-							stroke="var(--muted-foreground)"
-							strokeDasharray="2 5"
-							vertical={true}
-							horizontal={false}
-						/>
 						<XAxis
 							type="number"
 							domain={[0, domainMax]}
@@ -114,8 +108,7 @@ export function DailyBarChart({
 								stackId="a"
 								stroke="var(--muted-foreground)"
 								strokeWidth={1}
-								barSize={20}
-								radius={50}
+								barSize={80}
 							>
 								{data.map((row, index) => {
 									const hour = Number(key);
