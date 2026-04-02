@@ -46,33 +46,35 @@ export function BasePopup({
 
 	return (
 		<Dialog open={open} onOpenChange={onClose}>
-			<DialogHeader>
-				<DialogTitle className="font-bold text-xl">{title}</DialogTitle>
-			</DialogHeader>
-
 			<DialogContent className="w-full max-w-6xl">
-				{children}
-			</DialogContent>
+				<DialogHeader>
+					<DialogTitle className="font-bold text-xl">
+						{title}
+					</DialogTitle>
+				</DialogHeader>
 
-			{relevantDate && (
-				<DialogFooter>
-					<Button
-						variant="default"
-						className="cursor-pointer"
-						onClick={onClose}
-					>
-						<NavLink
-							to={{
-								pathname: pathname ?? "",
-								search,
-							}}
-							prefetch="intent"
+				{children}
+
+				{relevantDate && (
+					<DialogFooter>
+						<Button
+							variant="default"
+							className="cursor-pointer"
+							onClick={onClose}
 						>
-							{t(($) => $.popup.toDay)}
-						</NavLink>
-					</Button>
-				</DialogFooter>
-			)}
+							<NavLink
+								to={{
+									pathname: pathname ?? "",
+									search,
+								}}
+								prefetch="intent"
+							>
+								{t(($) => $.popup.toDay)}
+							</NavLink>
+						</Button>
+					</DialogFooter>
+				)}
+			</DialogContent>
 		</Dialog>
 	);
 }
