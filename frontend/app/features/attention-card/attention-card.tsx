@@ -53,6 +53,7 @@ export const AttentionCard = ({
 	};
 
 	const highestDangerLevel = useMemo(() => {
+		const sensorType = sensor ?? "total";
 		if (thresholdSummary === undefined) {
 			return null;
 		}
@@ -61,16 +62,16 @@ export const AttentionCard = ({
 			return "safe";
 		}
 
-		if (thresholdSummary.total.danger > 0) {
+		if (thresholdSummary[sensorType].danger > 0) {
 			return "danger";
 		}
 
-		if (thresholdSummary.total.warning > 0) {
+		if (thresholdSummary[sensorType].warning > 0) {
 			return "warning";
 		}
 
 		return "safe";
-	}, [thresholdSummary, subordinates]);
+	}, [thresholdSummary, subordinates, sensor]);
 
 	const selectedSensorKey = sensor ?? "total";
 	const showActionCard = date

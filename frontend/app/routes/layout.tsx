@@ -96,6 +96,7 @@ function getLinks(
 
 		case "operator": {
 			return [
+				{ to: href("/operator/live"), label: t(($) => $.layout.live) },
 				{ to: href("/operator"), label: t(($) => $.layout.overview) },
 				{ to: href("/operator/dust"), label: t(($) => $.dust) },
 				{ to: href("/operator/noise"), label: t(($) => $.noise) },

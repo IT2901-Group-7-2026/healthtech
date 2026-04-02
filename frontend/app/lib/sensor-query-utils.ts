@@ -94,9 +94,15 @@ export function buildSensorQuery(
 		field?: SensorTypeField;
 		usePeakAggregation?: boolean;
 		isOverview?: boolean;
+		startTime?: TZDate;
+		endTime?: TZDate;
 	},
 ): SensorDataRequestDto {
-	const { startTime, endTime } = getStartEnd(view, selectedDay);
+	const { startTime: defaultStartTime, endTime: defaultEndTime } =
+		getStartEnd(view, selectedDay);
+
+	const startTime = options?.startTime ?? defaultStartTime;
+	const endTime = options?.endTime ?? defaultEndTime;
 
 	const granularity =
 		options?.granularity ??

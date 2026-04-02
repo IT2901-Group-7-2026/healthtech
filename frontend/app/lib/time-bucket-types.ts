@@ -13,8 +13,12 @@ export type TimeBucketStatus = {
 	sensorDangerLevels?: Partial<Record<Sensor, DangerLevel>>;
 };
 
-export type SummaryCounts = {
+export type SummaryLevelCounts = {
 	safeCount: number;
 	warningCount: number;
 	dangerCount: number;
+};
+
+export type SummaryCounts = SummaryLevelCounts & {
+	bySensor: Record<Sensor, SummaryLevelCounts>;
 };

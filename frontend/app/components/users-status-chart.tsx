@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import type { UserWithStatusDto } from "@/lib/dto";
-import { thresholds } from "@/lib/thresholds";
+import { getThreshold } from "@/lib/thresholds";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import {
@@ -25,7 +25,7 @@ interface Props {
 
 export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	const [t] = useTranslation();
-	const threshold = thresholds[sensor];
+	const threshold = getThreshold(sensor);
 
 	const data = users.flatMap((user) => {
 		const sensorStatus = user.status[sensor];

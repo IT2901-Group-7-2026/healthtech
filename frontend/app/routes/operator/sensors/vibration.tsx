@@ -15,7 +15,7 @@ import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
-import { thresholds } from "@/lib/thresholds";
+import { getThreshold } from "@/lib/thresholds";
 import {
 	calculateSummaryCounts,
 	mapSensorDataToTimeBucketStatuses,
@@ -37,6 +37,7 @@ export default function Vibration() {
 	const chartContainerId = useId();
 
 	const sensor: Sensor = "vibration";
+	const vibrationThreshold = getThreshold(sensor);
 
 	const query = buildSensorQuery(sensor, view, date);
 	const daySummaryQuery = buildSensorQuery(sensor, view, date, {
@@ -84,6 +85,7 @@ export default function Vibration() {
 					view={view}
 					data={calculateSummaryCounts(
 						(useDaySummary ? daySummaryData : data) ?? [],
+						sensor,
 					)}
 				/>
 				<DailyNotes />
@@ -160,11 +162,11 @@ export default function Vibration() {
 								}
 							>
 								<ThresholdLine
-									y={thresholds.vibration.danger}
+									y={vibrationThreshold.danger}
 									dangerLevel="danger"
 								/>
 								<ThresholdLine
-									y={thresholds.vibration.warning}
+									y={vibrationThreshold.warning}
 									dangerLevel="warning"
 								/>
 							</ChartLineDefault>
