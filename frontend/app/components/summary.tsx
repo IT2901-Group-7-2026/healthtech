@@ -1,10 +1,10 @@
+import { useDate } from "@/features/date-picker/use-date.js";
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
-import { now } from "@/lib/date";
 import { sensors } from "@/lib/sensors.js";
 import type { SummaryCounts } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
@@ -68,7 +68,7 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 	};
 
 	let summaryTitle = "";
-	const currentDate = now();
+	const currentDate = useDate().date;
 
 	if (view === "month") {
 		summaryTitle = t(($) => $.exposure_summary.title.month, {
