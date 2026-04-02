@@ -21,7 +21,7 @@ import {
 	mapOverviewDataToTimeBucketStatuses,
 } from "@/lib/time-bucket-utils";
 import { useQuery } from "@tanstack/react-query";
-import { useId, useMemo } from "react";
+import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import Dust from "./sensors/dust";
 import Noise from "./sensors/noise";
@@ -58,25 +58,21 @@ export default function OperatorHome() {
 			return { minHour: 0, maxHour: 23 };
 		}
 
-		let minHour = 23;
-		let maxHour = 0;
+		let minimumHour = 23;
+		let maximumHour = 0;
 
 		for (const bucket of buckets) {
 			const hour = new Date(bucket.time).getHours();
 
-			if (hour < minHour) minHour = hour;
-			if (hour > maxHour) maxHour = hour;
+			if (hour < minimumHour) minimumHour = hour;
+			if (hour > maximumHour) maximumHour = hour;
 		}
 
-		console.log(minHour, maxHour);
-
-		return { minHour, maxHour };
+		return { minHour: minimumHour, maxHour: maximumHour };
 	}
 
-	// useMemo for performance
-	const { minHour, maxHour } = useMemo(
-		() => getHourDomainFromBuckets(overviewBuckets ?? []),
-		[overviewBuckets],
+	const { minHour, maxHour } = getHourDomainFromBuckets(
+		overviewBuckets ?? [],
 	);
 
 	return (
