@@ -220,7 +220,7 @@
     },
     "userStatusChart": {
       "xAxisLabel": "Percentage of exposure limit",
-      "noData": "No data available"
+      "noData": "No data sensor data available for any operators"
     },
     "siteMap": {
       "title": "Site map",
