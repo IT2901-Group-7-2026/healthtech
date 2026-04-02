@@ -101,46 +101,6 @@ export default function OperatorLiveView() {
 				<DailyNotes />
 			</div>
 
-			<div className="flex w-full min-w-0 flex-nowrap gap-4 overflow-x-auto pb-1">
-				<ExposureSlider
-					label="PM1 TWA"
-					sensor="dust"
-					field="pm1_twa"
-					value={dustTwa1Data?.[0]?.value}
-					dangerLevel={dustTwa1Data?.[0]?.dangerLevel}
-					unitLabel="µg/m³"
-				/>
-				<ExposureSlider
-					label="PM2.5 TWA"
-					sensor="dust"
-					field="pm25_twa"
-					value={dustTwa25Data?.[0]?.value}
-					dangerLevel={dustTwa25Data?.[0]?.dangerLevel}
-					unitLabel="µg/m³"
-				/>
-				<ExposureSlider
-					label="PM10 TWA"
-					sensor="dust"
-					field="pm10_twa"
-					value={dustTwa10Data?.[0]?.value}
-					dangerLevel={dustTwa10Data?.[0]?.dangerLevel}
-					unitLabel="µg/m³"
-				/>
-				<ExposureSlider
-					label={t(($) => $.noise)}
-					sensor="noise"
-					value={noiseData?.[0]?.value}
-					dangerLevel={noiseData?.[0]?.dangerLevel}
-					unitLabel="dB"
-				/>
-				<ExposureSlider
-					label={t(($) => $.vibration)}
-					sensor="vibration"
-					value={vibrationData?.[0]?.value}
-					dangerLevel={vibrationData?.[0]?.dangerLevel}
-					unitLabel="m/s²"
-				/>
-			</div>
 			<div className="flex w-full min-w-0 flex-col gap-4">
 				<LiveStatusOverviewCard
 					sensorDangerLevels={{
@@ -149,6 +109,47 @@ export default function OperatorLiveView() {
 						vibration: "warning",
 					}}
 				/>
+
+				<div className="flex w-full min-w-0 flex-nowrap gap-4 overflow-x-auto pb-1">
+					<ExposureSlider
+						label="PM1 TWA"
+						sensor="dust"
+						field="pm1_twa"
+						value={dustTwa1Data?.[0]?.value}
+						dangerLevel={dustTwa1Data?.[0]?.dangerLevel}
+						unitLabel="µg/m³"
+					/>
+					<ExposureSlider
+						label="PM2.5 TWA"
+						sensor="dust"
+						field="pm25_twa"
+						value={dustTwa25Data?.[0]?.value}
+						dangerLevel={dustTwa25Data?.[0]?.dangerLevel}
+						unitLabel="µg/m³"
+					/>
+					<ExposureSlider
+						label="PM10 TWA"
+						sensor="dust"
+						field="pm10_twa"
+						value={dustTwa10Data?.[0]?.value}
+						dangerLevel={dustTwa10Data?.[0]?.dangerLevel}
+						unitLabel="µg/m³"
+					/>
+					<ExposureSlider
+						label={t(($) => $.noise)}
+						sensor="noise"
+						value={noiseData?.[0]?.value}
+						dangerLevel={noiseData?.[0]?.dangerLevel}
+						unitLabel="dB"
+					/>
+					<ExposureSlider
+						label={t(($) => $.vibration)}
+						sensor="vibration"
+						value={vibrationData?.[0]?.value}
+						dangerLevel={vibrationData?.[0]?.dangerLevel}
+						unitLabel="m/s²"
+					/>
+				</div>
 			</div>
 		</div>
 	);
