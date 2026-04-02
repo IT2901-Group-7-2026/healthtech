@@ -34,10 +34,10 @@ export const LiveStatusOverviewCard = ({
 						<div>{t(($) => $[sensor])}</div>
 
 						<div
-							className={`text-xs flex items-center flex-row text-${mapDangerLevelToColor(dangerLevel)} gap-1`}
+							className={`flex flex-row items-center text-xs text-${mapDangerLevelToColor(dangerLevel)} gap-1`}
 						>
 							<p>{mapDangerLevelToLabel(dangerLevel)}</p>
-							<Icon className="w-5 h-5" />
+							<Icon className="h-5 w-5" />
 						</div>
 					</div>
 				);

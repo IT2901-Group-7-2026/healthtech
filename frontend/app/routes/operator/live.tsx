@@ -1,5 +1,6 @@
 import { DailyNotes } from "@/components/daily-notes";
 import { ExposureSlider } from "@/components/exposure-slider";
+import { LiveStatusOverviewCard } from "@/features/live-status/live-status-overview-card";
 import { useUser } from "@/features/user/user-context";
 import { sensorQueryOptions } from "@/lib/api";
 import { parseAsTZDate, today } from "@/lib/date";
@@ -9,7 +10,6 @@ import { useQuery } from "@tanstack/react-query";
 import { endOfHour, startOfHour } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
-import { LiveStatusOverviewCard } from "@/features/live-status/live-status-overview-card";
 
 export default function OperatorLiveView() {
 	const { t } = useTranslation();

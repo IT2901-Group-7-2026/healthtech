@@ -12,7 +12,7 @@
     "language": "Language"
   },
   "live": {
-    "overviewCard" : {
+    "overviewCard": {
       "danger": "Exceeding exposure limit",
       "warning": "Approaching exposure limit",
       "safe": "Safely within exposure limit"
