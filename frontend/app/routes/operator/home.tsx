@@ -68,7 +68,7 @@ export default function OperatorHome() {
 			if (hour > maxHour) maxHour = hour;
 		}
 
-		console.log(minHour, maxHour)
+		console.log(minHour, maxHour);
 
 		return { minHour, maxHour };
 	}
