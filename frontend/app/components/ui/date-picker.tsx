@@ -21,6 +21,8 @@ import { useFormatDate } from "@/hooks/use-format-date.js";
 import { TIMEZONE, TIMEZONE_NAME } from "@/i18n/locale.js";
 import { now } from "@/lib/date.js";
 import { capitalize } from "@/lib/utils.js";
+import { ViewPicker } from "@/features/views/view-picker.js";
+import { useView } from "@/features/views/use-view.js";
 
 type DatePickerProps = Omit<
 	DayPickerProps,
@@ -35,6 +37,7 @@ type DatePickerProps = Omit<
 	mode?: "day" | "week" | "month";
 	date?: TZDate;
 	onDateChange: (date: TZDate) => void;
+	withViewSelect?: boolean;
 };
 
 export function DatePicker({
@@ -42,11 +45,13 @@ export function DatePicker({
 	date,
 	onDateChange,
 	locale,
+	withViewSelect,
 	...props
 }: DatePickerProps) {
 	const formatDate = useFormatDate();
 	const buttonId = React.useId();
 	const { t, i18n } = useTranslation();
+	const { view } = useView();
 
 	const [selectedDate, setSelectedDate] = React.useState<TZDate>(date ?? now());
 
@@ -112,39 +117,107 @@ export function DatePicker({
 
 	if (selectedDate) {
 		if (mode === "day") {
-			buttonLabel = formatDate(selectedDate, "PPP");
+			buttonLabel = formatDate(
+				selectedDate,
+				i18n.language === "en" ? "MMMM dd, yyyy" : "dd. MMMM yyyy",
+			);
 		} else if (mode === "week") {
-			buttonLabel = `${t(($) => $.week)} ${formatDate(selectedDate, "w")}`;
+			buttonLabel = `${t(($) => $.week)} ${formatDate(selectedDate, "w, yyyy")}`;
 		} else {
 			buttonLabel = capitalize(formatDate(selectedDate, "MMMM yyyy"));
 		}
 	}
 
-	return (
-		<Popover>
-			<PopoverTrigger asChild>
-				<Button
-					variant="outline"
-					id={buttonId}
-					className="justify-start font-normal"
-				>
-					<div className="flex items-center gap-2">
-						<CalendarIcon size="1rem" />
-						<p>{buttonLabel}</p>
-					</div>
-				</Button>
-			</PopoverTrigger>
-			<PopoverContent className="w-auto p-0" align="start">
-				<Calendar
-					mode="single"
-					required
-					selected={selectedDate}
-					onSelect={handleDayClick}
-					modifiers={modifiers}
-					modifiersClassNames={{ today: "", ...modifiersClassNames }}
-					{...calendarProps}
-				/>
-			</PopoverContent>
-		</Popover>
+	const selectionDetail = formatSelection(
+		rangeStart && rangeEnd ? [rangeStart, rangeEnd] : selectedDate,
+		i18n.language,
+		formatDate,
 	);
+
+	const selectionRecap = selectionDetail.date
+		? t(($) => $.dateSelectionRecapSingle, { date: selectionDetail.date })
+		: t(($) => $.dateSelectionRecapMultiple, {
+				startDate: selectionDetail.startDate,
+				endDate: selectionDetail.endDate,
+			});
+
+	const formattedView = t(($) => $[view]).toLowerCase();
+	const selectionText = t(($) => $.viewSelectionText, { view: formattedView });
+
+	const selectionSummary = selectionDetail.date
+		? t(($) => $.dateSelectionSummarySingle, { date: selectionDetail.date })
+		: t(($) => $.dateSelectionSummaryMultiple, {
+				startDate: selectionDetail.startDate,
+				endDate: selectionDetail.endDate,
+			});
+
+	return (
+		<div className="flex gap-4 items-center">
+			<Popover>
+				<PopoverTrigger asChild>
+					<Button
+						variant="outline"
+						id={buttonId}
+						className="justify-start font-normal"
+					>
+						<div className="flex items-center gap-2">
+							<CalendarIcon size="1rem" />
+							<p>{buttonLabel}</p>
+						</div>
+					</Button>
+				</PopoverTrigger>
+				<PopoverContent
+					className="w-auto p-3 flex flex-col gap-4"
+					align="start"
+				>
+					{withViewSelect && <ViewPicker />}
+					<Calendar
+						mode="single"
+						className="min-w-60 p-0"
+						required
+						selected={selectedDate}
+						onSelect={handleDayClick}
+						modifiers={modifiers}
+						captionLayout="dropdown"
+						modifiersClassNames={{
+							today: "[&>button]:font-bold",
+							...modifiersClassNames,
+						}}
+						footer={
+							<p className="text-xs text-muted-foreground text-wrap mt-2">
+								{selectionRecap}
+							</p>
+						}
+						{...calendarProps}
+					/>
+				</PopoverContent>
+			</Popover>
+
+			<div className="flex flex-col">
+				<p className="text-xs text-muted-foreground">{selectionText}</p>
+				<p className="text-xs text-muted-foreground">{selectionSummary}</p>
+			</div>
+		</div>
+	);
+}
+
+function formatSelection(
+	dates: TZDate | [TZDate, TZDate],
+	locale: string,
+	formatDate: ReturnType<typeof useFormatDate>,
+) {
+	const isEn = locale === "en";
+
+	if (!Array.isArray(dates)) {
+		return {
+			date: formatDate(dates, isEn ? "MMM d, yyyy" : "d. MMM yyyy"),
+		};
+	}
+
+	const [start, end] = dates;
+
+	const startStr = formatDate(start, isEn ? "MMM d" : "d. MMM");
+	const endStr = formatDate(end, isEn ? "MMM d, yyyy" : "d. MMM yyyy");
+
+	return { startDate: startStr, endDate: endStr };
 }

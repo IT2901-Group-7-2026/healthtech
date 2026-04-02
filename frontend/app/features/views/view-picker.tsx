@@ -1,64 +1,50 @@
-import type { TZDate } from "@date-fns/tz";
-import { endOfWeek, startOfWeek } from "date-fns";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.js";
+import { CalendarIcon, ColumnsIcon, Grid3X3Icon } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useFormatDate } from "@/hooks/use-format-date";
-import { capitalize } from "@/lib/utils";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/ui/select";
-import { useDate } from "../date-picker/use-date";
 import { useView } from "./use-view";
 import type { View } from "./utils";
-import { views } from "./utils";
 
-export function ViewPicker() {
-	const formatDate = useFormatDate();
-	const { view, setView } = useView();
-	const { date } = useDate();
-	const { t, i18n } = useTranslation();
-	const locale = i18n.language;
-
-	return (
-		<Select value={view} onValueChange={(value: View) => setView(value)}>
-			<SelectTrigger className="w-32">
-				<SelectValue>{t(($) => $[view])}</SelectValue>
-			</SelectTrigger>
-			<SelectContent>
-				{views.map((v: View) => (
-					<SelectItem key={v} value={v}>
-						{t(($) => $[v])}
-					</SelectItem>
-				))}
-			</SelectContent>
-		</Select>
-	);
+interface ViewPickerProps {
+	className?: string;
 }
 
-function formatSelectedView(
-	view: View,
-	date: TZDate,
-	locale: string,
-	formatDate: ReturnType<typeof useFormatDate>,
-) {
-	const isEn = locale === "en";
+export function ViewPicker({ className }: ViewPickerProps) {
+	const { view, setView } = useView();
+	const { t } = useTranslation();
 
-	if (view === "day") {
-		return formatDate(date, isEn ? "MMMM do yyyy" : "d. MMMM yyyy");
-	}
-
-	if (view === "week") {
-		const start = startOfWeek(date, { weekStartsOn: 1 });
-		const end = endOfWeek(date, { weekStartsOn: 1 });
-
-		const startStr = formatDate(start, isEn ? "MMM do" : "d. MMM");
-		const endStr = formatDate(end, isEn ? "MMM do yyyy" : "d. MMM yyyy");
-
-		return `${startStr} - ${endStr}`;
-	}
-
-	return capitalize(formatDate(date, "MMMM yyyy"));
+	return (
+		<ToggleGroup
+			type="single"
+			value={view}
+			variant="outline"
+			size="sm"
+			className={className}
+			onValueChange={(value: View) => {
+				// Value is an empty string when clicking the already selected item, so we need this check to avoid
+				// deselecting.
+				if (value) {
+					setView(value);
+				}
+			}}
+		>
+			<ToggleGroupItem value="day" aria-label={t(($) => $.day)}>
+				<div className="flex items-center gap-2">
+					<CalendarIcon className="size-4" />
+					<p className="text-sm">{t(($) => $.day)}</p>
+				</div>
+			</ToggleGroupItem>
+			<ToggleGroupItem value="week" aria-label={t(($) => $.week)}>
+				<div className="flex items-center gap-2">
+					<ColumnsIcon className="size-4" />
+					<p className="text-sm">{t(($) => $.week)}</p>
+				</div>
+			</ToggleGroupItem>
+			<ToggleGroupItem value="month" aria-label={t(($) => $.month)}>
+				<div className="flex items-center gap-2">
+					<Grid3X3Icon className="size-4" />
+					<p className="text-sm">{t(($) => $.month)}</p>
+				</div>
+			</ToggleGroupItem>
+		</ToggleGroup>
+	);
 }

@@ -108,6 +108,12 @@
   "day": "Day",
   "week": "Week",
   "month": "Month",
+  "viewSelectionText": "You are viewing a {{view}}.",
+  "dateSelectionRecapSingle": "You have selected {{date}}.",
+  "dateSelectionRecapMultiple": "You have selected {{startDate}} to {{endDate}}.",
+  "dateSelectionSummarySingle": "Showing data for {{date}}.",
+  "dateSelectionSummaryMultiple": "Showing data from {{startDate}} to {{endDate}}.",
+
   "notifications": "Notifications",
   "popup": {
     "toDay": "See details",
