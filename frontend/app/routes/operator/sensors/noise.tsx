@@ -22,7 +22,7 @@ import {
 } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
-import { thresholds } from "@/lib/thresholds";
+import { getThreshold } from "@/lib/thresholds";
 import {
 	calculateSummaryCounts,
 	mapSensorDataToTimeBucketStatuses,
@@ -52,6 +52,7 @@ export default function Noise() {
 		parseAsAggregation.withDefault("average"),
 	);
 	const usePeakAggregation = aggregation === "peak";
+	const noiseThreshold = getThreshold(sensor);
 
 	const query = buildSensorQuery(sensor, view, date, {
 		usePeakAggregation,
@@ -81,11 +82,6 @@ export default function Noise() {
 		},
 	);
 
-	// Tighten vertical padding for noise charts so graph fills more of the card
-	const { minY, maxY } = computeYAxisRange(data ?? [], {
-		step: usePeakAggregation ? 130 : undefined,
-	});
-
 	if (isLoading) {
 		return (
 			<NoisePageLayout
@@ -98,6 +94,22 @@ export default function Noise() {
 				</Card>
 			</NoisePageLayout>
 		);
+	}
+
+	const maxValue = data
+		? Math.max(
+				...data.map((d) =>
+					usePeakAggregation && d.peakValue ? d.peakValue : d.value,
+				),
+			)
+		: 0;
+
+	const minY = 0;
+	let maxY = 150;
+	if (maxValue > maxY) {
+		maxY = computeYAxisRange(data ?? [], {
+			step: usePeakAggregation ? 130 : undefined,
+		}).maxY;
 	}
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(
@@ -114,6 +126,7 @@ export default function Noise() {
 					view={view}
 					data={calculateSummaryCounts(
 						(useDaySummary ? daySummaryData : data) ?? [],
+						sensor,
 						usePeakAggregation,
 					)}
 				/>
@@ -217,14 +230,14 @@ export default function Noise() {
 										y={
 											usePeakAggregation
 												? // biome-ignore lint/style/noNonNullAssertion: If usePeakAggregation is true and peakDangerLevel is null, there is a bug somewhere else
-													thresholds.noise.peakDanger!
-												: thresholds.noise.danger
+													noiseThreshold.peakDanger!
+												: noiseThreshold.danger
 										}
 										dangerLevel="danger"
 									/>
 									{!usePeakAggregation && (
 										<ThresholdLine
-											y={thresholds.noise.warning}
+											y={noiseThreshold.warning}
 											dangerLevel="warning"
 										/>
 									)}
@@ -251,7 +264,7 @@ const AggregationTabs = ({
 
 	return (
 		<span className="relative w-full">
-			<div className="absolute top-2 left-2 rounded border">
+			<div className="absolute -top-11 rounded border">
 				<Tabs
 					value={aggregation}
 					onValueChange={(value) =>
@@ -289,7 +302,11 @@ const NoisePageLayout = ({
 			<Summary
 				exposureType="noise"
 				view={view}
-				data={calculateSummaryCounts(data ?? [], usePeakAggregation)}
+				data={calculateSummaryCounts(
+					data ?? [],
+					"noise",
+					usePeakAggregation,
+				)}
 			/>
 			<DailyNotes />
 		</div>

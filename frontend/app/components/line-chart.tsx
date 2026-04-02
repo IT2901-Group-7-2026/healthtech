@@ -7,10 +7,16 @@ import {
 	ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
+import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
-import type { SensorDataResponseDto, UserSensorStatusDto } from "@/lib/dto";
+import { toTZDate } from "@/lib/date";
+import type {
+	SensorDataResponseDto,
+	SensorTypeField,
+	UserSensorStatusDto,
+} from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
-import { thresholds } from "@/lib/thresholds";
+import { getThreshold } from "@/lib/thresholds";
 import { downsampleSensorData } from "@/lib/utils";
 import {
 	addHours,
@@ -52,6 +58,7 @@ interface LineChartProps {
 	sensor: Sensor;
 	headerRight?: React.ReactNode;
 	usePeakData?: boolean;
+	dustField?: SensorTypeField;
 }
 
 export function ChartLineDefault({
@@ -65,12 +72,14 @@ export function ChartLineDefault({
 	sensor,
 	headerRight,
 	usePeakData = false,
+	dustField,
 }: LineChartProps) {
 	const { date: selectedDay } = useDate();
 	const { t } = useTranslation();
 	const id = useId();
+	const formatDate = useFormatDate();
 
-	const { warning, danger, peakDanger } = thresholds[sensor];
+	const { warning, danger, peakDanger } = getThreshold(sensor, dustField);
 	const dangerThreshold = usePeakData && peakDanger ? peakDanger : danger;
 
 	const getValue = (data: SensorDataResponseDto) =>
@@ -108,19 +117,18 @@ export function ChartLineDefault({
 	}));
 
 	const ticks = Array.from({ length: endHour - startHour + 1 }, (_, i) => {
-		const date = new Date(selectedDay);
-		date.setUTCHours(startHour + i);
+		const date = toTZDate(selectedDay);
+		date.setHours(startHour + i, 0, 0, 0);
 		return date.getTime();
 	});
 
-	const formatTime = (time: number) =>
-		new Date(time).getUTCHours().toString().padStart(2, "0");
+	const formatTime = (time: number) => formatDate(toTZDate(time), "HH:mm");
 
 	const maxDataDangerLevel = getDangerLevel(maxData, usePeakData);
 
 	return (
 		<Card className="w-full">
-			<CardHeader className="flex flex-row items-center justify-between">
+			<CardHeader className="mb-4 flex flex-row items-center justify-between">
 				<CardTitle>{chartTitle}</CardTitle>
 				{headerRight}
 			</CardHeader>
@@ -143,22 +151,34 @@ export function ChartLineDefault({
 							tickLine={false}
 							axisLine={false}
 							tickMargin={2}
+							tick={{
+								className: "text-base",
+								fill: "var(--color-muted-foreground)",
+							}}
 							label={{
 								value: t(($) => $.time),
 								position: "insideBottom",
 								offset: 0,
+								className: "text-base",
+								fill: "var(--color-muted-foreground)",
 							}}
 						/>
 						<YAxis
 							dataKey="value"
 							tickLine={false}
 							axisLine={false}
+							tick={{
+								className: "text-base",
+								fill: "var(--color-muted-foreground)",
+							}}
 							domain={[minY, maxY]}
 							label={{
 								value: unit,
 								position: "inside",
-								offset: -5,
+								dx: -32,
 								angle: -90,
+								className: "text-lg mr-4",
+								fill: "var(--color-muted-foreground)",
 							}}
 						/>
 						<ChartTooltip
@@ -293,9 +313,11 @@ export function ThresholdLine({
 				value: lineLabel,
 				position: "left",
 				fill: color,
-				offset: 10,
-				dy: -12,
+				offset: 64,
+				dy: -20,
 				fontSize: "75%",
+				textAnchor: "start",
+				className: "text-base",
 			}}
 		/>
 	);

@@ -29,11 +29,12 @@ import {
 	sensorQueryOptions,
 	usersQueryOptions,
 } from "@/lib/api.js";
+import { now, parseAsTZDate, today, toTZDate } from "@/lib/date";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
-import { thresholds } from "@/lib/thresholds";
+import { getThreshold } from "@/lib/thresholds";
 import { useQuery } from "@tanstack/react-query";
-import { addWeeks, endOfDay, parseISO, startOfDay } from "date-fns";
+import { addWeeks, endOfDay, startOfDay } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import type { ReactNode } from "react";
@@ -48,7 +49,7 @@ export default function ForemanOverview() {
 	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor);
 	const [date, setDate] = useQueryState(
 		"filterDate",
-		parseAsString.withDefault(formatDate(new Date(), "yyyy-MM-dd")),
+		parseAsTZDate.withDefault(today()),
 	);
 
 	const { data: users } = useQuery(usersQueryOptions());
@@ -60,14 +61,14 @@ export default function ForemanOverview() {
 	);
 	const selectedUser = users?.find((u) => u.id === selectedUserId);
 
-	const selectedDate = parseISO(date);
+	const selectedDate = date;
 
 	const startDate = startOfDay(selectedDate);
 	const endDate = endOfDay(selectedDate);
 
 	// Foremen can only see dates within the last week
-	const minSelectableDate = startOfDay(addWeeks(new Date(), -1));
-	const maxSelectableDate = new Date();
+	const minSelectableDate = startOfDay(addWeeks(today(), -1));
+	const maxSelectableDate = now();
 
 	const { user } = useUser();
 
@@ -123,6 +124,9 @@ export default function ForemanOverview() {
 
 	const subordinateCount = subordinates?.length ?? 0;
 	const isUserComboboxDisabled = !users || users.length === 0;
+	const dustThreshold = getThreshold("dust");
+	const dustPm25TwaThreshold = getThreshold("dust", "pm25_twa");
+	const dustPm10TwaThreshold = getThreshold("dust", "pm10_twa");
 
 	//TODO: Update card links to point to stats page
 
@@ -208,13 +212,15 @@ export default function ForemanOverview() {
 									after: maxSelectableDate,
 								}}
 								selected={selectedDate}
-								onSelect={(val) =>
-									setDate(
-										val
-											? formatDate(val, "yyyy-MM-dd")
-											: null,
-									)
-								}
+								onSelect={(val) => {
+									if (!val) {
+										setDate(null);
+										return;
+									}
+
+									const nextDate = startOfDay(toTZDate(val));
+									setDate(nextDate);
+								}}
 								defaultMonth={selectedDate}
 							/>
 						</PopoverContent>
@@ -295,7 +301,7 @@ export default function ForemanOverview() {
 								<DustChart
 									label="PM1 TWA"
 									value={dustTwa1Data[0].value}
-									thresholdValue={thresholds.dust.danger}
+									thresholdValue={dustThreshold.danger}
 								/>
 							)}
 
@@ -303,7 +309,7 @@ export default function ForemanOverview() {
 								<DustChart
 									label="PM2.5 TWA"
 									value={dustTwa25Data[0].value}
-									thresholdValue={thresholds.dust.danger}
+									thresholdValue={dustPm25TwaThreshold.danger}
 								/>
 							)}
 
@@ -311,7 +317,7 @@ export default function ForemanOverview() {
 								<DustChart
 									label="PM10 TWA"
 									value={dustTwa10Data[0].value}
-									thresholdValue={thresholds.dust.danger}
+									thresholdValue={dustPm10TwaThreshold.danger}
 								/>
 							)}
 						</div>

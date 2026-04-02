@@ -7,11 +7,14 @@ import {
 	CalendarPopup,
 	type CalendarPopupData,
 } from "@/features/popups/calendar-popup";
-import { getLocale } from "@/i18n/locale";
+import { getLocale, TIMEZONE } from "@/i18n/locale";
 import type { DangerLevel } from "@/lib/danger-levels";
+import { toTZDate } from "@/lib/date";
 import type { Aggregation } from "@/lib/dto";
 import type { TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
+import type { TZDate } from "@date-fns/tz";
+import { isSameDay, startOfDay } from "date-fns";
 import { useState } from "react";
 import type { CalendarDay, Modifiers } from "react-day-picker";
 import { useTranslation } from "react-i18next";
@@ -20,7 +23,7 @@ import { usePopup } from "../popups/use-popup";
 import type { Sensor } from "../sensor-picker/sensors";
 
 type CalendarProps = {
-	selectedDay: Date;
+	selectedDay: TZDate;
 	exposureType?: Sensor;
 	selectedAggregation?: Aggregation;
 	data: Array<TimeBucketStatus>;
@@ -36,7 +39,7 @@ export function CalendarWidget({
 	const { setDate } = useDate();
 
 	const [popupData, setPopupData] = useState<{
-		day: Date | null;
+		day: TZDate | null;
 		exposures: CalendarPopupData | null;
 	}>({ day: null, exposures: null });
 
@@ -52,18 +55,12 @@ export function CalendarWidget({
 		.filter((d) => d.dangerLevel === "danger")
 		.map((d) => d.time);
 
-	function handleDayClick(clickedDay: Date) {
-		const utcDate = new Date(
-			Date.UTC(
-				clickedDay.getFullYear(),
-				clickedDay.getMonth(),
-				clickedDay.getDate(),
-			),
-		);
-		setDate(utcDate);
+	function handleDayClick(clickedDay: TZDate) {
+		const selectedDate = startOfDay(clickedDay);
+		setDate(selectedDate);
 
-		const dayStatus = data.find(
-			(d) => d.time.toDateString() === clickedDay.toDateString(),
+		const dayStatus = data.find((d) =>
+			isSameDay(d.time, selectedDate, { in: TIMEZONE }),
 		);
 
 		if (!dayStatus) {
@@ -71,7 +68,7 @@ export function CalendarWidget({
 		}
 
 		setPopupData({
-			day: clickedDay,
+			day: selectedDate,
 			exposures: dayStatus.sensorDangerLevels ?? null,
 		});
 
@@ -80,14 +77,16 @@ export function CalendarWidget({
 
 	return (
 		<>
-			<Card className="w-full">
+			<Card className="mr-auto w-full max-w-2xl">
 				<Calendar
 					locale={getLocale(i18n.language)}
 					month={selectedDay}
 					hideNavigation
 					showWeekNumber
 					weekStartsOn={1}
-					onDayClick={handleDayClick}
+					onDayClick={(clickedDay) =>
+						handleDayClick(toTZDate(clickedDay))
+					}
 					components={{
 						DayButton: (props) => (
 							<CustomDay
@@ -102,14 +101,16 @@ export function CalendarWidget({
 						warning: warningDays,
 						danger: dangerDays,
 					}}
-					className="w-full bg-transparent font-bold text-foreground [--cell-size:--spacing(6)] sm:[--cell-size:--spacing(10)] md:[--cell-size:--spacing(12)]"
+					className="w-full bg-transparent font-bold text-foreground [--cell-size:2.25rem] sm:[--cell-size:2.75rem] md:[--cell-size:3rem]"
+					classNames={{
+						week: "mt-3 gap-3 flex w-full",
+					}}
 					captionLayout="label"
 					buttonVariant="default"
 					mode="single"
 				/>
 			</Card>
 
-			{/* interaction popup window */}
 			{popupData.day && (
 				<CalendarPopup
 					title={popupData.day.toLocaleDateString(i18n.language, {
@@ -133,11 +134,11 @@ export function CalendarWidget({
 }
 
 function getDayDangerLevel(
-	day: Date,
+	day: TZDate,
 	data: Array<TimeBucketStatus>,
 ): DangerLevel | null {
-	const dayStatus = data.find(
-		(d) => d.time.toDateString() === day.toDateString(),
+	const dayStatus = data.find((d) =>
+		isSameDay(d.time, day, { in: TIMEZONE }),
 	);
 
 	if (dayStatus) {
@@ -152,7 +153,7 @@ type CustomDayProps = {
 	day: CalendarDay;
 	modifiers: Modifiers;
 	className?: string;
-	handleDayClick: (day: Date) => void;
+	handleDayClick: (day: TZDate) => void;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 function CustomDay({
@@ -162,7 +163,7 @@ function CustomDay({
 	handleDayClick,
 	...buttonProps
 }: CustomDayProps) {
-	const dangerLevel = getDayDangerLevel(day.date, data);
+	const dangerLevel = getDayDangerLevel(toTZDate(day.date), data);
 	const disabled = dangerLevel === null;
 
 	let bgClassname = "";
@@ -179,7 +180,7 @@ function CustomDay({
 			type="button"
 			disabled={disabled}
 			className={cn(
-				"h-11/12 w-11/12 rounded-lg",
+				"h-full w-full rounded-lg",
 				!disabled && "cursor-pointer hover:brightness-85",
 				bgClassname,
 				className,

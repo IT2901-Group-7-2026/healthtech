@@ -15,7 +15,7 @@ import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
-import { thresholds } from "@/lib/thresholds";
+import { getThreshold } from "@/lib/thresholds";
 import {
 	calculateSummaryCounts,
 	mapSensorDataToTimeBucketStatuses,
@@ -43,6 +43,7 @@ export default function Dust() {
 	});
 
 	const useDaySummary = view === "day";
+	const dustThreshold = getThreshold(sensor, query.field);
 
 	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries(
 		{
@@ -62,7 +63,13 @@ export default function Dust() {
 		},
 	);
 
-	const { minY, maxY } = computeYAxisRange(data ?? []);
+	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
+
+	const minY = 0;
+	let maxY = 45;
+	if (maxValue > maxY) {
+		maxY = computeYAxisRange(data ?? []).maxY;
+	}
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor);
 
@@ -74,6 +81,7 @@ export default function Dust() {
 					view={view}
 					data={calculateSummaryCounts(
 						(useDaySummary ? daySummaryData : data) ?? [],
+						sensor,
 					)}
 				/>
 				<DailyNotes />
@@ -123,6 +131,7 @@ export default function Dust() {
 								minY={minY}
 								lineType="monotone"
 								sensor={sensor}
+								dustField={query.field}
 								headerRight={
 									<Button
 										size="sm"
@@ -148,11 +157,11 @@ export default function Dust() {
 							>
 								<div className="mb-2 flex justify-end"></div>
 								<ThresholdLine
-									y={thresholds.dust.danger}
+									y={dustThreshold.danger}
 									dangerLevel="danger"
 								/>
 								<ThresholdLine
-									y={thresholds.dust.warning}
+									y={dustThreshold.warning}
 									dangerLevel="warning"
 								/>
 							</ChartLineDefault>

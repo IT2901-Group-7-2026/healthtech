@@ -3,13 +3,14 @@ import type { DangerLevel } from "@/lib/danger-levels";
 import type { Aggregation } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { cn } from "@/lib/utils";
+import type { TZDate } from "@date-fns/tz";
 import { t } from "i18next";
 import { DailyNotes } from "../../components/daily-notes";
 import { Card } from "../../components/ui/card";
 
 type CalendarPopupProps = {
 	title: string;
-	selectedDate: Date;
+	selectedDate: TZDate;
 	selectedAggregation?: Aggregation;
 	exposureData?: CalendarPopupData | null;
 	open: boolean;

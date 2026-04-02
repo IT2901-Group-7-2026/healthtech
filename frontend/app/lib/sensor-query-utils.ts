@@ -1,5 +1,6 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import type { View } from "@/features/views/views";
+import type { TZDate } from "@date-fns/tz";
 import {
 	endOfDay,
 	endOfMonth,
@@ -59,10 +60,10 @@ function getSensorTypeFieldFromSensor(
 
 export function getStartEnd(
 	view: View,
-	selectedDay: Date,
+	selectedDay: TZDate,
 ): {
-	startTime: Date;
-	endTime: Date;
+	startTime: TZDate;
+	endTime: TZDate;
 } {
 	switch (view) {
 		case "day":
@@ -86,16 +87,22 @@ export function getStartEnd(
 export function buildSensorQuery(
 	sensor: Sensor,
 	view: View,
-	selectedDay: Date,
+	selectedDay: TZDate,
 	options?: {
 		granularity?: GranularityKey;
 		aggregationFunction?: AggregateFnKey;
 		field?: SensorTypeField;
 		usePeakAggregation?: boolean;
 		isOverview?: boolean;
+		startTime?: TZDate;
+		endTime?: TZDate;
 	},
 ): SensorDataRequestDto {
-	const { startTime, endTime } = getStartEnd(view, selectedDay);
+	const { startTime: defaultStartTime, endTime: defaultEndTime } =
+		getStartEnd(view, selectedDay);
+
+	const startTime = options?.startTime ?? defaultStartTime;
+	const endTime = options?.endTime ?? defaultEndTime;
 
 	const granularity =
 		options?.granularity ??
@@ -119,7 +126,7 @@ export function buildSensorQuery(
 export function buildSensorOverviewQuery(
 	sensors: Array<Sensor>,
 	view: View,
-	selectedDate: Date,
+	selectedDate: TZDate,
 	options?: {
 		usePeakAggregation?: boolean;
 	},

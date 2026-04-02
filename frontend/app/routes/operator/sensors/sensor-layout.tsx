@@ -1,6 +1,7 @@
 import { useDate } from "@/features/date-picker/use-date";
 import { useView } from "@/features/views/use-view";
 import { ViewPicker } from "@/features/views/view-picker";
+import { today } from "@/lib/date";
 import { getNextDay, getPrevDay } from "@/lib/utils";
 import { Button } from "@/ui/button";
 import { useTranslation } from "react-i18next";
@@ -16,7 +17,7 @@ export default function SensorLayout() {
 			<div className="flex flex-row">
 				<div className="mb-2 flex w-full flex-row justify-end gap-4">
 					<Button
-						onClick={() => setDate(new Date())}
+						onClick={() => setDate(today())}
 						size={"icon"}
 						className="px-8"
 					>

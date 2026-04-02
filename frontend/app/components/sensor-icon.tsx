@@ -1,34 +1,33 @@
-import type { Sensor } from "@/lib/sensors.js";
-import { cn } from "@/lib/utils.js";
-import type { ComponentType, SVGProps } from "react";
-
-type IconType = ComponentType<SVGProps<SVGSVGElement>>;
-
 import { DustIcon } from "@/components/icons/dust-icon";
 import { VibrationIcon } from "@/components/icons/vibration-icon";
-import { EarIcon } from "lucide-react";
+import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.js";
+import type { Sensor } from "@/lib/sensors.js";
+import { cn } from "@/lib/utils.js";
+import type { ComponentType } from "react";
+import { NoiseIcon } from "./icons/noise-icon";
 
-export type IconVariant = "dust" | "noise" | "vibration";
-
-// TODO: The icons shouldn't have titles we can't change when using SensorIcon. Vibration (EarIcon) also doesn't have a title
-const iconConfig: Record<Sensor, { icon: IconType; className: string }> = {
-	noise: {
-		icon: EarIcon,
-		className: "bg-violet-400/50 dark:bg-violet-600/50",
-	},
-	dust: {
-		icon: DustIcon,
-		className: "bg-teal-400/50 dark:bg-teal-600/50",
-	},
-	vibration: {
-		icon: VibrationIcon,
-		className: "bg-fuchsia-400/50 dark:bg-fuchsia-600/50",
-	},
+export type IconProps = Omit<
+	React.SVGProps<SVGSVGElement>,
+	"width" | "height" | "strokeWidth"
+> & {
+	size?: number | string;
+	strokeWidth?: number | string;
+	title?: string;
 };
 
-type SensorIconSize = "sm" | "md" | "lg" | "xl";
+type IconType = ComponentType<IconProps>;
+
+// TODO: The icons shouldn't have titles we can't change when using SensorIcon. Vibration (EarIcon) also doesn't have a title
+const iconConfig: Record<Sensor, IconType> = {
+	noise: NoiseIcon,
+	dust: DustIcon,
+	vibration: VibrationIcon,
+};
+
+type SensorIconSize = "xs" | "sm" | "md" | "lg" | "xl";
 
 const iconSizeClass: Record<SensorIconSize, string> = {
+	xs: "p-1 size-6",
 	sm: "p-1.5 size-8",
 	md: "p-[0.4rem] size-9",
 	lg: "p-[0.6rem] size-12",
@@ -38,22 +37,40 @@ const iconSizeClass: Record<SensorIconSize, string> = {
 interface SensorIconProps {
 	type: Sensor;
 	size?: SensorIconSize;
+	dangerLevel?: DangerLevel;
 	className?: string;
+	title?: string;
 }
 
-export const SensorIcon = ({ type, size, className }: SensorIconProps) => {
-	const Icon = iconConfig[type].icon;
-	const resolvedSize = size ?? "md";
+const defaultIconContainerClass =
+	"bg-muted text-foreground border border-border";
+
+export const SensorIcon = ({
+	type,
+	size,
+	dangerLevel,
+	className,
+	title,
+}: SensorIconProps) => {
+	const Icon = iconConfig[type];
+	const resolvedIconSize = size ?? "md";
+	const dangerLevelIconClasses = dangerLevel
+		? cn(
+				dangerlevelStyles[dangerLevel].bgSubtle,
+				dangerlevelStyles[dangerLevel].text,
+				dangerlevelStyles[dangerLevel].border,
+			)
+		: defaultIconContainerClass;
 
 	return (
 		<div
 			className={cn(
-				"rounded-full",
-				iconConfig[type].className,
+				"h-fit w-fit rounded-full border",
+				dangerLevelIconClasses,
 				className,
 			)}
 		>
-			<Icon className={iconSizeClass[resolvedSize]} />
+			<Icon className={iconSizeClass[resolvedIconSize]} title={title} />
 		</div>
 	);
 };

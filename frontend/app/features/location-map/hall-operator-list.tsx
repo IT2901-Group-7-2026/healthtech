@@ -7,14 +7,13 @@ import {
 } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { dangerlevelStyles } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import { type Sensor, sensors } from "@/lib/sensors";
-import { cn } from "@/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export interface HallOperatorListProps {
+	sensor: Sensor | "all";
 	operators: Array<UserWithStatusDto>;
 	hallName: string;
 	selectedHall: string | null;
@@ -22,6 +21,7 @@ export interface HallOperatorListProps {
 }
 
 export const HallOperatorList = ({
+	sensor,
 	operators,
 	hallName,
 	selectedHall,
@@ -69,13 +69,20 @@ export const HallOperatorList = ({
 										<TableCell>
 											{operator.username}
 										</TableCell>
-										{sensors.map((sensor) => (
+										{sensor === "all" ? (
+											sensors.map((s) => (
+												<HallOperatorListItem
+													key={s}
+													operator={operator}
+													sensor={s}
+												/>
+											))
+										) : (
 											<HallOperatorListItem
-												key={sensor}
 												operator={operator}
 												sensor={sensor}
 											/>
-										))}
+										)}
 									</TableRow>
 								);
 							})
@@ -107,14 +114,13 @@ const HallOperatorListItem = ({
 	);
 
 	return (
-		<TableCell title={title} className="items-center">
+		<TableCell className="items-center">
 			<SensorIcon
 				type={sensor}
 				size="sm"
-				className={cn(
-					"w-fit",
-					dangerlevelStyles[dangerLevel ?? "safe"].bg,
-				)}
+				dangerLevel={dangerLevel ?? "safe"}
+				className="w-fit"
+				title={title}
 			/>
 		</TableCell>
 	);

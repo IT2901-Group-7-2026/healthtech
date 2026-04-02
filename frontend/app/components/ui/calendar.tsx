@@ -85,8 +85,8 @@ function Calendar({
 				caption_label: cn(
 					"select-none font-medium",
 					captionLayout === "label"
-						? "text-sm"
-						: "rounded-md pl-2 pr-1 flex items-center gap-1 text-sm h-8 [&>svg]:text-muted-foreground [&>svg]:size-3.5",
+						? "text-base"
+						: "rounded-md pl-2 pr-1 flex items-center gap-1 text-base h-8 [&>svg]:text-muted-foreground [&>svg]:size-3.5",
 					defaultClassNames.caption_label,
 				),
 				table: "w-full border-collapse",
@@ -164,7 +164,7 @@ function Calendar({
 				WeekNumber: ({ children, ...props }) => {
 					return (
 						<td {...props}>
-							<div className="flex size-(--cell-size) items-center justify-center text-center">
+							<div className="flex size-(--cell-size) items-center justify-center text-center h-full">
 								{children}
 							</div>
 						</td>
