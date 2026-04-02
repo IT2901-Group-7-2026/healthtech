@@ -62,11 +62,13 @@ export default function OperatorHome() {
 		let maxHour = 0;
 
 		for (const bucket of buckets) {
-			const hour = new Date(bucket.time).getUTCHours();
+			const hour = new Date(bucket.time).getHours();
 
 			if (hour < minHour) minHour = hour;
 			if (hour > maxHour) maxHour = hour;
 		}
+
+		console.log(minHour, maxHour)
 
 		return { minHour, maxHour };
 	}
@@ -134,8 +136,8 @@ export default function OperatorHome() {
 								0,
 								23,
 							)}
-							startHour={0}
-							endHour={23}
+							startHour={minHour}
+							endHour={maxHour}
 							chartTitle={date.toLocaleDateString(i18n.language, {
 								day: "numeric",
 								month: "long",
