@@ -11,6 +11,13 @@
     "theme": "Fargetema",
     "language": "Språk"
   },
+  "live": {
+    "overviewCard": {
+      "danger": "Over grenseverdi",
+      "warning": "Nær grenseverdig",
+      "safe": "Innenfor grenseverdi"
+    }
+  },
   "overview": {
     "title": "Oversikt over {{view}}",
     "day": "dag",

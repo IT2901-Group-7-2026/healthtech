@@ -7,9 +7,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import { sensors } from "@/lib/sensors.js";
 import type { SummaryCounts } from "@/lib/time-bucket-types";
-import { cn } from "@/lib/utils";
+import { cn, getEmoji } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/ui/card";
-import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { SensorIcon } from "./sensor-icon.js";
@@ -230,22 +229,6 @@ const SummaryRow = ({
 		</p>
 	</div>
 );
-
-function getEmoji(dangerLevel: DangerLevel | null) {
-	if (dangerLevel === "danger") {
-		return FrownIcon;
-	}
-
-	if (dangerLevel === "warning") {
-		return MehIcon;
-	}
-
-	if (dangerLevel === "safe") {
-		return SmileIcon;
-	}
-
-	return CircleDashedIcon;
-}
 
 function getHighestLevel({
 	dangerCount,

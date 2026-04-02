@@ -10,7 +10,9 @@ import {
 	subMonths,
 	subWeeks,
 } from "date-fns";
+import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
+import type { DangerLevel } from "./danger-levels";
 import type { SensorDataResponseDto, User } from "./dto";
 import type { Sensor } from "./sensors";
 
@@ -151,4 +153,20 @@ export function shorthandName(name: string): string {
 
 export function capitalize(str: string): string {
 	return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function getEmoji(dangerLevel: DangerLevel | null) {
+	switch (dangerLevel) {
+		case "danger":
+			return FrownIcon;
+
+		case "warning":
+			return MehIcon;
+
+		case "safe":
+			return SmileIcon;
+
+		case null:
+			return CircleDashedIcon;
+	}
 }

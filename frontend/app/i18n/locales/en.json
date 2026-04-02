@@ -11,6 +11,13 @@
     "theme": "Theme",
     "language": "Language"
   },
+  "live": {
+    "overviewCard": {
+      "danger": "Exceeding exposure limit",
+      "warning": "Approaching exposure limit",
+      "safe": "Safely within exposure limit"
+    }
+  },
   "overview": {
     "title": "Overview of the {{view}}",
     "day": "day",
