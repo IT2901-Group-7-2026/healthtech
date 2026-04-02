@@ -17,8 +17,16 @@ import { DateProvider } from "./features/date-picker/date-provider";
 import { UserProvider } from "./features/user/user-provider.js";
 import { ViewProvider } from "./features/views/view-provider";
 import "./i18n/config";
+import { TZDate } from "@date-fns/tz";
 
-setDefaultOptions({ weekStartsOn: 1 }); // Monday
+const MONDAY = 1;
+setDefaultOptions({ weekStartsOn: MONDAY });
+
+// Monkey-patching to serialize TZDate as ISO string in UTC. Otherwise they keep their timezone, which makes no sense??
+// See https://github.com/date-fns/tz/issues/15
+TZDate.prototype.toISOString = function () {
+	return new Date(this).toISOString();
+};
 
 // biome-ignore lint/style/useComponentExportOnlyModules: Route files must export framework-specific functions like links
 export const links: Route.LinksFunction = () => [
