@@ -156,17 +156,17 @@ export function capitalize(str: string): string {
 }
 
 export function getEmoji(dangerLevel: DangerLevel | null) {
-	if (dangerLevel === "danger") {
-		return FrownIcon;
-	}
+	switch (dangerLevel) {
+		case "danger":
+			return FrownIcon;
 
-	if (dangerLevel === "warning") {
-		return MehIcon;
-	}
+		case "warning":
+			return MehIcon;
 
-	if (dangerLevel === "safe") {
-		return SmileIcon;
-	}
+		case "safe":
+			return SmileIcon;
 
-	return CircleDashedIcon;
+		case null:
+			return CircleDashedIcon;
+	}
 }
