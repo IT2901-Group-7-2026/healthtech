@@ -4,16 +4,12 @@ import { MapPinIcon, UsersIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../user/user-context.js";
 
-export const TeamSummary = ({
-	subordinateCount,
-}: {
-	subordinateCount: number;
-}) => {
+export const TeamSummary = ({ subordinateCount }: { subordinateCount: number }) => {
 	const { t } = useTranslation();
 	const { user } = useUser();
 
 	return (
-		<Card muted>
+		<Card muted={true}>
 			<CardHeader>
 				<h2 className="text-muted-foreground text-xs uppercase tracking-wider">
 					{t(($) => $.sidebar.yourTeam)}
@@ -22,9 +18,7 @@ export const TeamSummary = ({
 			<CardContent>
 				<div className="flex items-center gap-2">
 					<MapPinIcon size="1rem" />
-					<p className="text-sm">
-						{createLocationName(user.location)}
-					</p>
+					<p className="text-sm">{createLocationName(user.location)}</p>
 				</div>
 
 				<div className="flex items-center gap-2">

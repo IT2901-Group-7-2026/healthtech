@@ -1,12 +1,4 @@
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-	SelectValue,
-} from "@/ui/select";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/ui/select";
 import type { TranslatedString } from "../../app/@types/i18n.js";
 
 type OptionGroup<T extends string> = {

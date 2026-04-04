@@ -5,14 +5,7 @@ import type { ReactNode } from "react";
 import { DateContext } from "./use-date";
 
 export function DateProvider({ children }: { children: ReactNode }) {
-	const [date, setDate] = useQueryState<TZDate>(
-		"date",
-		parseAsTZDate.withDefault(today()),
-	);
+	const [date, setDate] = useQueryState<TZDate>("date", parseAsTZDate.withDefault(today()));
 
-	return (
-		<DateContext value={{ date, setDate: (d: TZDate) => setDate(d) }}>
-			{children}
-		</DateContext>
-	);
+	return <DateContext value={{ date, setDate: (d: TZDate) => setDate(d) }}>{children}</DateContext>;
 }

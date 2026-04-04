@@ -1,11 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import type { TZDate } from "@date-fns/tz";
 import { t } from "i18next";
@@ -46,33 +40,29 @@ export function BasePopup({
 
 	return (
 		<Dialog open={open} onOpenChange={onClose}>
-			<DialogHeader>
-				<DialogTitle className="font-bold text-xl">{title}</DialogTitle>
-			</DialogHeader>
-
 			<DialogContent className="w-full max-w-6xl">
-				{children}
-			</DialogContent>
+				<DialogHeader>
+					<DialogTitle className="font-bold text-xl">{title}</DialogTitle>
+				</DialogHeader>
 
-			{relevantDate && (
-				<DialogFooter>
-					<Button
-						variant="default"
-						className="cursor-pointer"
-						onClick={onClose}
-					>
-						<NavLink
-							to={{
-								pathname: pathname ?? "",
-								search,
-							}}
-							prefetch="intent"
-						>
-							{t(($) => $.popup.toDay)}
-						</NavLink>
-					</Button>
-				</DialogFooter>
-			)}
+				{children}
+
+				{relevantDate && (
+					<DialogFooter>
+						<Button variant="default" className="cursor-pointer" onClick={onClose}>
+							<NavLink
+								to={{
+									pathname: pathname ?? "",
+									search,
+								}}
+								prefetch="intent"
+							>
+								{t(($) => $.popup.toDay)}
+							</NavLink>
+						</Button>
+					</DialogFooter>
+				)}
+			</DialogContent>
 		</Dialog>
 	);
 }

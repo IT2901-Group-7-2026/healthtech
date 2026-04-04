@@ -7,10 +7,7 @@ export const HamburgerButton = () => (
 	</Button>
 );
 
-export const HamburgerIcon = ({
-	className,
-	...props
-}: React.SVGAttributes<SVGElement>) => (
+export const HamburgerIcon = ({ className, ...props }: React.SVGAttributes<SVGElement>) => (
 	<svg
 		className={cn("pointer-events-none scale-250", className)}
 		width={16}

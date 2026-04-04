@@ -1,10 +1,6 @@
 import { SensorIcon } from "@/components/sensor-icon";
 import { Button } from "@/components/ui/button";
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { UserWithStatusDto } from "@/lib/dto";
@@ -31,12 +27,8 @@ export const HallOperatorList = ({
 	const isOpen = selectedHall === hallName;
 
 	return (
-		<Collapsible
-			className="rounded-md"
-			open={isOpen}
-			onOpenChange={(open) => onOpenChange(open ? hallName : null)}
-		>
-			<CollapsibleTrigger asChild>
+		<Collapsible className="rounded-md" open={isOpen} onOpenChange={(open) => onOpenChange(open ? hallName : null)}>
+			<CollapsibleTrigger asChild={true}>
 				<Button variant="ghost" className="group w-full">
 					<p>{hallName}</p>
 
@@ -51,37 +43,21 @@ export const HallOperatorList = ({
 						{operators.length === 0 ? (
 							<TableRow>
 								<TableCell className="text-center text-zinc-500">
-									{t(
-										($) =>
-											$.foremanDashboard.siteMap
-												.noOperators,
-									)}
+									{t(($) => $.foremanDashboard.siteMap.noOperators)}
 								</TableCell>
 							</TableRow>
 						) : (
 							operators.map((operator) => {
 								return (
-									<TableRow
-										key={operator.id}
-										className="text-muted-foreground"
-									>
+									<TableRow key={operator.id} className="text-muted-foreground">
 										{/* TODO: Link to user stats page */}
-										<TableCell>
-											{operator.username}
-										</TableCell>
+										<TableCell>{operator.username}</TableCell>
 										{sensor === "all" ? (
 											sensors.map((s) => (
-												<HallOperatorListItem
-													key={s}
-													operator={operator}
-													sensor={s}
-												/>
+												<HallOperatorListItem key={s} operator={operator} sensor={s} />
 											))
 										) : (
-											<HallOperatorListItem
-												operator={operator}
-												sensor={sensor}
-											/>
+											<HallOperatorListItem operator={operator} sensor={sensor} />
 										)}
 									</TableRow>
 								);
@@ -99,33 +75,19 @@ interface HallOperatorListItemProps {
 	sensor: Sensor;
 }
 
-const HallOperatorListItem = ({
-	operator,
-	sensor,
-}: HallOperatorListItemProps) => {
+const HallOperatorListItem = ({ operator, sensor }: HallOperatorListItemProps) => {
 	const { t } = useTranslation();
 
 	const dangerLevel = operator.status[sensor]?.dangerLevel ?? "safe";
-	const title = t(
-		($) => $.foremanDashboard.siteMap.operatorSensorStatus[dangerLevel],
-		{
-			sensor: t(($$) => $$[sensor]).toLowerCase(),
-		},
-	);
+	const title = t(($) => $.foremanDashboard.siteMap.operatorSensorStatus[dangerLevel], {
+		sensor: t(($$) => $$[sensor]).toLowerCase(),
+	});
 
 	return (
 		<TableCell className="items-center">
-			<SensorIcon
-				type={sensor}
-				size="sm"
-				dangerLevel={dangerLevel ?? "safe"}
-				className="w-fit"
-				title={title}
-			/>
+			<SensorIcon type={sensor} size="sm" dangerLevel={dangerLevel ?? "safe"} className="w-fit" title={title} />
 		</TableCell>
 	);
 };
 
-export const HallOperatorListSkeleton = () => (
-	<Skeleton className="h-9 w-full rounded-md bg-zinc-100 dark:bg-accent" />
-);
+export const HallOperatorListSkeleton = () => <Skeleton className="h-9 w-full rounded-md bg-zinc-100 dark:bg-accent" />;

@@ -1,10 +1,4 @@
-import {
-	Card,
-	CardContent,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import { mapDangerLevelToColor } from "@/lib/danger-levels";
@@ -22,9 +16,7 @@ interface Props {
 export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 	const { t } = useTranslation();
 
-	const operators = users.filter(
-		(user) => (user.status[sensor]?.dangerLevel ?? "safe") === dangerLevel,
-	);
+	const operators = users.filter((user) => (user.status[sensor]?.dangerLevel ?? "safe") === dangerLevel);
 
 	return (
 		<Link
@@ -32,18 +24,10 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 			to={`/`}
 			className="group h-fit w-full flex-1 basis-64 rounded-2xl"
 		>
-			<Card hoverable>
+			<Card hoverable={true}>
 				<CardHeader>
-					<CardTitle
-						className={`text-center text-${mapDangerLevelToColor(dangerLevel ?? "safe")}`}
-					>
-						{t(
-							(x) =>
-								x.foremanDashboard.overview.statCards[
-									dangerLevel
-								].label,
-						)}{" "}
-						{`(${operators.length})`}
+					<CardTitle className={`text-center text-${mapDangerLevelToColor(dangerLevel ?? "safe")}`}>
+						{t((x) => x.foremanDashboard.overview.statCards[dangerLevel].label)} {`(${operators.length})`}
 					</CardTitle>
 				</CardHeader>
 
@@ -53,12 +37,7 @@ export function ExposureRiskCard({ users, sensor, dangerLevel }: Props) {
 							{operators.length === 0 ? (
 								<TableRow className="hover:bg-transparent">
 									<TableCell className="whitespace-normal text-center text-zinc-500">
-										{t(
-											(x) =>
-												x.foremanDashboard.overview
-													.statCards[dangerLevel]
-													.noOperators,
-										)}
+										{t((x) => x.foremanDashboard.overview.statCards[dangerLevel].noOperators)}
 									</TableCell>
 								</TableRow>
 							) : (

@@ -13,10 +13,7 @@ export const DangerLevelSchema = z.enum(["safe", "warning", "danger"]);
 export type DangerLevel = z.infer<typeof DangerLevelSchema>;
 
 /** Is "a" higher severity than "b"? */
-export const compareDangerLevels = (
-	a: DangerLevel | null,
-	b: DangerLevel | null,
-): number => {
+export const compareDangerLevels = (a: DangerLevel | null, b: DangerLevel | null): number => {
 	if (a === null && b === null) {
 		return 0;
 	}
@@ -33,10 +30,8 @@ export const compareDangerLevels = (
 };
 
 /** Is "b" higher severity than "a"? */
-export const isHigherSeverity = (
-	a: DangerLevel | null,
-	b: DangerLevel | null,
-): boolean => compareDangerLevels(a, b) < 0;
+export const isHigherSeverity = (a: DangerLevel | null, b: DangerLevel | null): boolean =>
+	compareDangerLevels(a, b) < 0;
 
 type DangerLevelInfo = {
 	label: string;
@@ -58,11 +53,9 @@ export const DangerLevels: Record<DangerLevel, DangerLevelInfo> = {
 	},
 };
 
-export const mapDangerLevelToLabel = (dangerLevel: DangerLevel): string =>
-	t(($) => $[dangerLevel]);
+export const mapDangerLevelToLabel = (dangerLevel: DangerLevel): string => t(($) => $[dangerLevel]);
 
-export const mapDangerLevelToColor = (dangerLevel: DangerLevel): string =>
-	DangerLevels[dangerLevel].color;
+export const mapDangerLevelToColor = (dangerLevel: DangerLevel): string => DangerLevels[dangerLevel].color;
 
 export const dangerlevelStyles = {
 	danger: {
@@ -93,20 +86,13 @@ export const dangerlevelStyles = {
 	}
 >;
 
-export function getHighestDangerLevel(
-	operators: Array<UserWithStatusDto>,
-	sensor: Sensor | null,
-): DangerLevel {
+export function getHighestDangerLevel(operators: Array<UserWithStatusDto>, sensor: Sensor | null): DangerLevel {
 	let highestLevel: DangerLevel = "safe";
 
 	operators.forEach((operator) => {
-		const level = sensor
-			? (operator.status[sensor]?.dangerLevel ?? "safe")
-			: operator.status.status;
+		const level = sensor ? (operator.status[sensor]?.dangerLevel ?? "safe") : operator.status.status;
 
-		if (
-			DANGER_LEVEL_SEVERITY[level] > DANGER_LEVEL_SEVERITY[highestLevel]
-		) {
+		if (DANGER_LEVEL_SEVERITY[level] > DANGER_LEVEL_SEVERITY[highestLevel]) {
 			highestLevel = level;
 		}
 	});

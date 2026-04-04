@@ -11,22 +11,17 @@ import { useUser } from "@/features/user/user-context";
 import { parseAsView } from "@/features/views/utils";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
-import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import {
-	calculateSummaryCounts,
-	mapSensorDataToTimeBucketStatuses,
-} from "@/lib/time-bucket-utils";
+import { calculateSummaryCounts, mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function Vibration() {
 	const [view] = useQueryState("view", parseAsView.withDefault("day"));
 	const { t, i18n } = useTranslation();
@@ -46,23 +41,21 @@ export default function Vibration() {
 
 	const useDaySummary = view === "day";
 
-	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries(
-		{
-			queries: [
-				sensorQueryOptions({
-					sensor,
-					query,
-					userId: user.id,
-				}),
-				sensorQueryOptions({
-					sensor,
-					query: daySummaryQuery,
-					userId: user.id,
-					enabled: useDaySummary,
-				}),
-			],
-		},
-	);
+	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries({
+		queries: [
+			sensorQueryOptions({
+				sensor,
+				query,
+				userId: user.id,
+			}),
+			sensorQueryOptions({
+				sensor,
+				query: daySummaryQuery,
+				userId: user.id,
+				enabled: useDaySummary,
+			}),
+		],
+	});
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
@@ -72,10 +65,7 @@ export default function Vibration() {
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
 
-	const calendarData = mapSensorDataToTimeBucketStatuses(
-		data ?? [],
-		"vibration",
-	);
+	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], "vibration");
 
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
@@ -83,10 +73,7 @@ export default function Vibration() {
 				<Summary
 					exposureType="vibration"
 					view={view}
-					data={calculateSummaryCounts(
-						(useDaySummary ? daySummaryData : data) ?? [],
-						sensor,
-					)}
+					data={calculateSummaryCounts((useDaySummary ? daySummaryData : data) ?? [], sensor)}
 				/>
 				<DailyNotes />
 			</div>
@@ -102,13 +89,7 @@ export default function Vibration() {
 				) : view === "month" ? (
 					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
-					<WeekWidget
-						locale={getLocale(i18n.language)}
-						dayStartHour={0}
-						dayEndHour={23}
-						weekStartsOn={1}
-						data={calendarData}
-					/>
+					<WeekWidget dayStartHour={0} dayEndHour={23} data={calendarData} />
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">
 						<CardTitle>
@@ -125,14 +106,11 @@ export default function Vibration() {
 						<div id={chartContainerId}>
 							<ChartLineDefault
 								chartData={data}
-								chartTitle={date.toLocaleDateString(
-									i18n.language,
-									{
-										day: "numeric",
-										month: "long",
-										year: "numeric",
-									},
-								)}
+								chartTitle={date.toLocaleDateString(i18n.language, {
+									day: "numeric",
+									month: "long",
+									year: "numeric",
+								})}
 								unit={t(($) => $.points)}
 								maxY={maxY}
 								minY={minY}
@@ -145,14 +123,11 @@ export default function Vibration() {
 										onClick={() =>
 											exportToPDF(
 												chartContainerId,
-												`${date.toLocaleDateString(
-													i18n.language,
-													{
-														day: "numeric",
-														month: "long",
-														year: "numeric",
-													},
-												)}-${user.username}-Vibration-Exposure-Overview`,
+												`${date.toLocaleDateString(i18n.language, {
+													day: "numeric",
+													month: "long",
+													year: "numeric",
+												})}-${user.username}-Vibration-Exposure-Overview`,
 												`Vibration Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
 											)
 										}
@@ -161,14 +136,8 @@ export default function Vibration() {
 									</Button>
 								}
 							>
-								<ThresholdLine
-									y={vibrationThreshold.danger}
-									dangerLevel="danger"
-								/>
-								<ThresholdLine
-									y={vibrationThreshold.warning}
-									dangerLevel="warning"
-								/>
+								<ThresholdLine y={vibrationThreshold.danger} dangerLevel="danger" />
+								<ThresholdLine y={vibrationThreshold.warning} dangerLevel="warning" />
 							</ChartLineDefault>
 						</div>
 					</div>

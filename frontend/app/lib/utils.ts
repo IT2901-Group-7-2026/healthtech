@@ -2,15 +2,10 @@ import type { View } from "@/features/views/views";
 import type { TranslateFn } from "@/i18n/config.js";
 import type { TZDate } from "@date-fns/tz";
 import { type ClassValue, clsx } from "clsx";
-import {
-	addDays,
-	addMonths,
-	addWeeks,
-	subDays,
-	subMonths,
-	subWeeks,
-} from "date-fns";
+import { addDays, addMonths, addWeeks, subDays, subMonths, subWeeks } from "date-fns";
+import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
+import type { DangerLevel } from "./danger-levels";
 import type { SensorDataResponseDto, User } from "./dto";
 import type { Sensor } from "./sensors";
 
@@ -54,25 +49,14 @@ export function computeYAxisRange(
 		clampToZero?: boolean;
 	},
 ) {
-	const {
-		topPadding = 5,
-		bottomPadding = 10,
-		step = 10,
-		clampToZero = true,
-	} = options ?? {};
+	const { topPadding = 5, bottomPadding = 10, step = 10, clampToZero = true } = options ?? {};
 
 	if (!data || data.length === 0) {
 		return { minY: 0, maxY: step };
 	}
 
-	const max = data.reduce(
-		(m, c) => (c.value > m ? c.value : m),
-		data[0].value,
-	);
-	const min = data.reduce(
-		(m, c) => (c.value < m ? c.value : m),
-		data[0].value,
-	);
+	const max = data.reduce((m, c) => (c.value > m ? c.value : m), data[0].value);
+	const min = data.reduce((m, c) => (c.value < m ? c.value : m), data[0].value);
 
 	const maxY = Math.ceil(max / step) * step + topPadding;
 	const minY = Math.floor((min - bottomPadding) / step) * step;
@@ -121,10 +105,7 @@ export function downsampleDataPoints(
 	return result;
 }
 
-export function downsampleSensorData(
-	sensor: Sensor,
-	data: Array<SensorDataResponseDto>,
-): Array<SensorDataResponseDto> {
+export function downsampleSensorData(sensor: Sensor, data: Array<SensorDataResponseDto>): Array<SensorDataResponseDto> {
 	if (sensor === "vibration") {
 		return data;
 	}
@@ -151,4 +132,20 @@ export function shorthandName(name: string): string {
 
 export function capitalize(str: string): string {
 	return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export function getEmoji(dangerLevel: DangerLevel | null) {
+	switch (dangerLevel) {
+		case "danger":
+			return FrownIcon;
+
+		case "warning":
+			return MehIcon;
+
+		case "safe":
+			return SmileIcon;
+
+		case null:
+			return CircleDashedIcon;
+	}
 }
