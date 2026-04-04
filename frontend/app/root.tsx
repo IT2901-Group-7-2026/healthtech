@@ -12,6 +12,7 @@ import { UserProvider } from "./features/user/user-provider.js";
 import { ViewProvider } from "./features/views/view-provider";
 import "./i18n/config";
 import { TZDate } from "@date-fns/tz";
+import type { ReactNode } from "react";
 
 const MONDAY = 1;
 setDefaultOptions({ weekStartsOn: MONDAY });
@@ -36,7 +37,7 @@ export const links: Route.LinksFunction = () => [
 	},
 ];
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: { children: ReactNode }) {
 	const { t, i18n } = useTranslation();
 	return (
 		<html lang={i18n.language} dir={i18n.dir(i18n.language)}>
@@ -69,12 +70,12 @@ export default function App() {
 			<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
 				<NuqsAdapter>
 					<UserProvider>
-						<DateProvider>
-							<ViewProvider>
+						<ViewProvider>
+							<DateProvider>
 								{import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
 								<Outlet />
-							</ViewProvider>
-						</DateProvider>
+							</DateProvider>
+						</ViewProvider>
 					</UserProvider>
 				</NuqsAdapter>
 			</ThemeProvider>

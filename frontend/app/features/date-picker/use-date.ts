@@ -3,6 +3,7 @@ import { createContext, useContext } from "react";
 
 type ContextValue = {
 	date: TZDate;
+	selection: { start: TZDate; end: TZDate };
 	setDate: (date: TZDate) => void;
 };
 

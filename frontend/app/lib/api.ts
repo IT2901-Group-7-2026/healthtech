@@ -77,14 +77,17 @@ const fetchSensorOverviewData = async (
 export function sensorOverviewQueryOptions({
 	query,
 	userId,
+	enabled,
 }: {
 	query: SensorOverviewDataRequestDto;
 	userId?: string;
+	enabled?: boolean;
 }) {
 	return queryOptions({
 		queryKey: [query, userId],
 		queryFn: () => fetchSensorOverviewData(query, userId),
 		staleTime: minutesToMilliseconds(10),
+		enabled,
 	});
 }
 

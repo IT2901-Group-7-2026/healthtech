@@ -1,43 +1,23 @@
+import { useView } from "@/features/views/use-view";
+import { useFormatDate } from "@/hooks/use-format-date";
+import { TIMEZONE, TIMEZONE_NAME } from "@/i18n/locale";
+import { now } from "@/lib/date";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/ui/calendar";
 import { TZDate } from "@date-fns/tz";
-import {
-	addMonths,
-	addWeeks,
-	startOfMonth,
-	startOfWeek,
-	subMilliseconds,
-} from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import * as React from "react";
+import { addMonths, addWeeks, startOfMonth, startOfWeek, subMilliseconds } from "date-fns";
+import { useCallback, useMemo, useState } from "react";
 import type { DayPickerProps } from "react-day-picker";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import { useFormatDate } from "@/hooks/use-format-date.js";
-import { TIMEZONE, TIMEZONE_NAME } from "@/i18n/locale.js";
-import { now } from "@/lib/date.js";
-import { capitalize } from "@/lib/utils.js";
-import { ViewPicker } from "@/features/views/view-picker.js";
-import { useView } from "@/features/views/use-view.js";
 
 type DatePickerProps = Omit<
 	DayPickerProps,
-	| "mode"
-	| "required"
-	| "defaultMonth"
-	| "onSelect"
-	| "selected"
-	| "timeZone"
-	| "weekStartsOn"
+	"mode" | "required" | "defaultMonth" | "onSelect" | "selected" | "timeZone" | "weekStartsOn"
 > & {
+	onDateChange: (date: TZDate) => void;
 	mode?: "day" | "week" | "month";
 	date?: TZDate;
-	onDateChange: (date: TZDate) => void;
-	withViewSelect?: boolean;
+	withFooter?: boolean;
 };
 
 export function DatePicker({
@@ -45,17 +25,17 @@ export function DatePicker({
 	date,
 	onDateChange,
 	locale,
-	withViewSelect,
+	className,
+	withFooter = true,
 	...props
 }: DatePickerProps) {
 	const formatDate = useFormatDate();
-	const buttonId = React.useId();
 	const { t, i18n } = useTranslation();
 	const { view } = useView();
 
-	const [selectedDate, setSelectedDate] = React.useState<TZDate>(date ?? now());
+	const [selectedDate, setSelectedDate] = useState<TZDate>(date ?? now());
 
-	const rangeStart = React.useMemo(() => {
+	const rangeStart = useMemo(() => {
 		if (mode === "day") {
 			return undefined;
 		}
@@ -67,7 +47,7 @@ export function DatePicker({
 		return startOfMonth(selectedDate, { in: TIMEZONE });
 	}, [mode, selectedDate]);
 
-	const rangeEnd = React.useMemo(() => {
+	const rangeEnd = useMemo(() => {
 		if (mode === "day" || !rangeStart) {
 			return undefined;
 		}
@@ -77,7 +57,7 @@ export function DatePicker({
 		return subMilliseconds(addFn(rangeStart, 1, { in: TIMEZONE }), 1);
 	}, [mode, rangeStart]);
 
-	const handleDayClick = React.useCallback(
+	const handleDayClick = useCallback(
 		(clickedDate: Date) => {
 			const tzDate = new TZDate(clickedDate, TIMEZONE_NAME);
 
@@ -113,21 +93,6 @@ export function DatePicker({
 				}
 			: undefined;
 
-	let buttonLabel = t(($) => $.foremanDashboard.overview.selectDatePlaceholder);
-
-	if (selectedDate) {
-		if (mode === "day") {
-			buttonLabel = formatDate(
-				selectedDate,
-				i18n.language === "en" ? "MMMM dd, yyyy" : "dd. MMMM yyyy",
-			);
-		} else if (mode === "week") {
-			buttonLabel = `${t(($) => $.week)} ${formatDate(selectedDate, "w, yyyy")}`;
-		} else {
-			buttonLabel = capitalize(formatDate(selectedDate, "MMMM yyyy"));
-		}
-	}
-
 	const selectionDetail = formatSelection(
 		rangeStart && rangeEnd ? [rangeStart, rangeEnd] : selectedDate,
 		i18n.language,
@@ -152,52 +117,25 @@ export function DatePicker({
 			});
 
 	return (
-		<div className="flex gap-4 items-center">
-			<Popover>
-				<PopoverTrigger asChild>
-					<Button
-						variant="outline"
-						id={buttonId}
-						className="justify-start font-normal"
-					>
-						<div className="flex items-center gap-2">
-							<CalendarIcon size="1rem" />
-							<p>{buttonLabel}</p>
-						</div>
-					</Button>
-				</PopoverTrigger>
-				<PopoverContent
-					className="w-auto p-3 flex flex-col gap-4"
-					align="start"
-				>
-					{withViewSelect && <ViewPicker />}
-					<Calendar
-						mode="single"
-						className="min-w-60 p-0"
-						required
-						selected={selectedDate}
-						onSelect={handleDayClick}
-						modifiers={modifiers}
-						captionLayout="dropdown"
-						modifiersClassNames={{
-							today: "[&>button]:font-bold",
-							...modifiersClassNames,
-						}}
-						footer={
-							<p className="text-xs text-muted-foreground text-wrap mt-2">
-								{selectionRecap}
-							</p>
-						}
-						{...calendarProps}
-					/>
-				</PopoverContent>
-			</Popover>
-
-			<div className="flex flex-col">
-				<p className="text-xs text-muted-foreground">{selectionText}</p>
-				<p className="text-xs text-muted-foreground">{selectionSummary}</p>
-			</div>
-		</div>
+		<Calendar
+			mode="single"
+			className={cn("w-65 bg-transparent p-0", className)}
+			required={true}
+			selected={selectedDate}
+			onSelect={handleDayClick}
+			modifiers={modifiers}
+			captionLayout="dropdown"
+			modifiersClassNames={{
+				today: "[&>button]:font-bold",
+				...modifiersClassNames,
+			}}
+			footer={
+				withFooter ? (
+					<p className="mt-2 text-wrap text-muted-foreground text-xs">{selectionRecap}</p>
+				) : undefined
+			}
+			{...calendarProps}
+		/>
 	);
 }
 

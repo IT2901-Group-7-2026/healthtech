@@ -17,7 +17,6 @@ export function ViewPicker({ className }: ViewPickerProps) {
 			type="single"
 			value={view}
 			variant="outline"
-			size="sm"
 			className={className}
 			onValueChange={(value: View) => {
 				// Value is an empty string when clicking the already selected item, so we need this check to avoid
