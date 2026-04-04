@@ -3,9 +3,8 @@ import { ExposureSlider } from "@/components/exposure-slider";
 import { LiveStatusOverviewCard } from "@/features/live-status/live-status-overview-card";
 import { useUser } from "@/features/user/user-context";
 import { sensorQueryOptions } from "@/lib/api";
-import { parseAsTZDate, today } from "@/lib/date";
+import { now, parseAsTZDate, today } from "@/lib/date";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import { TZDate } from "@date-fns/tz";
 import { useQuery } from "@tanstack/react-query";
 import { addMinutes, minutesToMilliseconds, startOfMinute } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
@@ -24,8 +23,8 @@ export default function OperatorLiveView() {
 	const selectedDate = date;
 	const targetUserId = selectedUserId ?? user.id;
 
-	const now = startOfMinute(new TZDate());
-	const start = addMinutes(now, -30);
+	const startOfCurrentMinute = startOfMinute(now());
+	const start = addMinutes(startOfCurrentMinute, -30);
 
 	// We have at most 1 data point every minute so we don't need a shorter refetch interval than that
 	const dataRefetchInterval = minutesToMilliseconds(1);
