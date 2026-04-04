@@ -1,4 +1,3 @@
-using Backend.Data;
 using Backend.DTOs;
 using Backend.Middleware;
 using Backend.Models;
@@ -51,6 +50,11 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 			startTime.UtcDateTime,
 			_signedInUserContext?.User?.Role
 		);
+
+		if (request.ClampEndTimeToNow)
+		{
+			endTime = TimeWindowUtils.ClampRequestEndDateToCurrentDateTime(endTime.UtcDateTime);
+		}
 
 		string avgColumnName = SensorUtils.GetAggregateColumnName(
 			AggregationFunction.Avg,
