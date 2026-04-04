@@ -12,7 +12,6 @@ import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
-import { getLocale } from "@/i18n/locale";
 import { sensorOverviewQueryOptions } from "@/lib/api";
 import { buildSensorOverviewQuery } from "@/lib/sensor-query-utils";
 import {
@@ -83,15 +82,15 @@ export default function OperatorHome() {
 							)}
 						/>
 					) : view === "week" ? (
-						<WeekWidget
-							locale={getLocale(i18n.language)}
-							dayStartHour={0}
-							dayEndHour={23}
-							weekStartsOn={1}
-							data={mapOverviewDataToTimeBucketStatuses(
-								overviewBuckets ?? [],
-							)}
-						/>
+						<div className="w-3/4">
+							<WeekWidget
+								dayStartHour={0}
+								dayEndHour={23}
+								data={mapOverviewDataToTimeBucketStatuses(
+									overviewBuckets ?? [],
+								)}
+							/>
+						</div>
 					) : !overviewBuckets || overviewBuckets.length === 0 ? (
 						<Card className="flex h-24 w-full items-center">
 							<CardTitle>

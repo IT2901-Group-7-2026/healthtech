@@ -11,7 +11,6 @@ import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
-import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
@@ -99,10 +98,8 @@ export default function Dust() {
 					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
 					<WeekWidget
-						locale={getLocale(locale)}
 						dayStartHour={0}
 						dayEndHour={23}
-						weekStartsOn={1}
 						data={calendarData}
 					/>
 				) : !data || data.length === 0 ? (
