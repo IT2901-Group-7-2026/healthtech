@@ -83,15 +83,15 @@ export default function OperatorHome() {
 							)}
 						/>
 					) : view === "week" ? (
-						<WeekWidget
-							locale={getLocale(i18n.language)}
-							dayStartHour={0}
-							dayEndHour={23}
-							weekStartsOn={1}
-							data={mapOverviewDataToTimeBucketStatuses(
-								overviewBuckets ?? [],
-							)}
-						/>
+						<div className="w-3/4">
+							<WeekWidget
+								dayStartHour={0}
+								dayEndHour={23}
+								data={mapOverviewDataToTimeBucketStatuses(
+									overviewBuckets ?? [],
+								)}
+							/>
+						</div>
 					) : !overviewBuckets || overviewBuckets.length === 0 ? (
 						<Card className="flex h-24 w-full items-center">
 							<CardTitle>
