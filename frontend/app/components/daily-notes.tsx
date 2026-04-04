@@ -95,7 +95,7 @@ export const DailyNotes = ({
 
 	if (isLoading) {
 		return (
-			<Card className="flex h-24 w-full items-center">
+			<Card muted className="flex h-24 w-full items-center">
 				<p>{t(($) => $.loadingData)}</p>
 			</Card>
 		);
@@ -103,7 +103,7 @@ export const DailyNotes = ({
 
 	if (isError) {
 		return (
-			<Card className="flex h-24 w-full items-center">
+			<Card muted className="flex h-24 w-full items-center">
 				<p>{t(($) => $.loadingData)}</p>
 			</Card>
 		);
