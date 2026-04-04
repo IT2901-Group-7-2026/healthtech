@@ -24,7 +24,6 @@ type SummaryProps = {
 
 type SummaryLabel = Record<DangerLevel, string>;
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: bruh
 export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 	const { t, i18n } = useTranslation();
 	const { view } = useView();

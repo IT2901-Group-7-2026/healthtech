@@ -26,7 +26,6 @@ import Dust from "./sensors/dust";
 import Noise from "./sensors/noise";
 import Vibration from "./sensors/vibration";
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function OperatorHome() {
 	const { t, i18n } = useTranslation();
 

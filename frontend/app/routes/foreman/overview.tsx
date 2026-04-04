@@ -31,7 +31,6 @@ import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { PieChartCard } from "../../features/attention-card/pie-chart-card";
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const formatDate = useFormatDate();

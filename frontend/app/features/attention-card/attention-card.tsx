@@ -26,7 +26,6 @@ export const AttentionCard = ({
 	isSubordinatesLoading,
 	thresholdSummary,
 	isThresholdSummaryLoading,
-	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: we should refactor this
 }: AttentionCardProps) => {
 	const { t } = useTranslation();
 	const [sensor] = useQueryState("sensor", parseAsSensor);

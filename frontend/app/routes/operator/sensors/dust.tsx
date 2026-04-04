@@ -21,7 +21,6 @@ import { useQueries } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function Dust() {
 	const { view } = useView();
 	const { date } = useDate();

@@ -22,7 +22,6 @@ import { useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function Vibration() {
 	const [view] = useQueryState("view", parseAsView.withDefault("day"));
 	const { t, i18n } = useTranslation();

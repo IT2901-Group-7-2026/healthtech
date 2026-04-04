@@ -25,7 +25,6 @@ import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function Noise() {
 	const { view } = useView();
 	const { t, i18n } = useTranslation();

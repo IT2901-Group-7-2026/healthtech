@@ -26,7 +26,6 @@
     "rules": {
       "recommended": true,
       "complexity": {
-        "noExcessiveCognitiveComplexity": "info",
         "noUselessConstructor": "error",
         "noUselessRename": "error",
         "noUselessTernary": "error",
