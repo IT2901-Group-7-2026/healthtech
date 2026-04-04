@@ -12,10 +12,7 @@ import {
 	useRemoveSubordinatesMutation,
 	usersQueryOptions,
 } from "@/lib/api";
-import {
-	mapDangerLevelToColor,
-	mapDangerLevelToLabel,
-} from "@/lib/danger-levels";
+import { mapDangerLevelToColor, mapDangerLevelToLabel } from "@/lib/danger-levels";
 import { type User, UserRole, type UserWithStatusDto } from "@/lib/dto";
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
@@ -34,13 +31,8 @@ export default function TeamPage() {
 			id: "select",
 			header: ({ table }) => (
 				<Checkbox
-					checked={
-						table.getIsAllPageRowsSelected() ||
-						(table.getIsSomePageRowsSelected() && "indeterminate")
-					}
-					onCheckedChange={(value) =>
-						table.toggleAllPageRowsSelected(!!value)
-					}
+					checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+					onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
 					aria-label={t(($) => $.select.all)}
 				/>
 			),
@@ -99,10 +91,7 @@ export default function TeamPage() {
 
 		const subordinateIds = new Set(subordinates.map((s) => s.id));
 
-		return users.filter(
-			(user) =>
-				user.role === UserRole.Operator && !subordinateIds.has(user.id),
-		);
+		return users.filter((user) => user.role === UserRole.Operator && !subordinateIds.has(user.id));
 	}, [users, subordinates]);
 
 	const addSubordinates = useAddSubordinatesMutation(user.id);
@@ -137,32 +126,22 @@ export default function TeamPage() {
 	}
 
 	if (subordinatesError) {
-		return (
-			<div className="p-4 text-destructive">
-				{t(($) => $.foremanDashboard.team.failedToLoadMembers)}
-			</div>
-		);
+		return <div className="p-4 text-destructive">{t(($) => $.foremanDashboard.team.failedToLoadMembers)}</div>;
 	}
 
 	if (!subordinates || subordinates.length === 0) {
-		return (
-			<div className="p-4">
-				{t(($) => $.foremanDashboard.team.noMembersFound)}
-			</div>
-		);
+		return <div className="p-4">{t(($) => $.foremanDashboard.team.noMembersFound)}</div>;
 	}
 
 	return (
 		<div className="flex flex-col gap-8">
 			<div className="flex flex-col gap-4">
-				<h1 className="font-bold text-2xl">
-					{t(($) => $.foremanDashboard.team.title)}
-				</h1>
+				<h1 className="font-bold text-2xl">{t(($) => $.foremanDashboard.team.title)}</h1>
 				<div className="flex items-center gap-2">
 					<UserSearch
 						users={filteredUsers}
 						placeholder={t(($) => $.user.searchPlaceholder)}
-						multiple
+						multiple={true}
 						value={userIdSelection}
 						onValueChange={(value) => {
 							if (value == null || value.length === 0) {
@@ -175,14 +154,8 @@ export default function TeamPage() {
 						disabled={filteredUsers.length === 0}
 						emptyLabel={t(($) => $.noOptions)}
 					/>
-					<Button
-						onClick={handleAddSubordinates}
-						disabled={userIdSelection.length === 0}
-					>
-						{t(
-							($) =>
-								$.foremanDashboard.team.action.addSubordinate,
-						)}
+					<Button onClick={handleAddSubordinates} disabled={userIdSelection.length === 0}>
+						{t(($) => $.foremanDashboard.team.action.addSubordinate)}
 					</Button>
 				</div>
 				<DataTable
@@ -199,25 +172,14 @@ export default function TeamPage() {
 						disabled={Object.keys(rowSelection).length === 0}
 						variant="destructive"
 					>
-						{t(
-							($) =>
-								$.foremanDashboard.team.action
-									.removeSubordinate,
-						)}
+						{t(($) => $.foremanDashboard.team.action.removeSubordinate)}
 					</Button>
 				</div>
 			</div>
 			<div className="flex w-2/3 flex-col gap-4">
-				<h1 className="font-bold text-2xl">
-					{t(($) => $.foremanDashboard.team.mapTitle)}
-				</h1>
-				<p className="text-muted-foreground">
-					{`(${t(($) => $.foremanDashboard.team.mapPlaceholder)})`}
-				</p>
-				<LocationMap
-					operators={subordinates ?? []}
-					isLoading={isSubordinatesLoading}
-				/>
+				<h1 className="font-bold text-2xl">{t(($) => $.foremanDashboard.team.mapTitle)}</h1>
+				<p className="text-muted-foreground">{`(${t(($) => $.foremanDashboard.team.mapPlaceholder)})`}</p>
+				<LocationMap operators={subordinates ?? []} isLoading={isSubordinatesLoading} />
 			</div>
 		</div>
 	);

@@ -1,15 +1,6 @@
-import {
-	Card,
-	CardContent,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import {
-	DANGER_LEVEL_SEVERITY,
-	mapDangerLevelToColor,
-} from "@/lib/danger-levels";
+import { DANGER_LEVEL_SEVERITY, mapDangerLevelToColor } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import { ArrowRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -22,9 +13,7 @@ interface Props {
 export function AtRiskTable({ users }: Props) {
 	const { t } = useTranslation();
 
-	const atRiskWorkers = users.filter(
-		(user) => DANGER_LEVEL_SEVERITY[user.status.status] > 0,
-	);
+	const atRiskWorkers = users.filter((user) => DANGER_LEVEL_SEVERITY[user.status.status] > 0);
 
 	return (
 		<Link
@@ -32,11 +21,9 @@ export function AtRiskTable({ users }: Props) {
 			to={`/foreman/team/`}
 			className="h-full w-full flex-1 basis-64 rounded-2xl"
 		>
-			<Card hoverable>
+			<Card hoverable={true}>
 				<CardHeader>
-					<CardTitle className="text-center">
-						{t((x) => x.atRiskTable.title)}
-					</CardTitle>
+					<CardTitle className="text-center">{t((x) => x.atRiskTable.title)}</CardTitle>
 				</CardHeader>
 
 				<CardContent>

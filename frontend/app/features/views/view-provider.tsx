@@ -6,10 +6,7 @@ import { views } from "./views";
 const parseAsView = parseAsStringLiteral(views);
 
 export function ViewProvider({ children }: { children: ReactNode }) {
-	const [view, setView] = useQueryState(
-		"view",
-		parseAsView.withDefault("day"),
-	);
+	const [view, setView] = useQueryState("view", parseAsView.withDefault("day"));
 
 	return <ViewContext value={{ view, setView }}>{children}</ViewContext>;
 }

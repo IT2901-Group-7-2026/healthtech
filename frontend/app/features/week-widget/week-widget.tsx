@@ -39,19 +39,13 @@ interface WeekWidgetProps {
 	aggregation?: Aggregation;
 }
 
-export function WeekWidget({
-	dayStartHour = 8,
-	dayEndHour = 16,
-	data,
-	aggregation,
-}: WeekWidgetProps) {
+export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data, aggregation }: WeekWidgetProps) {
 	const { visible, closePopup, openPopup } = usePopup();
 	const formatDate = useFormatDate();
 	const { date: selectedDate } = useDate();
 	const { t, i18n } = useTranslation();
 
-	const [selectedTimeBucket, setSelectedTimeBucket] =
-		useState<TimeBucketStatus | null>(null);
+	const [selectedTimeBucket, setSelectedTimeBucket] = useState<TimeBucketStatus | null>(null);
 
 	const daysInWeek = eachDayOfInterval({
 		start: startOfWeek(selectedDate),
@@ -76,10 +70,7 @@ export function WeekWidget({
 	}
 
 	function formatTimeBucketTitle(timeBucket: TimeBucketStatus): string {
-		const day = formatDate(
-			timeBucket.time,
-			i18n.language === "en" ? "MMMM dd, yyyy" : "dd. MMMM yyyy",
-		);
+		const day = formatDate(timeBucket.time, i18n.language === "en" ? "MMMM dd, yyyy" : "dd. MMMM yyyy");
 		const start = formatDate(timeBucket.time, "p");
 		const end = formatDate(addHours(timeBucket.time, 1), "p");
 
@@ -90,9 +81,7 @@ export function WeekWidget({
 		const hour = timeBucket.time.getHours();
 
 		return (
-			isSameWeek(daysInWeek[0], timeBucket.time, { in: TIMEZONE }) &&
-			hour >= dayStartHour &&
-			hour < dayEndHour
+			isSameWeek(daysInWeek[0], timeBucket.time, { in: TIMEZONE }) && hour >= dayStartHour && hour < dayEndHour
 		);
 	});
 
@@ -117,14 +106,8 @@ export function WeekWidget({
 
 									{timeSlotSegments.map((segment) => {
 										const today = isToday(segment.date);
-										const weekday = formatDate(
-											segment.date,
-											"EEE",
-										);
-										const date = formatDate(
-											segment.date,
-											"dd",
-										);
+										const weekday = formatDate(segment.date, "EEE");
+										const date = formatDate(segment.date, "dd");
 
 										return (
 											<div
@@ -134,17 +117,18 @@ export function WeekWidget({
 												<p
 													className={cn(
 														"flex items-center",
-														today
-															? "font-semibold"
-															: "text-muted-foreground",
+														!today && "text-muted-foreground",
+														today && "font-semibold",
 													)}
 												>
 													{weekday}{" "}
 													<span
 														className={cn(
 															"ml-1.5",
-															today &&
-																"flex size-6 items-center justify-center rounded-full bg-foreground font-bold text-secondary",
+															today && [
+																"flex size-6 items-center justify-center rounded-full",
+																"bg-foreground font-bold text-secondary",
+															],
 														)}
 													>
 														{date}
@@ -164,73 +148,57 @@ export function WeekWidget({
 								}}
 							>
 								{/* Time labels */}
-								{timeSlotSegments[0].timeSlots.map(
-									(timeSlot, cellIndex) => {
-										const isOnTheHour =
-											getMinutes(timeSlot) === 0;
+								{timeSlotSegments[0].timeSlots.map((timeSlot, cellIndex) => {
+									const isOnTheHour = getMinutes(timeSlot) === 0;
 
-										if (!isOnTheHour) {
-											return <div />;
-										}
+									if (!isOnTheHour) {
+										return <div />;
+									}
 
-										return (
-											<div
-												key={`time-${getUnixTime(timeSlot)}`}
-												className="-mt-1.5 flex items-start justify-end"
-												style={{
-													gridRowStart: cellIndex + 1,
-													gridRowEnd: cellIndex + 2,
-													gridColumnStart: 1,
-													gridColumnEnd: 2,
-												}}
-											>
-												<span className="text-muted-foreground text-xs tabular-nums">
-													{formatDate(
-														timeSlot,
-														"HH:mm",
-													)}
-												</span>
-											</div>
-										);
-									},
-								)}
+									return (
+										<div
+											key={`time-${getUnixTime(timeSlot)}`}
+											className="-mt-1.5 flex items-start justify-end"
+											style={{
+												gridRowStart: cellIndex + 1,
+												gridRowEnd: cellIndex + 2,
+												gridColumnStart: 1,
+												gridColumnEnd: 2,
+											}}
+										>
+											<span className="text-muted-foreground text-xs tabular-nums">
+												{formatDate(timeSlot, "HH:mm")}
+											</span>
+										</div>
+									);
+								})}
 
 								{/* Time slot cells */}
 								{timeSlotSegments.map((day, dayIndex) =>
-									day.timeSlots.map(
-										(timeSlot, timeSlotIndex) => {
-											const isFirstRow =
-												timeSlotIndex === 0;
-											const isLastRow =
-												timeSlotIndex ===
-												day.timeSlots.length - 1;
+									day.timeSlots.map((timeSlot, timeSlotIndex) => {
+										const isFirstRow = timeSlotIndex === 0;
+										const isLastRow = timeSlotIndex === day.timeSlots.length - 1;
 
-											const timeBuckets =
-												timeBucketsByHour.get(
-													timeSlot.getTime(),
-												) ?? [];
+										const timeBuckets = timeBucketsByHour.get(timeSlot.getTime()) ?? [];
 
-											const style = {
-												gridRowStart: timeSlotIndex + 1,
-												gridRowEnd: timeSlotIndex + 2,
-												gridColumnStart: dayIndex + 2,
-												gridColumnEnd: dayIndex + 3,
-											};
+										const style = {
+											gridRowStart: timeSlotIndex + 1,
+											gridRowEnd: timeSlotIndex + 2,
+											gridColumnStart: dayIndex + 2,
+											gridColumnEnd: dayIndex + 3,
+										};
 
-											return (
-												<Cell
-													key={getUnixTime(timeSlot)}
-													timeBuckets={timeBuckets}
-													isFirstRow={isFirstRow}
-													isLastRow={isLastRow}
-													style={style}
-													onSegmentClick={
-														handleSegmentClick
-													}
-												/>
-											);
-										},
-									),
+										return (
+											<Cell
+												key={getUnixTime(timeSlot)}
+												timeBuckets={timeBuckets}
+												isFirstRow={isFirstRow}
+												isLastRow={isLastRow}
+												style={style}
+												onSegmentClick={handleSegmentClick}
+											/>
+										);
+									}),
 								)}
 							</div>
 						</div>
@@ -277,13 +245,7 @@ interface CellProps {
 	onSegmentClick: (timeBucket: TimeBucketStatus) => void;
 }
 
-function Cell({
-	isFirstRow,
-	isLastRow,
-	timeBuckets,
-	style,
-	onSegmentClick,
-}: CellProps) {
+function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: CellProps) {
 	const rounding = "rounded-md";
 
 	return (
@@ -299,8 +261,7 @@ function Cell({
 			{timeBuckets.map((timeBucket) => {
 				const minuteOffset = getMinutes(timeBucket.time);
 				const topPercent = (minuteOffset / 60) * 100;
-				const bottomPercent =
-					minuteOffset === 0 ? 0 : ((60 - minuteOffset) / 60) * 100;
+				const bottomPercent = minuteOffset === 0 ? 0 : ((60 - minuteOffset) / 60) * 100;
 				const dangerColor = DangerLevels[timeBucket.dangerLevel].color;
 
 				return (

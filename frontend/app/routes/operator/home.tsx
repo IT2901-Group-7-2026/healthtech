@@ -26,7 +26,6 @@ import Dust from "./sensors/dust";
 import Noise from "./sensors/noise";
 import Vibration from "./sensors/vibration";
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function OperatorHome() {
 	const { t, i18n } = useTranslation();
 
@@ -77,18 +76,14 @@ export default function OperatorHome() {
 					) : view === "month" ? (
 						<CalendarWidget
 							selectedDay={date}
-							data={mapOverviewDataToTimeBucketStatuses(
-								overviewBuckets ?? [],
-							)}
+							data={mapOverviewDataToTimeBucketStatuses(overviewBuckets ?? [])}
 						/>
 					) : view === "week" ? (
 						<div className="w-3/4">
 							<WeekWidget
 								dayStartHour={0}
 								dayEndHour={23}
-								data={mapOverviewDataToTimeBucketStatuses(
-									overviewBuckets ?? [],
-								)}
+								data={mapOverviewDataToTimeBucketStatuses(overviewBuckets ?? [])}
 							/>
 						</div>
 					) : !overviewBuckets || overviewBuckets.length === 0 ? (
@@ -104,11 +99,7 @@ export default function OperatorHome() {
 						</Card>
 					) : (
 						<DailyBarChart
-							data={mapOverviewBucketsToChartRows(
-								overviewBuckets ?? [],
-								0,
-								23,
-							)}
+							data={mapOverviewBucketsToChartRows(overviewBuckets ?? [], 0, 23)}
 							startHour={0}
 							endHour={23}
 							chartTitle={date.toLocaleDateString(i18n.language, {
@@ -125,14 +116,11 @@ export default function OperatorHome() {
 												pdfVibrationChartContainerId,
 												pdfNoiseChartContainerId,
 											],
-											`${date.toLocaleDateString(
-												i18n.language,
-												{
-													day: "numeric",
-													month: "long",
-													year: "numeric",
-												},
-											)}-${user.username}-Exposure-Overview`,
+											`${date.toLocaleDateString(i18n.language, {
+												day: "numeric",
+												month: "long",
+												year: "numeric",
+											})}-${user.username}-Exposure-Overview`,
 											[
 												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
 												`Vibration Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,

@@ -17,9 +17,7 @@ function mapDangerLevelToLabel(dangerLevel: DangerLevel) {
 	return t(($) => $.live.overviewCard[dangerLevel]);
 }
 
-export const LiveStatusOverviewCard = ({
-	sensorDangerLevels,
-}: LiveStatusOverviewCardProps) => (
+export const LiveStatusOverviewCard = ({ sensorDangerLevels }: LiveStatusOverviewCardProps) => (
 	<Card>
 		<div className="grid grid-cols-3 gap-2">
 			{sensors.map((sensor) => {

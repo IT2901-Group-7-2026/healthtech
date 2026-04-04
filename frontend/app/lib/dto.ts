@@ -33,9 +33,7 @@ export type SensorDataRequestDto = {
 	clampEndTimeToNow?: boolean;
 };
 
-export type SensorOverviewDataRequestDto = Partial<
-	Record<Sensor, SensorDataRequestDto>
->;
+export type SensorOverviewDataRequestDto = Partial<Record<Sensor, SensorDataRequestDto>>;
 
 export const SensorDataResponseDtoSchema = z.object({
 	time: tzDateSchema,
@@ -141,9 +139,7 @@ export const UserWithStatusSchema = UserSchema.extend({
 export type UserWithStatusDto = z.infer<typeof UserWithStatusSchema>;
 
 export const createLocationName = (location: Location) =>
-	location.building
-		? `${location.building}, ${location.site}`
-		: location.site;
+	location.building ? `${location.building}, ${location.site}` : location.site;
 
 export type Aggregation = "average" | "peak";
 export const Aggregations: Array<Aggregation> = ["average", "peak"];
@@ -161,9 +157,7 @@ export const ThresholdSummarySchema = z.object({
 	noise: SensorThresholdSummarySchema,
 } satisfies Record<Sensor | "total", unknown>);
 
-export type SensorThresholdSummary = z.infer<
-	typeof SensorThresholdSummarySchema
->;
+export type SensorThresholdSummary = z.infer<typeof SensorThresholdSummarySchema>;
 export type ThresholdSummary = z.infer<typeof ThresholdSummarySchema>;
 
 export const SensorTypeFieldSchema = z.enum([

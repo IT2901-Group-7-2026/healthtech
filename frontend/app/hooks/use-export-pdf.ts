@@ -69,49 +69,34 @@ const elementToCanvas = async (elementId: string) => {
 };
 
 export const useExportPDF = () => {
-	const exportToPDF = useCallback(
-		async (elementId: string, fileName: string, title: string) => {
-			const canvas = await elementToCanvas(elementId);
-			if (!canvas) return;
+	const exportToPDF = useCallback(async (elementId: string, fileName: string, title: string) => {
+		const canvas = await elementToCanvas(elementId);
+		if (!canvas) return;
 
-			const titleHeight = 40;
+		const titleHeight = 40;
 
-			const pdf = new jsPDF({
-				orientation:
-					canvas.width > canvas.height ? "landscape" : "portrait",
-				unit: "px",
-				format: [canvas.width, canvas.height + titleHeight],
-			});
+		const pdf = new jsPDF({
+			orientation: canvas.width > canvas.height ? "landscape" : "portrait",
+			unit: "px",
+			format: [canvas.width, canvas.height + titleHeight],
+		});
 
-			pdf.setFont("helvetica", "bold");
-			pdf.setFontSize(20);
+		pdf.setFont("helvetica", "bold");
+		pdf.setFontSize(20);
 
-			pdf.text(title, canvas.width / 2, 25, {
-				align: "center",
-			});
+		pdf.text(title, canvas.width / 2, 25, {
+			align: "center",
+		});
 
-			const imgData = canvas.toDataURL("image/png", 1.0);
+		const imgData = canvas.toDataURL("image/png", 1.0);
 
-			pdf.addImage(
-				imgData,
-				"PNG",
-				0,
-				titleHeight,
-				canvas.width,
-				canvas.height,
-			);
+		pdf.addImage(imgData, "PNG", 0, titleHeight, canvas.width, canvas.height);
 
-			pdf.save(`${fileName}.pdf`);
-		},
-		[],
-	);
+		pdf.save(`${fileName}.pdf`);
+	}, []);
 
 	const exportMultipleToPDF = useCallback(
-		async (
-			elementIds: Array<string>,
-			fileName: string,
-			titles: Array<string>,
-		) => {
+		async (elementIds: Array<string>, fileName: string, titles: Array<string>) => {
 			let pdf: jsPDF | null = null;
 
 			const titleHeight = 40;
@@ -126,10 +111,7 @@ export const useExportPDF = () => {
 					pdf.addPage([canvas.width, canvas.height + titleHeight]);
 				} else {
 					pdf = new jsPDF({
-						orientation:
-							canvas.width > canvas.height
-								? "landscape"
-								: "portrait",
+						orientation: canvas.width > canvas.height ? "landscape" : "portrait",
 						unit: "px",
 						format: [canvas.width, canvas.height + titleHeight],
 					});
@@ -142,14 +124,7 @@ export const useExportPDF = () => {
 					align: "center",
 				});
 
-				pdf.addImage(
-					imgData,
-					"PNG",
-					0,
-					titleHeight,
-					canvas.width,
-					canvas.height,
-				);
+				pdf.addImage(imgData, "PNG", 0, titleHeight, canvas.width, canvas.height);
 			}
 
 			pdf?.save(`${fileName}.pdf`);

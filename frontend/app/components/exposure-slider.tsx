@@ -16,34 +16,19 @@ interface Props {
 	label: string;
 }
 
-export function ExposureSlider({
-	sensor,
-	field,
-	value,
-	dangerLevel,
-	unitLabel: unit,
-	label,
-}: Props) {
+export function ExposureSlider({ sensor, field, value, dangerLevel, unitLabel: unit, label }: Props) {
 	const { i18n } = useTranslation();
 	const { danger } = getThreshold(sensor, field);
 	const sliderMax = danger * 1.5;
 	const percentage =
-		value !== undefined
-			? Math.min(
-					100,
-					Math.max(0, sliderMax <= 0 ? 0 : (value / sliderMax) * 100),
-				)
-			: 0;
+		value !== undefined ? Math.min(100, Math.max(0, sliderMax <= 0 ? 0 : (value / sliderMax) * 100)) : 0;
 	const indicatorLeftOffset = `${percentage}%`;
 	const isAlert = dangerLevel === "danger";
 
-	const valueFormatter = new Intl.NumberFormat(
-		i18n.language === "no" ? "nb-NO" : "en-US",
-		{
-			minimumFractionDigits: 1,
-			maximumFractionDigits: 1,
-		},
-	);
+	const valueFormatter = new Intl.NumberFormat(i18n.language === "no" ? "nb-NO" : "en-US", {
+		minimumFractionDigits: 1,
+		maximumFractionDigits: 1,
+	});
 	const formattedValue = valueFormatter.format(value ?? 0);
 
 	return (
@@ -52,9 +37,7 @@ export function ExposureSlider({
 				<SensorIcon type={sensor} size="xs" />
 				<span className="flex flex-row items-center gap-3">
 					<span>{label}</span>
-					{isAlert && (
-						<TriangleAlert size={20} className="text-danger" />
-					)}
+					{isAlert && <TriangleAlert size={20} className="text-danger" />}
 				</span>
 			</div>
 
@@ -75,9 +58,7 @@ export function ExposureSlider({
 
 			<p className="font-semibold text-2xl tracking-tight">
 				{formattedValue}
-				<span className="ml-1 font-medium text-muted-foreground text-sm">
-					{unit}
-				</span>
+				<span className="ml-1 font-medium text-muted-foreground text-sm">{unit}</span>
 			</p>
 		</div>
 	);

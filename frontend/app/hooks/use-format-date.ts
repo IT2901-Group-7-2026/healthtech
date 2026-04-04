@@ -2,9 +2,7 @@ import { getLocale, TIMEZONE } from "@/i18n/locale.js";
 import { type FormatOptions, formatDate, type Locale } from "date-fns";
 import { useTranslation } from "react-i18next";
 
-export const getFormatOptions = (
-	i18nLanguage: string | Locale | null | undefined,
-) => {
+export const getFormatOptions = (i18nLanguage: string | Locale | null | undefined) => {
 	let locale: FormatOptions["locale"];
 
 	if (i18nLanguage) {
