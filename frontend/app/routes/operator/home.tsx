@@ -39,8 +39,7 @@ export default function OperatorHome() {
 
 	const { user } = useUser();
 
-	const queryType =
-		view === "day" ? "week" : view === "week" ? "month" : "day";
+	const queryType = view === "day" ? "week" : view === "week" ? "month" : "day";
 
 	// NOTE: If we later add a peak noise switch here it wouldn't work because we don't return peakDangerLevel in the overview query.
 	const {
@@ -55,7 +54,7 @@ export default function OperatorHome() {
 	);
 
 	// Retrieve week or month data to find the min and max hour the user has data for that time period
-	const queryToFindMixMaxData = useQuery(
+	const queryToFindMinMaxData = useQuery(
 		sensorOverviewQueryOptions({
 			query: buildSensorOverviewQuery([...sensors], queryType, date),
 			userId: user.id,
@@ -81,13 +80,9 @@ export default function OperatorHome() {
 	}
 	let minHour: number, maxHour: number;
 	if (view === "day") {
-		({ minHour, maxHour } = getHourDomainFromBuckets(
-			queryToFindMixMaxData.data ?? [],
-		));
+		({ minHour, maxHour } = getHourDomainFromBuckets(queryToFindMinMaxData.data ?? []));
 	} else {
-		({ minHour, maxHour } = getHourDomainFromBuckets(
-			overviewBuckets ?? [],
-		));
+		({ minHour, maxHour } = getHourDomainFromBuckets(overviewBuckets ?? []));
 	}
 
 	return (
@@ -121,7 +116,7 @@ export default function OperatorHome() {
 						<div className="w-3/4">
 							<WeekWidget
 								dayStartHour={minHour}
-								dayEndHour={maxHour+1}
+								dayEndHour={maxHour + 1}
 								data={mapOverviewDataToTimeBucketStatuses(overviewBuckets ?? [])}
 							/>
 						</div>

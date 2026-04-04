@@ -13,14 +13,14 @@ import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
-import { sensorQueryOptions } from "@/lib/api";
+import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
 import { type Aggregation, Aggregations, type SensorDataResponseDto } from "@/lib/dto";
-import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import type { Sensor } from "@/lib/sensors";
+import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
+import { type Sensor, sensors } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { calculateSummaryCounts, mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange } from "@/lib/utils";
-import { useQueries } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -33,6 +33,34 @@ export default function Noise() {
 	const { user } = useUser();
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
+
+	// Retrieve week data to find the min and max time the user has data
+	const queryToFindMinMaxData = useQuery(
+		sensorOverviewQueryOptions({
+			query: buildSensorOverviewQuery([...sensors], "week", date),
+			userId: user.id,
+		}),
+	);
+
+	function getMinMaxTime(dataFromQuery: typeof queryToFindMinMaxData.data) {
+		if (!dataFromQuery || dataFromQuery.length === 0) {
+			return { minTime: undefined, maxTime: undefined };
+		}
+
+		let minimumTime = new Date(dataFromQuery[0].time).getTime();
+		let maximumTime = new Date(dataFromQuery[0].time).getTime();
+
+		for (const bucket of dataFromQuery) {
+			const time = new Date(bucket.time).getTime();
+
+			if (time < minimumTime) minimumTime = time;
+			if (time > maximumTime) maximumTime = time;
+		}
+
+		return { minTime: new Date(minimumTime), maxTime: new Date(maximumTime) };
+	}
+
+	const { minTime, maxTime } = getMinMaxTime(queryToFindMinMaxData.data ?? []);
 
 	const sensor: Sensor = "noise";
 
@@ -142,6 +170,8 @@ export default function Noise() {
 						<div id={chartContainerId}>
 							<AggregationTabs aggregation={aggregation} setAggregation={setAggregation}>
 								<ChartLineDefault
+									minTime={minTime ?? new Date()}
+									maxTime={maxTime ?? new Date()}
 									usePeakData={usePeakAggregation}
 									chartData={data ?? []}
 									chartTitle={date.toLocaleDateString(i18n.language, {

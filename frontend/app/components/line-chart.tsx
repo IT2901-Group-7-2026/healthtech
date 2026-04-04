@@ -34,6 +34,8 @@ interface LineChartProps {
 	headerRight?: React.ReactNode;
 	usePeakData?: boolean;
 	dustField?: SensorTypeField;
+	minTime: Date;
+	maxTime: Date;
 }
 
 export function ChartLineDefault({
@@ -48,6 +50,8 @@ export function ChartLineDefault({
 	headerRight,
 	usePeakData = false,
 	dustField,
+	minTime,
+	maxTime,
 }: LineChartProps) {
 	const { date: selectedDay } = useDate();
 	const { t } = useTranslation();
@@ -61,10 +65,6 @@ export function ChartLineDefault({
 
 	const maxData = chartData.toSorted((a, b) => getValue(b) - getValue(a))[0];
 	const minData = chartData.toSorted((a, b) => getValue(a) - getValue(b))[0];
-
-	// Set the domain to be from 1 hour before the first data point to 1 hour after the last data point, clamped to the current day
-	const minTime = chartData.toSorted((a, b) => a.time.getTime() - b.time.getTime())[0].time;
-	const maxTime = chartData.toSorted((a, b) => b.time.getTime() - a.time.getTime())[0].time;
 
 	const paddedStart = subHours(minTime, 1);
 	const paddedEnd = addHours(maxTime, 1);
