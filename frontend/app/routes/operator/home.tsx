@@ -12,7 +12,6 @@ import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
-import { getLocale } from "@/i18n/locale";
 import { sensorOverviewQueryOptions } from "@/lib/api";
 import { buildSensorOverviewQuery } from "@/lib/sensor-query-utils";
 import {

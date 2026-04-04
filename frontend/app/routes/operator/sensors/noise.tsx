@@ -13,7 +13,6 @@ import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
-import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import {
 	type Aggregation,
@@ -159,10 +158,8 @@ export default function Noise() {
 					>
 						<WeekWidget
 							aggregation={aggregation}
-							locale={getLocale(i18n.language)}
 							dayStartHour={0}
 							dayEndHour={23}
-							weekStartsOn={1}
 							data={calendarData}
 						/>
 					</AggregationTabs>
