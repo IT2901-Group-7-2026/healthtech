@@ -96,6 +96,7 @@ export function buildSensorQuery(
 		isOverview?: boolean;
 		startTime?: TZDate;
 		endTime?: TZDate;
+		clampEndTimeToNow?: boolean;
 	},
 ): SensorDataRequestDto {
 	const { startTime: defaultStartTime, endTime: defaultEndTime } =
@@ -118,6 +119,7 @@ export function buildSensorQuery(
 		granularity,
 		function: aggregationFunction,
 		field,
+		clampEndTimeToNow: options?.clampEndTimeToNow,
 	};
 
 	return query;
