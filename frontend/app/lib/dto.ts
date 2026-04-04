@@ -30,6 +30,7 @@ export type SensorDataRequestDto = {
 	granularity: GranularityKey;
 	function: AggregateFnKey;
 	field?: SensorTypeField;
+	clampEndTimeToNow?: boolean;
 };
 
 export type SensorOverviewDataRequestDto = Partial<Record<Sensor, SensorDataRequestDto>>;

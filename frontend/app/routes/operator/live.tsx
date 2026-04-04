@@ -3,11 +3,10 @@ import { ExposureSlider } from "@/components/exposure-slider";
 import { LiveStatusOverviewCard } from "@/features/live-status/live-status-overview-card";
 import { useUser } from "@/features/user/user-context";
 import { sensorQueryOptions } from "@/lib/api";
-import { parseAsTZDate, today } from "@/lib/date";
+import { now, parseAsTZDate, today } from "@/lib/date";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import { TZDate } from "@date-fns/tz";
 import { useQuery } from "@tanstack/react-query";
-import { endOfHour, startOfHour } from "date-fns";
+import { addMinutes, minutesToMilliseconds, startOfMinute } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
 
@@ -21,8 +20,11 @@ export default function OperatorLiveView() {
 	const selectedDate = date;
 	const targetUserId = selectedUserId ?? user.id;
 
-	const start = new TZDate(startOfHour(new TZDate()));
-	const end = new TZDate(endOfHour(new TZDate()));
+	const startOfCurrentMinute = startOfMinute(now());
+	const start = addMinutes(startOfCurrentMinute, -30);
+
+	// We have at most 1 data point every minute so we don't need a shorter refetch interval than that
+	const dataRefetchInterval = minutesToMilliseconds(1);
 
 	const { data: dustTwa1Data } = useQuery(
 		sensorQueryOptions({
@@ -32,9 +34,10 @@ export default function OperatorLiveView() {
 				aggregationFunction: "avg",
 				field: "pm1_twa",
 				startTime: start,
-				endTime: end,
+				clampEndTimeToNow: true,
 			}),
 			userId: targetUserId,
+			refetchInterval: dataRefetchInterval,
 		}),
 	);
 
@@ -46,9 +49,10 @@ export default function OperatorLiveView() {
 				aggregationFunction: "avg",
 				field: "pm25_twa",
 				startTime: start,
-				endTime: end,
+				clampEndTimeToNow: true,
 			}),
 			userId: targetUserId,
+			refetchInterval: dataRefetchInterval,
 		}),
 	);
 
@@ -60,9 +64,10 @@ export default function OperatorLiveView() {
 				aggregationFunction: "avg",
 				field: "pm10_twa",
 				startTime: start,
-				endTime: end,
+				clampEndTimeToNow: true,
 			}),
 			userId: targetUserId,
+			refetchInterval: dataRefetchInterval,
 		}),
 	);
 
@@ -73,9 +78,10 @@ export default function OperatorLiveView() {
 				granularity: "hour",
 				aggregationFunction: "avg",
 				startTime: start,
-				endTime: end,
+				clampEndTimeToNow: true,
 			}),
 			userId: targetUserId,
+			refetchInterval: dataRefetchInterval,
 		}),
 	);
 
@@ -86,9 +92,10 @@ export default function OperatorLiveView() {
 				granularity: "hour",
 				aggregationFunction: "sum",
 				startTime: start,
-				endTime: end,
+				clampEndTimeToNow: true,
 			}),
 			userId: targetUserId,
+			refetchInterval: dataRefetchInterval,
 		}),
 	);
 

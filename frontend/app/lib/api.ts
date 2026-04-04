@@ -93,17 +93,20 @@ export function sensorQueryOptions({
 	query,
 	userId,
 	enabled,
+	refetchInterval,
 }: {
 	sensor: Sensor;
 	query: SensorDataRequestDto;
 	userId?: string;
 	enabled?: boolean;
+	refetchInterval?: number;
 }) {
 	return queryOptions({
 		queryKey: [sensor, query, userId],
 		queryFn: () => fetchSensorData(sensor, query, userId),
 		staleTime: minutesToMilliseconds(10),
 		enabled,
+		refetchInterval,
 	});
 }
 
