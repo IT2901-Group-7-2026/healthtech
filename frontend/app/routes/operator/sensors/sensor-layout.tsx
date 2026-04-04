@@ -9,13 +9,7 @@ export default function SensorLayout() {
 
 	return (
 		<section className="flex w-full flex-col gap-2">
-			<DatePicker
-				mode={view}
-				showWeekNumber
-				date={date}
-				onDateChange={setDate}
-				withViewSelect
-			/>
+			<DatePicker mode={view} showWeekNumber={true} date={date} onDateChange={setDate} withViewSelect={true} />
 			<Outlet />
 		</section>
 	);

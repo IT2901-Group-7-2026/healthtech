@@ -1,10 +1,6 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import type { TZDate } from "@date-fns/tz";
-import {
-	queryOptions,
-	useMutation,
-	useQueryClient,
-} from "@tanstack/react-query";
+import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { minutesToMilliseconds } from "date-fns";
 import { fetchWithUserId } from "./api-client";
 import {
@@ -111,10 +107,7 @@ export function sensorQueryOptions({
 	});
 }
 
-export const fetchNoteData = async (
-	noteDataRequest: NoteDataRequest,
-	userId: string,
-): Promise<Array<Note>> => {
+export const fetchNoteData = async (noteDataRequest: NoteDataRequest, userId: string): Promise<Array<Note>> => {
 	const response = await fetchWithUserId(`notes/${userId}`, {
 		method: "POST",
 		body: JSON.stringify(noteDataRequest),
@@ -128,15 +121,7 @@ export const fetchNoteData = async (
 	return NoteSchema.array().parseAsync(json);
 };
 
-export function notesQueryOptions({
-	view,
-	selectedDay,
-	userId,
-}: {
-	view: View;
-	selectedDay: TZDate;
-	userId: string;
-}) {
+export function notesQueryOptions({ view, selectedDay, userId }: { view: View; selectedDay: TZDate; userId: string }) {
 	const query = getStartEnd(view, selectedDay);
 
 	return queryOptions({
@@ -146,13 +131,7 @@ export function notesQueryOptions({
 	});
 }
 
-export const updateNote = async ({
-	note,
-	userId,
-}: {
-	note: Note;
-	userId: string;
-}) => {
+export const updateNote = async ({ note, userId }: { note: Note; userId: string }) => {
 	const res = await fetchWithUserId(`notes/${userId}`, {
 		method: "PUT",
 		body: JSON.stringify(note),
@@ -167,13 +146,7 @@ export const updateNote = async ({
 	return NoteSchema.parseAsync(json);
 };
 
-export const createNote = async ({
-	note,
-	userId,
-}: {
-	note: Note;
-	userId: string;
-}) => {
+export const createNote = async ({ note, userId }: { note: Note; userId: string }) => {
 	const res = await fetchWithUserId(`notes/${userId}/create`, {
 		method: "POST",
 		body: JSON.stringify(note),
@@ -188,11 +161,7 @@ export const createNote = async ({
 	return NoteSchema.parseAsync(json);
 };
 
-export const fetchSubordinatesQueryOptions = (
-	userId: string,
-	startTime?: TZDate,
-	endTime?: TZDate,
-) => {
+export const fetchSubordinatesQueryOptions = (userId: string, startTime?: TZDate, endTime?: TZDate) => {
 	const params = new URLSearchParams();
 	if (startTime) {
 		params.append("startTime", startTime.toISOString());
@@ -204,9 +173,7 @@ export const fetchSubordinatesQueryOptions = (
 	return queryOptions({
 		queryKey: ["user.subordinates", userId, startTime, endTime],
 		queryFn: async () => {
-			const response = await fetchWithUserId(
-				`users/${userId}/subordinates?${params.toString()}`,
-			);
+			const response = await fetchWithUserId(`users/${userId}/subordinates?${params.toString()}`);
 
 			if (!response.ok) {
 				throw new Error("Failed to fetch subordinates");
@@ -219,17 +186,11 @@ export const fetchSubordinatesQueryOptions = (
 	});
 };
 
-export const removeSubordinates = async (
-	managerId: string,
-	subordinateIds: Array<string>,
-) => {
-	const response = await fetchWithUserId(
-		`users/${managerId}/subordinates/delete`,
-		{
-			method: "PUT",
-			body: JSON.stringify(subordinateIds),
-		},
-	);
+export const removeSubordinates = async (managerId: string, subordinateIds: Array<string>) => {
+	const response = await fetchWithUserId(`users/${managerId}/subordinates/delete`, {
+		method: "PUT",
+		body: JSON.stringify(subordinateIds),
+	});
 
 	if (!response.ok) {
 		const errorText = await response.text();
@@ -242,8 +203,7 @@ export const useRemoveSubordinatesMutation = (parentUserId: string) => {
 
 	return useMutation({
 		mutationKey: ["user.subordinates.remove", parentUserId],
-		mutationFn: (subordinateIds: Array<string>) =>
-			removeSubordinates(parentUserId, subordinateIds),
+		mutationFn: (subordinateIds: Array<string>) => removeSubordinates(parentUserId, subordinateIds),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
 				queryKey: fetchSubordinatesQueryOptions(parentUserId).queryKey,
@@ -252,17 +212,11 @@ export const useRemoveSubordinatesMutation = (parentUserId: string) => {
 	});
 };
 
-export const addSubordinates = async (
-	managerId: string,
-	subordinateIds: Array<string>,
-) => {
-	const response = await fetchWithUserId(
-		`users/${managerId}/subordinates/create`,
-		{
-			method: "PUT",
-			body: JSON.stringify(subordinateIds),
-		},
-	);
+export const addSubordinates = async (managerId: string, subordinateIds: Array<string>) => {
+	const response = await fetchWithUserId(`users/${managerId}/subordinates/create`, {
+		method: "PUT",
+		body: JSON.stringify(subordinateIds),
+	});
 
 	if (!response.ok) {
 		const errorText = await response.text();
@@ -275,8 +229,7 @@ export const useAddSubordinatesMutation = (parentUserId: string) => {
 
 	return useMutation({
 		mutationKey: ["user.subordinates.add", parentUserId],
-		mutationFn: (subordinateIds: Array<string>) =>
-			addSubordinates(parentUserId, subordinateIds),
+		mutationFn: (subordinateIds: Array<string>) => addSubordinates(parentUserId, subordinateIds),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
 				queryKey: fetchSubordinatesQueryOptions(parentUserId).queryKey,
@@ -285,18 +238,9 @@ export const useAddSubordinatesMutation = (parentUserId: string) => {
 	});
 };
 
-export const fetchThresholdSummaryQueryOptions = (
-	managerUserId: string,
-	startTime?: TZDate,
-	endTime?: TZDate,
-) =>
+export const fetchThresholdSummaryQueryOptions = (managerUserId: string, startTime?: TZDate, endTime?: TZDate) =>
 	queryOptions({
-		queryKey: [
-			"user.subordinates.threshold-summary",
-			managerUserId,
-			startTime,
-			endTime,
-		],
+		queryKey: ["user.subordinates.threshold-summary", managerUserId, startTime, endTime],
 		queryFn: async () => {
 			const params = new URLSearchParams();
 			if (startTime) {

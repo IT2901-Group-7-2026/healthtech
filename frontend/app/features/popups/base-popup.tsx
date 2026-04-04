@@ -1,11 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import type { TZDate } from "@date-fns/tz";
 import { t } from "i18next";
@@ -48,20 +42,14 @@ export function BasePopup({
 		<Dialog open={open} onOpenChange={onClose}>
 			<DialogContent className="w-full max-w-6xl">
 				<DialogHeader>
-					<DialogTitle className="font-bold text-xl">
-						{title}
-					</DialogTitle>
+					<DialogTitle className="font-bold text-xl">{title}</DialogTitle>
 				</DialogHeader>
 
 				{children}
 
 				{relevantDate && (
 					<DialogFooter>
-						<Button
-							variant="default"
-							className="cursor-pointer"
-							onClick={onClose}
-						>
+						<Button variant="default" className="cursor-pointer" onClick={onClose}>
 							<NavLink
 								to={{
 									pathname: pathname ?? "",

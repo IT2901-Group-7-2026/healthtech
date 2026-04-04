@@ -15,11 +15,7 @@ import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Textarea } from "./ui/textarea";
 
-export const DailyNotes = ({
-	popUpOverride = false,
-}: {
-	popUpOverride?: boolean;
-}) => {
+export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean }) => {
 	const { t, i18n } = useTranslation();
 	const locale = i18n.language;
 	const { view } = useView();
@@ -48,17 +44,11 @@ export const DailyNotes = ({
 	});
 
 	const [todayNote, setTodayNote] = useState<Note | null>(
-		data
-			? (data.find((note) =>
-					isSameDay(note.time, date, { in: TIMEZONE }),
-				) ?? null)
-			: null,
+		data ? (data.find((note) => isSameDay(note.time, date, { in: TIMEZONE })) ?? null) : null,
 	);
 
 	const [showTextArea, setShowTextArea] = useState<boolean>(
-		data
-			? !data.some((note) => isSameDay(note.time, date, { in: TIMEZONE }))
-			: true,
+		data ? !data.some((note) => isSameDay(note.time, date, { in: TIMEZONE })) : true,
 	);
 
 	const handleEdit = () => {
@@ -67,11 +57,7 @@ export const DailyNotes = ({
 
 	const handleSubmit = () => {
 		if (todayNote !== null && todayNote.note !== "" && data) {
-			if (
-				data.some((note) =>
-					isSameDay(note.time, date, { in: TIMEZONE }),
-				)
-			) {
+			if (data.some((note) => isSameDay(note.time, date, { in: TIMEZONE }))) {
 				mutateUpdateNote({ note: todayNote, userId: user.id });
 			} else {
 				mutateCreateNote({ note: todayNote, userId: user.id });
@@ -82,10 +68,7 @@ export const DailyNotes = ({
 
 	useEffect(() => {
 		if (data) {
-			const foundNote =
-				data.find((note) =>
-					isSameDay(note.time, date, { in: TIMEZONE }),
-				) ?? null;
+			const foundNote = data.find((note) => isSameDay(note.time, date, { in: TIMEZONE })) ?? null;
 			setTodayNote(foundNote);
 			setShowTextArea(!foundNote);
 		}
@@ -95,7 +78,7 @@ export const DailyNotes = ({
 
 	if (isLoading) {
 		return (
-			<Card muted className="flex h-24 w-full items-center">
+			<Card muted={true} className="flex h-24 w-full items-center">
 				<p>{t(($) => $.loadingData)}</p>
 			</Card>
 		);
@@ -103,7 +86,7 @@ export const DailyNotes = ({
 
 	if (isError) {
 		return (
-			<Card muted className="flex h-24 w-full items-center">
+			<Card muted={true} className="flex h-24 w-full items-center">
 				<p>{t(($) => $.loadingData)}</p>
 			</Card>
 		);
@@ -111,14 +94,11 @@ export const DailyNotes = ({
 
 	if (view === "day" || popUpOverride) {
 		return (
-			<Card muted className="max-h-96 w-full overflow-y-auto">
+			<Card muted={true} className="max-h-96 w-full overflow-y-auto">
 				<CardHeader>
 					<h2 className="text-muted-foreground text-xs uppercase tracking-wider">
 						{t(($) => $.daily_notes.dayTitle, {
-							day: formatDate(
-								date,
-								locale === "en" ? "MMMM do" : "do MMMM",
-							),
+							day: formatDate(date, locale === "en" ? "MMMM do" : "do MMMM"),
 						})}
 					</h2>
 				</CardHeader>
@@ -149,21 +129,14 @@ export const DailyNotes = ({
 				</CardContent>
 				<CardFooter className="justify-end gap-2">
 					{todayNote !== null && !showTextArea && (
-						<Button
-							size="sm"
-							variant={"secondary"}
-							onClick={handleEdit}
-						>
+						<Button size="sm" variant={"secondary"} onClick={handleEdit}>
 							{t(($) => $.daily_notes.edit)}
 						</Button>
 					)}
 					{showTextArea && (
 						<Button
 							size="sm"
-							disabled={
-								todayNote === null ||
-								todayNote.note.trim() === ""
-							}
+							disabled={todayNote === null || todayNote.note.trim() === ""}
 							onClick={handleSubmit}
 						>
 							{t(($) => $.daily_notes.save)}
@@ -176,7 +149,7 @@ export const DailyNotes = ({
 
 	if (view === "week") {
 		return (
-			<Card muted className="max-h-96 w-full overflow-y-auto">
+			<Card muted={true} className="max-h-96 w-full overflow-y-auto">
 				<CardHeader>
 					<h2 className="text-xl">
 						{t(($) => $.daily_notes.notesFromThis)}
@@ -194,21 +167,14 @@ export const DailyNotes = ({
 											weekStartsOn: 1,
 										}),
 									)
-									.sort(
-										(n1, n2) =>
-											n1.time.getTime() -
-											n2.time.getTime(),
-									)
+									.sort((n1, n2) => n1.time.getTime() - n2.time.getTime())
 									.map((note) => (
 										<li key={note.time.toDateString()}>
 											<strong>
-												{note.time.toLocaleDateString(
-													locale,
-													{
-														day: "numeric",
-														month: "long",
-													},
-												)}
+												{note.time.toLocaleDateString(locale, {
+													day: "numeric",
+													month: "long",
+												})}
 												{": "}
 											</strong>
 											{note.note}
@@ -223,7 +189,7 @@ export const DailyNotes = ({
 
 	//month-view
 	return (
-		<Card muted className="max-h-96 w-full overflow-y-auto">
+		<Card muted={true} className="max-h-96 w-full overflow-y-auto">
 			<CardHeader>
 				<h2 className="text-xl">
 					{t(($) => $.daily_notes.notesFromThis)}
@@ -240,20 +206,14 @@ export const DailyNotes = ({
 										in: TIMEZONE,
 									}),
 								)
-								.sort(
-									(n1, n2) =>
-										n1.time.getTime() - n2.time.getTime(),
-								)
+								.sort((n1, n2) => n1.time.getTime() - n2.time.getTime())
 								.map((note) => (
 									<li key={note.time.getTime()}>
 										<strong>
-											{note.time.toLocaleDateString(
-												locale,
-												{
-													day: "numeric",
-													month: "long",
-												},
-											)}
+											{note.time.toLocaleDateString(locale, {
+												day: "numeric",
+												month: "long",
+											})}
 											{": "}
 										</strong>
 										{note.note}

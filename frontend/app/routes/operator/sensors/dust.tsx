@@ -15,10 +15,7 @@ import { sensorQueryOptions } from "@/lib/api";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import {
-	calculateSummaryCounts,
-	mapSensorDataToTimeBucketStatuses,
-} from "@/lib/time-bucket-utils";
+import { calculateSummaryCounts, mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useId } from "react";
@@ -44,23 +41,21 @@ export default function Dust() {
 	const useDaySummary = view === "day";
 	const dustThreshold = getThreshold(sensor, query.field);
 
-	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries(
-		{
-			queries: [
-				sensorQueryOptions({
-					sensor,
-					query,
-					userId: user.id,
-				}),
-				sensorQueryOptions({
-					sensor,
-					query: daySummaryQuery,
-					userId: user.id,
-					enabled: useDaySummary,
-				}),
-			],
-		},
-	);
+	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries({
+		queries: [
+			sensorQueryOptions({
+				sensor,
+				query,
+				userId: user.id,
+			}),
+			sensorQueryOptions({
+				sensor,
+				query: daySummaryQuery,
+				userId: user.id,
+				enabled: useDaySummary,
+			}),
+		],
+	});
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
@@ -78,10 +73,7 @@ export default function Dust() {
 				<Summary
 					exposureType={sensor}
 					view={view}
-					data={calculateSummaryCounts(
-						(useDaySummary ? daySummaryData : data) ?? [],
-						sensor,
-					)}
+					data={calculateSummaryCounts((useDaySummary ? daySummaryData : data) ?? [], sensor)}
 				/>
 				<DailyNotes />
 			</div>
@@ -97,11 +89,7 @@ export default function Dust() {
 				) : view === "month" ? (
 					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
-					<WeekWidget
-						dayStartHour={0}
-						dayEndHour={23}
-						data={calendarData}
-					/>
+					<WeekWidget dayStartHour={0} dayEndHour={23} data={calendarData} />
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">
 						<CardTitle>
@@ -136,14 +124,11 @@ export default function Dust() {
 										onClick={() =>
 											exportToPDF(
 												chartContainerId,
-												`${date.toLocaleDateString(
-													locale,
-													{
-														day: "numeric",
-														month: "long",
-														year: "numeric",
-													},
-												)}-${user.username}-Dust-Exposure-Overview`,
+												`${date.toLocaleDateString(locale, {
+													day: "numeric",
+													month: "long",
+													year: "numeric",
+												})}-${user.username}-Dust-Exposure-Overview`,
 												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(locale)}`,
 											)
 										}
@@ -153,14 +138,8 @@ export default function Dust() {
 								}
 							>
 								<div className="mb-2 flex justify-end"></div>
-								<ThresholdLine
-									y={dustThreshold.danger}
-									dangerLevel="danger"
-								/>
-								<ThresholdLine
-									y={dustThreshold.warning}
-									dangerLevel="warning"
-								/>
+								<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
+								<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
 							</ChartLineDefault>
 						</div>
 					</div>

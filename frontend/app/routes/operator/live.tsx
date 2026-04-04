@@ -16,10 +16,7 @@ export default function OperatorLiveView() {
 	const { user } = useUser();
 	const [selectedUserId] = useQueryState("userId", parseAsString);
 
-	const [date] = useQueryState(
-		"filterDate",
-		parseAsTZDate.withDefault(today()),
-	);
+	const [date] = useQueryState("filterDate", parseAsTZDate.withDefault(today()));
 
 	const selectedDate = date;
 	const targetUserId = selectedUserId ?? user.id;

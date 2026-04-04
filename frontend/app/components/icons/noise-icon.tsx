@@ -1,13 +1,7 @@
 import { useTranslation } from "react-i18next";
 import type { IconProps } from "../sensor-icon";
 
-export function NoiseIcon({
-	className,
-	size = 24,
-	strokeWidth = 2,
-	title,
-	...props
-}: IconProps) {
+export function NoiseIcon({ className, size = 24, strokeWidth = 2, title, ...props }: IconProps) {
 	const { t } = useTranslation();
 
 	return (
