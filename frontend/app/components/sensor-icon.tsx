@@ -37,12 +37,15 @@ interface SensorIconProps {
 	dangerLevel?: DangerLevel;
 	className?: string;
 	title?: string;
+	inline?: boolean;
 }
 
 const defaultIconContainerClass = "bg-muted text-foreground border border-border";
 
-export const SensorIcon = ({ type, size, dangerLevel, className, title }: SensorIconProps) => {
+export const SensorIcon = ({ type, size, dangerLevel, className, title, inline }: SensorIconProps) => {
 	const Icon = iconConfig[type];
+	const Component = inline ? "span" : "div";
+
 	const resolvedIconSize = size ?? "md";
 	const dangerLevelIconClasses = dangerLevel
 		? cn(
@@ -53,8 +56,8 @@ export const SensorIcon = ({ type, size, dangerLevel, className, title }: Sensor
 		: defaultIconContainerClass;
 
 	return (
-		<div className={cn("h-fit w-fit rounded-full border", dangerLevelIconClasses, className)}>
-			<Icon className={iconSizeClass[resolvedIconSize]} title={title} />
-		</div>
+		<Component className={cn("h-fit w-fit rounded-full border", dangerLevelIconClasses, className)}>
+			<Icon className={cn(iconSizeClass[resolvedIconSize], inline && "inline-block")} title={title} />
+		</Component>
 	);
 };

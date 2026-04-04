@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
-
 import { DailyNotes } from "@/components/daily-notes";
 import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
 import { Summary } from "@/components/summary";
@@ -20,9 +18,9 @@ import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { calculateSummaryCounts, mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange } from "@/lib/utils";
-import { useQueries } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import { useId } from "react";
+import { type ReactNode, useId } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function Noise() {
@@ -48,28 +46,14 @@ export default function Noise() {
 	const query = buildSensorQuery(sensor, view, date, {
 		usePeakAggregation,
 	});
-	const daySummaryQuery = buildSensorQuery(sensor, view, date, {
-		granularity: "hour",
-		usePeakAggregation,
-	});
 
-	const useDaySummary = view === "day";
-
-	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries({
-		queries: [
-			sensorQueryOptions({
-				sensor,
-				query,
-				userId: user.id,
-			}),
-			sensorQueryOptions({
-				sensor,
-				query: daySummaryQuery,
-				userId: user.id,
-				enabled: useDaySummary,
-			}),
-		],
-	});
+	const { data, isLoading, isError } = useQuery(
+		sensorQueryOptions({
+			sensor,
+			query,
+			userId: user.id,
+		}),
+	);
 
 	if (isLoading) {
 		return (
@@ -97,19 +81,7 @@ export default function Noise() {
 
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
-			<div className="flex flex-col gap-4 md:w-1/5">
-				<Summary
-					exposureType={sensor}
-					view={view}
-					data={calculateSummaryCounts(
-						(useDaySummary ? daySummaryData : data) ?? [],
-						sensor,
-						usePeakAggregation,
-					)}
-				/>
-				<DailyNotes />
-			</div>
-			<div className="flex flex-1 flex-col items-end gap-4">
+			<div className="flex flex-1 flex-col gap-4">
 				{isLoading ? (
 					<Card className="flex h-24 w-full items-center">
 						<p>{t(($) => $.loadingData)}</p>
@@ -228,7 +200,7 @@ const NoisePageLayout = ({
 	usePeakAggregation,
 	view,
 }: {
-	children: React.ReactNode;
+	children: ReactNode;
 	data: Array<SensorDataResponseDto>;
 	usePeakAggregation?: boolean;
 	view: View;
