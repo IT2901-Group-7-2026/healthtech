@@ -226,7 +226,7 @@
     },
     "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",
-      "noData": "Ingen data tilgjengelig"
+      "noData": "Ingen sensordata tilgjengelig for operatører"
     },
     "siteMap": {
       "title": "Områdekart",
