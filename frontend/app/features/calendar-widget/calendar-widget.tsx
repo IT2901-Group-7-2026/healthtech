@@ -96,11 +96,7 @@ export function CalendarWidget({
 						{t(($) => $.sendButton)}
 					</Button>
 
-					{showMessage && (
-						<div className="text-green-600 text-xs">
-							{t(($) => $.sendConfirmation)}
-						</div>
-					)}
+					{showMessage && <div className="text-green-600 text-xs">{t(($) => $.sendConfirmation)}</div>}
 				</div>
 				<Calendar
 					locale={getLocale(i18n.language)}
