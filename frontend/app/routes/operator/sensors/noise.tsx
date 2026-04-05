@@ -118,10 +118,10 @@ export default function Noise() {
 			}
 		}
 
-		return { minTime: new Date(minimumTime), maxTime: new Date(maximumTime) };
+		return { minTime: new Date(minimumTime), maxTime: new Date(maximumTime), minimumHour, maximumHour };
 	}
 
-	const { minTime, maxTime } = getMinMaxTime(weekQuery ?? []);
+	const { minTime, maxTime, minimumHour, maximumHour } = getMinMaxTime(weekQuery ?? []);
 
 	if (isLoading) {
 		return (
@@ -176,7 +176,7 @@ export default function Noise() {
 					</AggregationTabs>
 				) : view === "week" ? (
 					<AggregationTabs aggregation={aggregation} setAggregation={setAggregation}>
-						<WeekWidget aggregation={aggregation} dayStartHour={0} dayEndHour={23} data={calendarData} />
+						<WeekWidget dayStartHour={minimumHour} dayEndHour={(maximumHour ?? 23) +1} data={calendarData} />
 					</AggregationTabs>
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">

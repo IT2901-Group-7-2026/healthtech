@@ -102,10 +102,10 @@ export default function Dust() {
 			}
 		}
 
-		return { minTime: new Date(minimumTime), maxTime: new Date(maximumTime) };
+		return { minTime: new Date(minimumTime), maxTime: new Date(maximumTime), minimumHour, maximumHour };
 	}
 
-	const { minTime, maxTime } = getMinMaxTime(weekQuery ?? []);
+	const { minTime, maxTime, minimumHour, maximumHour } = getMinMaxTime(weekQuery ?? []);
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
@@ -139,7 +139,7 @@ export default function Dust() {
 				) : view === "month" ? (
 					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
-					<WeekWidget dayStartHour={0} dayEndHour={23} data={calendarData} />
+					<WeekWidget dayStartHour={minimumHour} dayEndHour={(maximumHour ?? 23) +1} data={calendarData} />
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">
 						<CardTitle>
