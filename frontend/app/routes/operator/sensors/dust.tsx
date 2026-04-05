@@ -68,8 +68,14 @@ export default function Dust() {
 	});
 
 	function getMinMaxTime(dataFromQuery?: typeof weekSummaryData) {
+		const defaultMin = new Date(date);
+		defaultMin.setHours(8, 0, 0, 0);
+
+		const defaultMax = new Date(date);
+		defaultMax.setHours(16, 0, 0, 0);
+		
 		if (!dataFromQuery || dataFromQuery.length === 0) {
-			return { minTime: undefined, maxTime: undefined };
+			return { minTime: defaultMin, maxTime: defaultMax };
 		}
 
 		let minimumTime = new Date(dataFromQuery[0].time).getTime();
@@ -144,8 +150,8 @@ export default function Dust() {
 					<div className="w-full">
 						<div id={chartContainerId}>
 							<ChartLineDefault
-								minTime={minTime ?? new Date()}
-								maxTime={maxTime ?? new Date()}
+								minTime={minTime}
+								maxTime={maxTime}
 								chartData={data ?? []}
 								chartTitle={date.toLocaleDateString(locale, {
 									day: "numeric",
