@@ -39,10 +39,7 @@ export function CalendarWidget({
 	const { t, i18n } = useTranslation();
 	const { visible, openPopup, closePopup } = usePopup();
 	const { setDate } = useDate();
-	const [
-		showShareDataConfirmationMessage,
-		setShowShareDataConfirmationMessage,
-	] = useState(false);
+	const [showShareDataConfirmationMessage, setShowShareDataConfirmationMessage] = useState(false);
 
 	const [popupData, setPopupData] = useState<{
 		day: TZDate | null;
@@ -96,12 +93,12 @@ export function CalendarWidget({
 							}, 5000); // Confirmation message duration in ms
 						}}
 					>
-						{t(($) => $.sendButton)}
+						{t(($) => $.shareDataWithHygienistButton)}
 					</Button>
 
 					{showShareDataConfirmationMessage && (
 						<div className="text-green-600 text-xs">
-							{t(($) => $.sendConfirmation)}
+							<div className="text-green-600 text-xs">{t(($) => $.shareDataWithHygienistConfirmation)}</div>
 						</div>
 					)}
 				</div>
