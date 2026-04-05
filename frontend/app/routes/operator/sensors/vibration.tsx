@@ -106,7 +106,7 @@ export default function Vibration() {
 		return { minTime: new Date(minimumTime), maxTime: new Date(maximumTime), minimumHour, maximumHour };
 	}
 
-	const { minTime, maxTime, minimumHour, maximumHour } = getMinMaxTime(weekQuery ?? []);
+	const { minTime, maxTime, minimumHour: minHour, maximumHour: maxHour } = getMinMaxTime(weekQuery ?? []);
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
@@ -140,7 +140,7 @@ export default function Vibration() {
 				) : view === "month" ? (
 					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
-					<WeekWidget dayStartHour={minimumHour} dayEndHour={(maximumHour ?? 23) +1} data={calendarData} />
+					<WeekWidget dayStartHour={minHour} dayEndHour={(maxHour ?? 23) + 1} data={calendarData} />
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">
 						<CardTitle>
