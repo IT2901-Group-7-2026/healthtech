@@ -65,13 +65,14 @@
     "danger": "Fare: Eksponeringsgrenser overskredet den"
   },
   "daily_notes": {
-    "viewTitle": "Dine notater for {{view}}",
+    "viewTitle": "Dine notater for {{date}}",
     "writeHere": "Skriv her...",
     "edit": "Rediger",
     "save": "Lagre",
     "day": "dagen",
     "week": "uken",
-    "month": "måneden"
+    "month": "måneden",
+    "emptyState": "Ingen notater for denne {{view}}. Velg en dag for å legge til notater."
   },
   "buttons": {
     "confirm": "Ok",

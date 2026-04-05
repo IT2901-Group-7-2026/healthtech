@@ -92,21 +92,21 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 
 	const isForDayView = view === "day" || popUpOverride;
 
-	let titleFormattedDate = "";
+	let formattedDateLabel = "";
 	switch (view) {
 		case "day":
-			titleFormattedDate = formatDate(date, locale === "en" ? "MMMM do" : "do MMMM");
+			formattedDateLabel = formatDate(date, locale === "en" ? "MMMM do" : "do MMMM");
 			break;
 		case "week":
-			titleFormattedDate = `${t(($) => $.week)} ${formatDate(date, "w, yyyy")}`;
+			formattedDateLabel = `${t(($) => $.week)} ${formatDate(date, "w, yyyy")}`;
 			break;
 		case "month":
-			titleFormattedDate = formatDate(date, "MMMM yyyy");
+			formattedDateLabel = formatDate(date, "MMMM yyyy");
 			break;
 	}
 
 	const title = t(($) => $.daily_notes.viewTitle, {
-		view: titleFormattedDate,
+		date: formattedDateLabel,
 	});
 
 	let Content: JSX.Element;
@@ -137,22 +137,29 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 				</p>
 			);
 	} else {
-		Content = (
-			<ul>
-				{data?.map((note) => (
-					<li key={note.time.getTime()}>
-						<strong>
-							{note.time.toLocaleDateString(locale, {
-								day: "numeric",
-								month: "long",
-							})}
-							{": "}
-						</strong>
-						{note.note}
-					</li>
-				))}
-			</ul>
-		);
+		Content =
+			data && data.length > 0 ? (
+				<ul>
+					{data.map((note) => (
+						<li key={note.time.getTime()}>
+							<strong>
+								{note.time.toLocaleDateString(locale, {
+									day: "numeric",
+									month: "long",
+								})}
+								{": "}
+							</strong>
+							{note.note}
+						</li>
+					))}
+				</ul>
+			) : (
+				<p className="text-sm">
+					{t(($) => $.daily_notes.emptyState, {
+						view: t(($$) => $$.daily_notes[view]),
+					})}
+				</p>
+			);
 	}
 
 	return (

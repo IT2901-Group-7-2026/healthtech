@@ -65,13 +65,14 @@
     "danger": "Danger: Exposure limits exceeded on"
   },
   "daily_notes": {
-    "viewTitle": "Your notes for {{view}}",
+    "viewTitle": "Your notes for {{date}}",
     "writeHere": "Write here...",
     "edit": "Edit",
     "save": "Save",
     "day": "day",
     "week": "week",
-    "month": "month"
+    "month": "month",
+    "emptyState": "No notes for this {{view}}. Select a day to add a note."
   },
   "buttons": {
     "confirm": "Ok",
