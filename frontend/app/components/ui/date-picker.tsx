@@ -1,3 +1,16 @@
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
+import { useView } from "@/features/views/use-view.js";
+import { ViewPicker } from "@/features/views/view-picker.js";
+import { useFormatDate } from "@/hooks/use-format-date.js";
+import { TIMEZONE, TIMEZONE_NAME } from "@/i18n/locale.js";
+import { now } from "@/lib/date.js";
+import { capitalize } from "@/lib/utils.js";
 import { TZDate } from "@date-fns/tz";
 import {
 	addMonths,
@@ -8,21 +21,9 @@ import {
 } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import * as React from "react";
+import { useEffect } from "react";
 import type { DayPickerProps } from "react-day-picker";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import { useFormatDate } from "@/hooks/use-format-date.js";
-import { TIMEZONE, TIMEZONE_NAME } from "@/i18n/locale.js";
-import { now } from "@/lib/date.js";
-import { capitalize } from "@/lib/utils.js";
-import { ViewPicker } from "@/features/views/view-picker.js";
-import { useView } from "@/features/views/use-view.js";
 
 type DatePickerProps = Omit<
 	DayPickerProps,
@@ -54,6 +55,16 @@ export function DatePicker({
 	const { view } = useView();
 
 	const [selectedDate, setSelectedDate] = React.useState<TZDate>(date ?? now());
+
+	useEffect(() => {
+		if (!date) {
+			return;
+		}
+
+		setSelectedDate((prev) =>
+			prev.getTime() === date.getTime() ? prev : date,
+		);
+	}, [date]);
 
 	const rangeStart = React.useMemo(() => {
 		if (mode === "day") {
