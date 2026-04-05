@@ -57,6 +57,57 @@ export default function Vibration() {
 		],
 	});
 
+	// Retrieve week data to find the min and max hour the user has data
+	const weekSummaryQuery = buildSensorQuery(sensor, "week", date, {
+		granularity: "hour",
+	});
+
+	const weekQuery = useQueries({
+		queries: [
+			sensorQueryOptions({
+				sensor,
+				query,
+				userId: user.id,
+			}),
+			sensorQueryOptions({
+				sensor,
+				query: weekSummaryQuery,
+				userId: user.id,
+				enabled: true,
+			}),
+		],
+	});
+
+	function getMinMaxTime(weeklyQuery: typeof weekQuery) {
+		const dataFromQuery = weeklyQuery[1].data;
+		if (!dataFromQuery || dataFromQuery.length === 0) {
+			return { minTime: undefined, maxTime: undefined };
+		}
+
+		let minimumTime = new Date(dataFromQuery[0].time).getTime();
+		let maximumTime = new Date(dataFromQuery[0].time).getTime();
+		let minimumHour = 23;
+		let maximumHour = 0;
+
+		for (const bucket of dataFromQuery) {
+			const time = new Date(bucket.time).getTime();
+			const hour = new Date(bucket.time).getHours();
+
+			if (hour < minimumHour) {
+				minimumTime = time;
+				minimumHour = hour;
+			}
+			if (hour > maximumHour) {
+				maximumTime = time;
+				maximumHour = hour;
+			}
+		}
+
+		return { minTime: new Date(minimumTime), maxTime: new Date(maximumTime) };
+	}
+
+	const { minTime, maxTime } = getMinMaxTime(weekQuery ?? []);
+
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
 	const minY = 0;
@@ -105,6 +156,8 @@ export default function Vibration() {
 					<div className="w-full">
 						<div id={chartContainerId}>
 							<ChartLineDefault
+								minTime={minTime ?? new Date()}
+								maxTime={maxTime ?? new Date()}
 								chartData={data}
 								chartTitle={date.toLocaleDateString(i18n.language, {
 									day: "numeric",
