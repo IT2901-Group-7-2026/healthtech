@@ -37,10 +37,15 @@ export default function Dust() {
 		granularity: "hour",
 	});
 
+	// Retrieve week data to find the min and max hour the user has data
+	const weekSummaryQuery = buildSensorQuery(sensor, "week", date, {
+		granularity: "hour",
+	});
+
 	const useDaySummary = view === "day";
 	const dustThreshold = getThreshold(sensor, query.field);
 
-	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries({
+	const [{ data, isLoading, isError }, { data: daySummaryData }, { data: weekSummaryData }] = useQueries({
 		queries: [
 			sensorQueryOptions({
 				sensor,
@@ -53,21 +58,6 @@ export default function Dust() {
 				userId: user.id,
 				enabled: useDaySummary,
 			}),
-		],
-	});
-
-	// Retrieve week data to find the min and max hour the user has data
-	const weekSummaryQuery = buildSensorQuery(sensor, "week", date, {
-		granularity: "hour",
-	});
-
-	const weekQuery = useQueries({
-		queries: [
-			sensorQueryOptions({
-				sensor,
-				query,
-				userId: user.id,
-			}),
 			sensorQueryOptions({
 				sensor,
 				query: weekSummaryQuery,
@@ -77,8 +67,7 @@ export default function Dust() {
 		],
 	});
 
-	function getMinMaxTime(weeklyQuery: typeof weekQuery) {
-		const dataFromQuery = weeklyQuery[1].data;
+	function getMinMaxTime(dataFromQuery?: typeof weekSummaryData) {
 		if (!dataFromQuery || dataFromQuery.length === 0) {
 			return { minTime: undefined, maxTime: undefined };
 		}
@@ -105,7 +94,7 @@ export default function Dust() {
 		return { minTime: new Date(minimumTime), maxTime: new Date(maximumTime) };
 	}
 
-	const { minTime, maxTime } = getMinMaxTime(weekQuery ?? []);
+	const { minTime, maxTime } = getMinMaxTime(weekSummaryData);
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
