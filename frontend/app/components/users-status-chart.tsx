@@ -26,6 +26,12 @@ interface Props {
 export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	const [t] = useTranslation();
 	const threshold = getThreshold(sensor);
+	// Values less than MIN_VALUE is counted as 0
+	const MIN_VALUE = 0.4;
+
+	const hasAnySensorData = users.some(
+		(u) => (u.status[sensor]?.value ?? 0) > MIN_VALUE,
+	);
 
 	const data = users.flatMap((user) => {
 		const sensorStatus = user.status[sensor];
@@ -54,7 +60,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 		];
 	});
 
-	if (data.length === 0) {
+	if (!hasAnySensorData) {
 		return (
 			<Card className="w-192">
 				<CardContent className="flex h-48 items-center justify-center text-muted-foreground text-sm">
