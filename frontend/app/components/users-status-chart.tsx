@@ -29,7 +29,9 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	// Values less than MIN_VALUE is counted as 0
 	const MIN_VALUE = 0.4;
 
-	const hasAnySensorData = users.some((u) => (u.status[sensor]?.value??0)>MIN_VALUE);
+	const hasAnySensorData = users.some(
+		(u) => (u.status[sensor]?.value ?? 0) > MIN_VALUE,
+	);
 
 	const data = users.flatMap((user) => {
 		const sensorStatus = user.status[sensor];
