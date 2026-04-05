@@ -39,7 +39,10 @@ export function CalendarWidget({
 	const { t, i18n } = useTranslation();
 	const { visible, openPopup, closePopup } = usePopup();
 	const { setDate } = useDate();
-	const [showShareDataConfirmationMessage, setShowShareDataConfirmationMessage] = useState(false);
+	const [
+		showShareDataConfirmationMessage,
+		setShowShareDataConfirmationMessage,
+	] = useState(false);
 
 	const [popupData, setPopupData] = useState<{
 		day: TZDate | null;
@@ -86,17 +89,21 @@ export function CalendarWidget({
 						size="xs"
 						variant="outline"
 						onClick={() => {
-							setShowMessage(true);
+							setShowShareDataConfirmationMessage(true);
 
 							setTimeout(() => {
-								setShowMessage(false);
+								setShowShareDataConfirmationMessage(false);
 							}, 5000); // Confirmation message duration in ms
 						}}
 					>
 						{t(($) => $.sendButton)}
 					</Button>
 
-					{showMessage && <div className="text-green-600 text-xs">{t(($) => $.sendConfirmation)}</div>}
+					{showShareDataConfirmationMessage && (
+						<div className="text-green-600 text-xs">
+							{t(($) => $.sendConfirmation)}
+						</div>
+					)}
 				</div>
 				<Calendar
 					locale={getLocale(i18n.language)}
