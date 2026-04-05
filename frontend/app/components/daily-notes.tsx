@@ -8,14 +8,18 @@ import { TIMEZONE } from "@/i18n/locale";
 import { createNote, notesQueryOptions, updateNote } from "@/lib/api";
 import type { Note } from "@/lib/dto";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { isSameDay, isSameMonth, isSameWeek } from "date-fns";
+import { isSameDay } from "date-fns";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Textarea } from "./ui/textarea";
 
-export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean }) => {
+export const DailyNotes = ({
+	popUpOverride = false,
+}: {
+	popUpOverride?: boolean;
+}) => {
 	const { t, i18n } = useTranslation();
 	const locale = i18n.language;
 	const { view } = useView();
@@ -44,11 +48,16 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 	});
 
 	const [todayNote, setTodayNote] = useState<Note | null>(
-		data ? (data.find((note) => isSameDay(note.time, date, { in: TIMEZONE })) ?? null) : null,
+		data
+			? (data.find((note) => isSameDay(note.time, date, { in: TIMEZONE })) ??
+					null)
+			: null,
 	);
 
 	const [showTextArea, setShowTextArea] = useState<boolean>(
-		data ? !data.some((note) => isSameDay(note.time, date, { in: TIMEZONE })) : true,
+		data
+			? !data.some((note) => isSameDay(note.time, date, { in: TIMEZONE }))
+			: true,
 	);
 
 	const handleEdit = () => {
@@ -68,7 +77,9 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 
 	useEffect(() => {
 		if (data) {
-			const foundNote = data.find((note) => isSameDay(note.time, date, { in: TIMEZONE })) ?? null;
+			const foundNote =
+				data.find((note) => isSameDay(note.time, date, { in: TIMEZONE })) ??
+				null;
 			setTodayNote(foundNote);
 			setShowTextArea(!foundNote);
 		}
@@ -160,26 +171,18 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 				<CardContent>
 					<ul>
 						{data
-							? data
-									.filter((note) =>
-										isSameWeek(date, note.time, {
-											in: TIMEZONE,
-											weekStartsOn: 1,
-										}),
-									)
-									.sort((n1, n2) => n1.time.getTime() - n2.time.getTime())
-									.map((note) => (
-										<li key={note.time.toDateString()}>
-											<strong>
-												{note.time.toLocaleDateString(locale, {
-													day: "numeric",
-													month: "long",
-												})}
-												{": "}
-											</strong>
-											{note.note}
-										</li>
-									))
+							? data.map((note) => (
+									<li key={note.time.toDateString()}>
+										<strong>
+											{note.time.toLocaleDateString(locale, {
+												day: "numeric",
+												month: "long",
+											})}
+											{": "}
+										</strong>
+										{note.note}
+									</li>
+								))
 							: null}
 					</ul>
 				</CardContent>
@@ -200,25 +203,18 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 			<CardContent>
 				<ul>
 					{data
-						? data
-								.filter((note) =>
-									isSameMonth(date, note.time, {
-										in: TIMEZONE,
-									}),
-								)
-								.sort((n1, n2) => n1.time.getTime() - n2.time.getTime())
-								.map((note) => (
-									<li key={note.time.getTime()}>
-										<strong>
-											{note.time.toLocaleDateString(locale, {
-												day: "numeric",
-												month: "long",
-											})}
-											{": "}
-										</strong>
-										{note.note}
-									</li>
-								))
+						? data.map((note) => (
+								<li key={note.time.getTime()}>
+									<strong>
+										{note.time.toLocaleDateString(locale, {
+											day: "numeric",
+											month: "long",
+										})}
+										{": "}
+									</strong>
+									{note.note}
+								</li>
+							))
 						: null}
 				</ul>
 			</CardContent>

@@ -31,6 +31,7 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
 				&& n.Time <= request.EndTime
 				&& !string.IsNullOrEmpty(n.Note)
 			)
+			.OrderBy(n => n.Time)
 			.ToListAsync();
 	}
 
