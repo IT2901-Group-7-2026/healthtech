@@ -125,7 +125,7 @@ export function LocationMap({ operators, isLoading, imageUrl = "/factory_arial_v
 			</CardHeader>
 			<CardContent>
 				<div className="flex h-full w-full flex-row gap-4">
-					<div className="flex w-2/6 flex-col gap-1 border-r-2 border-solid pr-2">
+					<div className="flex w-3/6 min-w-[290px] max-w-[290px] flex-col gap-1 border-r-2 border-solid pr-2">
 						{isLoading ? (
 							<>
 								<HallOperatorListSkeleton />

@@ -85,7 +85,7 @@ const HallOperatorListItem = ({ operator, sensor }: HallOperatorListItemProps) =
 
 	return (
 		<TableCell className="items-center">
-			<SensorIcon type={sensor} size="sm" dangerLevel={dangerLevel ?? "safe"} className="w-fit" title={title} />
+			<SensorIcon type={sensor} size="xs" dangerLevel={dangerLevel ?? "safe"} className="w-fit" title={title} />
 		</TableCell>
 	);
 };
