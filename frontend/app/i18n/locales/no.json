@@ -103,6 +103,9 @@
   "dark": "Mørk",
   "system": "System",
 
+  "sendButton": "Del data med hygieniker",
+  "sendConfirmation": "Månedlige data vellykket delt ✓",
+
   "dust": "Støv",
   "vibration": "Vibrasjon",
   "noise": "Støy",

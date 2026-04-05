@@ -103,6 +103,9 @@
   "dark": "Dark",
   "system": "System",
 
+  "sendButton": "Share data with hygienist",
+  "sendConfirmation": "Monthly data successfully shared ✓",
+
   "dust": "Dust",
   "vibration": "Vibration",
   "noise": "Noise",

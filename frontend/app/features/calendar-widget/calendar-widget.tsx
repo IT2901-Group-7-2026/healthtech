@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/correctness/noNestedComponentDefinitions: CustomDay is intentionally defined inside CalendarView for prop access. */
 
+import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
 import { DialogDescription } from "@/components/ui/dialog";
@@ -27,6 +28,7 @@ type CalendarProps = {
 	exposureType?: Sensor;
 	selectedAggregation?: Aggregation;
 	data: Array<TimeBucketStatus>;
+	headerRight?: React.ReactNode;
 };
 
 export function CalendarWidget({
@@ -37,6 +39,7 @@ export function CalendarWidget({
 	const { t, i18n } = useTranslation();
 	const { visible, openPopup, closePopup } = usePopup();
 	const { setDate } = useDate();
+	const [showMessage, setShowMessage] = useState(false);
 
 	const [popupData, setPopupData] = useState<{
 		day: TZDate | null;
@@ -77,7 +80,28 @@ export function CalendarWidget({
 
 	return (
 		<>
-			<Card className="mr-auto w-full max-w-2xl">
+			<Card className="relative mr-auto w-full max-w-2xl">
+				<div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-1">
+					<Button
+						size="xs"
+						variant="outline"
+						onClick={() => {
+							setShowMessage(true);
+
+							setTimeout(() => {
+								setShowMessage(false);
+							}, 5000); // Confirmation message duration in ms
+						}}
+					>
+						{t(($) => $.sendButton)}
+					</Button>
+
+					{showMessage && (
+						<div className="text-green-600 text-xs">
+							{t(($) => $.sendConfirmation)}
+						</div>
+					)}
+				</div>
 				<Calendar
 					locale={getLocale(i18n.language)}
 					month={selectedDay}
