@@ -66,6 +66,7 @@ export function ChartLineDefault({
 	const maxData = chartData.toSorted((a, b) => getValue(b) - getValue(a))[0];
 	const minData = chartData.toSorted((a, b) => getValue(a) - getValue(b))[0];
 
+	// Set the domain to be from 1 hour before the first data point to 1 hour after the last data point, clamped to the current day
 	const paddedStart = subHours(minTime, 1);
 	const paddedEnd = addHours(maxTime, 1);
 

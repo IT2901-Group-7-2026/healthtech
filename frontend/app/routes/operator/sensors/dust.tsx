@@ -11,13 +11,13 @@ import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
-import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
-import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
-import { type Sensor, sensors } from "@/lib/sensors";
+import { sensorQueryOptions } from "@/lib/api";
+import { buildSensorQuery } from "@/lib/sensor-query-utils";
+import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { calculateSummaryCounts, mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange } from "@/lib/utils";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -29,34 +29,6 @@ export default function Dust() {
 	const { user } = useUser();
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
-
-	// Retrieve week data to find the min and max time the user has data
-	const queryToFindMinMaxData = useQuery(
-		sensorOverviewQueryOptions({
-			query: buildSensorOverviewQuery([...sensors], "week", date),
-			userId: user.id,
-		}),
-	);
-
-	function getMinMaxTime(dataFromQuery: typeof queryToFindMinMaxData.data) {
-		if (!dataFromQuery || dataFromQuery.length === 0) {
-			return { minTime: undefined, maxTime: undefined };
-		}
-
-		let minimumTime = new Date(dataFromQuery[0].time).getTime();
-		let maximumTime = new Date(dataFromQuery[0].time).getTime();
-
-		for (const bucket of dataFromQuery) {
-			const time = new Date(bucket.time).getTime();
-
-			if (time < minimumTime) minimumTime = time;
-			if (time > maximumTime) maximumTime = time;
-		}
-
-		return { minTime: new Date(minimumTime), maxTime: new Date(maximumTime) };
-	}
-
-	const { minTime, maxTime } = getMinMaxTime(queryToFindMinMaxData.data ?? []);
 
 	const sensor: Sensor = "dust";
 
@@ -83,6 +55,57 @@ export default function Dust() {
 			}),
 		],
 	});
+
+	// Retrieve week data to find the min and max hour the user has data
+	const weekSummaryQuery = buildSensorQuery(sensor, "week", date, {
+		granularity: "hour",
+	});
+
+	const weekQuery = useQueries({
+		queries: [
+			sensorQueryOptions({
+				sensor,
+				query,
+				userId: user.id,
+			}),
+			sensorQueryOptions({
+				sensor,
+				query: weekSummaryQuery,
+				userId: user.id,
+				enabled: true,
+			}),
+		],
+	});
+
+	function getMinMaxTime(weeklyQuery: typeof weekQuery) {
+		const dataFromQuery = weeklyQuery[1].data;
+		if (!dataFromQuery || dataFromQuery.length === 0) {
+			return { minTime: undefined, maxTime: undefined };
+		}
+
+		let minimumTime = new Date(dataFromQuery[0].time).getTime();
+		let maximumTime = new Date(dataFromQuery[0].time).getTime();
+		let minimumHour = 23;
+		let maximumHour = 0;
+
+		for (const bucket of dataFromQuery) {
+			const time = new Date(bucket.time).getTime();
+			const hour = new Date(bucket.time).getHours();
+
+			if (hour < minimumHour) {
+				minimumTime = time;
+				minimumHour = hour;
+			}
+			if (hour > maximumHour) {
+				maximumTime = time;
+				maximumHour = hour;
+			}
+		}
+
+		return { minTime: new Date(minimumTime), maxTime: new Date(maximumTime) };
+	}
+
+	const { minTime, maxTime } = getMinMaxTime(weekQuery ?? []);
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
