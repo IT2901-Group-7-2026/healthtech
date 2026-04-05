@@ -103,6 +103,9 @@
   "dark": "Mørk",
   "system": "System",
 
+  "shareDataWithHygienistButton": "Del data med hygieniker",
+  "shareDataWithHygienistConfirmation": "Månedlige data delt ✓",
+
   "dust": "Støv",
   "vibration": "Vibrasjon",
   "noise": "Støy",
