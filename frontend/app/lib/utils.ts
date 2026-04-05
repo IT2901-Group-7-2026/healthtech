@@ -149,3 +149,36 @@ export function getEmoji(dangerLevel: DangerLevel | null) {
 			return CircleDashedIcon;
 	}
 }
+
+export function getMinAndMaxHour(dataFromQuery: Array <SensorDataResponseDto> | undefined, baseDate: Date) {
+		const defaultMin = new Date(baseDate);
+		defaultMin.setHours(8, 0, 0, 0);
+
+		const defaultMax = new Date(baseDate);
+		defaultMax.setHours(16, 0, 0, 0);
+		
+		if (!dataFromQuery || dataFromQuery.length === 0) {
+			return { minTime: defaultMin, maxTime: defaultMax };
+		}
+
+		let minimumTime = new Date(dataFromQuery[0].time).getTime();
+		let maximumTime = new Date(dataFromQuery[0].time).getTime();
+		let minimumHour = 23;
+		let maximumHour = 0;
+
+		for (const bucket of dataFromQuery) {
+			const time = new Date(bucket.time).getTime();
+			const hour = new Date(bucket.time).getHours();
+
+			if (hour < minimumHour) {
+				minimumTime = time;
+				minimumHour = hour;
+			}
+			if (hour > maximumHour) {
+				maximumTime = time;
+				maximumHour = hour;
+			}
+		}
+
+		return { minTime: new Date(minimumTime), maxTime: new Date(maximumTime) };
+	}
