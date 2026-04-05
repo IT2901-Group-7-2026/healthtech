@@ -39,10 +39,7 @@ export function CalendarWidget({
 	const { t, i18n } = useTranslation();
 	const { visible, openPopup, closePopup } = usePopup();
 	const { setDate } = useDate();
-	const [
-		showShareDataConfirmationMessage,
-		setShowShareDataConfirmationMessage,
-	] = useState(false);
+	const [showShareDataConfirmationMessage, setShowShareDataConfirmationMessage] = useState(false);
 
 	const [popupData, setPopupData] = useState<{
 		day: TZDate | null;
