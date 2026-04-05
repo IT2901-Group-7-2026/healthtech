@@ -26,14 +26,38 @@ import { usersQueryOptions } from "@/lib/api";
 import { type User, UserRoleSchema } from "@/lib/dto.js";
 import { cn, shorthandName, userRoleToString } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { Bell, House, Languages, type LucideIcon, Monitor, Moon, Palette, Sun, User as UserIcon } from "lucide-react";
+import {
+	Bell,
+	House,
+	Languages,
+	type LucideIcon,
+	Monitor,
+	Moon,
+	Palette,
+	Sun,
+	User as UserIcon,
+} from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { href, Link, NavLink, Outlet, type To, useLocation, useNavigate } from "react-router";
+import {
+	href,
+	Link,
+	NavLink,
+	Outlet,
+	type To,
+	useLocation,
+	useNavigate,
+} from "react-router";
 import "leaflet/dist/leaflet.css";
 
 const Logo = () => (
-	<svg width="44" height="40" viewBox="0 0 44 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<svg
+		width="44"
+		height="40"
+		viewBox="0 0 44 40"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+	>
 		<title>{"HealthTech Logo"}</title>
 		<path
 			d="M42.8334 20H34.5001L28.2501 38.75L15.7501 1.25L9.50008 20H1.16675"
@@ -54,12 +78,17 @@ function HomeLink() {
 			<div className="text-2xl">
 				<Logo />
 			</div>
-			<span className="hidden text-xl sm:inline-block">{"HealthTech"}</span>
+			<span className="hidden text-xl sm:inline-block">
+				{"HealthTech"}
+			</span>
 		</NavLink>
 	);
 }
 
-function getLinks(t: TranslateFn, role: User["role"] | null): Array<{ to: To; label: string; icon?: LucideIcon }> {
+function getLinks(
+	t: TranslateFn,
+	role: User["role"] | null,
+): Array<{ to: To; label: string; icon?: LucideIcon }> {
 	switch (role) {
 		case null: {
 			return [];
@@ -182,7 +211,12 @@ export default function Layout() {
 							<Bell className="size-5" />
 						</Button>
 
-						<UserDropdown user={user} users={sortedUsers} setUser={setUser} i18n={i18n} />
+						<UserDropdown
+							user={user}
+							users={sortedUsers}
+							setUser={setUser}
+							i18n={i18n}
+						/>
 					</div>
 				</header>
 
@@ -222,14 +256,21 @@ function UserDropdown({
 	return (
 		<>
 			<DropdownMenu>
-				<DropdownMenuTrigger asChild={true}>
-					<Button variant="ghost" className="h-10 max-w-[14rem] cursor-pointer gap-2 rounded-full pr-3 pl-0">
+				<DropdownMenuTrigger asChild>
+					<Button
+						variant="ghost"
+						className="h-10 max-w-[14rem] cursor-pointer gap-2 rounded-full pr-3 pl-0"
+					>
 						<div className="flex size-9 items-center justify-center rounded-full bg-primary">
 							<UserIcon className="size-5 text-primary-foreground" />
 						</div>
 						<div className="min-w-0 grow text-left leading-tight">
-							<p className="truncate font-medium">{shorthandName(user.username)}</p>
-							<p className="truncate text-foreground/60 text-xs">{user.location.site}</p>
+							<p className="truncate font-medium">
+								{shorthandName(user.username)}
+							</p>
+							<p className="truncate text-foreground/60 text-xs">
+								{user.location.site}
+							</p>
 						</div>
 					</Button>
 				</DropdownMenuTrigger>
@@ -298,8 +339,12 @@ function UserDropdown({
 									localStorage.setItem("i18nextLng", value);
 								}}
 							>
-								<DropdownMenuRadioItem value="en">{t(($) => $.english)}</DropdownMenuRadioItem>
-								<DropdownMenuRadioItem value="no">{t(($) => $.norwegian)}</DropdownMenuRadioItem>
+								<DropdownMenuRadioItem value="en">
+									{t(($) => $.english)}
+								</DropdownMenuRadioItem>
+								<DropdownMenuRadioItem value="no">
+									{t(($) => $.norwegian)}
+								</DropdownMenuRadioItem>
 							</DropdownMenuRadioGroup>
 						</DropdownMenuSubContent>
 					</DropdownMenuSub>
@@ -307,7 +352,9 @@ function UserDropdown({
 					<DropdownMenuSeparator />
 
 					<div className="rounded-md bg-yellow-100 p-3 dark:bg-amber-950">
-						<p className="font-bold text-sm text-zinc-600 dark:text-zinc-300">{"DEMO"}</p>
+						<p className="font-bold text-sm text-zinc-600 dark:text-zinc-300">
+							{"DEMO"}
+						</p>
 
 						<div className="mt-2 flex gap-2.5">
 							{users.length > 0 ? (
@@ -322,10 +369,13 @@ function UserDropdown({
 											className={cn(
 												"flex-1 text-sm text-zinc-600 dark:text-zinc-300",
 												"bg-amber-200 hover:bg-amber-300 dark:bg-amber-900/75 dark:hover:bg-amber-800",
-												isActive && "bg-amber-300 dark:bg-amber-800",
+												isActive &&
+													"bg-amber-300 dark:bg-amber-800",
 											)}
 											onClick={() => {
-												const userWithRole = users.find((u) => u.role === roleValue);
+												const userWithRole = users.find(
+													(u) => u.role === roleValue,
+												);
 												if (userWithRole) {
 													setUser(userWithRole);
 												}
@@ -343,7 +393,9 @@ function UserDropdown({
 						{user.role && (
 							<p className="my-2 text-sm text-zinc-600 dark:text-zinc-300">
 								{t(($) => $.demo.currentRole)}{" "}
-								<span className="font-semibold">{userRoleToString(user.role, t)}</span>
+								<span className="font-semibold">
+									{userRoleToString(user.role, t)}
+								</span>
 							</p>
 						)}
 
@@ -353,9 +405,11 @@ function UserDropdown({
 								"mt-2 w-full text-sm text-zinc-600 dark:text-zinc-300",
 								"bg-amber-200 hover:bg-amber-300 dark:bg-amber-900/75 dark:hover:bg-amber-800",
 							)}
-							asChild={true}
+							asChild
 						>
-							<Link to="/register">{t(($) => $.demo.navigate.toRegister)}</Link>
+							<Link to="/register">
+								{t(($) => $.demo.navigate.toRegister)}
+							</Link>
 						</Button>
 					</div>
 				</DropdownMenuContent>
@@ -373,7 +427,11 @@ function UserDropdown({
 	);
 }
 
-function NavTabs({ routes }: { routes: Array<{ label: string; to: To; icon?: LucideIcon }> }) {
+function NavTabs({
+	routes,
+}: {
+	routes: Array<{ label: string; to: To; icon?: LucideIcon }>;
+}) {
 	const { view } = useView();
 	const { date } = useDate();
 	const location = useLocation();
@@ -382,16 +440,9 @@ function NavTabs({ routes }: { routes: Array<{ label: string; to: To; icon?: Luc
 	const [pillWidth, setPillWidth] = useState<number>();
 	const [pillLeft, setPillLeft] = useState<number>();
 
-	// finds index of the most specific matching route
-	const activeNavIndex =
-		routes
-			.map((route, i) => ({
-				index: i,
-				match: location.pathname.startsWith(route.to.toString()),
-				length: route.to.toString().length,
-			}))
-			.filter((route) => route.match)
-			.sort((a, b) => b.length - a.length)[0]?.index ?? -1;
+	const activeNavIndex = routes.findIndex(
+		(route) => route.to === location.pathname,
+	);
 
 	// update pill whenever the active route changes,
 	useLayoutEffect(() => {
@@ -425,7 +476,7 @@ function NavTabs({ routes }: { routes: Array<{ label: string; to: To; icon?: Luc
 
 				return (
 					<NavLink
-						end={true}
+						end
 						to={{
 							pathname: route.to.toString(),
 							search: `?view=${view}&date=${date.toISOString().split("T")[0]}`,
@@ -438,7 +489,9 @@ function NavTabs({ routes }: { routes: Array<{ label: string; to: To; icon?: Luc
 						className={className}
 						prefetch="intent"
 					>
-						<span className="inline-flex items-center gap-2.5">{route.label}</span>
+						<span className="inline-flex items-center gap-2.5">
+							{route.label}
+						</span>
 					</NavLink>
 				);
 			})}
