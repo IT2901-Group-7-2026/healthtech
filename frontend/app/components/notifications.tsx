@@ -1,10 +1,4 @@
-import {
-	Item,
-	ItemContent,
-	ItemDescription,
-	ItemGroup,
-	ItemTitle,
-} from "@/components/ui/item";
+import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@/components/ui/item";
 import { NotificationPopup } from "@/features/popups/notification-popup";
 import { usePopup } from "@/features/popups/use-popup";
 import { TIMEZONE } from "@/i18n/locale";
@@ -55,11 +49,7 @@ type NotifData = {
 	dangerLevel: DangerLevel;
 };
 
-export function Notifications({
-	onParentClose,
-}: {
-	onParentClose: () => void;
-}) {
+export function Notifications({ onParentClose }: { onParentClose: () => void }) {
 	const { t, i18n } = useTranslation();
 
 	const { visible, openPopup, closePopup } = usePopup();
@@ -85,9 +75,7 @@ export function Notifications({
 						<button
 							type={"button"}
 							key={`${date} ${sensor} ${dangerLevel}`}
-							onClick={() =>
-								handleNotifClick({ date, sensor, dangerLevel })
-							}
+							onClick={() => handleNotifClick({ date, sensor, dangerLevel })}
 							className="cursor-pointer"
 						>
 							<Item
@@ -96,18 +84,10 @@ export function Notifications({
 								size="sm"
 								className="rounded-3xl border-3 border-border bg-background hover:bg-card-highlight"
 							>
-								<SensorIcon
-									type={sensor}
-									size="md"
-									dangerLevel={dangerLevel}
-								/>
+								<SensorIcon type={sensor} size="md" dangerLevel={dangerLevel} />
 								<ItemContent>
-									<ItemTitle className="line-clamp-1">
-										{t(($) => $[sensor])}
-									</ItemTitle>
-									<ItemDescription
-										className={cn(`text-${dangerLevel}`)}
-									>
+									<ItemTitle className="line-clamp-1">{t(($) => $[sensor])}</ItemTitle>
+									<ItemDescription className={cn(`text-${dangerLevel}`)}>
 										{t(($) => $[dangerLevel])}
 									</ItemDescription>
 								</ItemContent>
@@ -155,5 +135,4 @@ export function Notifications({
 	);
 }
 
-const formatNotificationDate = (date: TZDate): string =>
-	formatDate(date, "dd.MM HH.mm", { in: TIMEZONE });
+const formatNotificationDate = (date: TZDate): string => formatDate(date, "dd.MM HH.mm", { in: TIMEZONE });

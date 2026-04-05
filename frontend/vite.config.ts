@@ -11,10 +11,7 @@ const silenceChromeDevtools = (): PluginOption => ({
 	name: "silence-chrome-devtools",
 	configureServer(server) {
 		server.middlewares.use((request, response, next) => {
-			if (
-				request.url ===
-				"/.well-known/appspecific/com.chrome.devtools.json"
-			) {
+			if (request.url === "/.well-known/appspecific/com.chrome.devtools.json") {
 				response.statusCode = 404;
 				response.end();
 				return;
@@ -25,10 +22,5 @@ const silenceChromeDevtools = (): PluginOption => ({
 });
 
 export default defineConfig({
-	plugins: [
-		tailwindcss(),
-		reactRouter(),
-		tsconfigPaths(),
-		silenceChromeDevtools(),
-	],
+	plugins: [tailwindcss(), reactRouter(), tsconfigPaths(), silenceChromeDevtools()],
 });

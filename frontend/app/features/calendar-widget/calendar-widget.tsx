@@ -3,10 +3,7 @@
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
 import { DialogDescription } from "@/components/ui/dialog";
-import {
-	CalendarPopup,
-	type CalendarPopupData,
-} from "@/features/popups/calendar-popup";
+import { CalendarPopup, type CalendarPopupData } from "@/features/popups/calendar-popup";
 import { getLocale, TIMEZONE } from "@/i18n/locale";
 import type { DangerLevel } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
@@ -29,11 +26,7 @@ type CalendarProps = {
 	data: Array<TimeBucketStatus>;
 };
 
-export function CalendarWidget({
-	selectedDay,
-	data,
-	selectedAggregation,
-}: CalendarProps) {
+export function CalendarWidget({ selectedDay, data, selectedAggregation }: CalendarProps) {
 	const { t, i18n } = useTranslation();
 	const { visible, openPopup, closePopup } = usePopup();
 	const { setDate } = useDate();
@@ -43,25 +36,17 @@ export function CalendarWidget({
 		exposures: CalendarPopupData | null;
 	}>({ day: null, exposures: null });
 
-	const safeDays = data
-		.filter((d) => d.dangerLevel === "safe")
-		.map((d) => d.time);
+	const safeDays = data.filter((d) => d.dangerLevel === "safe").map((d) => d.time);
 
-	const warningDays = data
-		.filter((d) => d.dangerLevel === "warning")
-		.map((d) => d.time);
+	const warningDays = data.filter((d) => d.dangerLevel === "warning").map((d) => d.time);
 
-	const dangerDays = data
-		.filter((d) => d.dangerLevel === "danger")
-		.map((d) => d.time);
+	const dangerDays = data.filter((d) => d.dangerLevel === "danger").map((d) => d.time);
 
 	function handleDayClick(clickedDay: TZDate) {
 		const selectedDate = startOfDay(clickedDay);
 		setDate(selectedDate);
 
-		const dayStatus = data.find((d) =>
-			isSameDay(d.time, selectedDate, { in: TIMEZONE }),
-		);
+		const dayStatus = data.find((d) => isSameDay(d.time, selectedDate, { in: TIMEZONE }));
 
 		if (!dayStatus) {
 			return;
@@ -81,20 +66,12 @@ export function CalendarWidget({
 				<Calendar
 					locale={getLocale(i18n.language)}
 					month={selectedDay}
-					hideNavigation
-					showWeekNumber
+					hideNavigation={true}
+					showWeekNumber={true}
 					weekStartsOn={1}
-					onDayClick={(clickedDay) =>
-						handleDayClick(toTZDate(clickedDay))
-					}
+					onDayClick={(clickedDay) => handleDayClick(toTZDate(clickedDay))}
 					components={{
-						DayButton: (props) => (
-							<CustomDay
-								{...props}
-								handleDayClick={handleDayClick}
-								data={data}
-							/>
-						),
+						DayButton: (props) => <CustomDay {...props} handleDayClick={handleDayClick} data={data} />,
 					}}
 					modifiers={{
 						safe: safeDays,
@@ -133,13 +110,8 @@ export function CalendarWidget({
 	);
 }
 
-function getDayDangerLevel(
-	day: TZDate,
-	data: Array<TimeBucketStatus>,
-): DangerLevel | null {
-	const dayStatus = data.find((d) =>
-		isSameDay(d.time, day, { in: TIMEZONE }),
-	);
+function getDayDangerLevel(day: TZDate, data: Array<TimeBucketStatus>): DangerLevel | null {
+	const dayStatus = data.find((d) => isSameDay(d.time, day, { in: TIMEZONE }));
 
 	if (dayStatus) {
 		return dayStatus.dangerLevel;
@@ -156,13 +128,7 @@ type CustomDayProps = {
 	handleDayClick: (day: TZDate) => void;
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-function CustomDay({
-	data,
-	day,
-	className,
-	handleDayClick,
-	...buttonProps
-}: CustomDayProps) {
+function CustomDay({ data, day, className, handleDayClick, ...buttonProps }: CustomDayProps) {
 	const dangerLevel = getDayDangerLevel(toTZDate(day.date), data);
 	const disabled = dangerLevel === null;
 

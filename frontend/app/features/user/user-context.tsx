@@ -7,9 +7,7 @@ type UserContextType = {
 	setUser: (user: User) => void;
 };
 
-export const UserContext = createContext<UserContextType | undefined>(
-	undefined,
-);
+export const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const useUser = () => {
 	const context = useContext(UserContext);

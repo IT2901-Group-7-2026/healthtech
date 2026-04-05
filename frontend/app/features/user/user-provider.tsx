@@ -28,9 +28,5 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 	};
 
 	// This assertion is cursed but it's fine
-	return (
-		<UserContext.Provider value={{ user, isLoading, setUser }}>
-			{children}
-		</UserContext.Provider>
-	);
+	return <UserContext.Provider value={{ user, isLoading, setUser }}>{children}</UserContext.Provider>;
 };

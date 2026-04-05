@@ -16,40 +16,24 @@ const CELL_SIZE_CN = "size-10";
 const STICKY = "sticky left-0 z-10 bg-card pl-4";
 
 const getCellAppearance = (dangerLevel: string | null) => {
-	const baseClasses = cn(
-		CELL_SIZE_CN,
-		"block rounded-lg border transition-all",
-	);
+	const baseClasses = cn(CELL_SIZE_CN, "block rounded-lg border transition-all");
 
-	const clickableClasses =
-		"border-transparent hover:brightness-90 active:scale-[0.98] active:brightness-90";
+	const clickableClasses = "border-transparent hover:brightness-90 active:scale-[0.98] active:brightness-90";
 
 	switch (dangerLevel) {
 		case "danger":
 			return {
-				className: cn(
-					baseClasses,
-					clickableClasses,
-					"bg-danger text-danger-text",
-				),
+				className: cn(baseClasses, clickableClasses, "bg-danger text-danger-text"),
 				isClickable: true,
 			};
 		case "warning":
 			return {
-				className: cn(
-					baseClasses,
-					clickableClasses,
-					"bg-warning text-warning-text",
-				),
+				className: cn(baseClasses, clickableClasses, "bg-warning text-warning-text"),
 				isClickable: true,
 			};
 		case "safe":
 			return {
-				className: cn(
-					baseClasses,
-					clickableClasses,
-					"bg-safe text-safe-text",
-				),
+				className: cn(baseClasses, clickableClasses, "bg-safe text-safe-text"),
 				isClickable: true,
 			};
 		default:
@@ -71,30 +55,19 @@ interface DailyBarChartProps {
 	headerRight?: React.ReactNode;
 }
 
-export function DailyBarChart({
-	data,
-	chartTitle,
-	startHour = 0,
-	endHour = 23,
-	headerRight,
-}: DailyBarChartProps) {
+export function DailyBarChart({ data, chartTitle, startHour = 0, endHour = 23, headerRight }: DailyBarChartProps) {
 	const { t } = useTranslation();
 	const { date } = useDate();
 	const formatDate = useFormatDate();
 
 	const totalHours = endHour - startHour + 1;
 
-	const hours = useMemo(
-		() => Array.from({ length: totalHours }, (_, i) => startHour + i),
-		[startHour, totalHours],
-	);
+	const hours = useMemo(() => Array.from({ length: totalHours }, (_, i) => startHour + i), [startHour, totalHours]);
 
 	const hourData = useMemo(() => {
 		const baseDate = startOfDay(date);
 
-		return hours.reduce<
-			Record<number, { timeLabel: string; utcHour: number }>
-		>((acc, hour) => {
+		return hours.reduce<Record<number, { timeLabel: string; utcHour: number }>>((acc, hour) => {
 			const hourDate = setHours(baseDate, hour);
 
 			acc[hour] = {
@@ -106,10 +79,7 @@ export function DailyBarChart({
 		}, {});
 	}, [hours, date, formatDate]);
 
-	const dateQueryParam = useMemo(
-		() => formatDate(date, "yyyy-MM-dd"),
-		[date, formatDate],
-	);
+	const dateQueryParam = useMemo(() => formatDate(date, "yyyy-MM-dd"), [date, formatDate]);
 
 	const dataBySensor = useMemo(
 		() =>
@@ -140,10 +110,7 @@ export function DailyBarChart({
 
 						{/* Header row */}
 						{hours.map((hour) => (
-							<div
-								key={`header-${hour}`}
-								className="text-center text-[0.675rem] text-muted-foreground"
-							>
+							<div key={`header-${hour}`} className="text-center text-[0.675rem] text-muted-foreground">
 								{hourData[hour].timeLabel}
 							</div>
 						))}
@@ -167,15 +134,10 @@ export function DailyBarChart({
 
 									{/* Hourly grid cells */}
 									{hours.map((localHour) => {
-										const { timeLabel, utcHour } =
-											hourData[localHour];
-										const dangerLevel =
-											rowData?.dangerLevelByHour?.[
-												utcHour
-											];
+										const { timeLabel, utcHour } = hourData[localHour];
+										const dangerLevel = rowData?.dangerLevelByHour?.[utcHour];
 
-										const { className, isClickable } =
-											getCellAppearance(dangerLevel);
+										const { className, isClickable } = getCellAppearance(dangerLevel);
 
 										if (!isClickable) {
 											return (

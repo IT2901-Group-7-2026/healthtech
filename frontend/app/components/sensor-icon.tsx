@@ -6,10 +6,7 @@ import { cn } from "@/lib/utils.js";
 import type { ComponentType } from "react";
 import { NoiseIcon } from "./icons/noise-icon";
 
-export type IconProps = Omit<
-	React.SVGProps<SVGSVGElement>,
-	"width" | "height" | "strokeWidth"
-> & {
+export type IconProps = Omit<React.SVGProps<SVGSVGElement>, "width" | "height" | "strokeWidth"> & {
 	size?: number | string;
 	strokeWidth?: number | string;
 	title?: string;
@@ -42,16 +39,9 @@ interface SensorIconProps {
 	title?: string;
 }
 
-const defaultIconContainerClass =
-	"bg-muted text-foreground border border-border";
+const defaultIconContainerClass = "bg-muted text-foreground border border-border";
 
-export const SensorIcon = ({
-	type,
-	size,
-	dangerLevel,
-	className,
-	title,
-}: SensorIconProps) => {
+export const SensorIcon = ({ type, size, dangerLevel, className, title }: SensorIconProps) => {
 	const Icon = iconConfig[type];
 	const resolvedIconSize = size ?? "md";
 	const dangerLevelIconClasses = dangerLevel
@@ -63,13 +53,7 @@ export const SensorIcon = ({
 		: defaultIconContainerClass;
 
 	return (
-		<div
-			className={cn(
-				"h-fit w-fit rounded-full border",
-				dangerLevelIconClasses,
-				className,
-			)}
-		>
+		<div className={cn("h-fit w-fit rounded-full border", dangerLevelIconClasses, className)}>
 			<Icon className={iconSizeClass[resolvedIconSize]} title={title} />
 		</div>
 	);

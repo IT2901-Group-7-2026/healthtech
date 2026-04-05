@@ -13,10 +13,7 @@ import {
 import type { User } from "@/lib/dto.js";
 import type { ComboboxRootProps } from "@base-ui/react";
 
-type UserSearchProps<Multiple extends boolean = false> = Exclude<
-	ComboboxRootProps<User, Multiple>,
-	"placeholder"
-> & {
+type UserSearchProps<Multiple extends boolean = false> = Exclude<ComboboxRootProps<User, Multiple>, "placeholder"> & {
 	users: Array<User>;
 	placeholder: string;
 	emptyLabel: string;
@@ -40,9 +37,7 @@ export const UserSearch = <Multiple extends boolean = false>({
 				<ComboboxChips>
 					<ComboboxValue>
 						{props.value.map((item) => (
-							<ComboboxChip key={item.id}>
-								{item.username}
-							</ComboboxChip>
+							<ComboboxChip key={item.id}>{item.username}</ComboboxChip>
 						))}
 					</ComboboxValue>
 					<ComboboxChipsInput placeholder={placeholder} />

@@ -1,14 +1,7 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import type { View } from "@/features/views/views";
 import type { TZDate } from "@date-fns/tz";
-import {
-	endOfDay,
-	endOfMonth,
-	endOfWeek,
-	startOfDay,
-	startOfMonth,
-	startOfWeek,
-} from "date-fns";
+import { endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import type {
 	AggregateFnKey,
 	GranularityKey,
@@ -17,10 +10,7 @@ import type {
 	SensorTypeField,
 } from "./dto";
 
-function getGranularityFromView(
-	view: View,
-	isOverview?: boolean,
-): GranularityKey {
+function getGranularityFromView(view: View, isOverview?: boolean): GranularityKey {
 	switch (view) {
 		case "day":
 			// The overview shows hourly data in the day view
@@ -32,10 +22,7 @@ function getGranularityFromView(
 	}
 }
 
-function getAggregationFunction(
-	sensor: Sensor,
-	usePeakAggregation: boolean,
-): AggregateFnKey {
+function getAggregationFunction(sensor: Sensor, usePeakAggregation: boolean): AggregateFnKey {
 	switch (sensor) {
 		case "dust":
 			return "avg";
@@ -46,9 +33,7 @@ function getAggregationFunction(
 	}
 }
 
-function getSensorTypeFieldFromSensor(
-	sensor: Sensor,
-): SensorTypeField | undefined {
+function getSensorTypeFieldFromSensor(sensor: Sensor): SensorTypeField | undefined {
 	switch (sensor) {
 		case "dust":
 			return "pm1_twa";
@@ -96,20 +81,17 @@ export function buildSensorQuery(
 		isOverview?: boolean;
 		startTime?: TZDate;
 		endTime?: TZDate;
+		clampEndTimeToNow?: boolean;
 	},
 ): SensorDataRequestDto {
-	const { startTime: defaultStartTime, endTime: defaultEndTime } =
-		getStartEnd(view, selectedDay);
+	const { startTime: defaultStartTime, endTime: defaultEndTime } = getStartEnd(view, selectedDay);
 
 	const startTime = options?.startTime ?? defaultStartTime;
 	const endTime = options?.endTime ?? defaultEndTime;
 
-	const granularity =
-		options?.granularity ??
-		getGranularityFromView(view, options?.isOverview);
+	const granularity = options?.granularity ?? getGranularityFromView(view, options?.isOverview);
 	const aggregationFunction =
-		options?.aggregationFunction ??
-		getAggregationFunction(sensor, options?.usePeakAggregation ?? false);
+		options?.aggregationFunction ?? getAggregationFunction(sensor, options?.usePeakAggregation ?? false);
 	const field = options?.field ?? getSensorTypeFieldFromSensor(sensor);
 
 	const query: SensorDataRequestDto = {
@@ -118,6 +100,7 @@ export function buildSensorQuery(
 		granularity,
 		function: aggregationFunction,
 		field,
+		clampEndTimeToNow: options?.clampEndTimeToNow,
 	};
 
 	return query;

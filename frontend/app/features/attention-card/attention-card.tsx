@@ -4,10 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton.js";
 import { AtRiskPopup } from "@/features/attention-card/exposure-level-popup.js";
 import { StatCard } from "@/features/attention-card/stat-card";
 import { TIMEZONE } from "@/i18n/locale";
-import {
-	type DangerLevel,
-	mapDangerLevelToColor,
-} from "@/lib/danger-levels.js";
+import { type DangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels.js";
 import { now, parseAsTZDate, today } from "@/lib/date";
 import type { ThresholdSummary, UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor } from "@/lib/sensors.js";
@@ -29,18 +26,12 @@ export const AttentionCard = ({
 	isSubordinatesLoading,
 	thresholdSummary,
 	isThresholdSummaryLoading,
-	// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: we should refactor this
 }: AttentionCardProps) => {
 	const { t } = useTranslation();
 	const [sensor] = useQueryState("sensor", parseAsSensor);
-	const [date] = useQueryState(
-		"filterDate",
-		parseAsTZDate.withDefault(today()),
-	);
+	const [date] = useQueryState("filterDate", parseAsTZDate.withDefault(today()));
 
-	const [selectedStatus, setSelectedStatus] = useState<DangerLevel | null>(
-		null,
-	);
+	const [selectedStatus, setSelectedStatus] = useState<DangerLevel | null>(null);
 	const [popupStatus, setPopupStatus] = useState<DangerLevel | null>(null);
 
 	const openForStatus = (status: DangerLevel) => {
@@ -74,35 +65,20 @@ export const AttentionCard = ({
 	}, [thresholdSummary, subordinates, sensor]);
 
 	const selectedSensorKey = sensor ?? "total";
-	const showActionCard = date
-		? isSameDay(date, now(), { in: TIMEZONE })
-		: false;
+	const showActionCard = date ? isSameDay(date, now(), { in: TIMEZONE }) : false;
 
-	const dangerLevelColor =
-		highestDangerLevel !== null
-			? `text-${mapDangerLevelToColor(highestDangerLevel)}`
-			: null;
+	const dangerLevelColor = highestDangerLevel !== null ? `text-${mapDangerLevelToColor(highestDangerLevel)}` : null;
 
 	const attentionHeaderText =
-		highestDangerLevel !== null
-			? t(($) => $.foremanDashboard.actionCard[highestDangerLevel])
-			: null;
+		highestDangerLevel !== null ? t(($) => $.foremanDashboard.actionCard[highestDangerLevel]) : null;
 
 	const criticalExposureText =
-		highestDangerLevel === "danger"
-			? t(($) => $.foremanDashboard.actionCard.criticalExposureText)
-			: null;
+		highestDangerLevel === "danger" ? t(($) => $.foremanDashboard.actionCard.criticalExposureText) : null;
 
 	const approachingThresholdText =
-		highestDangerLevel === "warning"
-			? t(($) => $.foremanDashboard.actionCard.approachingThresholdText)
-			: null;
+		highestDangerLevel === "warning" ? t(($) => $.foremanDashboard.actionCard.approachingThresholdText) : null;
 
-	if (
-		isThresholdSummaryLoading ||
-		thresholdSummary === undefined ||
-		highestDangerLevel === null
-	) {
+	if (isThresholdSummaryLoading || thresholdSummary === undefined || highestDangerLevel === null) {
 		return (
 			<Card className="gap-3 p-6">
 				<Skeleton className="h-8 w-[50%] rounded-full bg-zinc-100 dark:bg-accent" />
@@ -116,24 +92,21 @@ export const AttentionCard = ({
 			{isSubordinatesLoading ? (
 				<Skeleton className="h-8 w-[50%] rounded-full bg-zinc-100 dark:bg-accent" />
 			) : (
-				<h2 className={cn("font-bold text-2xl", dangerLevelColor)}>
-					{attentionHeaderText}
-				</h2>
+				<h2 className={cn("font-bold text-2xl", dangerLevelColor)}>{attentionHeaderText}</h2>
 			)}
 		</CardHeader>
 	);
 
 	return (
 		<>
-			<Card muted className="gap-3">
+			<Card muted={true} className="gap-3">
 				{actionCardHeader}
 
 				<CardContent className="gap-2">
 					{showActionCard ? (
 						<>
 							{" "}
-							<p>{criticalExposureText}</p>{" "}
-							<p>{approachingThresholdText}</p>{" "}
+							<p>{criticalExposureText}</p> <p>{approachingThresholdText}</p>{" "}
 						</>
 					) : (
 						<p>{t(($) => $.foremanDashboard.actionCard.oldData)}</p>
@@ -143,73 +116,39 @@ export const AttentionCard = ({
 							<>
 								<StatCard
 									className="text-red-500"
-									label={t(
-										($) =>
-											$.foremanDashboard.overview
-												.statCards.danger.label,
-									)}
+									label={t(($) => $.foremanDashboard.overview.statCards.danger.label)}
 									onClick={() => openForStatus("danger")}
-									value={
-										thresholdSummary[selectedSensorKey]
-											.danger
-									}
+									value={thresholdSummary[selectedSensorKey].danger}
 								></StatCard>
 
 								<StatCard
 									className="text-orange-400"
-									label={t(
-										($) =>
-											$.foremanDashboard.overview
-												.statCards.warning.label,
-									)}
+									label={t(($) => $.foremanDashboard.overview.statCards.warning.label)}
 									onClick={() => openForStatus("warning")}
-									value={
-										thresholdSummary[selectedSensorKey]
-											.warning
-									}
+									value={thresholdSummary[selectedSensorKey].warning}
 								></StatCard>
 
 								<StatCard
 									className="text-green-600"
-									label={t(
-										($) =>
-											$.foremanDashboard.overview
-												.statCards.safe.label,
-									)}
+									label={t(($) => $.foremanDashboard.overview.statCards.safe.label)}
 									onClick={() => openForStatus("safe")}
-									value={
-										thresholdSummary[selectedSensorKey].safe
-									}
+									value={thresholdSummary[selectedSensorKey].safe}
 								/>
 							</>
 						)}
 
 						{sensor && (
 							<>
-								<ExposureRiskCard
-									users={subordinates ?? []}
-									sensor={sensor}
-									dangerLevel="danger"
-								/>
-								<ExposureRiskCard
-									users={subordinates ?? []}
-									sensor={sensor}
-									dangerLevel="warning"
-								/>
-								<ExposureRiskCard
-									users={subordinates ?? []}
-									sensor={sensor}
-									dangerLevel="safe"
-								/>
+								<ExposureRiskCard users={subordinates ?? []} sensor={sensor} dangerLevel="danger" />
+								<ExposureRiskCard users={subordinates ?? []} sensor={sensor} dangerLevel="warning" />
+								<ExposureRiskCard users={subordinates ?? []} sensor={sensor} dangerLevel="safe" />
 							</>
 						)}
 					</div>
 				</CardContent>
 			</Card>
 
-			{(popupStatus === "warning" ||
-				popupStatus === "danger" ||
-				popupStatus === "safe") && (
+			{(popupStatus === "warning" || popupStatus === "danger" || popupStatus === "safe") && (
 				<AtRiskPopup
 					open={selectedStatus !== null}
 					onClose={closePopup}

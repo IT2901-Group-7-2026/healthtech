@@ -9,14 +9,9 @@ interface Props {
 	unit?: string;
 	label?: string;
 }
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
+
 // NOTE: This is just a proof of concept. The code will be rewritten completely later on.
-export function DustChart({
-	value,
-	thresholdValue,
-	unit,
-	label,
-}: Props) {
+export function DustChart({ value, thresholdValue, unit, label }: Props) {
 	const { t } = useTranslation();
 	const resolvedUnit = unit ?? t(($) => $.dust_y_axis);
 	const resolvedLabel = label ?? t(($) => $.dust);
@@ -131,7 +126,9 @@ export function DustChart({
 				</svg>
 			</div>
 
-			<div className="mt-2 w-full text-center text-sm font-medium">{resolvedLabel}</div>
+			<div className="mt-2 w-full text-center text-sm font-medium">
+				{resolvedLabel}
+			</div>
 		</Card>
 	);
 }

@@ -2,11 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
 import { Form, FormField, FormItem } from "@/components/ui/form";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { now, toTZDate } from "@/lib/date";
 import type { User } from "@/lib/dto.js";
@@ -29,13 +25,7 @@ interface ProfilePopupProps {
 	children?: React.ReactNode;
 }
 
-export function ProfilePopup({
-	user,
-	open,
-	onClose,
-	avatarSrc,
-	children,
-}: ProfilePopupProps) {
+export function ProfilePopup({ user, open, onClose, avatarSrc, children }: ProfilePopupProps) {
 	const { t } = useTranslation();
 	const title = t(($) => $.profile.title);
 
@@ -58,11 +48,7 @@ export function ProfilePopup({
 	const format = useFormatDate();
 
 	const onSubmit = (data: FormValues) => {
-		if (
-			data.fromDate &&
-			data.toDate &&
-			isBefore(data.toDate, data.fromDate)
-		) {
+		if (data.fromDate && data.toDate && isBefore(data.toDate, data.fromDate)) {
 			form.setError("toDate", {
 				message: t(($) => $.popup.invalidDate),
 			});
@@ -84,12 +70,7 @@ export function ProfilePopup({
 	const [deleteText, setDeleteText] = useState(false);
 
 	return (
-		<BasePopup
-			title={title}
-			open={open}
-			relevantDate={null}
-			onClose={onClose}
-		>
+		<BasePopup title={title} open={open} relevantDate={null} onClose={onClose}>
 			{children}
 
 			<div className="flex flex-col gap-6 md:px-6 md:pb-2">
@@ -109,29 +90,21 @@ export function ProfilePopup({
 					</div>
 					<div className="flex w-full flex-col">
 						<div className="flex flex-row gap-3">
-							<p className="label text-muted-foreground">
-								{t(($) => $.profile.name)}
-							</p>
+							<p className="label text-muted-foreground">{t(($) => $.profile.name)}</p>
 							<h2>{user.username}</h2>
 						</div>
 						<div className="flex flex-row gap-3">
-							<p className="label text-muted-foreground">
-								{t(($) => $.profile.location)}
-							</p>
+							<p className="label text-muted-foreground">{t(($) => $.profile.location)}</p>
 							<h3>{user.location.site}</h3>
 						</div>
 						<div className="flex flex-row gap-3">
-							<p className="label text-muted-foreground">
-								{t(($) => $.profile.jobTitle)}
-							</p>
+							<p className="label text-muted-foreground">{t(($) => $.profile.jobTitle)}</p>
 							<h3>{userRoleToString(user.role, t)}</h3>
 						</div>
 					</div>
 				</div>
 				<div className="flex flex-col gap-2">
-					<h4 className="text-muted-foreground">
-						{t(($) => $.profile.secReg)}
-					</h4>
+					<h4 className="text-muted-foreground">{t(($) => $.profile.secReg)}</h4>
 					<div className="w-full rounded-lg bg-card-highlight p-2">
 						<ul className="ml-5 list-disc">
 							{tempListOfRegulations.map((reg) => (
@@ -141,9 +114,7 @@ export function ProfilePopup({
 					</div>
 				</div>
 				<div className="flex flex-col gap-2">
-					<p className="label text-muted-foreground">
-						{t(($) => $.profile.jobDescription)}
-					</p>
+					<p className="label text-muted-foreground">{t(($) => $.profile.jobDescription)}</p>
 					<div className="w-full rounded-lg bg-card-highlight p-2">
 						<p>{user.jobDescription}</p>
 					</div>
@@ -153,11 +124,7 @@ export function ProfilePopup({
 						<form onSubmit={form.handleSubmit(onSubmit)}>
 							<div className="flex flex-col gap-2">
 								<div className="flex flex-wrap items-center gap-2">
-									<Button
-										type="submit"
-										disabled={!(fromDate && toDate)}
-										className="h-8 w-25 text-sm"
-									>
+									<Button type="submit" disabled={!(fromDate && toDate)} className="h-8 w-25 text-sm">
 										{t(($) => $.popup.deleteData)}
 									</Button>
 									{t(($) => $.popup.from)}
@@ -166,51 +133,25 @@ export function ProfilePopup({
 										name="fromDate"
 										render={({ field }) => (
 											<FormItem>
-												<Popover
-													open={fromCalendarOpen}
-													onOpenChange={
-														setFromCalendarOpen
-													}
-												>
-													<PopoverTrigger asChild>
+												<Popover open={fromCalendarOpen} onOpenChange={setFromCalendarOpen}>
+													<PopoverTrigger asChild={true}>
 														<Button
 															variant={"outline"}
-															data-empty={
-																!field.value
-															}
+															data-empty={!field.value}
 															className="h-8 w-25 justify-between text-left font-normal text-sm data-[empty=true]:text-muted-foreground"
 														>
 															{fromDate
-																? format(
-																		fromDate,
-																		"dd.MM.yy",
-																	)
-																: t(
-																		($) =>
-																			$
-																				.popup
-																				.select,
-																	)}
+																? format(fromDate, "dd.MM.yy")
+																: t(($) => $.popup.select)}
 															<ChevronDownIcon data-icon="inline-end" />
 														</Button>
 													</PopoverTrigger>
-													<PopoverContent
-														className="w-auto p-0"
-														align="start"
-													>
+													<PopoverContent className="w-auto p-0" align="start">
 														<Calendar
 															mode="single"
-															selected={
-																field.value
-															}
+															selected={field.value}
 															onSelect={(value) =>
-																field.onChange(
-																	value
-																		? toTZDate(
-																				value,
-																			)
-																		: undefined,
-																)
+																field.onChange(value ? toTZDate(value) : undefined)
 															}
 															disabled={{
 																before: minSelectableDate,
@@ -229,51 +170,25 @@ export function ProfilePopup({
 										name="toDate"
 										render={({ field }) => (
 											<FormItem>
-												<Popover
-													open={toCalendarOpen}
-													onOpenChange={
-														setToCalendarOpen
-													}
-												>
-													<PopoverTrigger asChild>
+												<Popover open={toCalendarOpen} onOpenChange={setToCalendarOpen}>
+													<PopoverTrigger asChild={true}>
 														<Button
 															variant={"outline"}
-															data-empty={
-																!field.value
-															}
+															data-empty={!field.value}
 															className="h-8 w-24 justify-between text-left font-normal text-sm data-[empty=true]:text-muted-foreground"
 														>
 															{toDate
-																? format(
-																		toDate,
-																		"dd.MM.yy",
-																	)
-																: t(
-																		($) =>
-																			$
-																				.popup
-																				.select,
-																	)}
+																? format(toDate, "dd.MM.yy")
+																: t(($) => $.popup.select)}
 															<ChevronDownIcon data-icon="inline-end" />
 														</Button>
 													</PopoverTrigger>
-													<PopoverContent
-														className="w-auto p-0"
-														align="start"
-													>
+													<PopoverContent className="w-auto p-0" align="start">
 														<Calendar
 															mode="single"
-															selected={
-																field.value
-															}
+															selected={field.value}
 															onSelect={(value) =>
-																field.onChange(
-																	value
-																		? toTZDate(
-																				value,
-																			)
-																		: undefined,
-																)
+																field.onChange(value ? toTZDate(value) : undefined)
 															}
 															disabled={{
 																before: minSelectableDate,
@@ -287,18 +202,13 @@ export function ProfilePopup({
 									/>
 									{form.formState.errors.toDate && (
 										<div className="text-red-500 text-sm">
-											{
-												form.formState.errors.toDate
-													.message
-											}
+											{form.formState.errors.toDate.message}
 										</div>
 									)}
 									{deleteText && fromDate && toDate && (
 										<div className="text-green-700 text-sm">
-											{t(($) => $.popup.dataDeleted)}{" "}
-											{format(fromDate, "d MMMM yyyy")}{" "}
-											{t(($) => $.popup.to)}{" "}
-											{format(toDate, "d MMMM yyyy")}
+											{t(($) => $.popup.dataDeleted)} {format(fromDate, "d MMMM yyyy")}{" "}
+											{t(($) => $.popup.to)} {format(toDate, "d MMMM yyyy")}
 										</div>
 									)}
 								</div>
