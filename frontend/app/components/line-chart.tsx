@@ -122,11 +122,7 @@ export function ChartLineDefault({
 	const getOffset = (y: number) =>
 		maxData && minData ? `${((getValue(maxData) - y) / (getValue(maxData) - getValue(minData))) * 100}%` : "0%";
 
-	//TODO: Call downsample function at call sites
-	// const downsampledData = downsampleSensorData(sensor, chartData);
-	const downsampledData = chartData;
-
-	const transformedData = downsampledData.map((item) => ({
+	const transformedData = chartData.map((item) => ({
 		time: item.time.getTime(),
 		value: getValue(item),
 	}));
