@@ -34,11 +34,12 @@ import { PieChartCard } from "../../features/attention-card/pie-chart-card";
 export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const formatDate = useFormatDate();
+	const { user } = useUser();
 
 	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor);
 	const [date, setDate] = useQueryState("filterDate", parseAsTZDate.withDefault(today()));
 
-	const { data: users } = useQuery(usersQueryOptions());
+	const { data: users } = useQuery(fetchSubordinatesQueryOptions(user.id));
 
 	// TODO: Use this to show data for only that user
 	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString);
@@ -53,7 +54,6 @@ export default function ForemanOverview() {
 	const minSelectableDate = startOfDay(addWeeks(today(), -1));
 	const maxSelectableDate = now();
 
-	const { user } = useUser();
 
 	const isDustQueriesEnabled = Boolean(selectedUserId);
 
