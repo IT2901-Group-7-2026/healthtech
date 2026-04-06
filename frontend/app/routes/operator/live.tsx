@@ -15,7 +15,13 @@ import { getThreshold } from "@/lib/thresholds";
 import { computeYAxisRange } from "@/lib/utils";
 import { TZDate } from "@date-fns/tz";
 import { useQuery } from "@tanstack/react-query";
-import { addMinutes, isWithinInterval, minutesToMilliseconds, startOfDay, startOfMinute } from "date-fns";
+import {
+	addMinutes,
+	isWithinInterval,
+	minutesToMilliseconds,
+	startOfDay,
+	startOfMinute,
+} from "date-fns";
 import { Clock } from "lucide-react";
 import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useMemo } from "react";
@@ -35,7 +41,10 @@ export default function OperatorLiveView() {
 	const [selectedUserId] = useQueryState("userId", parseAsString);
 	const { t } = useTranslation();
 
-	const [timeRange, setTimeRange] = useQueryState<TimeRangeOption>("timeRange", parseTimeRange.withDefault("30"));
+	const [timeRange, setTimeRange] = useQueryState<TimeRangeOption>(
+		"timeRange",
+		parseTimeRange.withDefault("30"),
+	);
 
 	const targetUserId = selectedUserId ?? user.id;
 
@@ -128,7 +137,9 @@ export default function OperatorLiveView() {
 			return [];
 		}
 
-		return rawVibrationData.filter((d) => isWithinInterval(d.time, { start, end }));
+		return rawVibrationData.filter((d) =>
+			isWithinInterval(d.time, { start, end }),
+		);
 	}, [rawVibrationData, start, end]);
 
 	const { data: noiseData } = useQuery(
@@ -156,27 +167,30 @@ export default function OperatorLiveView() {
 				<Card muted={true} className="flex flex-col">
 					<p className="flex items-center gap-2 text-sm">
 						<Clock size="1rem" />
-						Time range
+						{t(($) => $.live.timeRange.label)}
 					</p>
-					<Tabs value={timeRange} onValueChange={(value) => setTimeRange(value as TimeRangeOption)}>
+					<Tabs
+						value={timeRange}
+						onValueChange={(value) => setTimeRange(value as TimeRangeOption)}
+					>
 						<TabsList className="bg-transparent">
 							<TabsTrigger
 								value="30"
 								className="p-4 data-[state=active]:bg-neutral-900 data-[state=active]:text-white"
 							>
-								30 minutes
+								{t(($) => $.live.timeRange.options.thirtyMinutes)}
 							</TabsTrigger>
 							<TabsTrigger
 								value="60"
 								className="p-4 data-[state=active]:bg-neutral-900 data-[state=active]:text-white"
 							>
-								1 hour
+								{t(($) => $.live.timeRange.options.oneHour)}
 							</TabsTrigger>
 							<TabsTrigger
 								value="180"
 								className="p-4 data-[state=active]:bg-neutral-900 data-[state=active]:text-white"
 							>
-								3 hours
+								{t(($) => $.live.timeRange.options.threeHours)}
 							</TabsTrigger>
 						</TabsList>
 					</Tabs>
@@ -190,6 +204,7 @@ export default function OperatorLiveView() {
 							sensor="dust"
 							exposureLabel={"PM1 TWA"}
 							exposureUnitLabel="µg/m³"
+							chartUnitLabel={t(($) => $.dust_y_axis)}
 							data={dustTwa1Data ?? []}
 							minTime={start}
 							maxTime={end}
@@ -201,6 +216,7 @@ export default function OperatorLiveView() {
 							exposureLabel={"PM2.5 TWA"}
 							exposureField="pm25_twa"
 							exposureUnitLabel="µg/m³"
+							chartUnitLabel={t(($) => $.dust_y_axis)}
 							data={dustTwa25Data ?? []}
 							minTime={start}
 							maxTime={end}
@@ -212,6 +228,7 @@ export default function OperatorLiveView() {
 							exposureLabel={"PM10 TWA"}
 							exposureField="pm10_twa"
 							exposureUnitLabel="µg/m³"
+							chartUnitLabel={t(($) => $.dust_y_axis)}
 							data={dustTwa10Data ?? []}
 							minTime={start}
 							maxTime={end}
@@ -229,6 +246,7 @@ export default function OperatorLiveView() {
 							sensor="noise"
 							exposureLabel={t(($) => $.noise)}
 							exposureUnitLabel="dB"
+							chartUnitLabel="db (TWA)"
 							data={noiseData ?? []}
 							minTime={start}
 							maxTime={end}
@@ -245,7 +263,8 @@ export default function OperatorLiveView() {
 						<LiveExposureCard
 							sensor="vibration"
 							exposureLabel={t(($) => $.vibration)}
-							exposureUnitLabel="Points"
+							exposureUnitLabel={t(($) => $.points)}
+							chartUnitLabel={t(($) => $.points)}
 							data={vibrationData ?? []}
 							minTime={start}
 							maxTime={end}
@@ -263,6 +282,7 @@ interface LiveExposureCardProps {
 	exposureLabel: string;
 	exposureField?: "pm1_twa" | "pm25_twa" | "pm10_twa";
 	exposureUnitLabel: string;
+	chartUnitLabel: string;
 	data: Array<SensorDataResponseDto>;
 	minTime: TZDate;
 	maxTime: TZDate;
@@ -274,6 +294,7 @@ const LiveExposureCard = ({
 	exposureLabel,
 	exposureField,
 	exposureUnitLabel,
+	chartUnitLabel,
 	data,
 	minTime,
 	maxTime,
@@ -311,7 +332,7 @@ const LiveExposureCard = ({
 					maxTime={maxTime}
 					chartData={data}
 					chartTitle=""
-					unit={t(($) => $.points)}
+					unit={chartUnitLabel}
 					maxY={maxY}
 					minY={minY}
 					lineType="monotone"
@@ -319,15 +340,23 @@ const LiveExposureCard = ({
 					hideLabels={true}
 					disableAnimation={true}
 					startTickLabel=""
-					endTickLabel="Now"
+					endTickLabel={t(($) => $.live.chart.now)}
 					className={chartClassName}
 					contentClassName="p-0"
 					chartContainerClassName="!aspect-auto"
 					hideHeader={true}
 					muteTickLabels={true}
 				>
-					<ThresholdLine y={threshold.danger} dangerLevel="danger" hideLineLabel={true} />
-					<ThresholdLine y={threshold.warning} dangerLevel="warning" hideLineLabel={true} />
+					<ThresholdLine
+						y={threshold.danger}
+						dangerLevel="danger"
+						hideLineLabel={true}
+					/>
+					<ThresholdLine
+						y={threshold.warning}
+						dangerLevel="warning"
+						hideLineLabel={true}
+					/>
 				</ChartLineDefault>
 			</div>
 		</div>
