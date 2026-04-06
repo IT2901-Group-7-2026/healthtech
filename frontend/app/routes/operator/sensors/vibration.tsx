@@ -16,7 +16,7 @@ import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { calculateSummaryCounts, mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange } from "@/lib/utils";
+import { computeYAxisRange, getHourDomainFromBuckets } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
 import { useId } from "react";
@@ -39,9 +39,14 @@ export default function Vibration() {
 		granularity: "hour",
 	});
 
+	// Retrieve week data to find the min and max hour the user has data
+	const weekSummaryQuery = buildSensorQuery(sensor, "week", date, {
+		granularity: "hour",
+	});
+
 	const useDaySummary = view === "day";
 
-	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries({
+	const [{ data, isLoading, isError }, { data: daySummaryData }, { data: weekSummaryData }] = useQueries({
 		queries: [
 			sensorQueryOptions({
 				sensor,
@@ -54,8 +59,16 @@ export default function Vibration() {
 				userId: user.id,
 				enabled: useDaySummary,
 			}),
+			sensorQueryOptions({
+				sensor,
+				query: weekSummaryQuery,
+				userId: user.id,
+				enabled: true,
+			}),
 		],
 	});
+
+	const { minHour, maxHour } = getHourDomainFromBuckets(weekSummaryData ?? []);
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
@@ -89,7 +102,7 @@ export default function Vibration() {
 				) : view === "month" ? (
 					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
-					<WeekWidget dayStartHour={0} dayEndHour={23} data={calendarData} />
+					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">
 						<CardTitle>
@@ -105,6 +118,8 @@ export default function Vibration() {
 					<div className="w-full">
 						<div id={chartContainerId}>
 							<ChartLineDefault
+								minHour={minHour}
+								maxHour={maxHour}
 								chartData={data}
 								chartTitle={date.toLocaleDateString(i18n.language, {
 									day: "numeric",

@@ -19,6 +19,7 @@ import {
 	mapOverviewBucketsToChartRows,
 	mapOverviewDataToTimeBucketStatuses,
 } from "@/lib/time-bucket-utils";
+import { getHourDomainFromBuckets } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -39,6 +40,8 @@ export default function OperatorHome() {
 
 	const { user } = useUser();
 
+	const queryType = view === "day" ? "week" : view === "week" ? "month" : "day";
+
 	// NOTE: If we later add a peak noise switch here it wouldn't work because we don't return peakDangerLevel in the overview query.
 	const {
 		data: overviewBuckets,
@@ -50,6 +53,21 @@ export default function OperatorHome() {
 			userId: user.id,
 		}),
 	);
+
+	// Retrieve week or month data to find the min and max hour the user has data for that time period
+	const queryToFindMinMaxData = useQuery(
+		sensorOverviewQueryOptions({
+			query: buildSensorOverviewQuery([...sensors], queryType, date),
+			userId: user.id,
+		}),
+	);
+
+	let minHour: number, maxHour: number;
+	if (view === "day") {
+		({ minHour, maxHour } = getHourDomainFromBuckets(queryToFindMinMaxData.data ?? []));
+	} else {
+		({ minHour, maxHour } = getHourDomainFromBuckets(overviewBuckets ?? []));
+	}
 
 	return (
 		<>
@@ -81,8 +99,8 @@ export default function OperatorHome() {
 					) : view === "week" ? (
 						<div className="w-3/4">
 							<WeekWidget
-								dayStartHour={0}
-								dayEndHour={23}
+								dayStartHour={minHour}
+								dayEndHour={maxHour}
 								data={mapOverviewDataToTimeBucketStatuses(overviewBuckets ?? [])}
 							/>
 						</div>
@@ -100,8 +118,8 @@ export default function OperatorHome() {
 					) : (
 						<DailyBarChart
 							data={mapOverviewBucketsToChartRows(overviewBuckets ?? [], 0, 23)}
-							startHour={0}
-							endHour={23}
+							startHour={minHour}
+							endHour={maxHour}
 							chartTitle={date.toLocaleDateString(i18n.language, {
 								day: "numeric",
 								month: "long",
