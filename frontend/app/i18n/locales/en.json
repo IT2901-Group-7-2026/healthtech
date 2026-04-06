@@ -1,302 +1,302 @@
 {
-	"title": "HealthTech | Operator Exposure Dashboard",
-	"description": "Monitor and manage exposure to dust, vibration, and noise.",
-	"layout": {
-		"live": "Live",
-		"overview": "Overview",
-		"home": "Home",
-		"team": "Team",
-		"statistics": "Statistics",
-		"export": "Export overview as PDF",
-		"theme": "Theme",
-		"language": "Language"
-	},
-	"live": {
-		"timeRange": {
-			"label": "Time range",
-			"options": {
-				"thirtyMinutes": "30 minutes",
-				"oneHour": "1 hour",
-				"threeHours": "3 hours"
-			}
-		},
-		"chart": {
-			"now": "Now"
-		},
-		"overviewCard": {
-			"danger": "Exceeding exposure limit",
-			"warning": "Approaching exposure limit",
-			"safe": "Safely within exposure limit"
-		}
-	},
-	"overview": {
-		"all": "All data",
-		"dust": "",
-		"week": "Week {{week}}, {{start}} to {{end}}.",
-		"month": "{{month}}, {{start}} to {{end}}."
-	},
-	"dustExposure": {
-		"title": "Dust exposure"
-	},
-	"vibrationExposure": {
-		"title": "Vibration exposure",
-		"export": "Export as PDF"
-	},
-	"noiseExposure": {
-		"title": "Noise exposure"
-	},
-	"exposure_summary": {
-		"title": {
-			"day": "Exposure for {{day}}",
-			"week": "Exposure for week {{week}}",
-			"month": "Exposure for {{month}}"
-		},
-		"greenHourText": "Hours with safe amount of exposure",
-		"greenDayText": "Days with safe amount of exposure",
-		"orangeHourText": "Hours close to exposure limit",
-		"orangeDayText": "Days close to exposure limit",
-		"redHourText": "Hours above exposure limit",
-		"redDayText": "Days above exposure limit",
-		"dangerSmiley": "Dangerous levels",
-		"safeSmiley": "OK",
-		"warningSmiley": "Near dangerous levels",
-		"noData": "No data"
-	},
-	"line_chart": {
-		"danger": "Exposure Limit",
-		"warning": "Action Limit",
-		"safe": "Safely within exposure limit"
-	},
-	"monthly_view": {
-		"safe": "Safe day on",
-		"warning": "Warnings issued on",
-		"danger": "Danger: Exposure limits exceeded on"
-	},
-	"daily_notes": {
-		"viewTitle": "Your notes for {{date}}",
-		"writeHere": "Write here...",
-		"edit": "Edit",
-		"save": "Save",
-		"day": "day",
-		"week": "week",
-		"month": "month",
-		"emptyState": "No notes for this {{view}}. Select a day to add a note."
-	},
-	"buttons": {
-		"confirm": "Ok",
-		"close": "Close"
-	},
-	"table": {
-		"numberOfRowsSelected": "{{selected}} of {{total}} rows selected",
-		"numberOfRowsSelected_one": "{{selected}} of {{total}} row selected",
-		"numberOfRowsSelected_other": "{{selected}} of {{total}} rows selected"
-	},
-	"sidebar": {
-		"yourTeam": "Your team"
-	},
-	"english": "English",
-	"norwegian": "Norwegian",
+  "title": "HealthTech | Operator Exposure Dashboard",
+  "description": "Monitor and manage exposure to dust, vibration, and noise.",
+  "layout": {
+    "live": "Live",
+    "overview": "Overview",
+    "home": "Home",
+    "team": "Team",
+    "statistics": "Statistics",
+    "export": "Export overview as PDF",
+    "theme": "Theme",
+    "language": "Language"
+  },
+  "live": {
+    "timeRange": {
+      "label": "Time range",
+      "options": {
+        "thirtyMinutes": "30 minutes",
+        "oneHour": "1 hour",
+        "threeHours": "3 hours"
+      }
+    },
+    "chart": {
+      "now": "Now"
+    },
+    "overviewCard": {
+      "danger": "Exceeding exposure limit",
+      "warning": "Approaching exposure limit",
+      "safe": "Safely within exposure limit"
+    }
+  },
+  "overview": {
+    "all": "All data",
+    "dust": "",
+    "week": "Week {{week}}, {{start}} to {{end}}.",
+    "month": "{{month}}, {{start}} to {{end}}."
+  },
+  "dustExposure": {
+    "title": "Dust exposure"
+  },
+  "vibrationExposure": {
+    "title": "Vibration exposure",
+    "export": "Export as PDF"
+  },
+  "noiseExposure": {
+    "title": "Noise exposure"
+  },
+  "exposure_summary": {
+    "title": {
+      "day": "Exposure for {{day}}",
+      "week": "Exposure for week {{week}}",
+      "month": "Exposure for {{month}}"
+    },
+    "greenHourText": "Hours with safe amount of exposure",
+    "greenDayText": "Days with safe amount of exposure",
+    "orangeHourText": "Hours close to exposure limit",
+    "orangeDayText": "Days close to exposure limit",
+    "redHourText": "Hours above exposure limit",
+    "redDayText": "Days above exposure limit",
+    "dangerSmiley": "Dangerous levels",
+    "safeSmiley": "OK",
+    "warningSmiley": "Near dangerous levels",
+    "noData": "No data"
+  },
+  "line_chart": {
+    "danger": "Exposure Limit",
+    "warning": "Action Limit",
+    "safe": "Safely within exposure limit"
+  },
+  "monthly_view": {
+    "safe": "Safe day on",
+    "warning": "Warnings issued on",
+    "danger": "Danger: Exposure limits exceeded on"
+  },
+  "daily_notes": {
+    "viewTitle": "Your notes for {{date}}",
+    "writeHere": "Write here...",
+    "edit": "Edit",
+    "save": "Save",
+    "day": "day",
+    "week": "week",
+    "month": "month",
+    "emptyState": "No notes for this {{view}}. Select a day to add a note."
+  },
+  "buttons": {
+    "confirm": "Ok",
+    "close": "Close"
+  },
+  "table": {
+    "numberOfRowsSelected": "{{selected}} of {{total}} rows selected",
+    "numberOfRowsSelected_one": "{{selected}} of {{total}} row selected",
+    "numberOfRowsSelected_other": "{{selected}} of {{total}} rows selected"
+  },
+  "sidebar": {
+    "yourTeam": "Your team"
+  },
+  "english": "English",
+  "norwegian": "Norwegian",
 
-	"time": "Time",
-	"today": "Today",
+  "time": "Time",
+  "today": "Today",
 
-	"safe": "Safe",
-	"warning": "Warning",
-	"danger": "Danger",
+  "safe": "Safe",
+  "warning": "Warning",
+  "danger": "Danger",
 
-	"peak": "Peak",
-	"average": "Average",
+  "peak": "Peak",
+  "average": "Average",
 
-	"light": "Light",
-	"dark": "Dark",
-	"system": "System",
+  "light": "Light",
+  "dark": "Dark",
+  "system": "System",
 
-	"shareDataWithHygienistButton": "Share data with hygienist",
-	"shareDataWithHygienistConfirmation": "Monthly data shared ✓",
+  "shareDataWithHygienistButton": "Share data with hygienist",
+  "shareDataWithHygienistConfirmation": "Monthly data shared ✓",
 
-	"dust": "Dust",
-	"vibration": "Vibration",
-	"noise": "Noise",
-	"allSensors": "Overview",
-	"all": "All sensors",
+  "dust": "Dust",
+  "vibration": "Vibration",
+  "noise": "Noise",
+  "allSensors": "Overview",
+  "all": "All sensors",
 
-	"sensorSelectPlaceholder": "Sensor",
+  "sensorSelectPlaceholder": "Sensor",
 
-	"views": "Views",
-	"day": "Day",
-	"week": "Week",
-	"month": "Month",
-	"viewSelectionText": "You are viewing a {{view}}.",
-	"dateSelectionRecapSingle": "You have selected {{date}}.",
-	"dateSelectionRecapMultiple": "You have selected {{startDate}} to {{endDate}}.",
+  "views": "Views",
+  "day": "Day",
+  "week": "Week",
+  "month": "Month",
+  "viewSelectionText": "You are viewing a {{view}}.",
+  "dateSelectionRecapSingle": "You have selected {{date}}.",
+  "dateSelectionRecapMultiple": "You have selected {{startDate}} to {{endDate}}.",
 
-	"notifications": "Notifications",
-	"popup": {
-		"toDay": "See details",
-		"notesTitle": "Note for this day:",
-		"exposureTitle": "Exposure:",
-		"safe": "No exposure limit was exceeded",
-		"warning": "An exposure limit was almost exceeded",
-		"danger": "An exposure limit was exceeded",
-		"openDaily": "See details for information about type of exposure",
-		"eventTitle": "{{day}}, from {{start}} to {{end}}",
-		"notifTitle": "Notification received {{date}}",
-		"deleteData": "Delete data",
-		"dataDeleted": "Deleted data from",
-		"to": "Delete data to:",
-		"from": "Delete data from:",
-		"startDate": "Start date...",
-		"endDate": "End date...",
-		"date": "date",
-		"invalidDate": "Please select a start date that starts before the end date. "
-	},
-	"profile": {
-		"title": "Profile",
-		"location": "Location",
-		"name": "Name",
-		"prefLanguage": "Preferred language",
-		"secReg": "Current security regulations",
-		"jobTitle": "Job title",
-		"jobDescription": "Job description",
-		"deleteButtonInformation": "Delete personal data"
-	},
-	"atRiskTable": {
-		"title": "Workers at Risk",
-		"detailText": "View details",
-		"noWorkers": "No workers at risk"
-	},
-	"exposureLevel": {
-		"in_danger": "Workers In Danger",
-		"warning": "Workers at Risk",
-		"safe": "Workers Within Limits",
-		"no_in_danger": "No workers in this category"
-	},
-	"interactiveCard": {
-		"viewDetails": "View details"
-	},
-	"loadingData": "Loading data...",
-	"errorLoadingData": "Something went wrong while fetching sensor data.",
-	"noData": "No exposure data found for this day",
-	"points": "Points",
-	"dust_y_axis": "µg/m³",
-	"foremanDashboard": {
-		"team": {
-			"title": "Your team",
-			"failedToLoadMembers": "Failed to load team members",
-			"noMembersFound": "No team members found",
-			"table": {
-				"username": "Username",
-				"email": "Email",
-				"status": "Status",
-				"jobDescription": "Job description",
-				"action": "Action"
-			},
-			"action": {
-				"removeSubordinate": "Remove from team",
-				"addSubordinate": "Add to team"
-			},
-			"membersCount": "{{count}} operator in team",
-			"membersCount_one": "{{count}} operator in team",
-			"membersCount_other": "{{count}} operators in team",
-			"mapTitle": "Location map",
-			"mapPlaceholder": "Placeholder. Will be moved"
-		},
-		"overview": {
-			"title": "Foreman Overview",
-			"pieChart": {
-				"noData": "No data found for this date"
-			},
-			"statCards": {
-				"danger": {
-					"description": "Operators exceeding threshold",
-					"label": "In danger",
-					"noOperators": "No operators in danger"
-				},
-				"warning": {
-					"description": "Operators approaching exposure limit",
-					"label": "At risk",
-					"noOperators": "No operators at risk"
-				},
-				"safe": {
-					"description": "Operators within safe exposure range",
-					"label": "Within limits",
-					"noOperators": "No operators within limits"
-				}
-			},
-			"selectUserPlaceholder": "Select team member",
-			"selectDatePlaceholder": "Pick a date"
-		},
-		"actionCard": {
-			"safe": "All good!",
-			"warning": "Attention may be required!",
-			"danger": "Attention may be required!",
-			"criticalExposureText": "Operators above the exposure limit. Immediate follow-up recommended.",
-			"approachingThresholdText": "Operators approaching the exposure limit. Consider preventive measures.",
-			"safeText": "Operators are within safe levels. No action needed right now.",
-			"oldData": "You are viewing old data."
-		},
-		"userStatusChart": {
-			"xAxisLabel": "Percentage of exposure limit",
-			"noData": "No sensor data available for any operators"
-		},
-		"siteMap": {
-			"title": "Site map",
-			"anonymousOperator": "Anonymous operator",
-			"noOperators": "No operators in hall",
-			"operatorSensorStatus": {
-				"danger": "Above exposure limit for {{sensor}}",
-				"warning": "Approaching exposure limit for {{sensor}}",
-				"safe": "Within safe exposure limit for {{sensor}}"
-			}
-		}
-	},
-	"user": {
-		"role": {
-			"operator": "Operator",
-			"foreman": "Foreman"
-		},
-		"searchPlaceholder": "Search users..."
-	},
-	"demo": {
-		"currentRole": "Current role:",
-		"navigate": {
-			"toApp": "Go to app",
-			"toRegister": "Go to register page"
-		}
-	},
-	"select": {
-		"all": "Select all",
-		"row": "Select row"
-	},
-	"noOptions": "No options available",
-	"operatorHeader": {
-		"title": {
-			"yourExposure": "Your exposure",
-			"yourSensorExposure": "Your {{sensor}} exposure"
-		},
-		"subtitle": {
-			"allExposureTypes": "All exposure types",
-			"viewDay": "Day",
-			"viewWeek": "Week {{week}}",
-			"viewMonth": "Month",
-			"dateDay": "{{date}}",
-			"dateRange": "{{startDate}} to {{endDate}}"
-		}
-	},
-	"register": {
-		"title": "Register to HealthTech",
-		"name": "Full name",
-		"email": "Email address",
-		"password": "Password",
-		"confirmPassword": "Confirm password",
-		"privacyConsent": "I consent to sharing my data with my supervisors for health and safety purposes.",
-		"createAccount": "Create account",
-		"haveAccount": "Already have an account? ",
-		"login": "Log in"
-	},
-	"securityRegulationsCard": {
-		"title": "Current safety regulations",
-		"safetyBoots": "Safety boots",
-		"helmet": "Helmet"
-	}
+  "notifications": "Notifications",
+  "popup": {
+    "toDay": "See details",
+    "notesTitle": "Note for this day:",
+    "exposureTitle": "Exposure:",
+    "safe": "No exposure limit was exceeded",
+    "warning": "An exposure limit was almost exceeded",
+    "danger": "An exposure limit was exceeded",
+    "openDaily": "See details for information about type of exposure",
+    "eventTitle": "{{day}}, from {{start}} to {{end}}",
+    "notifTitle": "Notification received {{date}}",
+    "deleteData": "Delete data",
+    "dataDeleted": "Deleted data from",
+    "to": "Delete data to:",
+    "from": "Delete data from:",
+    "startDate": "Start date...",
+    "endDate": "End date...",
+    "date": "date",
+    "invalidDate": "Please select a start date that starts before the end date. "
+  },
+  "profile": {
+    "title": "Profile",
+    "location": "Location",
+    "name": "Name",
+    "prefLanguage": "Preferred language",
+    "secReg": "Current security regulations",
+    "jobTitle": "Job title",
+    "jobDescription": "Job description",
+    "deleteButtonInformation": "Delete personal data"
+  },
+  "atRiskTable": {
+    "title": "Workers at Risk",
+    "detailText": "View details",
+    "noWorkers": "No workers at risk"
+  },
+  "exposureLevel": {
+    "in_danger": "Workers In Danger",
+    "warning": "Workers at Risk",
+    "safe": "Workers Within Limits",
+    "no_in_danger": "No workers in this category"
+  },
+  "interactiveCard": {
+    "viewDetails": "View details"
+  },
+  "loadingData": "Loading data...",
+  "errorLoadingData": "Something went wrong while fetching sensor data.",
+  "noData": "No exposure data found for this day",
+  "points": "Points",
+  "dust_y_axis": "µg/m³",
+  "foremanDashboard": {
+    "team": {
+      "title": "Your team",
+      "failedToLoadMembers": "Failed to load team members",
+      "noMembersFound": "No team members found",
+      "table": {
+        "username": "Username",
+        "email": "Email",
+        "status": "Status",
+        "jobDescription": "Job description",
+        "action": "Action"
+      },
+      "action": {
+        "removeSubordinate": "Remove from team",
+        "addSubordinate": "Add to team"
+      },
+      "membersCount": "{{count}} operator in team",
+      "membersCount_one": "{{count}} operator in team",
+      "membersCount_other": "{{count}} operators in team",
+      "mapTitle": "Location map",
+      "mapPlaceholder": "Placeholder. Will be moved"
+    },
+    "overview": {
+      "title": "Foreman Overview",
+      "pieChart": {
+        "noData": "No data found for this date"
+      },
+      "statCards": {
+        "danger": {
+          "description": "Operators exceeding threshold",
+          "label": "In danger",
+          "noOperators": "No operators in danger"
+        },
+        "warning": {
+          "description": "Operators approaching exposure limit",
+          "label": "At risk",
+          "noOperators": "No operators at risk"
+        },
+        "safe": {
+          "description": "Operators within safe exposure range",
+          "label": "Within limits",
+          "noOperators": "No operators within limits"
+        }
+      },
+      "selectUserPlaceholder": "Select team member",
+      "selectDatePlaceholder": "Pick a date"
+    },
+    "actionCard": {
+      "safe": "All good!",
+      "warning": "Attention may be required!",
+      "danger": "Attention may be required!",
+      "criticalExposureText": "Operators above the exposure limit. Immediate follow-up recommended.",
+      "approachingThresholdText": "Operators approaching the exposure limit. Consider preventive measures.",
+      "safeText": "Operators are within safe levels. No action needed right now.",
+      "oldData": "You are viewing old data."
+    },
+    "userStatusChart": {
+      "xAxisLabel": "Percentage of exposure limit",
+      "noData": "No sensor data available for any operators"
+    },
+    "siteMap": {
+      "title": "Site map",
+      "anonymousOperator": "Anonymous operator",
+      "noOperators": "No operators in hall",
+      "operatorSensorStatus": {
+        "danger": "Above exposure limit for {{sensor}}",
+        "warning": "Approaching exposure limit for {{sensor}}",
+        "safe": "Within safe exposure limit for {{sensor}}"
+      }
+    }
+  },
+  "user": {
+    "role": {
+      "operator": "Operator",
+      "foreman": "Foreman"
+    },
+    "searchPlaceholder": "Search users..."
+  },
+  "demo": {
+    "currentRole": "Current role:",
+    "navigate": {
+      "toApp": "Go to app",
+      "toRegister": "Go to register page"
+    }
+  },
+  "select": {
+    "all": "Select all",
+    "row": "Select row"
+  },
+  "noOptions": "No options available",
+  "operatorHeader": {
+    "title": {
+      "yourExposure": "Your exposure",
+      "yourSensorExposure": "Your {{sensor}} exposure"
+    },
+    "subtitle": {
+      "allExposureTypes": "All exposure types",
+      "viewDay": "Day",
+      "viewWeek": "Week {{week}}",
+      "viewMonth": "Month",
+      "dateDay": "{{date}}",
+      "dateRange": "{{startDate}} to {{endDate}}"
+    }
+  },
+  "register": {
+    "title": "Register to HealthTech",
+    "name": "Full name",
+    "email": "Email address",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "privacyConsent": "I consent to sharing my data with my supervisors for health and safety purposes.",
+    "createAccount": "Create account",
+    "haveAccount": "Already have an account? ",
+    "login": "Log in"
+  },
+  "securityRegulationsCard": {
+    "title": "Current safety regulations",
+    "safetyBoots": "Safety boots",
+    "helmet": "Helmet"
+  }
 }

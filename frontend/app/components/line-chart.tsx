@@ -54,9 +54,10 @@ type CustomXAxisTickProps = {
 	payload?: { value?: number | string };
 	ticks: Array<number>;
 	getLabel: (value: number, index: number) => string;
+	muteTickLabels?: boolean;
 };
 
-function CustomXAxisTick({ x = 0, y = 0, payload, ticks, getLabel }: CustomXAxisTickProps) {
+function CustomXAxisTick({ x = 0, y = 0, payload, ticks, getLabel, muteTickLabels }: CustomXAxisTickProps) {
 	const xPos = typeof x === "number" ? x : Number(x) || 0;
 	const yPos = typeof y === "number" ? y : Number(y) || 0;
 
@@ -70,10 +71,11 @@ function CustomXAxisTick({ x = 0, y = 0, payload, ticks, getLabel }: CustomXAxis
 	return (
 		<text
 			x={xPos}
-			y={yPos + 14}
+			y={yPos}
 			textAnchor={isFirst ? "start" : isLast ? "end" : "middle"}
 			fill="var(--color-muted-foreground)"
 			fontSize={12}
+			className={cn(muteTickLabels ? "text-sm" : "text-base")}
 		>
 			{getLabel(value, index)}
 		</text>
@@ -212,7 +214,14 @@ export function ChartLineDefault({
 							tickLine={false}
 							axisLine={false}
 							tickMargin={8}
-							tick={(props) => <CustomXAxisTick {...props} ticks={ticks} getLabel={getXAxisTickLabel} />}
+							tick={(props) => (
+								<CustomXAxisTick
+									{...props}
+									ticks={ticks}
+									getLabel={getXAxisTickLabel}
+									muteTickLabels={muteTickLabels}
+								/>
+							)}
 							label={
 								hideLabels
 									? undefined
