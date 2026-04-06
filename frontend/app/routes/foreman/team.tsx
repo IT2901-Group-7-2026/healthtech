@@ -176,7 +176,7 @@ export default function TeamPage() {
 					</Button>
 				</div>
 			</div>
-			<div className="flex w-2/3 flex-col gap-4">
+			<div className="flex w-full flex-col gap-4">
 				<h1 className="font-bold text-2xl">{t(($) => $.foremanDashboard.team.mapTitle)}</h1>
 				<p className="text-muted-foreground">{`(${t(($) => $.foremanDashboard.team.mapPlaceholder)})`}</p>
 				<LocationMap operators={subordinates ?? []} isLoading={isSubordinatesLoading} />
