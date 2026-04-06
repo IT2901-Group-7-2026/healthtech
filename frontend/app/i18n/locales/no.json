@@ -136,12 +136,13 @@
     "eventTitle": "{{day}}, fra {{start}} til {{end}}",
     "notifTitle": "Notifikasjon mottatt {{date}}",
     "deleteData": "Slett data",
-    "dataDeleted": "Personlig data slettet fra",
-    "to": "til",
-    "from": "fra",
-    "select": "velg",
+    "dataDeleted": "Data slettet fra",
+    "to": "Slette data til:",
+    "from": "Slette data fra:",
+    "startDate": "Start dato...",
+    "endDate": "Slutt dato...",
     "date": "dato",
-    "invalidDate": "Sluttdato må være etter startdato"
+    "invalidDate": "Velg en start dato som starter før sluttdato."
   },
   "profile": {
     "title": "Profil",
@@ -150,7 +151,8 @@
     "prefLanguage": "Foretrukket språk",
     "secReg": "Gjeldende sikkerhetsreguleringer",
     "jobTitle": "Stillingsbetegnelse",
-    "jobDescription": "Stillingsbeskrivelse"
+    "jobDescription": "Stillingsbeskrivelse",
+    "deleteButtonInformation": "Slett personlig data"
   },
   "atRiskTable": {
     "title": "Risikosårbare arbeidere",
