@@ -69,14 +69,6 @@ export default function Noise() {
 
 	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
 
-	if (isLoading) {
-		return (
-			<Card className="flex h-24 w-full items-center">
-				<p>{t(($) => $.loadingData)}</p>
-			</Card>
-		);
-	}
-
 	const maxValue = data
 		? Math.max(...data.map((d) => (usePeakAggregation && d.peakValue ? d.peakValue : d.value)))
 		: 0;
@@ -93,6 +85,13 @@ export default function Noise() {
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">
+			<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
+				<TabsList>
+					<TabsTrigger value="average">{t(($) => $.average)}</TabsTrigger>
+					<TabsTrigger value="peak">{t(($) => $.peak)}</TabsTrigger>
+				</TabsList>
+			</Tabs>
+
 			{isLoading ? (
 				<Card className="flex h-24 w-full items-center">
 					<p>{t(($) => $.loadingData)}</p>
@@ -102,13 +101,9 @@ export default function Noise() {
 					<p>{t(($) => $.errorLoadingData)}</p>
 				</Card>
 			) : view === "month" ? (
-				<AggregationTabs aggregation={aggregation} setAggregation={setAggregation}>
-					<CalendarWidget selectedDay={date} selectedAggregation={aggregation} data={calendarData} />
-				</AggregationTabs>
+				<CalendarWidget selectedDay={date} selectedAggregation={aggregation} data={calendarData} />
 			) : view === "week" ? (
-				<AggregationTabs aggregation={aggregation} setAggregation={setAggregation}>
-					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
-				</AggregationTabs>
+				<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
 			) : !data || data.length === 0 ? (
 				<Card className="flex h-24 w-full items-center">
 					<CardTitle>
@@ -123,85 +118,55 @@ export default function Noise() {
 			) : (
 				<div className="w-full">
 					<div id={chartContainerId}>
-						<AggregationTabs aggregation={aggregation} setAggregation={setAggregation}>
-							<ChartLineDefault
-								minHour={minHour}
-								maxHour={maxHour}
-								usePeakData={usePeakAggregation}
-								chartData={data ?? []}
-								chartTitle={date.toLocaleDateString(i18n.language, {
-									day: "numeric",
-									month: "long",
-									year: "numeric",
-								})}
-								unit="db (TWA)"
-								maxY={maxY}
-								minY={minY}
-								lineType="monotone"
-								sensor={sensor}
-								headerRight={
-									<Button
-										size="sm"
-										variant="outline"
-										onClick={() =>
-											exportToPDF(
-												chartContainerId,
-												`${date.toLocaleDateString(i18n.language, {
-													day: "numeric",
-													month: "long",
-													year: "numeric",
-												})}-${user.username}-Noise-Exposure-Overview`,
-												`Noise Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
-											)
-										}
-									>
-										{t(($) => $.vibrationExposure.export)}
-									</Button>
-								}
-							>
-								<ThresholdLine
-									y={
-										usePeakAggregation
-											? // biome-ignore lint/style/noNonNullAssertion: If usePeakAggregation is true and peakDangerLevel is null, there is a bug somewhere else
-												noiseThreshold.peakDanger!
-											: noiseThreshold.danger
+						<ChartLineDefault
+							minHour={minHour}
+							maxHour={maxHour}
+							usePeakData={usePeakAggregation}
+							chartData={data ?? []}
+							chartTitle={date.toLocaleDateString(i18n.language, {
+								day: "numeric",
+								month: "long",
+								year: "numeric",
+							})}
+							unit="db (TWA)"
+							maxY={maxY}
+							minY={minY}
+							lineType="monotone"
+							sensor={sensor}
+							headerRight={
+								<Button
+									size="sm"
+									variant="outline"
+									onClick={() =>
+										exportToPDF(
+											chartContainerId,
+											`${date.toLocaleDateString(i18n.language, {
+												day: "numeric",
+												month: "long",
+												year: "numeric",
+											})}-${user.username}-Noise-Exposure-Overview`,
+											`Noise Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+										)
 									}
-									dangerLevel="danger"
-								/>
-								{!usePeakAggregation && (
-									<ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />
-								)}
-							</ChartLineDefault>
-						</AggregationTabs>
+								>
+									{t(($) => $.vibrationExposure.export)}
+								</Button>
+							}
+						>
+							<ThresholdLine
+								y={
+									usePeakAggregation
+										? // biome-ignore lint/style/noNonNullAssertion: If usePeakAggregation is true and peakDangerLevel is null, there is a bug somewhere else
+											noiseThreshold.peakDanger!
+										: noiseThreshold.danger
+								}
+								dangerLevel="danger"
+							/>
+							{!usePeakAggregation && <ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />}
+						</ChartLineDefault>
 					</div>
 				</div>
 			)}
 		</div>
 	);
 }
-
-const AggregationTabs = ({
-	aggregation,
-	setAggregation,
-	children,
-}: {
-	aggregation: Aggregation;
-	setAggregation: (mode: Aggregation) => void;
-	children: React.ReactNode;
-}) => {
-	const { t } = useTranslation();
-
-	return (
-		<span className="relative w-full">
-			<div className="absolute -top-11 rounded border">
-				<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
-					<TabsList>
-						<TabsTrigger value="average">{t(($) => $.average)}</TabsTrigger>
-						<TabsTrigger value="peak">{t(($) => $.peak)}</TabsTrigger>
-					</TabsList>
-				</Tabs>
-			</div>
-			{children}
-		</span>
-	);
-};

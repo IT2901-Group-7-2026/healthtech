@@ -71,7 +71,7 @@ export default function SensorLayout() {
 			className="grid w-full gap-6"
 			style={{
 				// 73 comes from w-65 on DatePicker's Calendar + p-4 on its outer div (so 8 spacings for both sides)
-				gridTemplateColumns: "minmax(calc(var(--spacing) * 40), 1fr) minmax(0, 4fr) calc(var(--spacing) * 73)",
+				gridTemplateColumns: "minmax(calc(var(--spacing) * 50), 1fr) minmax(0, 3fr) calc(var(--spacing) * 73)",
 				gridTemplateRows: "auto 1fr",
 			}}
 		>
