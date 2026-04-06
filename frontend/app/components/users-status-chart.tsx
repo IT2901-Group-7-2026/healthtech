@@ -26,10 +26,15 @@ interface Props {
 export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	const [t] = useTranslation();
 	const threshold = getThreshold(sensor);
-	// Values less than MIN_VALUE is counted as 0
-	const MIN_VALUE = 0.4;
+	const getPercent = (value: number) =>
+		Math.round((value / threshold.danger) * 100);
 
-	const hasAnySensorData = users.some((u) => (u.status[sensor]?.value ?? 0) > MIN_VALUE);
+	const hasAnySensorData = users.some((u) => {
+		const sensorStatus = u.status[sensor];
+		if (!sensorStatus) return false;
+
+		return getPercent(sensorStatus.value) >= 1;
+	});
 
 	const data = users.flatMap((user) => {
 		const sensorStatus = user.status[sensor];
@@ -37,14 +42,12 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 			return [];
 		}
 
-		const percent = Math.round(
-			(sensorStatus.value / threshold.danger) * 100,
-		);
+		const percent = getPercent(sensorStatus.value);
 		// Only show peak if it's above the current value
 		const peakPercent =
 			sensorStatus.peakValue &&
 			sensorStatus.peakValue > sensorStatus.value
-				? Math.round((sensorStatus.peakValue / threshold.danger) * 100)
+				? getPercent(sensorStatus.peakValue)
 				: null;
 
 		return [
