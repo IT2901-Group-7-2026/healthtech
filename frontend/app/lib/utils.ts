@@ -1,6 +1,6 @@
 import type { View } from "@/features/views/views";
 import type { TranslateFn } from "@/i18n/config.js";
-import type { TZDate } from "@date-fns/tz";
+import { TZDate } from "@date-fns/tz";
 import { type ClassValue, clsx } from "clsx";
 import { addDays, addMonths, addWeeks, subDays, subMonths, subWeeks } from "date-fns";
 import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
@@ -150,35 +150,35 @@ export function getEmoji(dangerLevel: DangerLevel | null) {
 	}
 }
 
-export function getMinAndMaxHour(dataFromQuery: Array <SensorDataResponseDto> | undefined, baseDate: Date) {
-		const defaultMin = new Date(baseDate);
-		defaultMin.setHours(8, 0, 0, 0);
+export function getMinAndMaxHour(dataFromQuery: Array<SensorDataResponseDto> | undefined, baseDate: TZDate) {
+	const defaultMin = new TZDate(baseDate);
+	defaultMin.setHours(8, 0, 0, 0);
 
-		const defaultMax = new Date(baseDate);
-		defaultMax.setHours(16, 0, 0, 0);
-		
-		if (!dataFromQuery || dataFromQuery.length === 0) {
-			return { minTime: defaultMin, maxTime: defaultMax };
-		}
+	const defaultMax = new TZDate(baseDate);
+	defaultMax.setHours(16, 0, 0, 0);
 
-		let minimumTime = new Date(dataFromQuery[0].time).getTime();
-		let maximumTime = new Date(dataFromQuery[0].time).getTime();
-		let minimumHour = 23;
-		let maximumHour = 0;
-
-		for (const bucket of dataFromQuery) {
-			const time = new Date(bucket.time).getTime();
-			const hour = new Date(bucket.time).getHours();
-
-			if (hour < minimumHour) {
-				minimumTime = time;
-				minimumHour = hour;
-			}
-			if (hour > maximumHour) {
-				maximumTime = time;
-				maximumHour = hour;
-			}
-		}
-
-		return { minTime: new Date(minimumTime), maxTime: new Date(maximumTime) };
+	if (!dataFromQuery || dataFromQuery.length === 0) {
+		return { minTime: defaultMin, maxTime: defaultMax };
 	}
+
+	let minimumTime = new TZDate(dataFromQuery[0].time);
+	let maximumTime = new TZDate(dataFromQuery[0].time);
+	let minimumHour = 23;
+	let maximumHour = 0;
+
+	for (const bucket of dataFromQuery) {
+		const time = new TZDate(bucket.time);
+		const hour = time.getHours();
+
+		if (hour < minimumHour) {
+			minimumTime = time;
+			minimumHour = hour;
+		}
+		if (hour > maximumHour) {
+			maximumTime = time;
+			maximumHour = hour;
+		}
+	}
+
+	return { minTime: minimumTime, maxTime: maximumTime };
+}
