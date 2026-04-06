@@ -25,6 +25,7 @@ import { useTranslation } from "react-i18next";
 import Dust from "./sensors/dust";
 import Noise from "./sensors/noise";
 import Vibration from "./sensors/vibration";
+import { getHourDomainFromBuckets } from "app/lib/utils";
 
 export default function OperatorHome() {
 	const { t, i18n } = useTranslation();
@@ -61,29 +62,14 @@ export default function OperatorHome() {
 		}),
 	);
 
-	function getHourDomainFromBuckets(buckets: typeof overviewBuckets) {
-		if (!buckets || buckets.length === 0) {
-			return { minHour: 0, maxHour: 23 };
-		}
-
-		let minimumHour = 23;
-		let maximumHour = 0;
-
-		for (const bucket of buckets) {
-			const hour = new Date(bucket.time).getHours();
-
-			if (hour < minimumHour) minimumHour = hour;
-			if (hour > maximumHour) maximumHour = hour;
-		}
-
-		return { minHour: minimumHour, maxHour: maximumHour };
-	}
 	let minHour: number, maxHour: number;
 	if (view === "day") {
 		({ minHour, maxHour } = getHourDomainFromBuckets(queryToFindMinMaxData.data ?? []));
 	} else {
 		({ minHour, maxHour } = getHourDomainFromBuckets(overviewBuckets ?? []));
 	}
+
+	console.log(minHour, maxHour)
 
 	return (
 		<>
@@ -116,7 +102,7 @@ export default function OperatorHome() {
 						<div className="w-3/4">
 							<WeekWidget
 								dayStartHour={minHour}
-								dayEndHour={maxHour + 1}
+								dayEndHour={maxHour}
 								data={mapOverviewDataToTimeBucketStatuses(overviewBuckets ?? [])}
 							/>
 						</div>

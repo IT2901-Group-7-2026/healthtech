@@ -8,6 +8,11 @@ import { twMerge } from "tailwind-merge";
 import type { DangerLevel } from "./danger-levels";
 import type { SensorDataResponseDto, User } from "./dto";
 import type { Sensor } from "./sensors";
+import type { TimeBucketStatus } from "app/lib/time-bucket-types";
+import { getHours } from "date-fns";
+
+const MAX_CHART_HOUR = 23
+const MIN_CHART_HOUR = 0
 
 export function cn(...inputs: Array<ClassValue>) {
 	return twMerge(clsx(inputs));
@@ -181,4 +186,23 @@ export function getMinAndMaxHour(dataFromQuery: Array<SensorDataResponseDto> | u
 	}
 
 	return { minTime: minimumTime, maxTime: maximumTime };
+}
+
+const clampHour = (hour: number) => Math.max(Math.min(hour, MAX_CHART_HOUR), MIN_CHART_HOUR)
+
+export function getHourDomainFromBuckets(buckets: Array<TimeBucketStatus>) {
+	if (buckets.length === 0) {
+		return {
+			minHour: MIN_CHART_HOUR,
+			maxHour: MAX_CHART_HOUR
+		};
+	}
+
+	const hours = buckets.map(({ time }) => getHours(time))
+
+	// We want to show an hour before and after the actual data. We clamp the values to chart.
+	const minHour = clampHour(Math.min(...hours) - 1)
+	const maxHour = clampHour(Math.max(...hours) + 1)
+
+	return { minHour, maxHour };
 }
