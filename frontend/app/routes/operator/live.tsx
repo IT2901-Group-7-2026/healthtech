@@ -1,6 +1,6 @@
-import { DailyNotes } from "@/components/daily-notes";
 import { ExposureSlider } from "@/components/exposure-slider";
 import { LiveStatusOverviewCard } from "@/features/live-status/live-status-overview-card";
+import { SecurityRegulationsCard } from "@/features/security-regulations-card/security-regulations-card";
 import { useUser } from "@/features/user/user-context";
 import { sensorQueryOptions } from "@/lib/api";
 import { now, parseAsTZDate, today } from "@/lib/date";
@@ -102,7 +102,7 @@ export default function OperatorLiveView() {
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex w-1/5 shrink-0 flex-col gap-4">
-				<DailyNotes />
+				<SecurityRegulationsCard />
 			</div>
 
 			<div className="flex w-full min-w-0 flex-col gap-4">

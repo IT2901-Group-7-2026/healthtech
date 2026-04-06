@@ -271,5 +271,10 @@
     "createAccount": "Opprett konto",
     "haveAccount": "Har du allerede en konto? ",
     "login": "Logg inn"
+  },
+  "securityRegulationsCard": {
+    "title": "Gjeldene sikkerhetsreguleringer",
+    "safetyBoots": "Sikkerhetsstøvler",
+    "helmet": "Hjelm"
   }
 }
