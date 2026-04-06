@@ -1,4 +1,3 @@
-import { useView } from "@/features/views/use-view";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { TIMEZONE, TIMEZONE_NAME } from "@/i18n/locale";
 import { now } from "@/lib/date";
@@ -31,7 +30,6 @@ export function DatePicker({
 }: DatePickerProps) {
 	const formatDate = useFormatDate();
 	const { t, i18n } = useTranslation();
-	const { view } = useView();
 
 	const [selectedDate, setSelectedDate] = useState<TZDate>(date ?? now());
 
@@ -102,16 +100,6 @@ export function DatePicker({
 	const selectionRecap = selectionDetail.date
 		? t(($) => $.dateSelectionRecapSingle, { date: selectionDetail.date })
 		: t(($) => $.dateSelectionRecapMultiple, {
-				startDate: selectionDetail.startDate,
-				endDate: selectionDetail.endDate,
-			});
-
-	const formattedView = t(($) => $[view]).toLowerCase();
-	const selectionText = t(($) => $.viewSelectionText, { view: formattedView });
-
-	const selectionSummary = selectionDetail.date
-		? t(($) => $.dateSelectionSummarySingle, { date: selectionDetail.date })
-		: t(($) => $.dateSelectionSummaryMultiple, {
 				startDate: selectionDetail.startDate,
 				endDate: selectionDetail.endDate,
 			});

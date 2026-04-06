@@ -253,6 +253,20 @@
     "row": "Select row"
   },
   "noOptions": "No options available",
+  "operatorHeader": {
+    "title": {
+      "yourExposure": "Your exposure",
+      "yourSensorExposure": "Your {{sensor}} exposure"
+    },
+    "subtitle": {
+      "allExposureTypes": "All exposure types",
+      "viewDay": "Day",
+      "viewWeek": "Week {{week}}",
+      "viewMonth": "Month",
+      "dateDay": "{{date}}",
+      "dateRange": "{{startDate}} to {{endDate}}"
+    }
+  },
   "register": {
     "title": "Register to HealthTech",
     "name": "Full name",
