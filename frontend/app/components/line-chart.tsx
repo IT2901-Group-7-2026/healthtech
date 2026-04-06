@@ -86,13 +86,9 @@ export function ChartLineDefault({
 	const dataMin = getValue(minData);
 	const dataMax = getValue(maxData);
 
-	console.log(dangerThreshold, warning, dataMax, dataMin)
-
 	const isAllDanger = dangerThreshold <= dataMin;
-	const isAllWarning = dangerThreshold >= dataMax && warning <= dataMin
+	const isAllWarning = dangerThreshold >= dataMax && warning <= dataMin;
 	const isAllSafe = warning >= dataMax;
-
-	console.log(isAllWarning)
 
 	return (
 		<Card className="w-full">
