@@ -65,14 +65,14 @@
     "danger": "Danger: Exposure limits exceeded on"
   },
   "daily_notes": {
-    "dayTitle": "Your notes for {{day}}",
+    "viewTitle": "Your notes for {{date}}",
     "writeHere": "Write here...",
     "edit": "Edit",
     "save": "Save",
-    "notesFromThis": "Notes from this ",
     "day": "day",
     "week": "week",
-    "month": "month"
+    "month": "month",
+    "emptyState": "No notes for this {{view}}. Select a day to add a note."
   },
   "buttons": {
     "confirm": "Ok",
@@ -103,6 +103,9 @@
   "dark": "Dark",
   "system": "System",
 
+  "shareDataWithHygienistButton": "Share data with hygienist",
+  "shareDataWithHygienistConfirmation": "Monthly data shared ✓",
+
   "dust": "Dust",
   "vibration": "Vibration",
   "noise": "Noise",
@@ -115,6 +118,12 @@
   "day": "Day",
   "week": "Week",
   "month": "Month",
+  "viewSelectionText": "You are viewing a {{view}}.",
+  "dateSelectionRecapSingle": "You have selected {{date}}.",
+  "dateSelectionRecapMultiple": "You have selected {{startDate}} to {{endDate}}.",
+  "dateSelectionSummarySingle": "Showing data for {{date}}.",
+  "dateSelectionSummaryMultiple": "Showing data from {{startDate}} to {{endDate}}.",
+
   "notifications": "Notifications",
   "popup": {
     "toDay": "See details",

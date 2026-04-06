@@ -7,6 +7,7 @@ export function NotificationPopup({
 	open,
 	onClose,
 	pathname,
+	search,
 	children,
 }: {
 	title: string;
@@ -14,6 +15,7 @@ export function NotificationPopup({
 	open: boolean;
 	onClose: () => void;
 	pathname?: string;
+	search?: string;
 	children?: React.ReactNode;
 }) {
 	return (
@@ -22,7 +24,8 @@ export function NotificationPopup({
 			open={open}
 			relevantDate={relevantDate}
 			onClose={onClose}
-			pathname={pathname ? pathname : undefined}
+			pathname={pathname}
+			navOverride={search}
 		>
 			{children}
 		</BasePopup>

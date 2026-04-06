@@ -18,10 +18,7 @@ function getSignedInUserId(): string {
 }
 
 // NOTE: For the prototype we don't have proper authentication, so we do a make-shift solution where the client includes the signed in user ID in the query parameters of each request
-export async function fetchWithUserId(
-	path: string,
-	init?: RequestInit,
-): Promise<Response> {
+export async function fetchWithUserId(path: string, init?: RequestInit): Promise<Response> {
 	const url = new URL(path, baseURL);
 	url.searchParams.set("signedInUserId", getSignedInUserId());
 

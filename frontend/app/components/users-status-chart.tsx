@@ -7,15 +7,7 @@ import type { UserWithStatusDto } from "@/lib/dto";
 import { getThreshold } from "@/lib/thresholds";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import {
-	Bar,
-	BarChart,
-	type BarProps,
-	CartesianGrid,
-	ReferenceLine,
-	XAxis,
-	YAxis,
-} from "recharts";
+import { Bar, BarChart, type BarProps, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
 
 interface Props {
 	users: Array<UserWithStatusDto>;
@@ -45,8 +37,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 		const percent = getPercent(sensorStatus.value);
 		// Only show peak if it's above the current value
 		const peakPercent =
-			sensorStatus.peakValue &&
-			sensorStatus.peakValue > sensorStatus.value
+			sensorStatus.peakValue && sensorStatus.peakValue > sensorStatus.value
 				? getPercent(sensorStatus.peakValue)
 				: null;
 
@@ -80,10 +71,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	const chartData = sortedData.map((item) => ({
 		...item,
 		safe: Math.min(item.percent, warningThresholdLine),
-		warning: Math.min(
-			Math.max(item.percent - warningThresholdLine, 0),
-			dangerThresholdLine - warningThresholdLine,
-		),
+		warning: Math.min(Math.max(item.percent - warningThresholdLine, 0), dangerThresholdLine - warningThresholdLine),
 		danger: Math.max(item.percent - dangerThresholdLine, 0),
 		userId: item.id,
 	}));
@@ -98,10 +86,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	};
 
 	// One tick per 25%
-	const xTicks = Array.from(
-		{ length: Math.ceil(xDomainMax / 25) + 1 },
-		(_, i) => i * 25,
-	);
+	const xTicks = Array.from({ length: Math.ceil(xDomainMax / 25) + 1 }, (_, i) => i * 25);
 
 	return (
 		<Card className="w-192 py-0">
@@ -110,12 +95,11 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 					config={{}}
 					className={cn(
 						"aspect-auto h-[520px] w-full",
-						userOnClick &&
-							"[&_.recharts-bar-rectangle]:cursor-pointer",
+						userOnClick && "[&_.recharts-bar-rectangle]:cursor-pointer",
 					)}
 				>
 					<BarChart
-						accessibilityLayer
+						accessibilityLayer={true}
 						layout="vertical"
 						data={chartData}
 						margin={{
@@ -135,11 +119,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 							tickFormatter={(v) => `${v}%`}
 							ticks={xTicks}
 							label={{
-								value: t(
-									($) =>
-										$.foremanDashboard.userStatusChart
-											.xAxisLabel,
-								),
+								value: t(($) => $.foremanDashboard.userStatusChart.xAxisLabel),
 								position: "insideBottom",
 								offset: -24,
 								className: "text-base",
@@ -198,22 +178,16 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 
 								return (
 									<div className="grid min-w-[8rem] gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
-										<div className="font-medium">
-											{label}
-										</div>
+										<div className="font-medium">{label}</div>
 										<div className="flex items-center justify-between gap-2">
-											<span className="text-muted-foreground">
-												{t(($) => $.average)}
-											</span>
+											<span className="text-muted-foreground">{t(($) => $.average)}</span>
 											<span className="font-medium font-mono text-foreground tabular-nums">
 												{`${avg}%`}
 											</span>
 										</div>
 										{peak != null && (
 											<div className="flex items-center justify-between gap-2">
-												<span className="text-muted-foreground">
-													{t(($) => $.peak)}
-												</span>
+												<span className="text-muted-foreground">{t(($) => $.peak)}</span>
 												<span className="font-medium font-mono tabular-nums">{`${peak}%`}</span>
 											</div>
 										)}
@@ -221,24 +195,9 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 								);
 							}}
 						/>
-						<Bar
-							dataKey="safe"
-							stackId="risk"
-							fill="var(--safe)"
-							onClick={barOnClick}
-						/>
-						<Bar
-							dataKey="warning"
-							stackId="risk"
-							fill="var(--warning)"
-							onClick={barOnClick}
-						/>
-						<Bar
-							dataKey="danger"
-							stackId="risk"
-							fill="var(--danger)"
-							onClick={barOnClick}
-						/>
+						<Bar dataKey="safe" stackId="risk" fill="var(--safe)" onClick={barOnClick} />
+						<Bar dataKey="warning" stackId="risk" fill="var(--warning)" onClick={barOnClick} />
+						<Bar dataKey="danger" stackId="risk" fill="var(--danger)" onClick={barOnClick} />
 					</BarChart>
 				</ChartContainer>
 			</CardContent>

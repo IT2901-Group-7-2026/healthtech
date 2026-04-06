@@ -51,6 +51,4 @@ export const parseAsTZDate = createParser<TZDate>({
 	eq: (a, b) => a.getTime() === b.getTime(),
 });
 
-export const tzDateSchema = z.coerce
-	.date()
-	.transform((value) => toTZDate(value));
+export const tzDateSchema = z.coerce.date().transform((value) => toTZDate(value));

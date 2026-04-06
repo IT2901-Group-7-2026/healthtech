@@ -65,14 +65,14 @@
     "danger": "Fare: Eksponeringsgrenser overskredet den"
   },
   "daily_notes": {
-    "dayTitle": "Dine notater for {{day}}",
+    "viewTitle": "Dine notater for {{date}}",
     "writeHere": "Skriv her...",
     "edit": "Rediger",
     "save": "Lagre",
-    "notesFromThis": "Notater fra denne ",
     "day": "dagen",
     "week": "uken",
-    "month": "måneden"
+    "month": "måneden",
+    "emptyState": "Ingen notater for denne {{view}}. Velg en dag for å legge til notater."
   },
   "buttons": {
     "confirm": "Ok",
@@ -103,6 +103,9 @@
   "dark": "Mørk",
   "system": "System",
 
+  "shareDataWithHygienistButton": "Del data med hygieniker",
+  "shareDataWithHygienistConfirmation": "Månedlige data delt ✓",
+
   "dust": "Støv",
   "vibration": "Vibrasjon",
   "noise": "Støy",
@@ -115,6 +118,12 @@
   "day": "Dag",
   "week": "Uke",
   "month": "Måned",
+  "viewSelectionText": "Du blir vist en {{view}}.",
+  "dateSelectionRecapSingle": "Du har valgt {{date}}.",
+  "dateSelectionRecapMultiple": "Du har valgt {{startDate}} til {{endDate}}.",
+  "dateSelectionSummarySingle": "Viser data for {{date}}.",
+  "dateSelectionSummaryMultiple": "Viser data fra {{startDate}} til {{endDate}}.",
+
   "notifications": "Notifikasjoner",
   "popup": {
     "toDay": "Se detaljer",
@@ -155,7 +164,7 @@
     "no_in_danger": "Ingen arbeidere i denne kategorien"
   },
   "interactiveCard": {
-    "viewDetails": "View details"
+    "viewDetails": "Se detaljer"
   },
   "loadingData": "Laster inn data...",
   "errorLoadingData": "Noe gikk galt under henting av sensordata.",
@@ -236,7 +245,7 @@
   "user": {
     "role": {
       "operator": "Operatør",
-      "foreman": "Forman"
+      "foreman": "Formann"
     },
     "searchPlaceholder": "Søk etter brukere..."
   },

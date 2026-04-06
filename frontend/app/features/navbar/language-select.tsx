@@ -1,20 +1,9 @@
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-} from "@/components/ui/select.js";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select.js";
 import type { i18nInstance, TranslateFn } from "@/i18n/config.js";
 import { cn } from "@/lib/utils.js";
 import { Languages } from "lucide-react";
 
-export const LanguageSelect = ({
-	i18n,
-	t,
-}: {
-	i18n: typeof i18nInstance;
-	t: TranslateFn;
-}) => (
+export const LanguageSelect = ({ i18n, t }: { i18n: typeof i18nInstance; t: TranslateFn }) => (
 	<Select
 		value={i18n.language || "en"}
 		onValueChange={(value) => {
@@ -23,7 +12,7 @@ export const LanguageSelect = ({
 		}}
 	>
 		<SelectTrigger
-			withoutChevron
+			withoutChevron={true}
 			className={cn(
 				"h-9 w-9 border-none bg-transparent p-0 shadow-none focus:ring-0 focus:ring-offset-0 dark:bg-transparent",
 				"hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",

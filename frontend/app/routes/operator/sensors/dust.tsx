@@ -11,21 +11,16 @@ import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
-import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import {
-	calculateSummaryCounts,
-	mapSensorDataToTimeBucketStatuses,
-} from "@/lib/time-bucket-utils";
-import { computeYAxisRange } from "@/lib/utils";
+import { calculateSummaryCounts, mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
+import { computeYAxisRange, getHourDomainFromBuckets } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function Dust() {
 	const { view } = useView();
 	const { date } = useDate();
@@ -42,26 +37,37 @@ export default function Dust() {
 		granularity: "hour",
 	});
 
+	// Retrieve week data to find the min and max hour the user has data
+	const weekSummaryQuery = buildSensorQuery(sensor, "week", date, {
+		granularity: "hour",
+	});
+
 	const useDaySummary = view === "day";
 	const dustThreshold = getThreshold(sensor, query.field);
 
-	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries(
-		{
-			queries: [
-				sensorQueryOptions({
-					sensor,
-					query,
-					userId: user.id,
-				}),
-				sensorQueryOptions({
-					sensor,
-					query: daySummaryQuery,
-					userId: user.id,
-					enabled: useDaySummary,
-				}),
-			],
-		},
-	);
+	const [{ data, isLoading, isError }, { data: daySummaryData }, { data: weekSummaryData }] = useQueries({
+		queries: [
+			sensorQueryOptions({
+				sensor,
+				query,
+				userId: user.id,
+			}),
+			sensorQueryOptions({
+				sensor,
+				query: daySummaryQuery,
+				userId: user.id,
+				enabled: useDaySummary,
+			}),
+			sensorQueryOptions({
+				sensor,
+				query: weekSummaryQuery,
+				userId: user.id,
+				enabled: true,
+			}),
+		],
+	});
+
+	const { minHour, maxHour } = getHourDomainFromBuckets(weekSummaryData ?? []);
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
@@ -79,10 +85,7 @@ export default function Dust() {
 				<Summary
 					exposureType={sensor}
 					view={view}
-					data={calculateSummaryCounts(
-						(useDaySummary ? daySummaryData : data) ?? [],
-						sensor,
-					)}
+					data={calculateSummaryCounts((useDaySummary ? daySummaryData : data) ?? [], sensor)}
 				/>
 				<DailyNotes />
 			</div>
@@ -98,13 +101,7 @@ export default function Dust() {
 				) : view === "month" ? (
 					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
-					<WeekWidget
-						locale={getLocale(locale)}
-						dayStartHour={0}
-						dayEndHour={23}
-						weekStartsOn={1}
-						data={calendarData}
-					/>
+					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">
 						<CardTitle>
@@ -120,6 +117,8 @@ export default function Dust() {
 					<div className="w-full">
 						<div id={chartContainerId}>
 							<ChartLineDefault
+								minHour={minHour}
+								maxHour={maxHour}
 								chartData={data ?? []}
 								chartTitle={date.toLocaleDateString(locale, {
 									day: "numeric",
@@ -139,14 +138,11 @@ export default function Dust() {
 										onClick={() =>
 											exportToPDF(
 												chartContainerId,
-												`${date.toLocaleDateString(
-													locale,
-													{
-														day: "numeric",
-														month: "long",
-														year: "numeric",
-													},
-												)}-${user.username}-Dust-Exposure-Overview`,
+												`${date.toLocaleDateString(locale, {
+													day: "numeric",
+													month: "long",
+													year: "numeric",
+												})}-${user.username}-Dust-Exposure-Overview`,
 												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(locale)}`,
 											)
 										}
@@ -156,14 +152,8 @@ export default function Dust() {
 								}
 							>
 								<div className="mb-2 flex justify-end"></div>
-								<ThresholdLine
-									y={dustThreshold.danger}
-									dangerLevel="danger"
-								/>
-								<ThresholdLine
-									y={dustThreshold.warning}
-									dangerLevel="warning"
-								/>
+								<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
+								<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
 							</ChartLineDefault>
 						</div>
 					</div>

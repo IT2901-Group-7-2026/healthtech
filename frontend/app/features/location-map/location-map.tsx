@@ -1,11 +1,7 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-	dangerlevelStyles,
-	getHighestDangerLevel,
-	mapDangerLevelToColor,
-} from "@/lib/danger-levels";
+import { dangerlevelStyles, getHighestDangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import L, { type LatLngBoundsExpression, type PathOptions } from "leaflet";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
@@ -14,10 +10,7 @@ import { renderToString } from "react-dom/server";
 import { useTranslation } from "react-i18next";
 import { ImageOverlay, MapContainer, Marker, Polygon } from "react-leaflet";
 import { type Sensor, sensors } from "../sensor-picker/sensors";
-import {
-	HallOperatorList,
-	HallOperatorListSkeleton,
-} from "./hall-operator-list";
+import { HallOperatorList, HallOperatorListSkeleton } from "./hall-operator-list";
 import { MapUsersBadge } from "./location-map-users-badge";
 import { getCenterPoint, xyToyx } from "./location-map-utils";
 import { useImageSize } from "./use-image-size";
@@ -37,11 +30,7 @@ type LocationMapProps = {
 	isLoading?: boolean;
 };
 
-export function LocationMap({
-	operators,
-	isLoading,
-	imageUrl = "/factory_arial_view.jpg",
-}: LocationMapProps) {
+export function LocationMap({ operators, isLoading, imageUrl = "/factory_arial_view.jpg" }: LocationMapProps) {
 	const imageSize = useImageSize(imageUrl);
 	const { t } = useTranslation();
 	const mapRef = useRef<L.Map | null>(null);
@@ -51,33 +40,20 @@ export function LocationMap({
 		parseAsStringLiteral(["all", ...sensors]).withDefault("all"),
 	);
 
-	const highestDangerLevel = getHighestDangerLevel(
-		operators,
-		sensor === "all" ? null : sensor,
-	);
+	const highestDangerLevel = getHighestDangerLevel(operators, sensor === "all" ? null : sensor);
 
 	// To avoid combining danger levels from multiple sensors when "all" is selected, we use a default color
 	const hallOverlayColor =
-		sensor === "all"
-			? "var(--color-blue-600)"
-			: `var(--${mapDangerLevelToColor(highestDangerLevel)})`;
+		sensor === "all" ? "var(--color-blue-600)" : `var(--${mapDangerLevelToColor(highestDangerLevel)})`;
 
-	const markerColor =
-		sensor === "all"
-			? "bg-teal-700"
-			: dangerlevelStyles[highestDangerLevel].bg;
+	const markerColor = sensor === "all" ? "bg-teal-700" : dangerlevelStyles[highestDangerLevel].bg;
 
 	// TODO: Data for prototype
 	const halls: Array<Hall> = [
 		{
 			name: "M-hallen",
 			operators,
-			positions: [
-				xyToyx(170, 250),
-				xyToyx(250, 250),
-				xyToyx(250, 70),
-				xyToyx(170, 70),
-			],
+			positions: [xyToyx(170, 250), xyToyx(250, 250), xyToyx(250, 70), xyToyx(170, 70)],
 			baseStyle: {
 				color: hallOverlayColor,
 				weight: 2,
@@ -102,9 +78,7 @@ export function LocationMap({
 		},
 	];
 
-	const [selectedHallName, setSelectedHallName] = useState<string | null>(
-		halls.length === 1 ? halls[0].name : null,
-	);
+	const [selectedHallName, setSelectedHallName] = useState<string | null>(halls.length === 1 ? halls[0].name : null);
 
 	const bounds: LatLngBoundsExpression | undefined = imageSize
 		? [
@@ -114,12 +88,7 @@ export function LocationMap({
 		: undefined;
 
 	if (!(imageSize && bounds)) {
-		return (
-			<Skeleton
-				className="w-full rounded-xl bg-muted"
-				style={{ aspectRatio: "16 / 9" }}
-			/>
-		);
+		return <Skeleton className="w-full rounded-xl bg-muted" style={{ aspectRatio: "16 / 9" }} />;
 	}
 
 	const onHallCollapsibleClick = (hallName: string | null) => {
@@ -156,7 +125,7 @@ export function LocationMap({
 			</CardHeader>
 			<CardContent>
 				<div className="flex h-full w-full flex-row gap-4">
-					<div className="flex w-2/6 flex-col gap-1 border-r-2 border-solid pr-2">
+					<div className="flex w-72 flex-col gap-1 border-r-2 border-solid pr-2">
 						{isLoading ? (
 							<>
 								<HallOperatorListSkeleton />
@@ -180,15 +149,11 @@ export function LocationMap({
 					<div className="w-full">
 						<Tabs
 							value={sensor}
-							onValueChange={(value) =>
-								setSensor(value as Sensor | "all")
-							}
+							onValueChange={(value) => setSensor(value as Sensor | "all")}
 							className="mb-4"
 						>
 							<TabsList variant="line">
-								<TabsTrigger value="all">
-									{t(($) => $.allSensors)}
-								</TabsTrigger>
+								<TabsTrigger value="all">{t(($) => $.allSensors)}</TabsTrigger>
 								{sensors.map((s) => (
 									<TabsTrigger key={s} value={s}>
 										{t(($) => $[s])}
@@ -222,52 +187,28 @@ export function LocationMap({
 									<Fragment key={hall.name}>
 										<Polygon
 											pathOptions={
-												selectedHallName === hall.name
-													? hall.selectedStyle
-													: hall.baseStyle
+												selectedHallName === hall.name ? hall.selectedStyle : hall.baseStyle
 											}
 											positions={hall.positions}
 											eventHandlers={{
-												click: () =>
-													hallOverlayOnClick(
-														hall.name,
-													),
+												click: () => hallOverlayOnClick(hall.name),
 												mouseover: (e) => {
-													if (
-														selectedHallName !==
-														hall.name
-													) {
-														e.target.setStyle(
-															hall.hoverStyle,
-														);
+													if (selectedHallName !== hall.name) {
+														e.target.setStyle(hall.hoverStyle);
 													}
 												},
 												mouseout: (e) => {
-													if (
-														selectedHallName !==
-														hall.name
-													) {
-														e.target.setStyle(
-															hall.baseStyle,
-														);
+													if (selectedHallName !== hall.name) {
+														e.target.setStyle(hall.baseStyle);
 													}
 												},
 											}}
 										/>
 										<Marker
-											position={getCenterPoint(
-												hall.positions,
-											)}
-											icon={createUsersIcon(
-												hall.operators.length,
-												markerColor,
-												isLoading,
-											)}
+											position={getCenterPoint(hall.positions)}
+											icon={createUsersIcon(hall.operators.length, markerColor, isLoading)}
 											eventHandlers={{
-												click: () =>
-													hallOverlayOnClick(
-														hall.name,
-													),
+												click: () => hallOverlayOnClick(hall.name),
 											}}
 										/>
 									</Fragment>
@@ -281,20 +222,10 @@ export function LocationMap({
 	);
 }
 
-function createUsersIcon(
-	count: number,
-	badgeBgClassName: string,
-	isLoading?: boolean,
-) {
+function createUsersIcon(count: number, badgeBgClassName: string, isLoading?: boolean) {
 	return L.divIcon({
 		className: "", // Prevents default Leaflet styling
-		html: renderToString(
-			<MapUsersBadge
-				count={count}
-				badgeBgClassName={badgeBgClassName}
-				isLoading={isLoading}
-			/>,
-		),
+		html: renderToString(<MapUsersBadge count={count} badgeBgClassName={badgeBgClassName} isLoading={isLoading} />),
 		iconSize: [60, 32],
 	});
 }

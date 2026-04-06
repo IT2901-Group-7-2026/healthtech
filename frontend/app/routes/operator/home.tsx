@@ -12,7 +12,6 @@ import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
-import { getLocale } from "@/i18n/locale";
 import { sensorOverviewQueryOptions } from "@/lib/api";
 import { buildSensorOverviewQuery } from "@/lib/sensor-query-utils";
 import {
@@ -20,6 +19,7 @@ import {
 	mapOverviewBucketsToChartRows,
 	mapOverviewDataToTimeBucketStatuses,
 } from "@/lib/time-bucket-utils";
+import { getHourDomainFromBuckets } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -27,7 +27,6 @@ import Dust from "./sensors/dust";
 import Noise from "./sensors/noise";
 import Vibration from "./sensors/vibration";
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function OperatorHome() {
 	const { t, i18n } = useTranslation();
 
@@ -41,6 +40,8 @@ export default function OperatorHome() {
 
 	const { user } = useUser();
 
+	const queryType = view === "day" ? "week" : view === "week" ? "month" : "day";
+
 	// NOTE: If we later add a peak noise switch here it wouldn't work because we don't return peakDangerLevel in the overview query.
 	const {
 		data: overviewBuckets,
@@ -52,6 +53,21 @@ export default function OperatorHome() {
 			userId: user.id,
 		}),
 	);
+
+	// Retrieve week or month data to find the min and max hour the user has data for that time period
+	const queryToFindMinMaxData = useQuery(
+		sensorOverviewQueryOptions({
+			query: buildSensorOverviewQuery([...sensors], queryType, date),
+			userId: user.id,
+		}),
+	);
+
+	let minHour: number, maxHour: number;
+	if (view === "day") {
+		({ minHour, maxHour } = getHourDomainFromBuckets(queryToFindMinMaxData.data ?? []));
+	} else {
+		({ minHour, maxHour } = getHourDomainFromBuckets(overviewBuckets ?? []));
+	}
 
 	return (
 		<>
@@ -78,20 +94,16 @@ export default function OperatorHome() {
 					) : view === "month" ? (
 						<CalendarWidget
 							selectedDay={date}
-							data={mapOverviewDataToTimeBucketStatuses(
-								overviewBuckets ?? [],
-							)}
+							data={mapOverviewDataToTimeBucketStatuses(overviewBuckets ?? [])}
 						/>
 					) : view === "week" ? (
-						<WeekWidget
-							locale={getLocale(i18n.language)}
-							dayStartHour={0}
-							dayEndHour={23}
-							weekStartsOn={1}
-							data={mapOverviewDataToTimeBucketStatuses(
-								overviewBuckets ?? [],
-							)}
-						/>
+						<div className="w-3/4">
+							<WeekWidget
+								dayStartHour={minHour}
+								dayEndHour={maxHour}
+								data={mapOverviewDataToTimeBucketStatuses(overviewBuckets ?? [])}
+							/>
+						</div>
 					) : !overviewBuckets || overviewBuckets.length === 0 ? (
 						<Card className="flex h-24 w-full items-center">
 							<CardTitle>
@@ -105,13 +117,9 @@ export default function OperatorHome() {
 						</Card>
 					) : (
 						<DailyBarChart
-							data={mapOverviewBucketsToChartRows(
-								overviewBuckets ?? [],
-								0,
-								23,
-							)}
-							startHour={0}
-							endHour={23}
+							data={mapOverviewBucketsToChartRows(overviewBuckets ?? [], 0, 23)}
+							startHour={minHour}
+							endHour={maxHour}
 							chartTitle={date.toLocaleDateString(i18n.language, {
 								day: "numeric",
 								month: "long",
@@ -126,14 +134,11 @@ export default function OperatorHome() {
 												pdfVibrationChartContainerId,
 												pdfNoiseChartContainerId,
 											],
-											`${date.toLocaleDateString(
-												i18n.language,
-												{
-													day: "numeric",
-													month: "long",
-													year: "numeric",
-												},
-											)}-${user.username}-Exposure-Overview`,
+											`${date.toLocaleDateString(i18n.language, {
+												day: "numeric",
+												month: "long",
+												year: "numeric",
+											})}-${user.username}-Exposure-Overview`,
 											[
 												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
 												`Vibration Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,

@@ -58,5 +58,6 @@ public record SensorDataRequestDto(
 	[Required] DateTimeOffset EndTime,
 	[Required] TimeGranularity Granularity,
 	[Required] AggregationFunction Function,
-	Field? Field
+	Field? Field,
+	bool ClampEndTimeToNow = false
 );

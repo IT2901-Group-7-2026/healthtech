@@ -13,27 +13,18 @@ import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
-import { getLocale } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
-import {
-	type Aggregation,
-	Aggregations,
-	type SensorDataResponseDto,
-} from "@/lib/dto";
+import { type Aggregation, Aggregations, type SensorDataResponseDto } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import {
-	calculateSummaryCounts,
-	mapSensorDataToTimeBucketStatuses,
-} from "@/lib/time-bucket-utils";
-import { computeYAxisRange } from "@/lib/utils";
+import { calculateSummaryCounts, mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
+import { computeYAxisRange, getHourDomainFromBuckets } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: help
 export default function Noise() {
 	const { view } = useView();
 	const { t, i18n } = useTranslation();
@@ -62,33 +53,41 @@ export default function Noise() {
 		usePeakAggregation,
 	});
 
+	// Retrieve week data to find the min and max hour the user has data
+	const weekSummaryQuery = buildSensorQuery(sensor, "week", date, {
+		granularity: "hour",
+		usePeakAggregation,
+	});
+
 	const useDaySummary = view === "day";
 
-	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries(
-		{
-			queries: [
-				sensorQueryOptions({
-					sensor,
-					query,
-					userId: user.id,
-				}),
-				sensorQueryOptions({
-					sensor,
-					query: daySummaryQuery,
-					userId: user.id,
-					enabled: useDaySummary,
-				}),
-			],
-		},
-	);
+	const [{ data, isLoading, isError }, { data: daySummaryData }, { data: weekSummaryData }] = useQueries({
+		queries: [
+			sensorQueryOptions({
+				sensor,
+				query,
+				userId: user.id,
+			}),
+			sensorQueryOptions({
+				sensor,
+				query: daySummaryQuery,
+				userId: user.id,
+				enabled: useDaySummary,
+			}),
+			sensorQueryOptions({
+				sensor,
+				query: weekSummaryQuery,
+				userId: user.id,
+				enabled: true,
+			}),
+		],
+	});
+
+	const { minHour, maxHour } = getHourDomainFromBuckets(weekSummaryData ?? []);
 
 	if (isLoading) {
 		return (
-			<NoisePageLayout
-				data={data ?? []}
-				view={view}
-				usePeakAggregation={usePeakAggregation}
-			>
+			<NoisePageLayout data={data ?? []} view={view} usePeakAggregation={usePeakAggregation}>
 				<Card className="flex h-24 w-full items-center">
 					<p>{t(($) => $.loadingData)}</p>
 				</Card>
@@ -97,11 +96,7 @@ export default function Noise() {
 	}
 
 	const maxValue = data
-		? Math.max(
-				...data.map((d) =>
-					usePeakAggregation && d.peakValue ? d.peakValue : d.value,
-				),
-			)
+		? Math.max(...data.map((d) => (usePeakAggregation && d.peakValue ? d.peakValue : d.value)))
 		: 0;
 
 	const minY = 0;
@@ -112,11 +107,7 @@ export default function Noise() {
 		}).maxY;
 	}
 
-	const calendarData = mapSensorDataToTimeBucketStatuses(
-		data ?? [],
-		sensor,
-		usePeakAggregation,
-	);
+	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, usePeakAggregation);
 
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
@@ -142,29 +133,12 @@ export default function Noise() {
 						<p>{t(($) => $.errorLoadingData)}</p>
 					</Card>
 				) : view === "month" ? (
-					<AggregationTabs
-						aggregation={aggregation}
-						setAggregation={setAggregation}
-					>
-						<CalendarWidget
-							selectedDay={date}
-							selectedAggregation={aggregation}
-							data={calendarData}
-						/>
+					<AggregationTabs aggregation={aggregation} setAggregation={setAggregation}>
+						<CalendarWidget selectedDay={date} selectedAggregation={aggregation} data={calendarData} />
 					</AggregationTabs>
 				) : view === "week" ? (
-					<AggregationTabs
-						aggregation={aggregation}
-						setAggregation={setAggregation}
-					>
-						<WeekWidget
-							aggregation={aggregation}
-							locale={getLocale(i18n.language)}
-							dayStartHour={0}
-							dayEndHour={23}
-							weekStartsOn={1}
-							data={calendarData}
-						/>
+					<AggregationTabs aggregation={aggregation} setAggregation={setAggregation}>
+						<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
 					</AggregationTabs>
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-24 w-full items-center">
@@ -180,21 +154,17 @@ export default function Noise() {
 				) : (
 					<div className="w-full">
 						<div id={chartContainerId}>
-							<AggregationTabs
-								aggregation={aggregation}
-								setAggregation={setAggregation}
-							>
+							<AggregationTabs aggregation={aggregation} setAggregation={setAggregation}>
 								<ChartLineDefault
+									minHour={minHour}
+									maxHour={maxHour}
 									usePeakData={usePeakAggregation}
 									chartData={data ?? []}
-									chartTitle={date.toLocaleDateString(
-										i18n.language,
-										{
-											day: "numeric",
-											month: "long",
-											year: "numeric",
-										},
-									)}
+									chartTitle={date.toLocaleDateString(i18n.language, {
+										day: "numeric",
+										month: "long",
+										year: "numeric",
+									})}
 									unit="db (TWA)"
 									maxY={maxY}
 									minY={minY}
@@ -207,22 +177,16 @@ export default function Noise() {
 											onClick={() =>
 												exportToPDF(
 													chartContainerId,
-													`${date.toLocaleDateString(
-														i18n.language,
-														{
-															day: "numeric",
-															month: "long",
-															year: "numeric",
-														},
-													)}-${user.username}-Noise-Exposure-Overview`,
+													`${date.toLocaleDateString(i18n.language, {
+														day: "numeric",
+														month: "long",
+														year: "numeric",
+													})}-${user.username}-Noise-Exposure-Overview`,
 													`Noise Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
 												)
 											}
 										>
-											{t(
-												($) =>
-													$.vibrationExposure.export,
-											)}
+											{t(($) => $.vibrationExposure.export)}
 										</Button>
 									}
 								>
@@ -236,10 +200,7 @@ export default function Noise() {
 										dangerLevel="danger"
 									/>
 									{!usePeakAggregation && (
-										<ThresholdLine
-											y={noiseThreshold.warning}
-											dangerLevel="warning"
-										/>
+										<ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />
 									)}
 								</ChartLineDefault>
 							</AggregationTabs>
@@ -265,19 +226,10 @@ const AggregationTabs = ({
 	return (
 		<span className="relative w-full">
 			<div className="absolute -top-11 rounded border">
-				<Tabs
-					value={aggregation}
-					onValueChange={(value) =>
-						setAggregation(value as Aggregation)
-					}
-				>
+				<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
 					<TabsList>
-						<TabsTrigger value="average">
-							{t(($) => $.average)}
-						</TabsTrigger>
-						<TabsTrigger value="peak">
-							{t(($) => $.peak)}
-						</TabsTrigger>
+						<TabsTrigger value="average">{t(($) => $.average)}</TabsTrigger>
+						<TabsTrigger value="peak">{t(($) => $.peak)}</TabsTrigger>
 					</TabsList>
 				</Tabs>
 			</div>
@@ -302,11 +254,7 @@ const NoisePageLayout = ({
 			<Summary
 				exposureType="noise"
 				view={view}
-				data={calculateSummaryCounts(
-					data ?? [],
-					"noise",
-					usePeakAggregation,
-				)}
+				data={calculateSummaryCounts(data ?? [], "noise", usePeakAggregation)}
 			/>
 			<DailyNotes />
 		</div>

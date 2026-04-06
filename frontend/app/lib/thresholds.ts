@@ -38,10 +38,7 @@ const dustThresholdOverrides: Partial<Record<SensorTypeField, Threshold>> = {
 	},
 };
 
-export function getThreshold(
-	sensor: Sensor,
-	dustField?: SensorTypeField | null,
-): Threshold {
+export function getThreshold(sensor: Sensor, dustField?: SensorTypeField | null): Threshold {
 	if (sensor === "dust" && dustField) {
 		return dustThresholdOverrides[dustField] ?? thresholds.dust;
 	}

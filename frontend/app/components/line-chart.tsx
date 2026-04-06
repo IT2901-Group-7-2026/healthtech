@@ -1,43 +1,17 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-	type ChartConfig,
-	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
-} from "@/components/ui/chart";
+import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
-import type {
-	SensorDataResponseDto,
-	SensorTypeField,
-	UserSensorStatusDto,
-} from "@/lib/dto";
+import type { SensorDataResponseDto, SensorTypeField, UserSensorStatusDto } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { downsampleSensorData } from "@/lib/utils";
-import {
-	addHours,
-	endOfDay,
-	getHours,
-	max,
-	min,
-	startOfDay,
-	subHours,
-} from "date-fns";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
-import {
-	type ActiveDotProps,
-	CartesianGrid,
-	Line,
-	LineChart,
-	ReferenceLine,
-	XAxis,
-	YAxis,
-} from "recharts";
+import { type ActiveDotProps, CartesianGrid, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
 
 const chartConfig = {
@@ -59,6 +33,8 @@ interface LineChartProps {
 	headerRight?: React.ReactNode;
 	usePeakData?: boolean;
 	dustField?: SensorTypeField;
+	minHour: number;
+	maxHour: number;
 }
 
 export function ChartLineDefault({
@@ -73,6 +49,8 @@ export function ChartLineDefault({
 	headerRight,
 	usePeakData = false,
 	dustField,
+	minHour,
+	maxHour,
 }: LineChartProps) {
 	const { date: selectedDay } = useDate();
 	const { t } = useTranslation();
@@ -82,32 +60,13 @@ export function ChartLineDefault({
 	const { warning, danger, peakDanger } = getThreshold(sensor, dustField);
 	const dangerThreshold = usePeakData && peakDanger ? peakDanger : danger;
 
-	const getValue = (data: SensorDataResponseDto) =>
-		usePeakData ? (data.peakValue ?? data.value) : data.value;
+	const getValue = (data: SensorDataResponseDto) => (usePeakData ? (data.peakValue ?? data.value) : data.value);
 
 	const maxData = chartData.toSorted((a, b) => getValue(b) - getValue(a))[0];
 	const minData = chartData.toSorted((a, b) => getValue(a) - getValue(b))[0];
 
-	// Set the domain to be from 1 hour before the first data point to 1 hour after the last data point, clamped to the current day
-	const minTime = chartData.toSorted(
-		(a, b) => a.time.getTime() - b.time.getTime(),
-	)[0].time;
-	const maxTime = chartData.toSorted(
-		(a, b) => b.time.getTime() - a.time.getTime(),
-	)[0].time;
-
-	const paddedStart = subHours(minTime, 1);
-	const paddedEnd = addHours(maxTime, 1);
-
-	const clampedStart = max([paddedStart, startOfDay(minTime)]);
-	const clampedEnd = min([paddedEnd, endOfDay(maxTime)]);
-
-	const startHour = getHours(clampedStart);
-	const endHour = getHours(clampedEnd);
-
 	// Used to position color-changes in the graph so the line changes color at threshold boundaries.
-	const getOffset = (y: number) =>
-		`${((getValue(maxData) - y) / (getValue(maxData) - getValue(minData))) * 100}%`;
+	const getOffset = (y: number) => `${((getValue(maxData) - y) / (getValue(maxData) - getValue(minData))) * 100}%`;
 
 	const downsampledData = downsampleSensorData(sensor, chartData);
 
@@ -116,9 +75,9 @@ export function ChartLineDefault({
 		value: getValue(item),
 	}));
 
-	const ticks = Array.from({ length: endHour - startHour + 1 }, (_, i) => {
+	const ticks = Array.from({ length: maxHour - minHour + 1 }, (_, i) => {
 		const date = toTZDate(selectedDay);
-		date.setHours(startHour + i, 0, 0, 0);
+		date.setHours(minHour + i, 0, 0, 0);
 		return date.getTime();
 	});
 
@@ -135,7 +94,7 @@ export function ChartLineDefault({
 			<CardContent>
 				<ChartContainer config={chartConfig}>
 					<LineChart
-						accessibilityLayer
+						accessibilityLayer={true}
 						data={transformedData}
 						margin={{
 							left: 12,
@@ -183,11 +142,8 @@ export function ChartLineDefault({
 						/>
 						<ChartTooltip
 							cursor={false}
-							content={<ChartTooltipContent hideLabel />}
-							formatter={(value?: number) => [
-								`${value?.toFixed(2) ?? "N/A"}`,
-								` ${unit}`,
-							]}
+							content={<ChartTooltipContent hideLabel={true} />}
+							formatter={(value?: number) => [`${value?.toFixed(2) ?? "N/A"}`, ` ${unit}`]}
 						/>
 
 						<defs>
@@ -195,60 +151,26 @@ export function ChartLineDefault({
 								{maxDataDangerLevel === "safe" ? (
 									<>
 										{/* Whole line is green */}
-										<stop
-											offset="0%"
-											stopColor="var(--safe)"
-										/>
-										<stop
-											offset="100%"
-											stopColor="var(--safe)"
-										/>
+										<stop offset="0%" stopColor="var(--safe)" />
+										<stop offset="100%" stopColor="var(--safe)" />
 									</>
 								) : maxDataDangerLevel === "warning" ? (
 									<>
 										{/* Green and yellow line*/}
-										<stop
-											offset={getOffset(warning)}
-											stopColor="var(--warning)"
-										/>
-										<stop
-											offset={getOffset(warning)}
-											stopColor="var(--safe)"
-										/>
+										<stop offset={getOffset(warning)} stopColor="var(--warning)" />
+										<stop offset={getOffset(warning)} stopColor="var(--safe)" />
 
-										<stop
-											offset="100%"
-											stopColor="var(--safe)"
-										/>
+										<stop offset="100%" stopColor="var(--safe)" />
 									</>
 								) : (
 									maxDataDangerLevel === "danger" && (
 										<>
 											{/* green, yellow and red line */}
-											<stop
-												offset={getOffset(
-													dangerThreshold,
-												)}
-												stopColor={"var(--danger)"}
-											/>
-											<stop
-												offset={getOffset(
-													dangerThreshold,
-												)}
-												stopColor={"var(--warning)"}
-											/>
-											<stop
-												offset={getOffset(warning)}
-												stopColor={"var(--warning)"}
-											/>
-											<stop
-												offset={getOffset(warning)}
-												stopColor={"var(--safe)"}
-											/>
-											<stop
-												offset="100%"
-												stopColor={"var(--safe)"}
-											/>
+											<stop offset={getOffset(dangerThreshold)} stopColor={"var(--danger)"} />
+											<stop offset={getOffset(dangerThreshold)} stopColor={"var(--warning)"} />
+											<stop offset={getOffset(warning)} stopColor={"var(--warning)"} />
+											<stop offset={getOffset(warning)} stopColor={"var(--safe)"} />
+											<stop offset="100%" stopColor={"var(--safe)"} />
 										</>
 									)
 								)}
@@ -260,13 +182,7 @@ export function ChartLineDefault({
 							stroke={`url(#${id})`}
 							strokeWidth={1.25}
 							dot={false}
-							activeDot={(props) => (
-								<Dot
-									{...props}
-									warning={warning}
-									danger={danger}
-								/>
-							)}
+							activeDot={(props) => <Dot {...props} warning={warning} danger={danger} />}
 						/>
 						{children}
 					</LineChart>
@@ -292,15 +208,7 @@ const Dot = ({ cx, cy, value, warning, danger }: DotProps) => {
 	return <circle cx={cx} cy={cy} r={6} fill={fillColor} />;
 };
 
-export function ThresholdLine({
-	y,
-	dangerLevel,
-	label,
-}: {
-	y: number;
-	dangerLevel: DangerLevel;
-	label?: string;
-}) {
+export function ThresholdLine({ y, dangerLevel, label }: { y: number; dangerLevel: DangerLevel; label?: string }) {
 	const { t } = useTranslation();
 	const color = `var(--${DangerLevels[dangerLevel].color})`;
 	const lineLabel = label ?? t(($) => $.line_chart[dangerLevel]);
@@ -323,10 +231,7 @@ export function ThresholdLine({
 	);
 }
 
-function getDangerLevel(
-	data: UserSensorStatusDto,
-	usePeakData: boolean,
-): DangerLevel {
+function getDangerLevel(data: UserSensorStatusDto, usePeakData: boolean): DangerLevel {
 	if (usePeakData) {
 		// biome-ignore lint/style/noNonNullAssertion: If usePeakData is true and peakDangerLevel is null, there is a bug somewhere else
 		return data.peakDangerLevel!;

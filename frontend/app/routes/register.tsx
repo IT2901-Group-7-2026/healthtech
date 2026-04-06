@@ -32,9 +32,7 @@ export default function Page() {
 				</div>
 
 				<div className="flex w-full max-w-sm flex-col rounded-xl bg-yellow-100 p-4 text-zinc-700 dark:bg-amber-950 dark:text-zinc-100">
-					<p className="font-bold text-sm text-zinc-600 dark:text-zinc-300">
-						{"DEMO"}
-					</p>
+					<p className="font-bold text-sm text-zinc-600 dark:text-zinc-300">{"DEMO"}</p>
 					<div className="mt-2 flex gap-3">
 						{Object.keys(UserRoleSchema.enum).map((role) => {
 							const roleValue = role as User["role"];
@@ -45,10 +43,7 @@ export default function Page() {
 									size="lg"
 									className="flex-1 bg-amber-200 font-semibold text-zinc-600 hover:bg-amber-300 dark:bg-amber-900/75 dark:text-zinc-300 dark:hover:bg-amber-800"
 									onClick={() => handleDemoClick(roleValue)}
-									disabled={
-										users === undefined ||
-										users.length === 0
-									}
+									disabled={users === undefined || users.length === 0}
 								>
 									{userRoleToString(roleValue, t)}
 								</Button>

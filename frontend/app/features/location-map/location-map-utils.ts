@@ -2,9 +2,7 @@ export function xyToyx(x: number, y: number): [number, number] {
 	return [y, x];
 }
 
-export function getCenterPoint(
-	points: Array<[number, number]>,
-): [number, number] {
+export function getCenterPoint(points: Array<[number, number]>): [number, number] {
 	const ys = points.map(([y]) => y);
 	const xs = points.map(([, x]) => x);
 

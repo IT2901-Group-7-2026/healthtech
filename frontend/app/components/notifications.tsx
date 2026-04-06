@@ -1,12 +1,7 @@
-import {
-	Item,
-	ItemContent,
-	ItemDescription,
-	ItemGroup,
-	ItemTitle,
-} from "@/components/ui/item";
+import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@/components/ui/item";
 import { NotificationPopup } from "@/features/popups/notification-popup";
 import { usePopup } from "@/features/popups/use-popup";
+import { useUser } from "@/features/user/user-context";
 import { TIMEZONE } from "@/i18n/locale";
 import type { DangerLevel } from "@/lib/danger-levels";
 import type { Sensor } from "@/lib/sensors";
@@ -55,14 +50,10 @@ type NotifData = {
 	dangerLevel: DangerLevel;
 };
 
-export function Notifications({
-	onParentClose,
-}: {
-	onParentClose: () => void;
-}) {
+export function Notifications({ onParentClose }: { onParentClose: () => void }) {
 	const { t, i18n } = useTranslation();
-
 	const { visible, openPopup, closePopup } = usePopup();
+	const { user } = useUser();
 
 	const [notifData, setNotifData] = useState<NotifData | null>(null);
 
@@ -77,6 +68,14 @@ export function Notifications({
 		openPopup();
 	}
 
+	const notificationLink = user.role === "foreman" ? `/foreman` : `/operator/${notifData?.sensor}`;
+
+	let notificationLinkSearch = "";
+	if (user.role === "foreman" && notifData) {
+		const formattedDate = formatDate(notifData.date, "yyyy-MM-dd");
+		notificationLinkSearch = `?sensor=${notifData.sensor}&filterDate=${formattedDate}`;
+	}
+
 	return (
 		<>
 			<Card className="h-64 w-full gap-0 overflow-y-auto px-4">
@@ -85,9 +84,7 @@ export function Notifications({
 						<button
 							type={"button"}
 							key={`${date} ${sensor} ${dangerLevel}`}
-							onClick={() =>
-								handleNotifClick({ date, sensor, dangerLevel })
-							}
+							onClick={() => handleNotifClick({ date, sensor, dangerLevel })}
 							className="cursor-pointer"
 						>
 							<Item
@@ -96,18 +93,10 @@ export function Notifications({
 								size="sm"
 								className="rounded-3xl border-3 border-border bg-background hover:bg-card-highlight"
 							>
-								<SensorIcon
-									type={sensor}
-									size="md"
-									dangerLevel={dangerLevel}
-								/>
+								<SensorIcon type={sensor} size="md" dangerLevel={dangerLevel} />
 								<ItemContent>
-									<ItemTitle className="line-clamp-1">
-										{t(($) => $[sensor])}
-									</ItemTitle>
-									<ItemDescription
-										className={cn(`text-${dangerLevel}`)}
-									>
+									<ItemTitle className="line-clamp-1">{t(($) => $[sensor])}</ItemTitle>
+									<ItemDescription className={cn(`text-${dangerLevel}`)}>
 										{t(($) => $[dangerLevel])}
 									</ItemDescription>
 								</ItemContent>
@@ -132,7 +121,8 @@ export function Notifications({
 							minute: "2-digit",
 						}),
 					})}
-					pathname={`/${notifData.sensor}`}
+					pathname={notificationLink}
+					search={notificationLinkSearch}
 				>
 					<div className="flex justify-start gap-2">
 						<span
@@ -155,5 +145,4 @@ export function Notifications({
 	);
 }
 
-const formatNotificationDate = (date: TZDate): string =>
-	formatDate(date, "dd.MM HH.mm", { in: TIMEZONE });
+const formatNotificationDate = (date: TZDate): string => formatDate(date, "dd.MM HH.mm", { in: TIMEZONE });

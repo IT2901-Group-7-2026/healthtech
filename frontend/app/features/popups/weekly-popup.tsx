@@ -35,13 +35,8 @@ export function WeeklyPopup({
 				{timeBucketStatus.dangerLevel && (
 					<Card className="p-2 md:p-5">
 						<div className="flex flex-col justify-start gap-2">
-							<div
-								className={`text-${timeBucketStatus.dangerLevel}`}
-							>
-								{t(
-									($) =>
-										$.popup[timeBucketStatus.dangerLevel],
-								)}
+							<div className={`text-${timeBucketStatus.dangerLevel}`}>
+								{t(($) => $.popup[timeBucketStatus.dangerLevel])}
 							</div>
 							<div>{t(($) => $.popup.openDaily)}</div>
 						</div>

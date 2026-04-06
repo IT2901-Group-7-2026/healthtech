@@ -11,35 +11,20 @@ export type StatCardProps = PropsWithChildren & {
 	onClick?: () => void;
 };
 
-export const StatCard = ({
-	className,
-	value,
-	label,
-	onClick,
-	children,
-}: StatCardProps) => {
+export const StatCard = ({ className, value, label, onClick, children }: StatCardProps) => {
 	const { t } = useTranslation();
 
 	const isHoverable = onClick !== undefined;
 
 	return (
 		<button type="button" onClick={onClick} className="w-full text-left">
-			<Card
-				hoverable={isHoverable}
-				className={cn("group h-full justify-between gap-2", className)}
-			>
+			<Card hoverable={isHoverable} className={cn("group h-full justify-between gap-2", className)}>
 				<CardContent className="gap-4">
-					<h2 className="text-xs uppercase tracking-widest dark:text-zinc-400">
-						{label}
-					</h2>
+					<h2 className="text-xs uppercase tracking-widest dark:text-zinc-400">{label}</h2>
 
-					<p className="w-fit font-bold text-3xl leading-tight">
-						{value}
-					</p>
+					<p className="w-fit font-bold text-3xl leading-tight">{value}</p>
 
-					<div className="flex flex-row items-center gap-3">
-						{children}
-					</div>
+					<div className="flex flex-row items-center gap-3">{children}</div>
 				</CardContent>
 
 				{isHoverable && (
