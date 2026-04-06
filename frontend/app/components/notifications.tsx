@@ -19,28 +19,24 @@ const notifications: Array<{
 	date: TZDate;
 }> = [
 	{
+		sensor: "dust",
+		dangerLevel: "warning",
+		date: new TZDate(2026, 3, 7, 9, 0, "Europe/Oslo"),
+	},
+	{
 		sensor: "noise",
 		dangerLevel: "warning",
-		// "18.11 9.41" → 18 November 2024, 09:41
-		date: new TZDate(2024, 10, 18, 9, 41, "Europe/Oslo"),
+		date: new TZDate(2026, 3, 6, 9, 0, "Europe/Oslo"),
 	},
 	{
 		sensor: "vibration",
+		dangerLevel: "warning",
+		date: new TZDate(2026, 3, 3, 15, 40, "Europe/Oslo"),
+	},
+	{
+		sensor: "noise",
 		dangerLevel: "danger",
-		// "12.05 14.04" → 12 May 2025, 14:04
-		date: new TZDate(2025, 4, 12, 14, 4, "Europe/Oslo"),
-	},
-	{
-		sensor: "dust",
-		dangerLevel: "warning",
-		// "17.02 8.53" → 17 February 2025, 08:53
-		date: new TZDate(2025, 1, 17, 8, 53, "Europe/Oslo"),
-	},
-	{
-		sensor: "dust",
-		dangerLevel: "warning",
-		// "20.02 8.54" → 20 February 2025, 08:54
-		date: new TZDate(2025, 1, 20, 8, 54, "Europe/Oslo"),
+		date: new TZDate(2026, 3, 1, 9, 10, "Europe/Oslo"),
 	},
 ];
 
