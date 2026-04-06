@@ -18,8 +18,7 @@ interface Props {
 export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	const [t] = useTranslation();
 	const threshold = getThreshold(sensor);
-	const getPercent = (value: number) =>
-		Math.round((value / threshold.danger) * 100);
+	const getPercent = (value: number) => Math.round((value / threshold.danger) * 100);
 
 	const hasAnySensorData = users.some((u) => {
 		const sensorStatus = u.status[sensor];
