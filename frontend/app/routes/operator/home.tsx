@@ -19,13 +19,13 @@ import {
 	mapOverviewBucketsToChartRows,
 	mapOverviewDataToTimeBucketStatuses,
 } from "@/lib/time-bucket-utils";
+import { getHourDomainFromBuckets } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import Dust from "./sensors/dust";
 import Noise from "./sensors/noise";
 import Vibration from "./sensors/vibration";
-import { getHourDomainFromBuckets } from "app/lib/utils";
 
 export default function OperatorHome() {
 	const { t, i18n } = useTranslation();
@@ -68,8 +68,6 @@ export default function OperatorHome() {
 	} else {
 		({ minHour, maxHour } = getHourDomainFromBuckets(overviewBuckets ?? []));
 	}
-
-	console.log(minHour, maxHour)
 
 	return (
 		<>
