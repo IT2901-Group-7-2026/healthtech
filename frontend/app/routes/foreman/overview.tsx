@@ -235,7 +235,7 @@ export default function ForemanOverview() {
 												label: t(($) => $.foremanDashboard.overview.statCards.danger.label),
 											},
 										}}
-										label={s}
+										label={t(($) => $[s])}
 										to="/"
 										key={s}
 										sensorType={s}
