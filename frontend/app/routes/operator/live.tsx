@@ -6,6 +6,7 @@ import { sensorQueryOptions } from "@/lib/api";
 import { now, parseAsTZDate, today } from "@/lib/date";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import { useQuery } from "@tanstack/react-query";
+import { SecurityRegulationsCard } from "app/features/security-regulations-card/security-regulations-card";
 import { addMinutes, minutesToMilliseconds, startOfMinute } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
@@ -102,7 +103,7 @@ export default function OperatorLiveView() {
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex w-1/5 shrink-0 flex-col gap-4">
-				<DailyNotes />
+				<SecurityRegulationsCard />
 			</div>
 
 			<div className="flex w-full min-w-0 flex-col gap-4">
