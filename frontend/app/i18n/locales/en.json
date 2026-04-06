@@ -272,9 +272,9 @@
     "haveAccount": "Already have an account? ",
     "login": "Log in"
   },
-	"securityRegulationsCard": {
-		"title": "Current safety regulations",
-		"safetyBoots": "Safety boots",
-		"helmet": "Helmet"
-	}
+  "securityRegulationsCard": {
+    "title": "Current safety regulations",
+    "safetyBoots": "Safety boots",
+    "helmet": "Helmet"
+  }
 }

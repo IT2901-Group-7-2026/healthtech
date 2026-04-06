@@ -1,12 +1,11 @@
-import { DailyNotes } from "@/components/daily-notes";
 import { ExposureSlider } from "@/components/exposure-slider";
 import { LiveStatusOverviewCard } from "@/features/live-status/live-status-overview-card";
+import { SecurityRegulationsCard } from "@/features/security-regulations-card/security-regulations-card";
 import { useUser } from "@/features/user/user-context";
 import { sensorQueryOptions } from "@/lib/api";
 import { now, parseAsTZDate, today } from "@/lib/date";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import { useQuery } from "@tanstack/react-query";
-import { SecurityRegulationsCard } from "app/features/security-regulations-card/security-regulations-card";
 import { addMinutes, minutesToMilliseconds, startOfMinute } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
