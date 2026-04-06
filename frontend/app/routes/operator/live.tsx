@@ -6,7 +6,6 @@ import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.js";
 import { SecurityRegulationsCard } from "@/features/security-regulations-card/security-regulations-card";
 import { useUser } from "@/features/user/user-context";
-import { TIMEZONE_NAME } from "@/i18n/locale";
 import { sensorQueryOptions } from "@/lib/api";
 import { now } from "@/lib/date";
 import type { SensorDataResponseDto } from "@/lib/dto";
@@ -15,7 +14,13 @@ import { getThreshold } from "@/lib/thresholds";
 import { computeYAxisRange } from "@/lib/utils";
 import { TZDate } from "@date-fns/tz";
 import { useQuery } from "@tanstack/react-query";
-import { addMinutes, isWithinInterval, minutesToMilliseconds, startOfDay, startOfMinute } from "date-fns";
+import {
+	addMinutes,
+	isWithinInterval,
+	minutesToMilliseconds,
+	startOfDay,
+	startOfMinute,
+} from "date-fns";
 import { Clock } from "lucide-react";
 import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useMemo } from "react";
@@ -35,27 +40,19 @@ export default function OperatorLiveView() {
 	const [selectedUserId] = useQueryState("userId", parseAsString);
 	const { t } = useTranslation();
 
-	const [timeRange, setTimeRange] = useQueryState<TimeRangeOption>("timeRange", parseTimeRange.withDefault("30"));
+	const [timeRange, setTimeRange] = useQueryState<TimeRangeOption>(
+		"timeRange",
+		parseTimeRange.withDefault("30"),
+	);
 
 	const targetUserId = selectedUserId ?? user.id;
 
-	// Test-only override: shift the live clock to tomorrow at 12:00 and keep it moving.TODO:
-	const testOffsetMinutes = useMemo(() => {
-		const realNow = now();
-		const testAnchor = new TZDate(
-			realNow.getFullYear(),
-			realNow.getMonth(),
-			realNow.getDate(),
-			12,
-			0,
-			TIMEZONE_NAME,
-		);
-
-		return Math.round((testAnchor.getTime() - realNow.getTime()) / 60000);
-	}, []);
-	const testNow = addMinutes(now(), testOffsetMinutes);
-	const end = startOfMinute(testNow);
-	const start = addMinutes(end, -TIME_RANGE_MINUTES[timeRange]);
+	const startOfCurrentMinute = startOfMinute(now());
+	const end = startOfCurrentMinute;
+	const start = addMinutes(
+		startOfCurrentMinute,
+		-TIME_RANGE_MINUTES[timeRange],
+	);
 
 	// We have at most 1 data point every minute so we don't need a shorter refetch interval than that
 	const dataRefetchInterval = minutesToMilliseconds(1);
@@ -69,7 +66,7 @@ export default function OperatorLiveView() {
 				field: "pm1_twa",
 				startTime: start,
 				endTime: end,
-				clampEndTimeToNow: false,
+				clampEndTimeToNow: true,
 			}),
 			userId: targetUserId,
 			refetchInterval: dataRefetchInterval,
@@ -85,7 +82,7 @@ export default function OperatorLiveView() {
 				field: "pm25_twa",
 				startTime: start,
 				endTime: end,
-				clampEndTimeToNow: false, //TODO: Use true
+				clampEndTimeToNow: true,
 			}),
 			userId: targetUserId,
 			refetchInterval: dataRefetchInterval,
@@ -101,7 +98,21 @@ export default function OperatorLiveView() {
 				field: "pm10_twa",
 				startTime: start,
 				endTime: end,
-				clampEndTimeToNow: false,
+				clampEndTimeToNow: true,
+			}),
+			userId: targetUserId,
+			refetchInterval: dataRefetchInterval,
+		}),
+	);
+
+	const { data: noiseData } = useQuery(
+		sensorQueryOptions({
+			sensor: "noise",
+			query: buildSensorQuery("noise", "day", end, {
+				granularity: "minute",
+				startTime: start,
+				endTime: end,
+				clampEndTimeToNow: true,
 			}),
 			userId: targetUserId,
 			refetchInterval: dataRefetchInterval,
@@ -115,7 +126,7 @@ export default function OperatorLiveView() {
 				granularity: "minute",
 				startTime: startOfDay(start),
 				endTime: end,
-				clampEndTimeToNow: false,
+				clampEndTimeToNow: true,
 			}),
 			userId: targetUserId,
 			refetchInterval: dataRefetchInterval,
@@ -128,28 +139,17 @@ export default function OperatorLiveView() {
 			return [];
 		}
 
-		return rawVibrationData.filter((d) => isWithinInterval(d.time, { start, end }));
+		return rawVibrationData.filter((d) =>
+			isWithinInterval(d.time, { start, end }),
+		);
 	}, [rawVibrationData, start, end]);
-
-	const { data: noiseData } = useQuery(
-		sensorQueryOptions({
-			sensor: "noise",
-			query: buildSensorQuery("noise", "day", end, {
-				granularity: "minute",
-				startTime: start,
-				endTime: end,
-				clampEndTimeToNow: false,
-			}),
-			userId: targetUserId,
-			refetchInterval: dataRefetchInterval,
-		}),
-	);
 
 	return (
 		<div
 			className="flex w-full flex-col gap-4 md:grid"
 			style={{
-				gridTemplateColumns: "minmax(calc(var(--spacing) * 40), 1fr) minmax(0, 3fr) calc(var(--spacing) * 73)",
+				gridTemplateColumns:
+					"minmax(calc(var(--spacing) * 40), 1fr) minmax(0, 3fr) calc(var(--spacing) * 73)",
 			}}
 		>
 			<aside className="flex flex-col gap-4 md:col-start-1">
@@ -251,13 +251,22 @@ export default function OperatorLiveView() {
 							setTimeRange(value);
 						}}
 					>
-						<ToggleGroupItem value="30" aria-label={t(($) => $.live.timeRange.options.thirtyMinutes)}>
+						<ToggleGroupItem
+							value="30"
+							aria-label={t(($) => $.live.timeRange.options.thirtyMinutes)}
+						>
 							<p>{t(($) => $.live.timeRange.options.thirtyMinutes)}</p>
 						</ToggleGroupItem>
-						<ToggleGroupItem value="60" aria-label={t(($) => $.live.timeRange.options.oneHour)}>
+						<ToggleGroupItem
+							value="60"
+							aria-label={t(($) => $.live.timeRange.options.oneHour)}
+						>
 							<p>{t(($) => $.live.timeRange.options.oneHour)}</p>
 						</ToggleGroupItem>
-						<ToggleGroupItem value="180" aria-label={t(($) => $.live.timeRange.options.threeHours)}>
+						<ToggleGroupItem
+							value="180"
+							aria-label={t(($) => $.live.timeRange.options.threeHours)}
+						>
 							<p>{t(($) => $.live.timeRange.options.threeHours)}</p>
 						</ToggleGroupItem>
 					</ToggleGroup>
@@ -337,8 +346,16 @@ const LiveExposureCard = ({
 					hideHeader={true}
 					muteTickLabels={true}
 				>
-					<ThresholdLine y={threshold.danger} dangerLevel="danger" hideLineLabel={true} />
-					<ThresholdLine y={threshold.warning} dangerLevel="warning" hideLineLabel={true} />
+					<ThresholdLine
+						y={threshold.danger}
+						dangerLevel="danger"
+						hideLineLabel={true}
+					/>
+					<ThresholdLine
+						y={threshold.warning}
+						dangerLevel="warning"
+						hideLineLabel={true}
+					/>
 				</ChartLineDefault>
 			</div>
 		</div>
