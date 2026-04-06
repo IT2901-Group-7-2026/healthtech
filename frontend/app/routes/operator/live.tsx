@@ -12,15 +12,9 @@ import type { SensorDataResponseDto } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import { getThreshold } from "@/lib/thresholds";
 import { computeYAxisRange } from "@/lib/utils";
-import { TZDate } from "@date-fns/tz";
+import type { TZDate } from "@date-fns/tz";
 import { useQuery } from "@tanstack/react-query";
-import {
-	addMinutes,
-	isWithinInterval,
-	minutesToMilliseconds,
-	startOfDay,
-	startOfMinute,
-} from "date-fns";
+import { addMinutes, isWithinInterval, minutesToMilliseconds, startOfDay, startOfMinute } from "date-fns";
 import { Clock } from "lucide-react";
 import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useMemo } from "react";
@@ -40,19 +34,13 @@ export default function OperatorLiveView() {
 	const [selectedUserId] = useQueryState("userId", parseAsString);
 	const { t } = useTranslation();
 
-	const [timeRange, setTimeRange] = useQueryState<TimeRangeOption>(
-		"timeRange",
-		parseTimeRange.withDefault("30"),
-	);
+	const [timeRange, setTimeRange] = useQueryState<TimeRangeOption>("timeRange", parseTimeRange.withDefault("30"));
 
 	const targetUserId = selectedUserId ?? user.id;
 
 	const startOfCurrentMinute = startOfMinute(now());
 	const end = startOfCurrentMinute;
-	const start = addMinutes(
-		startOfCurrentMinute,
-		-TIME_RANGE_MINUTES[timeRange],
-	);
+	const start = addMinutes(startOfCurrentMinute, -TIME_RANGE_MINUTES[timeRange]);
 
 	// We have at most 1 data point every minute so we don't need a shorter refetch interval than that
 	const dataRefetchInterval = minutesToMilliseconds(1);
@@ -139,17 +127,14 @@ export default function OperatorLiveView() {
 			return [];
 		}
 
-		return rawVibrationData.filter((d) =>
-			isWithinInterval(d.time, { start, end }),
-		);
+		return rawVibrationData.filter((d) => isWithinInterval(d.time, { start, end }));
 	}, [rawVibrationData, start, end]);
 
 	return (
 		<div
 			className="flex w-full flex-col gap-4 md:grid"
 			style={{
-				gridTemplateColumns:
-					"minmax(calc(var(--spacing) * 40), 1fr) minmax(0, 3fr) calc(var(--spacing) * 73)",
+				gridTemplateColumns: "minmax(calc(var(--spacing) * 40), 1fr) minmax(0, 3fr) calc(var(--spacing) * 73)",
 			}}
 		>
 			<aside className="flex flex-col gap-4 md:col-start-1">
@@ -251,22 +236,13 @@ export default function OperatorLiveView() {
 							setTimeRange(value);
 						}}
 					>
-						<ToggleGroupItem
-							value="30"
-							aria-label={t(($) => $.live.timeRange.options.thirtyMinutes)}
-						>
+						<ToggleGroupItem value="30" aria-label={t(($) => $.live.timeRange.options.thirtyMinutes)}>
 							<p>{t(($) => $.live.timeRange.options.thirtyMinutes)}</p>
 						</ToggleGroupItem>
-						<ToggleGroupItem
-							value="60"
-							aria-label={t(($) => $.live.timeRange.options.oneHour)}
-						>
+						<ToggleGroupItem value="60" aria-label={t(($) => $.live.timeRange.options.oneHour)}>
 							<p>{t(($) => $.live.timeRange.options.oneHour)}</p>
 						</ToggleGroupItem>
-						<ToggleGroupItem
-							value="180"
-							aria-label={t(($) => $.live.timeRange.options.threeHours)}
-						>
+						<ToggleGroupItem value="180" aria-label={t(($) => $.live.timeRange.options.threeHours)}>
 							<p>{t(($) => $.live.timeRange.options.threeHours)}</p>
 						</ToggleGroupItem>
 					</ToggleGroup>
@@ -346,16 +322,8 @@ const LiveExposureCard = ({
 					hideHeader={true}
 					muteTickLabels={true}
 				>
-					<ThresholdLine
-						y={threshold.danger}
-						dangerLevel="danger"
-						hideLineLabel={true}
-					/>
-					<ThresholdLine
-						y={threshold.warning}
-						dangerLevel="warning"
-						hideLineLabel={true}
-					/>
+					<ThresholdLine y={threshold.danger} dangerLevel="danger" hideLineLabel={true} />
+					<ThresholdLine y={threshold.warning} dangerLevel="warning" hideLineLabel={true} />
 				</ChartLineDefault>
 			</div>
 		</div>
