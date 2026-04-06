@@ -236,7 +236,7 @@ export default function ForemanOverview() {
 											},
 										}}
 										label={t(($) => $[s])}
-										to="/"
+										to={`?sensor=${s}`}
 										key={s}
 										sensorType={s}
 									/>
