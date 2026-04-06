@@ -155,39 +155,6 @@ export function getEmoji(dangerLevel: DangerLevel | null) {
 	}
 }
 
-export function getMinAndMaxHour(dataFromQuery: Array<SensorDataResponseDto> | undefined, baseDate: TZDate) {
-	const defaultMin = new TZDate(baseDate);
-	defaultMin.setHours(8, 0, 0, 0);
-
-	const defaultMax = new TZDate(baseDate);
-	defaultMax.setHours(16, 0, 0, 0);
-
-	if (!dataFromQuery || dataFromQuery.length === 0) {
-		return { minTime: defaultMin, maxTime: defaultMax };
-	}
-
-	let minimumTime = new TZDate(dataFromQuery[0].time);
-	let maximumTime = new TZDate(dataFromQuery[0].time);
-	let minimumHour = 23;
-	let maximumHour = 0;
-
-	for (const bucket of dataFromQuery) {
-		const time = new TZDate(bucket.time);
-		const hour = time.getHours();
-
-		if (hour < minimumHour) {
-			minimumTime = time;
-			minimumHour = hour;
-		}
-		if (hour > maximumHour) {
-			maximumTime = time;
-			maximumHour = hour;
-		}
-	}
-
-	return { minTime: minimumTime, maxTime: maximumTime };
-}
-
 const clampHour = (hour: number) => Math.max(Math.min(hour, MAX_CHART_HOUR), MIN_CHART_HOUR)
 
 export function getHourDomainFromBuckets(buckets: Array<TimeBucketStatus>) {

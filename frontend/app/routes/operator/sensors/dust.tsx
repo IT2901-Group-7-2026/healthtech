@@ -16,7 +16,7 @@ import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { calculateSummaryCounts, mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, getMinAndMaxHour } from "@/lib/utils";
+import { computeYAxisRange, getHourDomainFromBuckets } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -67,7 +67,7 @@ export default function Dust() {
 		],
 	});
 
-	const { minTime, maxTime } = getMinAndMaxHour(weekSummaryData, date);
+	const { minHour, maxHour } = getHourDomainFromBuckets(weekSummaryData ?? []);
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
@@ -117,8 +117,8 @@ export default function Dust() {
 					<div className="w-full">
 						<div id={chartContainerId}>
 							<ChartLineDefault
-								minTime={minTime}
-								maxTime={maxTime}
+								minTime={minHour}
+								maxTime={maxHour}
 								chartData={data ?? []}
 								chartTitle={date.toLocaleDateString(locale, {
 									day: "numeric",

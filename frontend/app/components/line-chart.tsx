@@ -34,8 +34,8 @@ interface LineChartProps {
 	headerRight?: React.ReactNode;
 	usePeakData?: boolean;
 	dustField?: SensorTypeField;
-	minTime: Date;
-	maxTime: Date;
+	minTime: number;
+	maxTime: number;
 }
 
 export function ChartLineDefault({
