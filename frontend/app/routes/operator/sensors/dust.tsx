@@ -1,8 +1,4 @@
-/** biome-ignore-all lint/suspicious/noAlert: We use alert for testing, but will be changed later */
-
-import { DailyNotes } from "@/components/daily-notes";
 import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
-import { Summary } from "@/components/summary";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
@@ -15,7 +11,7 @@ import { sensorQueryOptions } from "@/lib/api";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import { calculateSummaryCounts, mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
+import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, getHourDomainFromBuckets } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useId } from "react";
@@ -33,19 +29,15 @@ export default function Dust() {
 	const sensor: Sensor = "dust";
 
 	const query = buildSensorQuery(sensor, view, date);
-	const daySummaryQuery = buildSensorQuery(sensor, view, date, {
-		granularity: "hour",
-	});
 
 	// Retrieve week data to find the min and max hour the user has data
-	const weekSummaryQuery = buildSensorQuery(sensor, "week", date, {
+	const weekHourRangeQuery = buildSensorQuery(sensor, "week", date, {
 		granularity: "hour",
 	});
 
-	const useDaySummary = view === "day";
 	const dustThreshold = getThreshold(sensor, query.field);
 
-	const [{ data, isLoading, isError }, { data: daySummaryData }, { data: weekSummaryData }] = useQueries({
+	const [dataResult, weekHourRangeResult] = useQueries({
 		queries: [
 			sensorQueryOptions({
 				sensor,
@@ -54,20 +46,15 @@ export default function Dust() {
 			}),
 			sensorQueryOptions({
 				sensor,
-				query: daySummaryQuery,
+				query: weekHourRangeQuery,
 				userId: user.id,
-				enabled: useDaySummary,
-			}),
-			sensorQueryOptions({
-				sensor,
-				query: weekSummaryQuery,
-				userId: user.id,
-				enabled: true,
 			}),
 		],
 	});
 
-	const { minHour, maxHour } = getHourDomainFromBuckets(weekSummaryData ?? []);
+	const { data, isLoading, isError } = dataResult;
+
+	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
@@ -80,85 +67,75 @@ export default function Dust() {
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor);
 
 	return (
-		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
-			<div className="flex flex-col gap-4 md:w-1/5">
-				<Summary
-					exposureType={sensor}
-					view={view}
-					data={calculateSummaryCounts((useDaySummary ? daySummaryData : data) ?? [], sensor)}
-				/>
-				<DailyNotes />
-			</div>
-			<div className="flex flex-1 flex-col items-end gap-4">
-				{isLoading ? (
-					<Card className="flex h-24 w-full items-center">
-						<p>{t(($) => $.loadingData)}</p>
-					</Card>
-				) : isError ? (
-					<Card className="flex h-24 w-full items-center">
-						<p>{t(($) => $.errorLoadingData)}</p>
-					</Card>
-				) : view === "month" ? (
-					<CalendarWidget selectedDay={date} data={calendarData} />
-				) : view === "week" ? (
-					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
-				) : !data || data.length === 0 ? (
-					<Card className="flex h-24 w-full items-center">
-						<CardTitle>
-							{date.toLocaleDateString(locale, {
+		<div className="flex flex-1 flex-col gap-4">
+			{isLoading ? (
+				<Card className="flex h-24 w-full items-center">
+					<p>{t(($) => $.loadingData)}</p>
+				</Card>
+			) : isError ? (
+				<Card className="flex h-24 w-full items-center">
+					<p>{t(($) => $.errorLoadingData)}</p>
+				</Card>
+			) : view === "month" ? (
+				<CalendarWidget selectedDay={date} data={calendarData} />
+			) : view === "week" ? (
+				<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
+			) : !data || data.length === 0 ? (
+				<Card className="flex h-24 w-full items-center">
+					<CardTitle>
+						{date.toLocaleDateString(locale, {
+							day: "numeric",
+							month: "long",
+							year: "numeric",
+						})}
+					</CardTitle>
+					<p>{t(($) => $.noData)}</p>
+				</Card>
+			) : (
+				<div className="w-full">
+					<div id={chartContainerId}>
+						<ChartLineDefault
+							minHour={minHour}
+							maxHour={maxHour}
+							chartData={data ?? []}
+							chartTitle={date.toLocaleDateString(locale, {
 								day: "numeric",
 								month: "long",
 								year: "numeric",
 							})}
-						</CardTitle>
-						<p>{t(($) => $.noData)}</p>
-					</Card>
-				) : (
-					<div className="w-full">
-						<div id={chartContainerId}>
-							<ChartLineDefault
-								minHour={minHour}
-								maxHour={maxHour}
-								chartData={data ?? []}
-								chartTitle={date.toLocaleDateString(locale, {
-									day: "numeric",
-									month: "long",
-									year: "numeric",
-								})}
-								unit={t(($) => $.dust_y_axis)}
-								maxY={maxY}
-								minY={minY}
-								lineType="monotone"
-								sensor={sensor}
-								dustField={query.field}
-								headerRight={
-									<Button
-										size="sm"
-										variant="outline"
-										onClick={() =>
-											exportToPDF(
-												chartContainerId,
-												`${date.toLocaleDateString(locale, {
-													day: "numeric",
-													month: "long",
-													year: "numeric",
-												})}-${user.username}-Dust-Exposure-Overview`,
-												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(locale)}`,
-											)
-										}
-									>
-										{t(($) => $.vibrationExposure.export)}
-									</Button>
-								}
-							>
-								<div className="mb-2 flex justify-end"></div>
-								<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
-								<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
-							</ChartLineDefault>
-						</div>
+							unit={t(($) => $.dust_y_axis)}
+							maxY={maxY}
+							minY={minY}
+							lineType="monotone"
+							sensor={sensor}
+							dustField={query.field}
+							headerRight={
+								<Button
+									size="sm"
+									variant="outline"
+									onClick={() =>
+										exportToPDF(
+											chartContainerId,
+											`${date.toLocaleDateString(locale, {
+												day: "numeric",
+												month: "long",
+												year: "numeric",
+											})}-${user.username}-Dust-Exposure-Overview`,
+											`Dust Exposure - ${user.username} - ${date.toLocaleDateString(locale)}`,
+										)
+									}
+								>
+									{t(($) => $.vibrationExposure.export)}
+								</Button>
+							}
+						>
+							<div className="mb-2 flex justify-end"></div>
+							<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
+							<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
+						</ChartLineDefault>
 					</div>
-				)}
-			</div>
+				</div>
+			)}
 		</div>
 	);
 }

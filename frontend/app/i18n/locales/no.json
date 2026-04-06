@@ -261,6 +261,20 @@
     "row": "Velg rad"
   },
   "noOptions": "Ingen alternativer tilgjengelig",
+  "operatorHeader": {
+    "title": {
+      "yourExposure": "Din eksponering",
+      "yourSensorExposure": "Din {{sensor}}eksponering"
+    },
+    "subtitle": {
+      "allExposureTypes": "Alle eksponeringstyper",
+      "viewDay": "Dag",
+      "viewWeek": "Uke {{week}}",
+      "viewMonth": "Måned",
+      "dateDay": "{{date}}",
+      "dateRange": "{{startDate}} til {{endDate}}"
+    }
+  },
   "register": {
     "title": "Registrer til HealthTech",
     "name": "Fullt navn",

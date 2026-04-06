@@ -1,8 +1,8 @@
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.js";
-import { CalendarIcon, ColumnsIcon, Grid3X3Icon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useView } from "./use-view";
 import type { View } from "./utils";
+import { DayViewIcon, MonthViewIcon, WeekViewIcon } from "./views";
 
 interface ViewPickerProps {
 	className?: string;
@@ -17,7 +17,6 @@ export function ViewPicker({ className }: ViewPickerProps) {
 			type="single"
 			value={view}
 			variant="outline"
-			size="sm"
 			className={className}
 			onValueChange={(value: View) => {
 				// Value is an empty string when clicking the already selected item, so we need this check to avoid
@@ -29,19 +28,19 @@ export function ViewPicker({ className }: ViewPickerProps) {
 		>
 			<ToggleGroupItem value="day" aria-label={t(($) => $.day)}>
 				<div className="flex items-center gap-2">
-					<CalendarIcon className="size-4" />
+					<DayViewIcon className="size-4" />
 					<p className="text-sm">{t(($) => $.day)}</p>
 				</div>
 			</ToggleGroupItem>
 			<ToggleGroupItem value="week" aria-label={t(($) => $.week)}>
 				<div className="flex items-center gap-2">
-					<ColumnsIcon className="size-4" />
+					<WeekViewIcon className="size-4" />
 					<p className="text-sm">{t(($) => $.week)}</p>
 				</div>
 			</ToggleGroupItem>
 			<ToggleGroupItem value="month" aria-label={t(($) => $.month)}>
 				<div className="flex items-center gap-2">
-					<Grid3X3Icon className="size-4" />
+					<MonthViewIcon className="size-4" />
 					<p className="text-sm">{t(($) => $.month)}</p>
 				</div>
 			</ToggleGroupItem>

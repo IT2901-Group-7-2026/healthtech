@@ -7,7 +7,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import { sensors } from "@/lib/sensors.js";
 import type { SummaryCounts } from "@/lib/time-bucket-types";
-import { cn, getEmoji } from "@/lib/utils";
+import { capitalize, cn, getEmoji } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/ui/card";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -65,21 +65,27 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 		dangerLabel: viewLabelConfig[view].danger || defaultLabels.danger,
 	};
 
-	let summaryTitle = "";
 	const currentDate = useDate().date;
+	// For specific sensor: "<Sensor> exposure for <...>"
+	// For all sensors: "Exposure for <...>"
+	let summaryTitle = exposureType !== "all" ? `${t(($) => $[exposureType])} ` : "";
 
 	if (view === "month") {
-		summaryTitle = t(($) => $.exposure_summary.title.month, {
+		summaryTitle += t(($) => $.exposure_summary.title.month, {
 			month: formatDate(currentDate, "MMMM"),
 		});
 	} else if (view === "week") {
-		summaryTitle = t(($) => $.exposure_summary.title.week, {
+		summaryTitle += t(($) => $.exposure_summary.title.week, {
 			week: formatDate(currentDate, "w"),
 		});
 	} else {
-		summaryTitle = t(($) => $.exposure_summary.title.day, {
+		summaryTitle += t(($) => $.exposure_summary.title.day, {
 			day: formatDate(currentDate, i18n.language === "en" ? "MMMM do, yyyy" : "dd. MMMM yyyy"),
 		});
+	}
+
+	if (exposureType !== "all") {
+		summaryTitle = capitalize(summaryTitle);
 	}
 
 	let content: ReactNode;

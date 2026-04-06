@@ -19,13 +19,10 @@
     }
   },
   "overview": {
-    "title": "Overview of the {{view}}",
-    "day": "day",
-    "week": "week",
-    "month": "month",
-    "dust": "Dust",
-    "vibration": "Vibration",
-    "noise": "Noise"
+    "all": "All data",
+    "dust": "",
+    "week": "Week {{week}}, {{start}} to {{end}}.",
+    "month": "{{month}}, {{start}} to {{end}}."
   },
   "dustExposure": {
     "title": "Dust exposure"
@@ -121,8 +118,6 @@
   "viewSelectionText": "You are viewing a {{view}}.",
   "dateSelectionRecapSingle": "You have selected {{date}}.",
   "dateSelectionRecapMultiple": "You have selected {{startDate}} to {{endDate}}.",
-  "dateSelectionSummarySingle": "Showing data for {{date}}.",
-  "dateSelectionSummaryMultiple": "Showing data from {{startDate}} to {{endDate}}.",
 
   "notifications": "Notifications",
   "popup": {
@@ -261,6 +256,20 @@
     "row": "Select row"
   },
   "noOptions": "No options available",
+  "operatorHeader": {
+    "title": {
+      "yourExposure": "Your exposure",
+      "yourSensorExposure": "Your {{sensor}} exposure"
+    },
+    "subtitle": {
+      "allExposureTypes": "All exposure types",
+      "viewDay": "Day",
+      "viewWeek": "Week {{week}}",
+      "viewMonth": "Month",
+      "dateDay": "{{date}}",
+      "dateRange": "{{startDate}} to {{endDate}}"
+    }
+  },
   "register": {
     "title": "Register to HealthTech",
     "name": "Full name",
