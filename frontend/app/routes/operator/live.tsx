@@ -3,7 +3,7 @@ import { ExposureSlider } from "@/components/exposure-slider";
 import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.js";
 import { SecurityRegulationsCard } from "@/features/security-regulations-card/security-regulations-card";
 import { useUser } from "@/features/user/user-context";
 import { TIMEZONE_NAME } from "@/i18n/locale";
@@ -15,13 +15,7 @@ import { getThreshold } from "@/lib/thresholds";
 import { computeYAxisRange } from "@/lib/utils";
 import { TZDate } from "@date-fns/tz";
 import { useQuery } from "@tanstack/react-query";
-import {
-	addMinutes,
-	isWithinInterval,
-	minutesToMilliseconds,
-	startOfDay,
-	startOfMinute,
-} from "date-fns";
+import { addMinutes, isWithinInterval, minutesToMilliseconds, startOfDay, startOfMinute } from "date-fns";
 import { Clock } from "lucide-react";
 import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useMemo } from "react";
@@ -41,10 +35,7 @@ export default function OperatorLiveView() {
 	const [selectedUserId] = useQueryState("userId", parseAsString);
 	const { t } = useTranslation();
 
-	const [timeRange, setTimeRange] = useQueryState<TimeRangeOption>(
-		"timeRange",
-		parseTimeRange.withDefault("30"),
-	);
+	const [timeRange, setTimeRange] = useQueryState<TimeRangeOption>("timeRange", parseTimeRange.withDefault("30"));
 
 	const targetUserId = selectedUserId ?? user.id;
 
@@ -54,7 +45,7 @@ export default function OperatorLiveView() {
 		const testAnchor = new TZDate(
 			realNow.getFullYear(),
 			realNow.getMonth(),
-			realNow.getDate() + 1,
+			realNow.getDate(),
 			12,
 			0,
 			TIMEZONE_NAME,
@@ -137,9 +128,7 @@ export default function OperatorLiveView() {
 			return [];
 		}
 
-		return rawVibrationData.filter((d) =>
-			isWithinInterval(d.time, { start, end }),
-		);
+		return rawVibrationData.filter((d) => isWithinInterval(d.time, { start, end }));
 	}, [rawVibrationData, start, end]);
 
 	const { data: noiseData } = useQuery(
@@ -157,44 +146,18 @@ export default function OperatorLiveView() {
 	);
 
 	return (
-		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
-			<div className="flex w-1/5 shrink-0 flex-col gap-4">
+		<div
+			className="flex w-full flex-col gap-4 md:grid"
+			style={{
+				gridTemplateColumns: "minmax(calc(var(--spacing) * 40), 1fr) minmax(0, 3fr) calc(var(--spacing) * 73)",
+			}}
+		>
+			<aside className="flex flex-col gap-4 md:col-start-1">
 				<SecurityRegulationsCard />
 				<DailyNotes />
-			</div>
+			</aside>
 
-			<div className="flex w-fit min-w-0 flex-col gap-4">
-				<Card muted={true} className="flex flex-col">
-					<p className="flex items-center gap-2 text-sm">
-						<Clock size="1rem" />
-						{t(($) => $.live.timeRange.label)}
-					</p>
-					<Tabs
-						value={timeRange}
-						onValueChange={(value) => setTimeRange(value as TimeRangeOption)}
-					>
-						<TabsList className="bg-transparent">
-							<TabsTrigger
-								value="30"
-								className="p-4 data-[state=active]:bg-neutral-900 data-[state=active]:text-white"
-							>
-								{t(($) => $.live.timeRange.options.thirtyMinutes)}
-							</TabsTrigger>
-							<TabsTrigger
-								value="60"
-								className="p-4 data-[state=active]:bg-neutral-900 data-[state=active]:text-white"
-							>
-								{t(($) => $.live.timeRange.options.oneHour)}
-							</TabsTrigger>
-							<TabsTrigger
-								value="180"
-								className="p-4 data-[state=active]:bg-neutral-900 data-[state=active]:text-white"
-							>
-								{t(($) => $.live.timeRange.options.threeHours)}
-							</TabsTrigger>
-						</TabsList>
-					</Tabs>
-				</Card>
+			<div className="flex min-w-0 flex-col gap-4 md:col-start-2">
 				<Card>
 					<CardHeader>
 						<CardTitle>{t(($) => $.dust)}</CardTitle>
@@ -273,6 +236,33 @@ export default function OperatorLiveView() {
 					</CardContent>
 				</Card>
 			</div>
+
+			<aside className="md:col-start-3">
+				<Card muted={true} className="flex flex-col gap-4">
+					<p className="flex items-center gap-2 text-sm">
+						<Clock size="1rem" />
+						{t(($) => $.live.timeRange.label)}
+					</p>
+					<ToggleGroup
+						type="single"
+						value={timeRange}
+						variant="outline"
+						onValueChange={(value: TimeRangeOption) => {
+							setTimeRange(value);
+						}}
+					>
+						<ToggleGroupItem value="30" aria-label={t(($) => $.live.timeRange.options.thirtyMinutes)}>
+							<p>{t(($) => $.live.timeRange.options.thirtyMinutes)}</p>
+						</ToggleGroupItem>
+						<ToggleGroupItem value="60" aria-label={t(($) => $.live.timeRange.options.oneHour)}>
+							<p>{t(($) => $.live.timeRange.options.oneHour)}</p>
+						</ToggleGroupItem>
+						<ToggleGroupItem value="180" aria-label={t(($) => $.live.timeRange.options.threeHours)}>
+							<p>{t(($) => $.live.timeRange.options.threeHours)}</p>
+						</ToggleGroupItem>
+					</ToggleGroup>
+				</Card>
+			</aside>
 		</div>
 	);
 }
@@ -302,7 +292,7 @@ const LiveExposureCard = ({
 }: LiveExposureCardProps) => {
 	const { t } = useTranslation();
 
-	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
+	const maxValue = Math.max(...data.map((d) => d.value));
 
 	const minY = 0;
 	let maxY = sensor === "vibration" ? 450 : sensor === "noise" ? 150 : 45;
@@ -324,7 +314,7 @@ const LiveExposureCard = ({
 				value={latestValue}
 				dangerLevel={latestDangerLevel}
 				unitLabel={exposureUnitLabel}
-				className="w-60"
+				className="w-48"
 			/>
 			<div className="w-128 flex-1 self-stretch">
 				<ChartLineDefault
@@ -347,16 +337,8 @@ const LiveExposureCard = ({
 					hideHeader={true}
 					muteTickLabels={true}
 				>
-					<ThresholdLine
-						y={threshold.danger}
-						dangerLevel="danger"
-						hideLineLabel={true}
-					/>
-					<ThresholdLine
-						y={threshold.warning}
-						dangerLevel="warning"
-						hideLineLabel={true}
-					/>
+					<ThresholdLine y={threshold.danger} dangerLevel="danger" hideLineLabel={true} />
+					<ThresholdLine y={threshold.warning} dangerLevel="warning" hideLineLabel={true} />
 				</ChartLineDefault>
 			</div>
 		</div>
