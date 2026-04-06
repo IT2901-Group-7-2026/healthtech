@@ -13,12 +13,7 @@ import { AttentionCard } from "@/features/attention-card/attention-card.js";
 import { TeamSummary } from "@/features/sidebar/team-summary.js";
 import { useUser } from "@/features/user/user-context";
 import { useFormatDate } from "@/hooks/use-format-date";
-import {
-	fetchSubordinatesQueryOptions,
-	fetchThresholdSummaryQueryOptions,
-	sensorQueryOptions,
-	usersQueryOptions,
-} from "@/lib/api.js";
+import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions, sensorQueryOptions } from "@/lib/api.js";
 import { now, parseAsTZDate, today, toTZDate } from "@/lib/date";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
@@ -53,7 +48,6 @@ export default function ForemanOverview() {
 	// Foremen can only see dates within the last week
 	const minSelectableDate = startOfDay(addWeeks(today(), -1));
 	const maxSelectableDate = now();
-
 
 	const isDustQueriesEnabled = Boolean(selectedUserId);
 
