@@ -156,8 +156,8 @@ export default function Noise() {
 						<div id={chartContainerId}>
 							<AggregationTabs aggregation={aggregation} setAggregation={setAggregation}>
 								<ChartLineDefault
-									minTime={minHour}
-									maxTime={maxHour}
+									minHour={minHour}
+									maxHour={maxHour}
 									usePeakData={usePeakAggregation}
 									chartData={data ?? []}
 									chartTitle={date.toLocaleDateString(i18n.language, {

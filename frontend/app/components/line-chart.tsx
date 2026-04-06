@@ -33,8 +33,8 @@ interface LineChartProps {
 	headerRight?: React.ReactNode;
 	usePeakData?: boolean;
 	dustField?: SensorTypeField;
-	minTime: number;
-	maxTime: number;
+	minHour: number;
+	maxHour: number;
 }
 
 export function ChartLineDefault({
@@ -49,8 +49,8 @@ export function ChartLineDefault({
 	headerRight,
 	usePeakData = false,
 	dustField,
-	minTime,
-	maxTime,
+	minHour,
+	maxHour,
 }: LineChartProps) {
 	const { date: selectedDay } = useDate();
 	const { t } = useTranslation();
@@ -75,9 +75,9 @@ export function ChartLineDefault({
 		value: getValue(item),
 	}));
 
-	const ticks = Array.from({ length: maxTime - minTime + 1 }, (_, i) => {
+	const ticks = Array.from({ length: maxHour - minHour + 1 }, (_, i) => {
 		const date = toTZDate(selectedDay);
-		date.setHours(minTime + i, 0, 0, 0);
+		date.setHours(minHour + i, 0, 0, 0);
 		return date.getTime();
 	});
 

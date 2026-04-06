@@ -118,8 +118,8 @@ export default function Vibration() {
 					<div className="w-full">
 						<div id={chartContainerId}>
 							<ChartLineDefault
-								minTime={minHour}
-								maxTime={maxHour}
+								minHour={minHour}
+								maxHour={maxHour}
 								chartData={data}
 								chartTitle={date.toLocaleDateString(i18n.language, {
 									day: "numeric",

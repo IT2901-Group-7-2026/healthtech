@@ -154,7 +154,7 @@ export function getEmoji(dangerLevel: DangerLevel | null) {
 	}
 }
 
-const clampHour = (hour: number) => Math.max(Math.min(hour, MAX_CHART_HOUR), MIN_CHART_HOUR);
+export const clampHour = (hour: number) => Math.max(Math.min(hour, MAX_CHART_HOUR), MIN_CHART_HOUR);
 
 export function getHourDomainFromBuckets(buckets: Array<TimeBucketStatus>) {
 	if (buckets.length === 0) {
