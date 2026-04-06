@@ -378,13 +378,21 @@ function NavTabs({ routes }: { routes: Array<{ label: string; to: To; icon?: Luc
 	const { view } = useView();
 	const { date } = useDate();
 	const location = useLocation();
+	const pathname = location.pathname;
 	const formatDate = useFormatDate();
 
 	const navLinkRefs = useRef<Array<HTMLElement>>([]);
 	const [pillWidth, setPillWidth] = useState<number>();
 	const [pillLeft, setPillLeft] = useState<number>();
 
-	const activeNavIndex = routes.findIndex((route) => route.to === location.pathname);
+	function normalizePathname(path: string) {
+		if (path === "/") return path;
+		return path.replace(/\/+$/, "");
+	}
+
+	const activeNavIndex = routes.findIndex(
+		(route) => normalizePathname(route.to.toString()) === normalizePathname(pathname),
+	);
 
 	// update pill whenever the active route changes,
 	useLayoutEffect(() => {

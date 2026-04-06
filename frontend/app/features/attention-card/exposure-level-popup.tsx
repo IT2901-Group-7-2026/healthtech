@@ -46,7 +46,7 @@ const WorkerRow = ({ worker, status }: { worker: UserWithStatusDto; status: Dang
 			<TableCell>
 				<Link
 					//TODO: change routing to the subs individual page
-					to={`/foreman/team/`}
+					to={`/foreman/team`}
 					className="flex w-full items-center justify-between"
 				>
 					<div className="flex items-center gap-5">
@@ -97,7 +97,7 @@ export function AtRiskPopup({
 
 	return (
 		<BasePopup title={exposureTitle} open={open} relevantDate={null} onClose={onClose}>
-			<Link to={`/foreman/team/`} className="h-full w-full flex-1 basis-4 rounded-2xl">
+			<Link to={`/foreman/team`} className="h-full w-full flex-1 basis-4 rounded-2xl">
 				<Card hoverable={true}>
 					<CardContent>
 						<Table>

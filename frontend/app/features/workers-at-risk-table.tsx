@@ -18,7 +18,7 @@ export function AtRiskTable({ users }: Props) {
 	return (
 		<Link
 			//TODO: change routing to the subs individual page
-			to={`/foreman/team/`}
+			to={`/foreman/team`}
 			className="h-full w-full flex-1 basis-64 rounded-2xl"
 		>
 			<Card hoverable={true}>
