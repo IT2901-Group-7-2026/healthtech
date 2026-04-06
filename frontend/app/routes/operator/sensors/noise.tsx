@@ -19,7 +19,7 @@ import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { calculateSummaryCounts, mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange } from "@/lib/utils";
+import { computeYAxisRange, getHourDomainFromBuckets } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useId } from "react";
@@ -53,9 +53,15 @@ export default function Noise() {
 		usePeakAggregation,
 	});
 
+	// Retrieve week data to find the min and max hour the user has data
+	const weekSummaryQuery = buildSensorQuery(sensor, "week", date, {
+		granularity: "hour",
+		usePeakAggregation,
+	});
+
 	const useDaySummary = view === "day";
 
-	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries({
+	const [{ data, isLoading, isError }, { data: daySummaryData }, { data: weekSummaryData }] = useQueries({
 		queries: [
 			sensorQueryOptions({
 				sensor,
@@ -68,22 +74,6 @@ export default function Noise() {
 				userId: user.id,
 				enabled: useDaySummary,
 			}),
-		],
-	});
-
-	// Retrieve week data to find the min and max hour the user has data
-	const weekSummaryQuery = buildSensorQuery(sensor, "week", date, {
-		granularity: "hour",
-		usePeakAggregation,
-	});
-
-	const weekQuery = useQueries({
-		queries: [
-			sensorQueryOptions({
-				sensor,
-				query,
-				userId: user.id,
-			}),
 			sensorQueryOptions({
 				sensor,
 				query: weekSummaryQuery,
@@ -93,35 +83,7 @@ export default function Noise() {
 		],
 	});
 
-	function getMinMaxTime(weeklyQuery: typeof weekQuery) {
-		const dataFromQuery = weeklyQuery[1].data;
-		if (!dataFromQuery || dataFromQuery.length === 0) {
-			return { minTime: undefined, maxTime: undefined };
-		}
-
-		let minimumTime = new Date(dataFromQuery[0].time).getTime();
-		let maximumTime = new Date(dataFromQuery[0].time).getTime();
-		let minimumHour = 23;
-		let maximumHour = 0;
-
-		for (const bucket of dataFromQuery) {
-			const time = new Date(bucket.time).getTime();
-			const hour = new Date(bucket.time).getHours();
-
-			if (hour < minimumHour) {
-				minimumTime = time;
-				minimumHour = hour;
-			}
-			if (hour > maximumHour) {
-				maximumTime = time;
-				maximumHour = hour;
-			}
-		}
-
-		return { minTime: new Date(minimumTime), maxTime: new Date(maximumTime), minimumHour, maximumHour };
-	}
-
-	const { minTime, maxTime, minimumHour: minHour, maximumHour: maxHour } = getMinMaxTime(weekQuery ?? []);
+	const { minHour, maxHour } = getHourDomainFromBuckets(weekSummaryData ?? []);
 
 	if (isLoading) {
 		return (
@@ -194,8 +156,8 @@ export default function Noise() {
 						<div id={chartContainerId}>
 							<AggregationTabs aggregation={aggregation} setAggregation={setAggregation}>
 								<ChartLineDefault
-									minTime={minTime ?? new Date()}
-									maxTime={maxTime ?? new Date()}
+									minHour={minHour}
+									maxHour={maxHour}
 									usePeakData={usePeakAggregation}
 									chartData={data ?? []}
 									chartTitle={date.toLocaleDateString(i18n.language, {

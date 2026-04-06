@@ -16,7 +16,7 @@ import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { calculateSummaryCounts, mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange } from "@/lib/utils";
+import { computeYAxisRange, getHourDomainFromBuckets } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -37,10 +37,15 @@ export default function Dust() {
 		granularity: "hour",
 	});
 
+	// Retrieve week data to find the min and max hour the user has data
+	const weekSummaryQuery = buildSensorQuery(sensor, "week", date, {
+		granularity: "hour",
+	});
+
 	const useDaySummary = view === "day";
 	const dustThreshold = getThreshold(sensor, query.field);
 
-	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries({
+	const [{ data, isLoading, isError }, { data: daySummaryData }, { data: weekSummaryData }] = useQueries({
 		queries: [
 			sensorQueryOptions({
 				sensor,
@@ -53,21 +58,6 @@ export default function Dust() {
 				userId: user.id,
 				enabled: useDaySummary,
 			}),
-		],
-	});
-
-	// Retrieve week data to find the min and max hour the user has data
-	const weekSummaryQuery = buildSensorQuery(sensor, "week", date, {
-		granularity: "hour",
-	});
-
-	const weekQuery = useQueries({
-		queries: [
-			sensorQueryOptions({
-				sensor,
-				query,
-				userId: user.id,
-			}),
 			sensorQueryOptions({
 				sensor,
 				query: weekSummaryQuery,
@@ -77,35 +67,7 @@ export default function Dust() {
 		],
 	});
 
-	function getMinMaxTime(weeklyQuery: typeof weekQuery) {
-		const dataFromQuery = weeklyQuery[1].data;
-		if (!dataFromQuery || dataFromQuery.length === 0) {
-			return { minTime: undefined, maxTime: undefined };
-		}
-
-		let minimumTime = new Date(dataFromQuery[0].time).getTime();
-		let maximumTime = new Date(dataFromQuery[0].time).getTime();
-		let minimumHour = 23;
-		let maximumHour = 0;
-
-		for (const bucket of dataFromQuery) {
-			const time = new Date(bucket.time).getTime();
-			const hour = new Date(bucket.time).getHours();
-
-			if (hour < minimumHour) {
-				minimumTime = time;
-				minimumHour = hour;
-			}
-			if (hour > maximumHour) {
-				maximumTime = time;
-				maximumHour = hour;
-			}
-		}
-
-		return { minTime: new Date(minimumTime), maxTime: new Date(maximumTime), minimumHour, maximumHour };
-	}
-
-	const { minTime, maxTime, minimumHour: minHour, maximumHour: maxHour } = getMinMaxTime(weekQuery ?? []);
+	const { minHour, maxHour } = getHourDomainFromBuckets(weekSummaryData ?? []);
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
@@ -155,8 +117,8 @@ export default function Dust() {
 					<div className="w-full">
 						<div id={chartContainerId}>
 							<ChartLineDefault
-								minTime={minTime ?? new Date()}
-								maxTime={maxTime ?? new Date()}
+								minHour={minHour}
+								maxHour={maxHour}
 								chartData={data ?? []}
 								chartTitle={date.toLocaleDateString(locale, {
 									day: "numeric",
