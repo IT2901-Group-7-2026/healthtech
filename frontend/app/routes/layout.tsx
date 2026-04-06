@@ -21,16 +21,17 @@ import { usePopup } from "@/features/popups/use-popup";
 import { useUser } from "@/features/user/user-context";
 import { KARI_NORDMANN_ID, OLA_NORDMANN_ID } from "@/features/user/user-utils";
 import { useView } from "@/features/views/use-view";
+import { useFormatDate } from "@/hooks/use-format-date";
 import type { TranslateFn } from "@/i18n/config.js";
 import { usersQueryOptions } from "@/lib/api";
 import { type User, UserRoleSchema } from "@/lib/dto.js";
 import { cn, shorthandName, userRoleToString } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import "leaflet/dist/leaflet.css";
 import { Bell, House, Languages, type LucideIcon, Monitor, Moon, Palette, Sun, User as UserIcon } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { href, Link, NavLink, Outlet, type To, useLocation, useNavigate } from "react-router";
-import "leaflet/dist/leaflet.css";
 
 const Logo = () => (
 	<svg width="44" height="40" viewBox="0 0 44 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -377,12 +378,21 @@ function NavTabs({ routes }: { routes: Array<{ label: string; to: To; icon?: Luc
 	const { view } = useView();
 	const { date } = useDate();
 	const location = useLocation();
+	const pathname = location.pathname;
+	const formatDate = useFormatDate();
 
 	const navLinkRefs = useRef<Array<HTMLElement>>([]);
 	const [pillWidth, setPillWidth] = useState<number>();
 	const [pillLeft, setPillLeft] = useState<number>();
 
-	const activeNavIndex = routes.findIndex((route) => route.to === location.pathname);
+	function normalizePathname(path: string) {
+		if (path === "/") return path;
+		return path.replace(/\/+$/, "");
+	}
+
+	const activeNavIndex = routes.findIndex(
+		(route) => normalizePathname(route.to.toString()) === normalizePathname(pathname),
+	);
 
 	// update pill whenever the active route changes,
 	useLayoutEffect(() => {
@@ -419,7 +429,7 @@ function NavTabs({ routes }: { routes: Array<{ label: string; to: To; icon?: Luc
 						end={true}
 						to={{
 							pathname: route.to.toString(),
-							search: `?view=${view}&date=${date.toISOString().split("T")[0]}`,
+							search: `?view=${view}&date=${formatDate(date, "yyyy-MM-dd")}`,
 						}}
 						key={route.to.toString()}
 						ref={(el) => {

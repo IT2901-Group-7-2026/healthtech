@@ -1,6 +1,7 @@
 import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@/components/ui/item";
 import { NotificationPopup } from "@/features/popups/notification-popup";
 import { usePopup } from "@/features/popups/use-popup";
+import { useUser } from "@/features/user/user-context";
 import { TIMEZONE } from "@/i18n/locale";
 import type { DangerLevel } from "@/lib/danger-levels";
 import type { Sensor } from "@/lib/sensors";
@@ -51,8 +52,8 @@ type NotifData = {
 
 export function Notifications({ onParentClose }: { onParentClose: () => void }) {
 	const { t, i18n } = useTranslation();
-
 	const { visible, openPopup, closePopup } = usePopup();
+	const { user } = useUser();
 
 	const [notifData, setNotifData] = useState<NotifData | null>(null);
 
@@ -65,6 +66,14 @@ export function Notifications({ onParentClose }: { onParentClose: () => void }) 
 	function handleNotifClick(clickedNotif: NotifData): void {
 		setNotifData(clickedNotif);
 		openPopup();
+	}
+
+	const notificationLink = user.role === "foreman" ? `/foreman` : `/operator/${notifData?.sensor}`;
+
+	let notificationLinkSearch = "";
+	if (user.role === "foreman" && notifData) {
+		const formattedDate = formatDate(notifData.date, "yyyy-MM-dd");
+		notificationLinkSearch = `?sensor=${notifData.sensor}&filterDate=${formattedDate}`;
 	}
 
 	return (
@@ -112,7 +121,8 @@ export function Notifications({ onParentClose }: { onParentClose: () => void }) 
 							minute: "2-digit",
 						}),
 					})}
-					pathname={`/${notifData.sensor}`}
+					pathname={notificationLink}
+					search={notificationLinkSearch}
 				>
 					<div className="flex justify-start gap-2">
 						<span

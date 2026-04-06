@@ -65,14 +65,14 @@
     "danger": "Fare: Eksponeringsgrenser overskredet den"
   },
   "daily_notes": {
-    "dayTitle": "Dine notater for {{day}}",
+    "viewTitle": "Dine notater for {{date}}",
     "writeHere": "Skriv her...",
     "edit": "Rediger",
     "save": "Lagre",
-    "notesFromThis": "Notater fra denne ",
     "day": "dagen",
     "week": "uken",
-    "month": "måneden"
+    "month": "måneden",
+    "emptyState": "Ingen notater for denne {{view}}. Velg en dag for å legge til notater."
   },
   "buttons": {
     "confirm": "Ok",
@@ -102,6 +102,9 @@
   "light": "Lys",
   "dark": "Mørk",
   "system": "System",
+
+  "shareDataWithHygienistButton": "Del data med hygieniker",
+  "shareDataWithHygienistConfirmation": "Månedlige data delt ✓",
 
   "dust": "Støv",
   "vibration": "Vibrasjon",
@@ -242,7 +245,7 @@
   "user": {
     "role": {
       "operator": "Operatør",
-      "foreman": "Forman"
+      "foreman": "Formann"
     },
     "searchPlaceholder": "Søk etter brukere..."
   },

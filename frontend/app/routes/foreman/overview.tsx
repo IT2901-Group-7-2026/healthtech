@@ -13,12 +13,7 @@ import { AttentionCard } from "@/features/attention-card/attention-card.js";
 import { TeamSummary } from "@/features/sidebar/team-summary.js";
 import { useUser } from "@/features/user/user-context";
 import { useFormatDate } from "@/hooks/use-format-date";
-import {
-	fetchSubordinatesQueryOptions,
-	fetchThresholdSummaryQueryOptions,
-	sensorQueryOptions,
-	usersQueryOptions,
-} from "@/lib/api.js";
+import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions, sensorQueryOptions } from "@/lib/api.js";
 import { now, parseAsTZDate, today, toTZDate } from "@/lib/date";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
@@ -34,11 +29,12 @@ import { PieChartCard } from "../../features/attention-card/pie-chart-card";
 export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const formatDate = useFormatDate();
+	const { user } = useUser();
 
 	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor);
 	const [date, setDate] = useQueryState("filterDate", parseAsTZDate.withDefault(today()));
 
-	const { data: users } = useQuery(usersQueryOptions());
+	const { data: users } = useQuery(fetchSubordinatesQueryOptions(user.id));
 
 	// TODO: Use this to show data for only that user
 	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString);
@@ -52,8 +48,6 @@ export default function ForemanOverview() {
 	// Foremen can only see dates within the last week
 	const minSelectableDate = startOfDay(addWeeks(today(), -1));
 	const maxSelectableDate = now();
-
-	const { user } = useUser();
 
 	const isDustQueriesEnabled = Boolean(selectedUserId);
 
@@ -235,8 +229,8 @@ export default function ForemanOverview() {
 												label: t(($) => $.foremanDashboard.overview.statCards.danger.label),
 											},
 										}}
-										label={s}
-										to="/"
+										label={t(($) => $[s])}
+										to={`?sensor=${s}`}
 										key={s}
 										sensorType={s}
 									/>

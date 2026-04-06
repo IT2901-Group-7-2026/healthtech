@@ -37,6 +37,7 @@ public class UserService : IUserService
 		return await _context
 			.User.Where(u => u.Managers.Any(m => m.Id == managerId))
 			.Include(u => u.Location)
+			.OrderBy(u => u.Username)
 			.ToListAsync();
 	}
 
