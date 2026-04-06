@@ -5,7 +5,7 @@ import { useDate } from "@/features/date-picker/use-date";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
-import type { SensorDataResponseDto, SensorTypeField, UserSensorStatusDto } from "@/lib/dto";
+import type { SensorDataResponseDto, SensorTypeField } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { downsampleSensorData } from "@/lib/utils";
@@ -83,7 +83,12 @@ export function ChartLineDefault({
 
 	const formatTime = (time: number) => formatDate(toTZDate(time), "HH:mm");
 
-	const maxDataDangerLevel = getDangerLevel(maxData, usePeakData);
+	const dataMin = getValue(minData);
+	const dataMax = getValue(maxData);
+
+	const isAllDanger = dangerThreshold <= dataMin;
+	const isAllWarning = dangerThreshold >= dataMax && warning <= dataMin;
+	const isAllSafe = warning >= dataMax;
 
 	return (
 		<Card className="w-full">
@@ -148,31 +153,37 @@ export function ChartLineDefault({
 
 						<defs>
 							<linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-								{maxDataDangerLevel === "safe" ? (
+								{isAllDanger ? (
 									<>
-										{/* Whole line is green */}
+										<stop offset="0%" stopColor="var(--danger)" />
+										<stop offset="100%" stopColor="var(--danger)" />
+									</>
+								) : isAllWarning ? (
+									<>
+										<stop offset="0%" stopColor="var(--warning)" />
+										<stop offset="100%" stopColor="var(--warning)" />
+									</>
+								) : isAllSafe ? (
+									<>
 										<stop offset="0%" stopColor="var(--safe)" />
 										<stop offset="100%" stopColor="var(--safe)" />
 									</>
-								) : maxDataDangerLevel === "warning" ? (
+								) : usePeakData ? (
 									<>
-										{/* Green and yellow line*/}
-										<stop offset={getOffset(warning)} stopColor="var(--warning)" />
-										<stop offset={getOffset(warning)} stopColor="var(--safe)" />
-
+										{/* ONLY green → red */}
+										<stop offset={getOffset(dangerThreshold)} stopColor="var(--danger)" />
+										<stop offset={getOffset(dangerThreshold)} stopColor="var(--safe)" />
 										<stop offset="100%" stopColor="var(--safe)" />
 									</>
 								) : (
-									maxDataDangerLevel === "danger" && (
-										<>
-											{/* green, yellow and red line */}
-											<stop offset={getOffset(dangerThreshold)} stopColor={"var(--danger)"} />
-											<stop offset={getOffset(dangerThreshold)} stopColor={"var(--warning)"} />
-											<stop offset={getOffset(warning)} stopColor={"var(--warning)"} />
-											<stop offset={getOffset(warning)} stopColor={"var(--safe)"} />
-											<stop offset="100%" stopColor={"var(--safe)"} />
-										</>
-									)
+									<>
+										{/* normal 3-level */}
+										<stop offset={getOffset(dangerThreshold)} stopColor="var(--danger)" />
+										<stop offset={getOffset(dangerThreshold)} stopColor="var(--warning)" />
+										<stop offset={getOffset(warning)} stopColor="var(--warning)" />
+										<stop offset={getOffset(warning)} stopColor="var(--safe)" />
+										<stop offset="100%" stopColor="var(--safe)" />
+									</>
 								)}
 							</linearGradient>
 						</defs>
@@ -182,7 +193,9 @@ export function ChartLineDefault({
 							stroke={`url(#${id})`}
 							strokeWidth={1.25}
 							dot={false}
-							activeDot={(props) => <Dot {...props} warning={warning} danger={danger} />}
+							activeDot={(props) => (
+								<Dot {...props} warning={warning} danger={dangerThreshold} isPeak={usePeakData} />
+							)}
 						/>
 						{children}
 					</LineChart>
@@ -194,16 +207,14 @@ export function ChartLineDefault({
 
 type DotProps = ActiveDotProps & { warning: number; danger: number };
 
-const Dot = ({ cx, cy, value, warning, danger }: DotProps) => {
+const Dot = ({ cx, cy, value, warning, danger, isPeak }: DotProps & { isPeak?: boolean }) => {
 	let fillColor: string;
 
-	if (value >= danger) {
-		fillColor = "var(--danger)";
-	} else if (value >= warning) {
-		fillColor = "var(--warning)";
-	} else {
-		fillColor = "var(--safe)";
-	}
+	if (isPeak) {
+		fillColor = value >= danger ? "var(--danger)" : "var(--safe)";
+	} else if (value >= danger) fillColor = "var(--danger)";
+	else if (value >= warning) fillColor = "var(--warning)";
+	else fillColor = "var(--safe)";
 
 	return <circle cx={cx} cy={cy} r={6} fill={fillColor} />;
 };
@@ -229,13 +240,4 @@ export function ThresholdLine({ y, dangerLevel, label }: { y: number; dangerLeve
 			}}
 		/>
 	);
-}
-
-function getDangerLevel(data: UserSensorStatusDto, usePeakData: boolean): DangerLevel {
-	if (usePeakData) {
-		// biome-ignore lint/style/noNonNullAssertion: If usePeakData is true and peakDangerLevel is null, there is a bug somewhere else
-		return data.peakDangerLevel!;
-	}
-
-	return data.dangerLevel;
 }
