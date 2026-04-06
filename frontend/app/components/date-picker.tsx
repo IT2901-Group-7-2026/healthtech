@@ -1,6 +1,5 @@
 import { useFormatDate } from "@/hooks/use-format-date";
 import { TIMEZONE, TIMEZONE_NAME } from "@/i18n/locale";
-import { now } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/ui/calendar";
 import { TZDate } from "@date-fns/tz";
@@ -14,8 +13,8 @@ type DatePickerProps = Omit<
 	"mode" | "required" | "defaultMonth" | "onSelect" | "selected" | "timeZone" | "weekStartsOn"
 > & {
 	onDateChange: (date: TZDate) => void;
+	date: TZDate;
 	mode?: "day" | "week" | "month";
-	date?: TZDate;
 	withFooter?: boolean;
 };
 
@@ -31,7 +30,7 @@ export function DatePicker({
 	const formatDate = useFormatDate();
 	const { t, i18n } = useTranslation();
 
-	const [selectedDate, setSelectedDate] = useState<TZDate>(date ?? now());
+	const [selectedDate, setSelectedDate] = useState<TZDate>(date);
 
 	useEffect(() => {
 		if (!date) {

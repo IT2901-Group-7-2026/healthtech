@@ -68,7 +68,7 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 	const currentDate = useDate().date;
 	// For specific sensor: "<Sensor> exposure for <...>"
 	// For all sensors: "Exposure for <...>"
-	let summaryTitle = exposureType !== "all" ? `${exposureType} ` : "";
+	let summaryTitle = exposureType !== "all" ? `${t(($) => $[exposureType])} ` : "";
 
 	if (view === "month") {
 		summaryTitle += t(($) => $.exposure_summary.title.month, {

@@ -41,8 +41,7 @@ export default function SensorLayout() {
 	// pathname is "/operator" or "/operator/<sensor>"
 	const sensor = toSensor(pathname.split("/").at(-1) ?? "");
 
-	const sensorQuery =
-		sensor !== null ? buildSensorQuery(sensor, view, date, { granularity: "hour", usePeakAggregation }) : null;
+	const sensorQuery = sensor !== null ? buildSensorQuery(sensor, view, date, { usePeakAggregation }) : null;
 	const sensorQueryEnabled = sensor !== null && sensorQuery !== null;
 
 	const [sensorResponse, allSensorsResponse] = useQueries({
@@ -54,7 +53,9 @@ export default function SensorLayout() {
 				enabled: sensorQueryEnabled,
 			}),
 			sensorOverviewQueryOptions({
-				query: buildSensorOverviewQuery([...sensors], view, date),
+				query: buildSensorOverviewQuery([...sensors], view, date, {
+					usePeakAggregation,
+				}),
 				userId: user.id,
 				enabled: !sensorQueryEnabled,
 			}),
