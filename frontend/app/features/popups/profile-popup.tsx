@@ -52,6 +52,10 @@ export function ProfilePopup({ user, open, onClose, avatarSrc, children }: Profi
 			form.setError("toDate", {
 				message: t(($) => $.popup.invalidDate),
 			});
+
+			setTimeout(() => {
+				form.clearErrors("toDate");
+			}, 5000);
 			return;
 		}
 
@@ -59,7 +63,7 @@ export function ProfilePopup({ user, open, onClose, avatarSrc, children }: Profi
 
 		setTimeout(() => {
 			setDeleteText(false);
-		}, 15000);
+		}, 5000);
 	};
 
 	const minSelectableDate = new TZDate(2024, 0, 1, "Europe/Oslo");
@@ -73,7 +77,7 @@ export function ProfilePopup({ user, open, onClose, avatarSrc, children }: Profi
 		<BasePopup title={title} open={open} relevantDate={null} onClose={onClose}>
 			{children}
 
-			<div className="flex flex-col gap-6 md:px-6 md:pb-2">
+			<div className="flex flex-col gap-3 text-sm md:px-0 md:pb-1">
 				<div className="flex flex-row items-center gap-4">
 					<div>
 						{avatarSrc ? (
@@ -119,15 +123,14 @@ export function ProfilePopup({ user, open, onClose, avatarSrc, children }: Profi
 						<p>{user.jobDescription}</p>
 					</div>
 				</div>
-				<Card className="p-4">
-					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)}>
-							<div className="flex flex-col gap-2">
-								<div className="flex flex-wrap items-center gap-2">
-									<Button type="submit" disabled={!(fromDate && toDate)} className="h-8 w-25 text-sm">
-										{t(($) => $.popup.deleteData)}
-									</Button>
-									{t(($) => $.popup.from)}
+				<div className="flex flex-col gap-2">
+					<p className="label text-muted-foreground">{t(($) => $.profile.deleteButtonInformation)}</p>
+					<Card className="p-3">
+						<Form {...form}>
+							<form onSubmit={form.handleSubmit(onSubmit)} className="max-w-sm space-y-2">
+								{/* From */}
+								<div className="flex flex-col gap-2">
+									<span>{t(($) => $.popup.from)}</span>
 									<FormField
 										control={form.control}
 										name="fromDate"
@@ -136,17 +139,16 @@ export function ProfilePopup({ user, open, onClose, avatarSrc, children }: Profi
 												<Popover open={fromCalendarOpen} onOpenChange={setFromCalendarOpen}>
 													<PopoverTrigger asChild={true}>
 														<Button
-															variant={"outline"}
-															data-empty={!field.value}
-															className="h-8 w-25 justify-between text-left font-normal text-sm data-[empty=true]:text-muted-foreground"
+															variant="outline"
+															className="h-8 w-32 justify-between text-sm"
 														>
 															{fromDate
 																? format(fromDate, "dd.MM.yy")
-																: t(($) => $.popup.select)}
-															<ChevronDownIcon data-icon="inline-end" />
+																: t(($) => $.popup.startDate)}
+															<ChevronDownIcon />
 														</Button>
 													</PopoverTrigger>
-													<PopoverContent className="w-auto p-0" align="start">
+													<PopoverContent className="w-auto p-0">
 														<Calendar
 															mode="single"
 															selected={field.value}
@@ -163,8 +165,11 @@ export function ProfilePopup({ user, open, onClose, avatarSrc, children }: Profi
 											</FormItem>
 										)}
 									/>
+								</div>
 
-									{t(($) => $.popup.to)}
+								{/* To */}
+								<div className="flex flex-col gap-2">
+									<span>{t(($) => $.popup.to)}</span>
 									<FormField
 										control={form.control}
 										name="toDate"
@@ -173,17 +178,16 @@ export function ProfilePopup({ user, open, onClose, avatarSrc, children }: Profi
 												<Popover open={toCalendarOpen} onOpenChange={setToCalendarOpen}>
 													<PopoverTrigger asChild={true}>
 														<Button
-															variant={"outline"}
-															data-empty={!field.value}
-															className="h-8 w-24 justify-between text-left font-normal text-sm data-[empty=true]:text-muted-foreground"
+															variant="outline"
+															className="h-8 w-32 justify-between text-sm"
 														>
 															{toDate
 																? format(toDate, "dd.MM.yy")
-																: t(($) => $.popup.select)}
-															<ChevronDownIcon data-icon="inline-end" />
+																: t(($) => $.popup.endDate)}
+															<ChevronDownIcon />
 														</Button>
 													</PopoverTrigger>
-													<PopoverContent className="w-auto p-0" align="start">
+													<PopoverContent className="w-auto p-0">
 														<Calendar
 															mode="single"
 															selected={field.value}
@@ -200,22 +204,35 @@ export function ProfilePopup({ user, open, onClose, avatarSrc, children }: Profi
 											</FormItem>
 										)}
 									/>
-									{form.formState.errors.toDate && (
-										<div className="text-red-500 text-sm">
-											{form.formState.errors.toDate.message}
-										</div>
-									)}
-									{deleteText && fromDate && toDate && (
-										<div className="text-green-700 text-sm">
-											{t(($) => $.popup.dataDeleted)} {format(fromDate, "d MMMM yyyy")}{" "}
-											{t(($) => $.popup.to)} {format(toDate, "d MMMM yyyy")}
-										</div>
-									)}
 								</div>
-							</div>
-						</form>
-					</Form>
-				</Card>
+
+								{/* Button + floating message */}
+								<div className="relative mt-10">
+									<Button type="submit" disabled={!(fromDate && toDate)} className="h-8 text-sm">
+										{t(($) => $.popup.deleteData)}
+									</Button>
+
+									<div className="absolute bottom-full left-0 mb-2">
+										{form.formState.errors.toDate && (
+											<div className="text-red-500 text-sm">
+												{form.formState.errors.toDate.message}
+											</div>
+										)}
+
+										{deleteText && fromDate && toDate && (
+											<div className="text-green-700 text-sm">
+												{t(($) => $.popup.dataDeleted)} {format(fromDate, "d MMMM yyyy")}{" "}
+												{"to "}
+												{format(toDate, "d MMMM yyyy")}
+												{"."}
+											</div>
+										)}
+									</div>
+								</div>
+							</form>
+						</Form>
+					</Card>
+				</div>
 			</div>
 		</BasePopup>
 	);
