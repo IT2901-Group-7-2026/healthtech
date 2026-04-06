@@ -81,7 +81,7 @@ export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data, aggregatio
 		const hour = timeBucket.time.getHours();
 
 		return (
-			isSameWeek(daysInWeek[0], timeBucket.time, { in: TIMEZONE }) && hour >= dayStartHour && hour < dayEndHour
+			isSameWeek(daysInWeek[0], timeBucket.time, { in: TIMEZONE }) && hour >= dayStartHour && hour <= dayEndHour
 		);
 	});
 

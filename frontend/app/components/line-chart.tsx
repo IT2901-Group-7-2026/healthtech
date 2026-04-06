@@ -9,7 +9,6 @@ import type { SensorDataResponseDto, SensorTypeField, UserSensorStatusDto } from
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { downsampleSensorData } from "@/lib/utils";
-import { addHours, endOfDay, getHours, max, min, startOfDay, subHours } from "date-fns";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import { type ActiveDotProps, CartesianGrid, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
@@ -34,6 +33,8 @@ interface LineChartProps {
 	headerRight?: React.ReactNode;
 	usePeakData?: boolean;
 	dustField?: SensorTypeField;
+	minHour: number;
+	maxHour: number;
 }
 
 export function ChartLineDefault({
@@ -48,6 +49,8 @@ export function ChartLineDefault({
 	headerRight,
 	usePeakData = false,
 	dustField,
+	minHour,
+	maxHour,
 }: LineChartProps) {
 	const { date: selectedDay } = useDate();
 	const { t } = useTranslation();
@@ -62,19 +65,6 @@ export function ChartLineDefault({
 	const maxData = chartData.toSorted((a, b) => getValue(b) - getValue(a))[0];
 	const minData = chartData.toSorted((a, b) => getValue(a) - getValue(b))[0];
 
-	// Set the domain to be from 1 hour before the first data point to 1 hour after the last data point, clamped to the current day
-	const minTime = chartData.toSorted((a, b) => a.time.getTime() - b.time.getTime())[0].time;
-	const maxTime = chartData.toSorted((a, b) => b.time.getTime() - a.time.getTime())[0].time;
-
-	const paddedStart = subHours(minTime, 1);
-	const paddedEnd = addHours(maxTime, 1);
-
-	const clampedStart = max([paddedStart, startOfDay(minTime)]);
-	const clampedEnd = min([paddedEnd, endOfDay(maxTime)]);
-
-	const startHour = getHours(clampedStart);
-	const endHour = getHours(clampedEnd);
-
 	// Used to position color-changes in the graph so the line changes color at threshold boundaries.
 	const getOffset = (y: number) => `${((getValue(maxData) - y) / (getValue(maxData) - getValue(minData))) * 100}%`;
 
@@ -85,9 +75,9 @@ export function ChartLineDefault({
 		value: getValue(item),
 	}));
 
-	const ticks = Array.from({ length: endHour - startHour + 1 }, (_, i) => {
+	const ticks = Array.from({ length: maxHour - minHour + 1 }, (_, i) => {
 		const date = toTZDate(selectedDay);
-		date.setHours(startHour + i, 0, 0, 0);
+		date.setHours(minHour + i, 0, 0, 0);
 		return date.getTime();
 	});
 

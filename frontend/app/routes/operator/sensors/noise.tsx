@@ -19,7 +19,7 @@ import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { calculateSummaryCounts, mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange } from "@/lib/utils";
+import { computeYAxisRange, getHourDomainFromBuckets } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useId } from "react";
@@ -53,9 +53,15 @@ export default function Noise() {
 		usePeakAggregation,
 	});
 
+	// Retrieve week data to find the min and max hour the user has data
+	const weekSummaryQuery = buildSensorQuery(sensor, "week", date, {
+		granularity: "hour",
+		usePeakAggregation,
+	});
+
 	const useDaySummary = view === "day";
 
-	const [{ data, isLoading, isError }, { data: daySummaryData }] = useQueries({
+	const [{ data, isLoading, isError }, { data: daySummaryData }, { data: weekSummaryData }] = useQueries({
 		queries: [
 			sensorQueryOptions({
 				sensor,
@@ -68,8 +74,16 @@ export default function Noise() {
 				userId: user.id,
 				enabled: useDaySummary,
 			}),
+			sensorQueryOptions({
+				sensor,
+				query: weekSummaryQuery,
+				userId: user.id,
+				enabled: true,
+			}),
 		],
 	});
+
+	const { minHour, maxHour } = getHourDomainFromBuckets(weekSummaryData ?? []);
 
 	if (isLoading) {
 		return (
@@ -142,6 +156,8 @@ export default function Noise() {
 						<div id={chartContainerId}>
 							<AggregationTabs aggregation={aggregation} setAggregation={setAggregation}>
 								<ChartLineDefault
+									minHour={minHour}
+									maxHour={maxHour}
 									usePeakData={usePeakAggregation}
 									chartData={data ?? []}
 									chartTitle={date.toLocaleDateString(i18n.language, {
