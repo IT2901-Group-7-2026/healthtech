@@ -18,6 +18,14 @@ interface Props {
 export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 	const [t] = useTranslation();
 	const threshold = getThreshold(sensor);
+	const getPercent = (value: number) => Math.round((value / threshold.danger) * 100);
+
+	const hasAnySensorData = users.some((u) => {
+		const sensorStatus = u.status[sensor];
+		if (!sensorStatus) return false;
+
+		return getPercent(sensorStatus.value) >= 1;
+	});
 
 	const data = users.flatMap((user) => {
 		const sensorStatus = user.status[sensor];
@@ -25,11 +33,11 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 			return [];
 		}
 
-		const percent = Math.round((sensorStatus.value / threshold.danger) * 100);
+		const percent = getPercent(sensorStatus.value);
 		// Only show peak if it's above the current value
 		const peakPercent =
 			sensorStatus.peakValue && sensorStatus.peakValue > sensorStatus.value
-				? Math.round((sensorStatus.peakValue / threshold.danger) * 100)
+				? getPercent(sensorStatus.peakValue)
 				: null;
 
 		return [
@@ -43,7 +51,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 		];
 	});
 
-	if (data.length === 0) {
+	if (!hasAnySensorData) {
 		return (
 			<Card className="w-192">
 				<CardContent className="flex h-48 items-center justify-center text-muted-foreground text-sm">
