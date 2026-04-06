@@ -81,8 +81,8 @@ export default function OperatorHome() {
 					/>
 				) : view === "week" ? (
 					<WeekWidget
-						dayStartHour={0}
-						dayEndHour={23}
+						dayStartHour={minHour}
+						dayEndHour={maxHour}
 						data={mapOverviewDataToTimeBucketStatuses(overviewBuckets ?? [])}
 					/>
 				) : !overviewBuckets || overviewBuckets.length === 0 ? (
@@ -99,8 +99,8 @@ export default function OperatorHome() {
 				) : (
 					<DailyBarChart
 						data={mapOverviewBucketsToChartRows(overviewBuckets ?? [], 0, 23)}
-						startHour={0}
-						endHour={23}
+						startHour={minHour}
+						endHour={maxHour}
 						chartTitle={date.toLocaleDateString(i18n.language, {
 							day: "numeric",
 							month: "long",

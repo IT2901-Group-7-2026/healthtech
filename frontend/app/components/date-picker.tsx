@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Calendar } from "@/ui/calendar";
 import { TZDate } from "@date-fns/tz";
 import { addMonths, addWeeks, startOfMonth, startOfWeek, subMilliseconds } from "date-fns";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DayPickerProps } from "react-day-picker";
 import { useTranslation } from "react-i18next";
 
@@ -32,6 +32,14 @@ export function DatePicker({
 	const { t, i18n } = useTranslation();
 
 	const [selectedDate, setSelectedDate] = useState<TZDate>(date ?? now());
+
+	useEffect(() => {
+		if (!date) {
+			return;
+		}
+
+		setSelectedDate((prev) => (prev.getTime() === date.getTime() ? prev : date));
+	}, [date]);
 
 	const rangeStart = useMemo(() => {
 		if (mode === "day") {
