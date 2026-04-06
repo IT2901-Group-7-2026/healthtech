@@ -7,7 +7,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.js";
 import { SecurityRegulationsCard } from "@/features/security-regulations-card/security-regulations-card";
 import { useUser } from "@/features/user/user-context";
 import { sensorQueryOptions } from "@/lib/api";
-import { now } from "@/lib/date";
+import { now, toTZDate } from "@/lib/date";
 import type { SensorDataResponseDto } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import { getThreshold } from "@/lib/thresholds";
@@ -112,7 +112,7 @@ export default function OperatorLiveView() {
 			sensor: "vibration",
 			query: buildSensorQuery("vibration", "day", end, {
 				granularity: "minute",
-				startTime: startOfDay(start),
+				startTime: toTZDate(startOfDay(start)),
 				endTime: end,
 				clampEndTimeToNow: true,
 			}),
