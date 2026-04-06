@@ -10,7 +10,7 @@ import type { ThresholdSummary, UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsSensor } from "@/lib/sensors.js";
 import { cn } from "@/lib/utils";
 import { isSameDay } from "date-fns";
-import { useQueryState } from "nuqs";
+import { parseAsString, useQueryState } from "nuqs";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -30,6 +30,7 @@ export const AttentionCard = ({
 	const { t } = useTranslation();
 	const [sensor] = useQueryState("sensor", parseAsSensor);
 	const [date] = useQueryState("filterDate", parseAsTZDate.withDefault(today()));
+	const [, setSelectedUserId] = useQueryState("userId", parseAsString);
 
 	const [selectedStatus, setSelectedStatus] = useState<DangerLevel | null>(null);
 	const [popupStatus, setPopupStatus] = useState<DangerLevel | null>(null);
@@ -119,14 +120,14 @@ export const AttentionCard = ({
 									label={t(($) => $.foremanDashboard.overview.statCards.danger.label)}
 									onClick={() => openForStatus("danger")}
 									value={thresholdSummary[selectedSensorKey].danger}
-								></StatCard>
+								/>
 
 								<StatCard
 									className="text-orange-400"
 									label={t(($) => $.foremanDashboard.overview.statCards.warning.label)}
 									onClick={() => openForStatus("warning")}
 									value={thresholdSummary[selectedSensorKey].warning}
-								></StatCard>
+								/>
 
 								<StatCard
 									className="text-green-600"
@@ -139,9 +140,24 @@ export const AttentionCard = ({
 
 						{sensor && (
 							<>
-								<ExposureRiskCard users={subordinates ?? []} sensor={sensor} dangerLevel="danger" />
-								<ExposureRiskCard users={subordinates ?? []} sensor={sensor} dangerLevel="warning" />
-								<ExposureRiskCard users={subordinates ?? []} sensor={sensor} dangerLevel="safe" />
+								<ExposureRiskCard
+									users={subordinates ?? []}
+									sensor={sensor}
+									dangerLevel="danger"
+									onUserClick={setSelectedUserId}
+								/>
+								<ExposureRiskCard
+									users={subordinates ?? []}
+									sensor={sensor}
+									dangerLevel="warning"
+									onUserClick={setSelectedUserId}
+								/>
+								<ExposureRiskCard
+									users={subordinates ?? []}
+									sensor={sensor}
+									dangerLevel="safe"
+									onUserClick={setSelectedUserId}
+								/>
 							</>
 						)}
 					</div>
