@@ -78,7 +78,6 @@ function AllSensorsUserOverview({
 					startHour={minHour}
 					endHour={maxHour}
 					chartTitle={formatChartDate(selectedDate, i18n.language)}
-					buildLink={() => null}
 				/>
 			</DateScopedChart>
 		</SensorChartCard>
