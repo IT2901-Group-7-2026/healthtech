@@ -127,11 +127,11 @@ export default function SensorLayout() {
 			</article>
 
 			<aside className="col-start-3 row-start-2 flex flex-col gap-4">
-				<Card>
+				<Card muted={true}>
 					<ViewPicker />
 				</Card>
 
-				<Card>
+				<Card muted={true}>
 					<DatePicker mode={view} showWeekNumber={true} date={date} onDateChange={setDate} />
 				</Card>
 			</aside>
