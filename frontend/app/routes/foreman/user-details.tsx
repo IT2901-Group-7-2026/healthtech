@@ -12,7 +12,7 @@ import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-u
 import { type Sensor, sensors } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapOverviewBucketsToChartRows } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, getHourDomainFromBuckets } from "@/lib/utils";
+import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { endOfDay, startOfDay } from "date-fns";
@@ -177,7 +177,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 						<ChartLineDefault
 							minHour={minHour}
 							maxHour={maxHour}
-							chartData={data ?? []}
+							chartData={downsampleSensorData(sensor, data ?? [])}
 							chartTitle={formatChartDate(selectedDate, i18n.language)}
 							unit={t(($) => $.dust_y_axis)}
 							maxY={maxY}
@@ -281,7 +281,7 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 					<ChartLineDefault
 						minHour={minHour}
 						maxHour={maxHour}
-						chartData={data ?? []}
+						chartData={downsampleSensorData(sensor, data ?? [])}
 						chartTitle={formatChartDate(selectedDate, i18n.language)}
 						unit={t(($) => $.points)}
 						maxY={maxY}
@@ -379,7 +379,7 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 							minHour={minHour}
 							maxHour={maxHour}
 							usePeakData={usePeakAggregation}
-							chartData={data ?? []}
+							chartData={downsampleSensorData(sensor, data ?? [])}
 							chartTitle={formatChartDate(selectedDate, i18n.language)}
 							unit="db (TWA)"
 							maxY={maxY}
