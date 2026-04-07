@@ -3,16 +3,23 @@ import { useTranslation } from "react-i18next";
 import { useView } from "./use-view";
 import type { View } from "./utils";
 import { DayViewIcon, MonthViewIcon, WeekViewIcon } from "./views";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useDate } from "../date-picker/use-date";
+import { Button } from "@/components/ui/button";
 
 interface ViewPickerProps {
+	withNavigationButtons?: boolean;
 	className?: string;
 }
 
-export function ViewPicker({ className }: ViewPickerProps) {
+export function ViewPicker({ className, withNavigationButtons = false }: ViewPickerProps) {
 	const { view, setView } = useView();
+	const { navigate } = useDate();
 	const { t } = useTranslation();
 
 	return (
+		<div className="flex flex-col gap-2">
+
 		<ToggleGroup
 			type="single"
 			value={view}
@@ -25,7 +32,7 @@ export function ViewPicker({ className }: ViewPickerProps) {
 					setView(value);
 				}
 			}}
-		>
+			>
 			<ToggleGroupItem value="day" aria-label={t(($) => $.day)}>
 				<div className="flex items-center gap-2">
 					<DayViewIcon className="size-4" />
@@ -45,5 +52,18 @@ export function ViewPicker({ className }: ViewPickerProps) {
 				</div>
 			</ToggleGroupItem>
 		</ToggleGroup>
+
+		{withNavigationButtons && (
+			<div className="grid grid-cols-2 items-center gap-2">
+			<Button variant="outline"  onClick={() => navigate.previous()} className="flex items-center gap-2">
+				<ChevronLeftIcon className="size-4 shrink-0 justify-self-start" />
+				<p className="text-sm">{t(($) => $.viewPicker[view].previous)}</p>
+			</Button>
+			<Button variant="outline"  onClick={() => navigate.next()} className="flex items-center gap-2">
+				<p className="text-sm">{t(($) => $.viewPicker[view].next)}</p>
+				<ChevronRightIcon className="size-4 shrink-0 justify-self-end" />
+			</Button>
+		</div>)} 
+			</div>
 	);
 }
