@@ -28,13 +28,7 @@ const getExposureBadges = (worker: UserWithStatusDto, popupStatus: DangerLevel) 
 	});
 };
 
-const WorkerRow = ({
-	worker,
-	status,
-}: {
-	worker: UserWithStatusDto;
-	status: DangerLevel;
-}) => {
+const WorkerRow = ({ worker, status }: { worker: UserWithStatusDto; status: DangerLevel }) => {
 	const exposureBadges = getExposureBadges(worker, status).map(({ key, data }) => (
 		<span
 			key={key}
