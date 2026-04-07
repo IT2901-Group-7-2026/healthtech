@@ -412,7 +412,7 @@ function NavTabs({ routes }: { routes: Array<{ label: string; to: To; icon?: Luc
 	return (
 		<div className="relative mx-auto flex h-11 flex-row rounded-full bg-accent px-2 dark:bg-card">
 			<div
-				className="absolute top-0 bottom-0 z-10 flex overflow-hidden rounded-full py-1.5 transition-all duration-300"
+				className="absolute top-0 bottom-0 z-10 flex overflow-hidden rounded-full py-1 transition-all duration-300"
 				style={{ left: pillLeft, width: pillWidth }}
 			>
 				<span className="h-full w-full rounded-full bg-background shadow-sm" />
@@ -421,7 +421,7 @@ function NavTabs({ routes }: { routes: Array<{ label: string; to: To; icon?: Luc
 			{routes.map((route, i) => {
 				const className = ({ isActive }: { isActive: boolean }) =>
 					cn(
-						"z-20 my-auto cursor-pointer select-none rounded-full px-4",
+						"z-20 flex cursor-pointer select-none items-center rounded-full px-5 py-2",
 						"text-center font-medium text-muted-foreground text-sm hover:text-foreground",
 						isActive && "text-foreground",
 					);
