@@ -92,25 +92,21 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 
 	if (mode === "count") {
 		content = (
-			<CardContent className="exposures-wrapper flex flex-row justify-center gap-4 md:flex-col md:gap-0">
-				<SummaryRow
-					count={data.safeCount}
-					label={isMobile ? defaultLabels.safe : summaryLabels.safeLabel}
-					hoverTitle={DangerLevels.safe.label}
-					colorClass={safeColor}
-				/>
-				<SummaryRow
-					count={data.warningCount}
-					label={isMobile ? defaultLabels.warning : summaryLabels.warningLabel}
-					hoverTitle={DangerLevels.warning.label}
-					colorClass={warningColor}
-				/>
-				<SummaryRow
-					count={data.dangerCount}
-					label={isMobile ? defaultLabels.danger : summaryLabels.dangerLabel}
-					hoverTitle={DangerLevels.danger.label}
-					colorClass={dangerColor}
-				/>
+			<CardContent className="grid grid-cols-[auto_1fr] items-center gap-2">
+				<p className={cn("text-right font-bold md:text-center", safeColor)}>{data.safeCount}</p>
+				<p className={cn("text-xs md:text-sm", safeColor)}>
+					{isMobile ? defaultLabels.safe : summaryLabels.safeLabel}
+				</p>
+
+				<p className={cn("text-right font-bold md:text-center", warningColor)}>{data.warningCount}</p>
+				<p className={cn("text-xs md:text-sm", warningColor)}>
+					{isMobile ? defaultLabels.warning : summaryLabels.warningLabel}
+				</p>
+
+				<p className={cn("text-right font-bold md:text-center", dangerColor)}>{data.dangerCount}</p>
+				<p className={cn("text-xs md:text-sm", dangerColor)}>
+					{isMobile ? defaultLabels.danger : summaryLabels.dangerLabel}
+				</p>
 			</CardContent>
 		);
 	} else {
@@ -171,20 +167,6 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 		</Card>
 	);
 }
-
-interface SummaryRowProps {
-	count: number;
-	label: string;
-	hoverTitle: string;
-	colorClass: string;
-}
-
-const SummaryRow = ({ hoverTitle, count, label, colorClass }: SummaryRowProps) => (
-	<div className="flex items-baseline justify-center p-2 md:justify-start" title={hoverTitle}>
-		<p className={cn("w-8 text-right font-bold text-2xl brightness-110 md:text-center", colorClass)}>{count}</p>
-		<p className={cn("ml-1 text-xs md:ml-2 md:text-sm", colorClass)}>{label}</p>
-	</div>
-);
 
 function getHighestLevel({
 	dangerCount,

@@ -12,6 +12,17 @@
     "language": "Language"
   },
   "live": {
+    "timeRange": {
+      "label": "Time range",
+      "options": {
+        "thirtyMinutes": "30 minutes",
+        "oneHour": "1 hour",
+        "threeHours": "3 hours"
+      }
+    },
+    "chart": {
+      "now": "Now"
+    },
     "overviewCard": {
       "danger": "Exceeding exposure limit",
       "warning": "Approaching exposure limit",
@@ -131,7 +142,7 @@
     "eventTitle": "{{day}}, from {{start}} to {{end}}",
     "notifTitle": "Notification received {{date}}",
     "deleteData": "Delete data",
-    "dataDeleted": "Deleted data from",
+    "dataDeleted": "Deleted data from {{from}} to {{to}}.",
     "to": "Delete data to:",
     "from": "Delete data from:",
     "startDate": "Start date...",

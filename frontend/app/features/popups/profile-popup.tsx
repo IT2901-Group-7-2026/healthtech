@@ -221,10 +221,10 @@ export function ProfilePopup({ user, open, onClose, avatarSrc, children }: Profi
 
 										{deleteText && fromDate && toDate && (
 											<div className="text-green-700 text-sm">
-												{t(($) => $.popup.dataDeleted)} {format(fromDate, "d MMMM yyyy")}{" "}
-												{"to "}
-												{format(toDate, "d MMMM yyyy")}
-												{"."}
+												{t(($) => $.popup.dataDeleted, {
+													from: format(fromDate, "d MMMM yyyy"),
+													to: format(toDate, "d MMMM yyyy"),
+												})}
 											</div>
 										)}
 									</div>

@@ -12,7 +12,7 @@ import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, getHourDomainFromBuckets } from "@/lib/utils";
+import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
 import { useId } from "react";
@@ -98,7 +98,7 @@ export default function Vibration() {
 							<ChartLineDefault
 								minHour={minHour}
 								maxHour={maxHour}
-								chartData={data}
+								chartData={downsampleSensorData(sensor, data ?? [])}
 								chartTitle={date.toLocaleDateString(i18n.language, {
 									day: "numeric",
 									month: "long",

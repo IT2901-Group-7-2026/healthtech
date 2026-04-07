@@ -63,18 +63,21 @@ export const dangerlevelStyles = {
 		bgSubtle: "bg-danger-subtle",
 		text: "text-danger-text",
 		border: "border-danger-border",
+		color: "var(--danger)",
 	},
 	warning: {
 		bg: "bg-warning",
 		bgSubtle: "bg-warning-subtle",
 		text: "text-warning-text",
 		border: "border-warning-border",
+		color: "var(--warning)",
 	},
 	safe: {
 		bg: "bg-safe",
 		bgSubtle: "bg-safe-subtle",
 		text: "text-safe-text",
 		border: "border-safe-border",
+		color: "var(--safe)",
 	},
 } satisfies Record<
 	DangerLevel,
@@ -83,6 +86,7 @@ export const dangerlevelStyles = {
 		bgSubtle: string;
 		text: string;
 		border: string;
+		color: string;
 	}
 >;
 
