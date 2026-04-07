@@ -12,6 +12,17 @@
     "language": "Språk"
   },
   "live": {
+    "timeRange": {
+      "label": "Tidsrom",
+      "options": {
+        "thirtyMinutes": "30 minutter",
+        "oneHour": "1 time",
+        "threeHours": "3 timer"
+      }
+    },
+    "chart": {
+      "now": "Nå"
+    },
     "overviewCard": {
       "danger": "Over grenseverdi",
       "warning": "Nær grenseverdig",

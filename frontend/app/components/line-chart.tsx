@@ -8,7 +8,7 @@ import { toTZDate } from "@/lib/date";
 import type { SensorDataResponseDto, SensorTypeField } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import { downsampleSensorData } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import { type ActiveDotProps, CartesianGrid, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
@@ -33,8 +33,53 @@ interface LineChartProps {
 	headerRight?: React.ReactNode;
 	usePeakData?: boolean;
 	dustField?: SensorTypeField;
-	minHour: number;
-	maxHour: number;
+	minHour?: number;
+	maxHour?: number;
+	minTime?: number | Date;
+	maxTime?: number | Date;
+	startTickLabel?: string;
+	endTickLabel?: string;
+	hideLabels?: boolean;
+	disableAnimation?: boolean;
+	className?: string;
+	contentClassName?: string;
+	chartContainerClassName?: string;
+	hideHeader?: boolean;
+	muteTickLabels?: boolean;
+}
+
+type CustomXAxisTickProps = {
+	x?: number | string;
+	y?: number | string;
+	payload?: { value?: number | string };
+	ticks: Array<number>;
+	getLabel: (value: number, index: number) => string;
+	muteTickLabels?: boolean;
+};
+
+function CustomXAxisTick({ x = 0, y = 0, payload, ticks, getLabel, muteTickLabels }: CustomXAxisTickProps) {
+	const xPos = typeof x === "number" ? x : Number(x) || 0;
+	const yPos = typeof y === "number" ? y : Number(y) || 0;
+
+	const rawValue = payload?.value ?? 0;
+	const value = typeof rawValue === "number" ? rawValue : Number(rawValue) || 0;
+
+	const index = ticks.indexOf(value);
+	const isFirst = index === 0;
+	const isLast = index === ticks.length - 1;
+
+	return (
+		<text
+			x={xPos}
+			y={yPos}
+			textAnchor={isFirst ? "start" : isLast ? "end" : "middle"}
+			fill="var(--color-muted-foreground)"
+			fontSize={12}
+			className={cn(muteTickLabels ? "text-sm" : "text-base")}
+		>
+			{getLabel(value, index)}
+		</text>
+	);
 }
 
 export function ChartLineDefault({
@@ -51,6 +96,17 @@ export function ChartLineDefault({
 	dustField,
 	minHour,
 	maxHour,
+	minTime,
+	maxTime,
+	startTickLabel,
+	endTickLabel,
+	hideLabels,
+	disableAnimation = false,
+	className,
+	contentClassName,
+	chartContainerClassName,
+	hideHeader,
+	muteTickLabels,
 }: LineChartProps) {
 	const { date: selectedDay } = useDate();
 	const { t } = useTranslation();
@@ -62,88 +118,144 @@ export function ChartLineDefault({
 
 	const getValue = (data: SensorDataResponseDto) => (usePeakData ? (data.peakValue ?? data.value) : data.value);
 
-	const maxData = chartData.toSorted((a, b) => getValue(b) - getValue(a))[0];
-	const minData = chartData.toSorted((a, b) => getValue(a) - getValue(b))[0];
+	const maxData = chartData.toSorted((a, b) => getValue(b) - getValue(a))?.[0];
+	const minData = chartData.toSorted((a, b) => getValue(a) - getValue(b))?.[0];
 
-	// Used to position color-changes in the graph so the line changes color at threshold boundaries.
-	const getOffset = (y: number) => `${((getValue(maxData) - y) / (getValue(maxData) - getValue(minData))) * 100}%`;
+	const getOffset = (y: number) =>
+		maxData && minData ? `${((getValue(maxData) - y) / (getValue(maxData) - getValue(minData))) * 100}%` : "0%";
 
-	const downsampledData = downsampleSensorData(sensor, chartData);
-
-	const transformedData = downsampledData.map((item) => ({
+	const transformedData = chartData.map((item) => ({
 		time: item.time.getTime(),
 		value: getValue(item),
 	}));
 
-	const ticks = Array.from({ length: maxHour - minHour + 1 }, (_, i) => {
+	const resolvedMinTime = minTime instanceof Date ? minTime.getTime() : minTime;
+	const resolvedMaxTime = maxTime instanceof Date ? maxTime.getTime() : maxTime;
+
+	const usesExplicitTimeRange = resolvedMinTime !== undefined && resolvedMaxTime !== undefined;
+
+	if (!usesExplicitTimeRange && (minHour === undefined || maxHour === undefined)) {
+		throw new Error("ChartLineDefault requires either minTime/maxTime or minHour/maxHour.");
+	}
+
+	const getHourTimestamp = (hour: number) => {
 		const date = toTZDate(selectedDay);
-		date.setHours(minHour + i, 0, 0, 0);
+		date.setHours(hour, 0, 0, 0);
 		return date.getTime();
-	});
+	};
 
-	const formatTime = (time: number) => formatDate(toTZDate(time), "HH:mm");
+	let xMin: number;
+	let xMax: number;
+	let ticks: Array<number>;
 
-	const dataMin = getValue(minData);
-	const dataMax = getValue(maxData);
+	if (usesExplicitTimeRange) {
+		xMin = resolvedMinTime;
+		xMax = resolvedMaxTime;
+		ticks = [xMin, xMax];
+	} else {
+		const boundedMinHour = minHour ?? 0;
+		const boundedMaxHour = maxHour ?? 23;
+		xMin = getHourTimestamp(boundedMinHour);
+		xMax = getHourTimestamp(boundedMaxHour);
+		ticks = Array.from({ length: boundedMaxHour - boundedMinHour + 1 }, (_, i) =>
+			getHourTimestamp(boundedMinHour + i),
+		);
+	}
+
+	const getXAxisTickLabel = (time: number, index: number) => {
+		if (usesExplicitTimeRange) {
+			if (index === 0) return startTickLabel ?? formatDate(toTZDate(time), "HH:mm");
+			if (index === ticks.length - 1) return endTickLabel ?? formatDate(toTZDate(time), "HH:mm");
+		}
+
+		return formatDate(toTZDate(time), "HH:mm");
+	};
+
+	const dataMin = minData ? getValue(minData) : 0;
+	const dataMax = maxData ? getValue(maxData) : 0;
 
 	const isAllDanger = dangerThreshold <= dataMin;
 	const isAllWarning = dangerThreshold >= dataMax && warning <= dataMin;
 	const isAllSafe = warning >= dataMax;
 
 	return (
-		<Card className="w-full">
-			<CardHeader className="mb-4 flex flex-row items-center justify-between">
-				<CardTitle>{chartTitle}</CardTitle>
-				{headerRight}
-			</CardHeader>
-			<CardContent>
-				<ChartContainer config={chartConfig}>
+		<Card className={cn("w-full", hideLabels && "pl-0", className)}>
+			{!hideHeader && (
+				<CardHeader className="mb-4 flex flex-row items-center justify-between">
+					<CardTitle>{chartTitle}</CardTitle>
+					{headerRight}
+				</CardHeader>
+			)}
+			<CardContent className={cn("flex h-full flex-1", contentClassName)}>
+				<ChartContainer
+					config={chartConfig}
+					className={cn("h-full w-full", chartContainerClassName, hideLabels && "!aspect-auto")}
+				>
 					<LineChart
 						accessibilityLayer={true}
 						data={transformedData}
-						margin={{
-							left: 12,
-							right: 12,
-						}}
+						margin={
+							hideLabels
+								? undefined
+								: {
+										left: 12,
+										right: 12,
+									}
+						}
 					>
 						<CartesianGrid vertical={true} strokeDasharray="3 3" />
 						<XAxis
 							dataKey="time"
 							type="number"
-							tickFormatter={formatTime}
+							domain={[xMin, xMax]}
 							ticks={ticks}
+							interval={0}
+							allowDataOverflow={true}
 							tickLine={false}
 							axisLine={false}
-							tickMargin={2}
-							tick={{
-								className: "text-base",
-								fill: "var(--color-muted-foreground)",
-							}}
-							label={{
-								value: t(($) => $.time),
-								position: "insideBottom",
-								offset: 0,
-								className: "text-base",
-								fill: "var(--color-muted-foreground)",
-							}}
+							tickMargin={8}
+							tick={(props) => (
+								<CustomXAxisTick
+									{...props}
+									ticks={ticks}
+									getLabel={getXAxisTickLabel}
+									muteTickLabels={muteTickLabels}
+								/>
+							)}
+							label={
+								hideLabels
+									? undefined
+									: {
+											value: t(($) => $.time),
+											position: "insideBottom",
+											offset: 0,
+											className: "text-base",
+											fill: "var(--color-muted-foreground)",
+										}
+							}
 						/>
 						<YAxis
 							dataKey="value"
+							width={hideLabels ? 48 : undefined}
 							tickLine={false}
 							axisLine={false}
 							tick={{
-								className: "text-base",
+								className: muteTickLabels ? "text-sm" : "text-base",
 								fill: "var(--color-muted-foreground)",
 							}}
 							domain={[minY, maxY]}
-							label={{
-								value: unit,
-								position: "inside",
-								dx: -32,
-								angle: -90,
-								className: "text-lg mr-4",
-								fill: "var(--color-muted-foreground)",
-							}}
+							label={
+								hideLabels
+									? undefined
+									: {
+											value: unit,
+											position: "inside",
+											dx: -32,
+											angle: -90,
+											className: "text-lg mr-4",
+											fill: "var(--color-muted-foreground)",
+										}
+							}
 						/>
 						<ChartTooltip
 							cursor={false}
@@ -182,6 +294,7 @@ export function ChartLineDefault({
 										<stop offset={getOffset(dangerThreshold)} stopColor="var(--warning)" />
 										<stop offset={getOffset(warning)} stopColor="var(--warning)" />
 										<stop offset={getOffset(warning)} stopColor="var(--safe)" />
+
 										<stop offset="100%" stopColor="var(--safe)" />
 									</>
 								)}
@@ -192,6 +305,8 @@ export function ChartLineDefault({
 							type={lineType as CurveType}
 							stroke={`url(#${id})`}
 							strokeWidth={1.25}
+							isAnimationActive={!disableAnimation}
+							animationDuration={0}
 							dot={false}
 							activeDot={(props) => (
 								<Dot {...props} warning={warning} danger={dangerThreshold} isPeak={usePeakData} />
@@ -219,10 +334,21 @@ const Dot = ({ cx, cy, value, warning, danger, isPeak }: DotProps & { isPeak?: b
 	return <circle cx={cx} cy={cy} r={6} fill={fillColor} />;
 };
 
-export function ThresholdLine({ y, dangerLevel, label }: { y: number; dangerLevel: DangerLevel; label?: string }) {
+export function ThresholdLine({
+	y,
+	dangerLevel,
+	label,
+	hideLineLabel,
+}: {
+	y: number;
+	dangerLevel: DangerLevel;
+	label?: string;
+	hideLineLabel?: boolean;
+}) {
 	const { t } = useTranslation();
 	const color = `var(--${DangerLevels[dangerLevel].color})`;
-	const lineLabel = label ?? t(($) => $.line_chart[dangerLevel]);
+	const lineLabel = hideLineLabel ? undefined : (label ?? t(($) => $.line_chart[dangerLevel]));
+
 	return (
 		<ReferenceLine
 			y={y}

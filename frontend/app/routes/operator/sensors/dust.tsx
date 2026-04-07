@@ -12,7 +12,7 @@ import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, getHourDomainFromBuckets } from "@/lib/utils";
+import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -97,7 +97,7 @@ export default function Dust() {
 						<ChartLineDefault
 							minHour={minHour}
 							maxHour={maxHour}
-							chartData={data ?? []}
+							chartData={downsampleSensorData(sensor, data ?? [])}
 							chartTitle={date.toLocaleDateString(locale, {
 								day: "numeric",
 								month: "long",

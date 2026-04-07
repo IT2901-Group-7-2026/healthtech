@@ -12,6 +12,17 @@
     "language": "Language"
   },
   "live": {
+    "timeRange": {
+      "label": "Time range",
+      "options": {
+        "thirtyMinutes": "30 minutes",
+        "oneHour": "1 hour",
+        "threeHours": "3 hours"
+      }
+    },
+    "chart": {
+      "now": "Now"
+    },
     "overviewCard": {
       "danger": "Exceeding exposure limit",
       "warning": "Approaching exposure limit",
