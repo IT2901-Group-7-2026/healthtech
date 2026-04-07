@@ -208,31 +208,25 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 				</DateScopedChart>
 			</SensorChartCard>
 
-			{dustTwa1Data?.length && dustTwa25Data?.length && dustTwa10Data?.length && (
-				<div className="flex flex-wrap items-center gap-4">
-					{dustTwa1Data && dustTwa1Data.length > 0 && (
-						<DustChart
-							label="PM1 TWA"
-							value={dustTwa1Data[0].value}
-							thresholdValue={dustThreshold.danger}
-						/>
-					)}
-					{dustTwa25Data && dustTwa25Data.length > 0 && (
-						<DustChart
-							label="PM2.5 TWA"
-							value={dustTwa25Data[0].value}
-							thresholdValue={dustPm25TwaThreshold.danger}
-						/>
-					)}
-					{dustTwa10Data && dustTwa10Data.length > 0 && (
-						<DustChart
-							label="PM10 TWA"
-							value={dustTwa10Data[0].value}
-							thresholdValue={dustPm10TwaThreshold.danger}
-						/>
-					)}
-				</div>
-			)}
+			<div className="flex flex-wrap items-center gap-4">
+				{dustTwa1Data && dustTwa1Data.length > 0 && (
+					<DustChart label="PM1 TWA" value={dustTwa1Data[0].value} thresholdValue={dustThreshold.danger} />
+				)}
+				{dustTwa25Data && dustTwa25Data.length > 0 && (
+					<DustChart
+						label="PM2.5 TWA"
+						value={dustTwa25Data[0].value}
+						thresholdValue={dustPm25TwaThreshold.danger}
+					/>
+				)}
+				{dustTwa10Data && dustTwa10Data.length > 0 && (
+					<DustChart
+						label="PM10 TWA"
+						value={dustTwa10Data[0].value}
+						thresholdValue={dustPm10TwaThreshold.danger}
+					/>
+				)}
+			</div>
 		</div>
 	);
 }
