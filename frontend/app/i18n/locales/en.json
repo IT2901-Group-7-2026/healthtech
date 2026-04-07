@@ -151,7 +151,7 @@
     "invalidDate": "Please select a start date that starts before the end date. "
   },
   "profile": {
-    "title": "Profile",
+    "title": "My account",
     "location": "Location",
     "name": "Name",
     "prefLanguage": "Preferred language",
