@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils.js";
 import { setHours, startOfDay } from "date-fns";
 import { Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
+import { Link, type To } from "react-router";
 import { SensorIcon } from "./sensor-icon.js";
 
 const CELL_SIZE = 10;
@@ -53,9 +53,17 @@ interface DailyBarChartProps {
 	startHour?: number;
 	endHour?: number;
 	headerRight?: React.ReactNode;
+	buildLink?: (sensor: string, dateQueryParam: string) => To | null;
 }
 
-export function DailyBarChart({ data, chartTitle, startHour = 0, endHour = 23, headerRight }: DailyBarChartProps) {
+export function DailyBarChart({
+	data,
+	chartTitle,
+	startHour = 0,
+	endHour = 23,
+	headerRight,
+	buildLink,
+}: DailyBarChartProps) {
 	const { t } = useTranslation();
 	const { date } = useDate();
 	const formatDate = useFormatDate();
@@ -80,6 +88,12 @@ export function DailyBarChart({ data, chartTitle, startHour = 0, endHour = 23, h
 	}, [hours, date, formatDate]);
 
 	const dateQueryParam = useMemo(() => formatDate(date, "yyyy-MM-dd"), [date, formatDate]);
+	const createLink =
+		buildLink ??
+		((sensor: string, formattedDate: string) => ({
+			pathname: sensor,
+			search: `?view=Day&date=${formattedDate}`,
+		}));
 
 	const dataBySensor = useMemo(
 		() =>
@@ -136,10 +150,11 @@ export function DailyBarChart({ data, chartTitle, startHour = 0, endHour = 23, h
 									{hours.map((localHour) => {
 										const { timeLabel, utcHour } = hourData[localHour];
 										const dangerLevel = rowData?.dangerLevelByHour?.[utcHour];
+										const linkTarget = createLink(sensor, dateQueryParam);
 
 										const { className, isClickable } = getCellAppearance(dangerLevel);
 
-										if (!isClickable) {
+										if (!isClickable || linkTarget === null) {
 											return (
 												<div
 													key={`${sensor}-${localHour}`}
@@ -152,10 +167,7 @@ export function DailyBarChart({ data, chartTitle, startHour = 0, endHour = 23, h
 										return (
 											<Link
 												key={`${sensor}-${localHour}`}
-												to={{
-													pathname: sensor,
-													search: `?view=Day&date=${dateQueryParam}`,
-												}}
+												to={linkTarget}
 												title={`${timeLabel} - ${dangerLevel}`}
 												className={className}
 												aria-label={`View ${sensor} data for ${timeLabel}`}

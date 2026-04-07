@@ -60,6 +60,8 @@ function AllSensorsUserOverview({
 	selectedDate: TZDate;
 }) {
 	const { i18n } = useTranslation();
+	const [selectedUserId] = useQueryState("userId");
+	const [filterDate] = useQueryState("filterDate");
 
 	const { data, isLoading, isError } = useQuery(
 		sensorOverviewQueryOptions({
@@ -78,6 +80,20 @@ function AllSensorsUserOverview({
 					startHour={minHour}
 					endHour={maxHour}
 					chartTitle={formatChartDate(selectedDate, i18n.language)}
+					buildLink={(sensor) => {
+						const params = new URLSearchParams();
+						params.set("sensor", sensor);
+
+						if (selectedUserId) {
+							params.set("userId", selectedUserId);
+						}
+
+						if (filterDate) {
+							params.set("filterDate", filterDate);
+						}
+
+						return `?${params.toString()}`;
+					}}
 				/>
 			</DateScopedChart>
 		</SensorChartCard>
