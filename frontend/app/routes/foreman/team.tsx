@@ -1,9 +1,8 @@
-// biome-ignore-all lint/nursery/noShadow: user user user
+// biome-ignore-all lint/nursery/noShadow: Allow us to use the variable name "user" in different scopes
 
 import { Button } from "@/components/ui/button.js";
 import { Checkbox } from "@/components/ui/checkbox.js";
 import { DataTable } from "@/components/ui/data-table";
-import { LocationMap } from "@/features/location-map/location-map";
 import { useUser } from "@/features/user/user-context";
 import { UserSearch } from "@/features/user/user-search.js";
 import {
@@ -175,10 +174,6 @@ export default function TeamPage() {
 						{t(($) => $.foremanDashboard.team.action.removeSubordinate)}
 					</Button>
 				</div>
-			</div>
-			<div className="flex w-full flex-col gap-4">
-				<h1 className="font-bold text-2xl">{t(($) => $.foremanDashboard.team.mapTitle)}</h1>
-				<LocationMap operators={subordinates ?? []} isLoading={isSubordinatesLoading} />
 			</div>
 		</div>
 	);

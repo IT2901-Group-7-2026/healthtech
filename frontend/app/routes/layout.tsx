@@ -28,7 +28,7 @@ import { type User, UserRoleSchema } from "@/lib/dto.js";
 import { cn, shorthandName, userRoleToString } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import "leaflet/dist/leaflet.css";
-import { Bell, House, Languages, type LucideIcon, Monitor, Moon, Palette, Sun, User as UserIcon } from "lucide-react";
+import { Bell, Languages, type LucideIcon, Monitor, Moon, Palette, Sun, User as UserIcon } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { href, Link, NavLink, Outlet, type To, useLocation, useNavigate } from "react-router";
@@ -84,12 +84,14 @@ function getLinks(t: TranslateFn, role: User["role"] | null): Array<{ to: To; la
 				{
 					to: href("/foreman"),
 					label: t(($) => $.layout.home),
-					icon: House,
 				},
 				{
 					to: href("/foreman/team"),
 					label: t(($) => $.layout.team),
-					icon: UserIcon,
+				},
+				{
+					to: href("/foreman/map"),
+					label: t(($) => $.layout.map),
 				},
 			];
 		}

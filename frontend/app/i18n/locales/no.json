@@ -9,7 +9,8 @@
     "statistics": "Statistikk",
     "export": "Eksporter oversikt som PDF",
     "theme": "Fargetema",
-    "language": "Språk"
+    "language": "Språk",
+    "map": "Kart"
   },
   "live": {
     "timeRange": {

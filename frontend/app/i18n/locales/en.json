@@ -9,7 +9,8 @@
     "statistics": "Statistics",
     "export": "Export overview as PDF",
     "theme": "Theme",
-    "language": "Language"
+    "language": "Language",
+    "map": "Map"
   },
   "live": {
     "timeRange": {
