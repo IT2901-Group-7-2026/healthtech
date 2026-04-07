@@ -208,7 +208,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 				</DateScopedChart>
 			</SensorChartCard>
 
-			{dustTwa1Data?.length || dustTwa25Data?.length || dustTwa10Data?.length ? (
+			{dustTwa1Data?.length || dustTwa25Data?.length || dustTwa10Data?.length && (
 				<div className="flex flex-wrap items-center gap-4">
 					{dustTwa1Data && dustTwa1Data.length > 0 && (
 						<DustChart
