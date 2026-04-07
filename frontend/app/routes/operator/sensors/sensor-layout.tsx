@@ -48,9 +48,11 @@ export default function SensorLayout() {
 		queries: [
 			sensorQueryOptions({
 				sensor: sensor as NonNullable<typeof sensor>,
-				query: sensorQuery as NonNullable<typeof sensorQuery>,
-				userId: user.id,
+				query: buildSensorQuery(sensor as NonNullable<typeof sensor>, view, date, {
+					granularity: "hour",
+				}),
 				enabled: sensorQueryEnabled,
+				userId: user.id,
 			}),
 			sensorOverviewQueryOptions({
 				query: buildSensorOverviewQuery([...sensors], view, date, {
