@@ -147,13 +147,13 @@
     "eventTitle": "{{day}}, fra {{start}} til {{end}}",
     "notifTitle": "Notifikasjon mottatt {{date}}",
     "deleteData": "Slett data",
-    "dataDeleted": "Data slettet fra",
-    "to": "Slette data til:",
-    "from": "Slette data fra:",
-    "startDate": "Start dato...",
-    "endDate": "Slutt dato...",
+    "dataDeleted": "Data slettet fra {{from}} til {{to}}.",
+    "to": "Slett data til:",
+    "from": "Slett data fra:",
+    "startDate": "Startdato...",
+    "endDate": "Sluttdato...",
     "date": "dato",
-    "invalidDate": "Velg en start dato som starter før sluttdato."
+    "invalidDate": "Velg en startdato som starter før sluttdato."
   },
   "profile": {
     "title": "Profil",
