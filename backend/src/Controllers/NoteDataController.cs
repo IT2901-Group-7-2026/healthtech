@@ -73,4 +73,29 @@ public class NoteDataController(INoteDataService noteDataService) : ControllerBa
 			return BadRequest(ex.Message);
 		}
 	}
+
+	[HttpDelete("{userId}")]
+	public async Task<ActionResult<NoteDataDto>> DeleteNoteAsync(
+		[FromBody] NoteDataDto request,
+		[FromRoute] Guid userId
+	)
+	{
+		try
+		{
+			NoteData? note = await _noteDataService.DeleteNoteAsync(request, userId);
+
+			if (note == null)
+			{
+				return NotFound("Note not found");
+			}
+
+			var dto = NoteDataDto.FromEntity(note);
+
+			return dto;
+		}
+		catch (ArgumentException ex)
+		{
+			return BadRequest(ex.Message);
+		}
+	}
 }
