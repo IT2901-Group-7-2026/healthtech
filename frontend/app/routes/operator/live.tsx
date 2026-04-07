@@ -14,7 +14,7 @@ import { getThreshold } from "@/lib/thresholds";
 import { computeYAxisRange } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQuery } from "@tanstack/react-query";
-import { addMinutes, isWithinInterval, minutesToMilliseconds, startOfDay, startOfMinute } from "date-fns";
+import { addHours, addMinutes, isWithinInterval, minutesToMilliseconds, startOfDay, startOfMinute } from "date-fns";
 import { Clock } from "lucide-react";
 import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useMemo } from "react";
@@ -38,7 +38,8 @@ export default function OperatorLiveView() {
 
 	const targetUserId = selectedUserId ?? user.id;
 
-	const startOfCurrentMinute = startOfMinute(now());
+	// TODO: Temporarily pushing the current time 3 hours forward for demo purposes.
+	const startOfCurrentMinute = startOfMinute(toTZDate(addHours(now(), 3)));
 	const end = startOfCurrentMinute;
 	const start = addMinutes(startOfCurrentMinute, -TIME_RANGE_MINUTES[timeRange]);
 
@@ -54,7 +55,7 @@ export default function OperatorLiveView() {
 				field: "pm1_twa",
 				startTime: start,
 				endTime: end,
-				clampEndTimeToNow: true,
+				// clampEndTimeToNow: true,
 			}),
 			userId: targetUserId,
 			refetchInterval: dataRefetchInterval,
@@ -70,7 +71,7 @@ export default function OperatorLiveView() {
 				field: "pm25_twa",
 				startTime: start,
 				endTime: end,
-				clampEndTimeToNow: true,
+				// clampEndTimeToNow: true,
 			}),
 			userId: targetUserId,
 			refetchInterval: dataRefetchInterval,
@@ -86,7 +87,7 @@ export default function OperatorLiveView() {
 				field: "pm10_twa",
 				startTime: start,
 				endTime: end,
-				clampEndTimeToNow: true,
+				// clampEndTimeToNow: true,
 			}),
 			userId: targetUserId,
 			refetchInterval: dataRefetchInterval,
@@ -100,7 +101,7 @@ export default function OperatorLiveView() {
 				granularity: "minute",
 				startTime: start,
 				endTime: end,
-				clampEndTimeToNow: true,
+				// clampEndTimeToNow: true,
 			}),
 			userId: targetUserId,
 			refetchInterval: dataRefetchInterval,
@@ -114,7 +115,7 @@ export default function OperatorLiveView() {
 				granularity: "minute",
 				startTime: toTZDate(startOfDay(start)),
 				endTime: end,
-				clampEndTimeToNow: true,
+				// clampEndTimeToNow: true,
 			}),
 			userId: targetUserId,
 			refetchInterval: dataRefetchInterval,
