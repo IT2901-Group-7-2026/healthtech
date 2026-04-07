@@ -156,7 +156,7 @@ export default function ForemanOverview() {
 							/>
 
 							{sensor ? (
-								<UserStatusChart users={subordinates ?? []} sensor={sensor} userOnClick={() => {}} />
+								<UserStatusChart users={subordinates ?? []} sensor={sensor} />
 							) : (
 								<SensorSummaryGrid thresholdSummary={thresholdSummary} />
 							)}
