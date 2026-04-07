@@ -174,19 +174,19 @@ export default function Layout() {
 					{desktopHeader}
 
 					<div className="flex flex-row items-center gap-4">
-						<div className="relative">
-							<Button
-								variant="ghost"
-								size="icon"
-								onClick={openNotificationPopup}
-								className="cursor-pointer rounded-full"
-							>
+						<Button
+							variant="ghost"
+							size="icon"
+							onClick={openNotificationPopup}
+							className="cursor-pointer rounded-full"
+						>
+							<div className="relative">
 								<Bell className="size-5" />
-							</Button>
-							<span className="absolute -top-1 -right-1 flex h-5.5 min-h-5.5 min-w-5.5 items-center justify-center rounded-full border-2 border-background bg-red-500 text-white text-xs">
-								{"4"}
-							</span>
-						</div>
+								<span className="absolute -top-2 -right-2 flex size-4.75 items-center justify-center rounded-full border-2 border-background bg-red-500 text-[0.625rem] text-white">
+									{"4"}
+								</span>
+							</div>
+						</Button>
 
 						<UserDropdown user={user} users={sortedUsers} setUser={setUser} i18n={i18n} />
 					</div>
