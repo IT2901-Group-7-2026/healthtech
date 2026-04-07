@@ -232,7 +232,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 						/>
 					)}
 				</div>
-			) : null}
+			)}
 		</div>
 	);
 }
