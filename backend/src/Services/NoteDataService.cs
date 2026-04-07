@@ -9,6 +9,7 @@ public interface INoteDataService
 	Task<IEnumerable<NoteData>> GetNotesAsync(NoteDataRequestDto request);
 	Task<NoteData> CreateNoteAsync(NoteDataCreateDto createDto, Guid userId);
 	Task<NoteData> UpdateNoteAsync(NoteDataDto updateDto);
+	Task<NoteData?> DeleteNoteAsync(NoteDataDto request, Guid userId);
 }
 
 public class NoteDataService(AppDbContext dbContext) : INoteDataService
@@ -80,6 +81,28 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
 		}
 
 		note.Note = updateDto.Note;
+		await _dbContext.SaveChangesAsync();
+
+		return note;
+	}
+
+	public async Task<NoteData?> DeleteNoteAsync(NoteDataDto dto, Guid userId)
+	{
+		if (dto.Time!.Value.Offset != TimeSpan.Zero)
+		{
+			throw new ArgumentException("Please provide time in UTC format");
+		}
+
+		var note = await _dbContext.NoteData.FirstOrDefaultAsync(n =>
+			n.Time == dto.Time && n.UserId == userId
+		);
+
+		if (note == null)
+		{
+			return null;
+		}
+
+		_dbContext.NoteData.Remove(note);
 		await _dbContext.SaveChangesAsync();
 
 		return note;
