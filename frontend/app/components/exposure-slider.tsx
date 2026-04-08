@@ -21,7 +21,7 @@ export function ExposureSlider({ sensor, field, value, dangerLevel, unitLabel: u
 	const { danger } = getThreshold(sensor, field);
 	const sliderMax = danger * 1.5;
 	const percentage =
-		value !== undefined ? Math.min(100, Math.max(0, sliderMax <= 0 ? 0 : (value / sliderMax) * 100)) : 0;
+		value === undefined ? 0 : Math.min(100, Math.max(0, sliderMax <= 0 ? 0 : (value / sliderMax) * 100));
 	const indicatorLeftOffset = `${percentage}%`;
 
 	const valueFormatter = new Intl.NumberFormat(i18n.language === "no" ? "nb-NO" : "en-US", {
@@ -31,7 +31,7 @@ export function ExposureSlider({ sensor, field, value, dangerLevel, unitLabel: u
 	const formattedValue = valueFormatter.format(value ?? 0);
 
 	const Emoji = getEmoji(dangerLevel ?? null);
-	const color = dangerLevel !== undefined ? dangerlevelStyles[dangerLevel].color : undefined;
+	const color = dangerLevel === undefined ? undefined : dangerlevelStyles[dangerLevel].color;
 
 	return (
 		<div className={cn("flex w-full flex-col gap-1.5 rounded-xl border border-transparent p-3", className)}>

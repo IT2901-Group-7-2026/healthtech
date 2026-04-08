@@ -68,7 +68,7 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 	const currentDate = useDate().date;
 	// For specific sensor: "<Sensor> exposure for <...>"
 	// For all sensors: "Exposure for <...>"
-	let summaryTitle = exposureType !== "all" ? `${t(($) => $[exposureType])} ` : "";
+	let summaryTitle = exposureType === "all" ? "" : `${t(($) => $[exposureType])} `;
 
 	if (view === "month") {
 		summaryTitle += t(($) => $.exposure_summary.title.month, {
@@ -117,7 +117,7 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 
 					const highestLevel = getHighestLevel(sensorSummary);
 
-					const color = highestLevel !== null ? `var(--${DangerLevels[highestLevel].color})` : undefined;
+					const color = highestLevel === null ? undefined : `var(--${DangerLevels[highestLevel].color})`;
 
 					const description = t(($) =>
 						highestLevel ? $.exposure_summary[`${highestLevel}Smiley` as const] : $.exposure_summary.noData,

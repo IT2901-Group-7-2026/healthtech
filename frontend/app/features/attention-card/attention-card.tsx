@@ -68,10 +68,10 @@ export const AttentionCard = ({
 	const selectedSensorKey = sensor ?? "total";
 	const showActionCard = date ? isSameDay(date, now(), { in: TIMEZONE }) : false;
 
-	const dangerLevelColor = highestDangerLevel !== null ? `text-${mapDangerLevelToColor(highestDangerLevel)}` : null;
+	const dangerLevelColor = highestDangerLevel === null ? null : `text-${mapDangerLevelToColor(highestDangerLevel)}`;
 
 	const attentionHeaderText =
-		highestDangerLevel !== null ? t(($) => $.foremanDashboard.actionCard[highestDangerLevel]) : null;
+		highestDangerLevel === null ? null : t(($) => $.foremanDashboard.actionCard[highestDangerLevel]);
 
 	const criticalExposureText =
 		highestDangerLevel === "danger" ? t(($) => $.foremanDashboard.actionCard.criticalExposureText) : null;

@@ -81,22 +81,22 @@ export function DatePicker({
 	} as const satisfies Partial<DayPickerProps>;
 
 	const modifiers =
-		mode !== "day"
-			? {
+		mode === "day"
+			? undefined
+			: {
 					highlighted: { from: rangeStart, to: rangeEnd },
 					rangeStart: rangeStart ?? false,
 					rangeEnd: rangeEnd ?? false,
-				}
-			: undefined;
+				};
 
 	const modifiersClassNames =
-		mode !== "day"
-			? {
+		mode === "day"
+			? undefined
+			: {
 					highlighted: "bg-accent text-accent-foreground",
 					rangeStart: "rounded-l-xl",
 					rangeEnd: "rounded-r-xl",
-				}
-			: undefined;
+				};
 
 	const selectionDetail = formatSelection(
 		rangeStart && rangeEnd ? [rangeStart, rangeEnd] : selectedDate,
