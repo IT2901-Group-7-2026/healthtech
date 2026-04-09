@@ -30,24 +30,8 @@
       "safe": "Innenfor grenseverdi"
     }
   },
-  "overview": {
-    "title": "Oversikt over {{view}}",
-    "day": "dag",
-    "week": "uke",
-    "month": "måned",
-    "dust": "Støv",
-    "vibration": "Vibrasjon",
-    "noise": "Støy"
-  },
-  "dustExposure": {
-    "title": "Støveksponering"
-  },
   "vibrationExposure": {
-    "title": "Vibrasjonseksponering",
     "export": "Eksporter som PDF"
-  },
-  "noiseExposure": {
-    "title": "Støyeksponering"
   },
   "exposure_summary": {
     "title": {
@@ -70,11 +54,6 @@
     "danger": "Grenseverdi",
     "warning": "Tiltaksverdi",
     "safe": "Trygt innenfor eksponeringsgrensen"
-  },
-  "monthly_view": {
-    "safe": "Trygg dag den",
-    "warning": "Advarsler utstedt den",
-    "danger": "Fare: Eksponeringsgrenser overskredet den"
   },
   "daily_notes": {
     "viewTitle": "Dine notater for {{date}}",
@@ -133,8 +112,6 @@
   "viewSelectionText": "Du blir vist en {{view}}.",
   "dateSelectionRecapSingle": "Du har valgt {{date}}.",
   "dateSelectionRecapMultiple": "Du har valgt {{startDate}} til {{endDate}}.",
-  "dateSelectionSummarySingle": "Viser data for {{date}}.",
-  "dateSelectionSummaryMultiple": "Viser data fra {{startDate}} til {{endDate}}.",
 
   "notifications": "Notifikasjoner",
   "popup": {
@@ -168,7 +145,6 @@
   },
   "atRiskTable": {
     "title": "Risikosårbare arbeidere",
-    "detailText": "Se detaljer",
     "noWorkers": "Ingen risikosårbare arbeidere"
   },
   "exposureLevel": {
@@ -213,23 +189,19 @@
       },
       "statCards": {
         "danger": {
-          "description": "Operatører som har overskredet grenseverdien",
           "label": "Over grenseverdi",
           "noOperators": "Ingen over grenseverdien"
         },
         "warning": {
-          "description": "Operatører som nærmer seg grenseverdien",
           "label": "Nær grenseverdi",
           "noOperators": "Ingen nærmer grenseverdien"
         },
         "safe": {
-          "description": "Operatører innenfor trygge grenseverdier",
           "label": "Innenfor grenseverdi",
           "noOperators": "Ingen innenfor trygge grenseverdier"
         }
       },
-      "selectUserPlaceholder": "Velg et teammedlem",
-      "selectDatePlaceholder": "Velg en dato"
+      "selectUserPlaceholder": "Velg et teammedlem"
     },
     "actionCard": {
       "safe": "Alt er bra!",
@@ -237,7 +209,6 @@
       "danger": "Oppmerksomhet anbefales!",
       "criticalExposureText": "Operatører over eksponeringsgrensen. Umiddelbar oppfølging anbefales.",
       "approachingThresholdText": "Operatører nærmer seg eksponeringsgrensen. Vurder forebyggende tiltak.",
-      "safeText": "Operatører er innenfor sikre nivåer. Ingen handling nødvendig akkurat nå.",
       "oldData": "Du ser på tidligere data."
     },
     "userStatusChart": {
@@ -246,7 +217,6 @@
     },
     "siteMap": {
       "title": "Områdekart",
-      "anonymousOperator": "Anonym operatør",
       "noOperators": "Ingen operatører i bygg",
       "operatorSensorStatus": {
         "danger": "Over grenseverdi for {{sensor}}",
@@ -265,7 +235,6 @@
   "demo": {
     "currentRole": "Nåværende rolle:",
     "navigate": {
-      "toApp": "Gå til appen",
       "toRegister": "Gå til registreringssiden"
     }
   },
