@@ -70,11 +70,11 @@ function getLinks(t: TranslateFn, role: User["role"] | null): Array<{ to: To; la
 			return [
 				{ to: href("/operator/live"), label: t(($) => $.layout.live) },
 				{ to: href("/operator"), label: t(($) => $.layout.overview) },
-				{ to: href("/operator/dust"), label: t(($) => $.dust) },
-				{ to: href("/operator/noise"), label: t(($) => $.noise) },
+				{ to: href("/operator/dust"), label: t(($) => $.sensors.dust) },
+				{ to: href("/operator/noise"), label: t(($) => $.sensors.noise) },
 				{
 					to: href("/operator/vibration"),
-					label: t(($) => $.vibration),
+					label: t(($) => $.sensors.vibration),
 				},
 			];
 		}
@@ -197,7 +197,7 @@ export default function Layout() {
 				<BellPopup
 					open={notificationPopupVisible}
 					onClose={closeNotificationPopup}
-					title={t(($) => $.notifications)}
+					title={t(($) => $.common.notifications)}
 				/>
 
 				<main className="m-5 items-center justify-center">
@@ -306,8 +306,10 @@ function UserDropdown({
 									localStorage.setItem("i18nextLng", value);
 								}}
 							>
-								<DropdownMenuRadioItem value="en">{t(($) => $.english)}</DropdownMenuRadioItem>
-								<DropdownMenuRadioItem value="no">{t(($) => $.norwegian)}</DropdownMenuRadioItem>
+								<DropdownMenuRadioItem value="en">{t(($) => $.language.english)}</DropdownMenuRadioItem>
+								<DropdownMenuRadioItem value="no">
+									{t(($) => $.language.norwegian)}
+								</DropdownMenuRadioItem>
 							</DropdownMenuRadioGroup>
 						</DropdownMenuSubContent>
 					</DropdownMenuSub>

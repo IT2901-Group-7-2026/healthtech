@@ -91,9 +91,9 @@ export function Notifications({ onParentClose }: { onParentClose: () => void }) 
 							>
 								<SensorIcon type={sensor} size="md" dangerLevel={dangerLevel} />
 								<ItemContent>
-									<ItemTitle className="line-clamp-1">{t(($) => $[sensor])}</ItemTitle>
+									<ItemTitle className="line-clamp-1">{t(($) => $.sensors[sensor])}</ItemTitle>
 									<ItemDescription className={cn(`text-${dangerLevel}`)}>
-										{t(($) => $[dangerLevel])}
+										{t(($) => $.dangerLevels[dangerLevel])}
 									</ItemDescription>
 								</ItemContent>
 								<ItemContent>
@@ -128,7 +128,7 @@ export function Notifications({ onParentClose }: { onParentClose: () => void }) 
 								"h-fit w-fit px-2",
 							)}
 						>
-							{t(($) => $[notifData.sensor as Sensor])}
+							{t(($) => $.sensors[notifData.sensor as Sensor])}
 						</span>
 						<span className="text-muted-foreground">{"->"}</span>
 						<div className={`text-${notifData.dangerLevel}`}>

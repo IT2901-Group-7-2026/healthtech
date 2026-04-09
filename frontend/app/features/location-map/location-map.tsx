@@ -153,10 +153,10 @@ export function LocationMap({ operators, isLoading, imageUrl = "/factory_arial_v
 							className="mb-4"
 						>
 							<TabsList variant="line">
-								<TabsTrigger value="all">{t(($) => $.allSensors)}</TabsTrigger>
+								<TabsTrigger value="all">{t(($) => $.sensors.overview)}</TabsTrigger>
 								{sensors.map((s) => (
 									<TabsTrigger key={s} value={s}>
-										{t(($) => $[s])}
+										{t(($) => $.sensors[s])}
 									</TabsTrigger>
 								))}
 							</TabsList>

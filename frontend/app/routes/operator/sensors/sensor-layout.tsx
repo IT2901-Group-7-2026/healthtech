@@ -84,7 +84,7 @@ export default function SensorLayout() {
 						<h1 className="font-medium text-3xl">
 							{sensor
 								? t(($) => $.operatorHeader.title.yourSensorExposure, {
-										sensor: t(($) => $[sensor]).toLowerCase(),
+										sensor: t(($) => $.sensors[sensor]).toLowerCase(),
 									})
 								: t(($) => $.operatorHeader.title.yourExposure)}
 						</h1>
@@ -104,7 +104,7 @@ export default function SensorLayout() {
 					<Badge variant="secondary" className="gap-1.5 px-1 py-1 pr-2.5 font-normal text-sm">
 						<SensorIcon type={sensor ?? "all"} iconClassName="p-0.75 size-5" />
 						{sensor ? (
-							<p>{t(($) => $[sensor])}</p>
+							<p>{t(($) => $.sensors[sensor])}</p>
 						) : (
 							<p>{t(($) => $.operatorHeader.subtitle.allExposureTypes)}</p>
 						)}

@@ -1,6 +1,55 @@
 {
-  "title": "HealthTech | Operatør Eksponeringsdashboard",
-  "description": "Overvåk og administrer eksponering for støv, vibrasjon og støy.",
+  "app": {
+    "title": "HealthTech | Operatør Eksponeringsdashboard",
+    "description": "Overvåk og administrer eksponering for støv, vibrasjon og støy."
+  },
+  "common": {
+    "loading": "Laster inn data...",
+    "error": "Noe gikk galt under henting av sensordata.",
+    "noData": "Ingen eksponeringsdata funnet for denne dagen",
+    "noOptions": "Ingen alternativer tilgjengelig",
+    "time": "Tid",
+    "today": "I dag",
+    "points": "Poeng",
+    "notifications": "Notifikasjoner",
+    "exportAsPdf": "Eksporter som PDF"
+  },
+  "sensors": {
+    "dust": "Støv",
+    "vibration": "Vibrasjon",
+    "noise": "Støy",
+    "all": "Alle sensorer",
+    "overview": "Oversikt",
+    "selectPlaceholder": "Sensor",
+    "dustUnit": "µg/m³"
+  },
+  "dangerLevels": {
+    "safe": "Trygg",
+    "warning": "Advarsel",
+    "danger": "Fare"
+  },
+  "views": {
+    "label": "Visning",
+    "day": "Dag",
+    "week": "Uke",
+    "month": "Måned",
+    "selectionText": "Du blir vist en {{view}}.",
+    "dateSelectionSingle": "Du har valgt {{date}}.",
+    "dateSelectionMultiple": "Du har valgt {{startDate}} til {{endDate}}."
+  },
+  "theme": {
+    "light": "Lys",
+    "dark": "Mørk",
+    "system": "System"
+  },
+  "language": {
+    "english": "Engelsk",
+    "norwegian": "Norsk"
+  },
+  "measurement": {
+    "peak": "Topp",
+    "average": "Gjennomsnitt"
+  },
   "layout": {
     "live": "Live",
     "overview": "Oversikt",
@@ -30,10 +79,7 @@
       "safe": "Innenfor grenseverdi"
     }
   },
-  "vibrationExposure": {
-    "export": "Eksporter som PDF"
-  },
-  "exposure_summary": {
+  "exposureSummary": {
     "title": {
       "day": "Eksponering for {{day}}",
       "week": "Eksponering for uke {{week}}",
@@ -50,12 +96,12 @@
     "warningSmiley": "Nær farlige nivåer",
     "noData": "Ingen data"
   },
-  "line_chart": {
+  "lineChart": {
     "danger": "Grenseverdi",
     "warning": "Tiltaksverdi",
     "safe": "Trygt innenfor eksponeringsgrensen"
   },
-  "daily_notes": {
+  "dailyNotes": {
     "viewTitle": "Dine notater for {{date}}",
     "writeHere": "Skriv her...",
     "edit": "Rediger",
@@ -65,10 +111,6 @@
     "month": "måneden",
     "emptyState": "Ingen notater for denne {{view}}. Velg en dag for å legge til notater."
   },
-  "buttons": {
-    "confirm": "Ok",
-    "close": "Lukk"
-  },
   "table": {
     "numberOfRowsSelected": "{{selected}} av {{total}} rader valgt",
     "numberOfRowsSelected_one": "{{selected}} av {{total}} rad valgt",
@@ -77,43 +119,6 @@
   "sidebar": {
     "yourTeam": "Ditt team"
   },
-  "english": "Engelsk",
-  "norwegian": "Norsk",
-
-  "time": "Tid",
-  "today": "I dag",
-
-  "safe": "Trygg",
-  "warning": "Advarsel",
-  "danger": "Fare",
-
-  "peak": "Topp",
-  "average": "Gjennomsnitt",
-
-  "light": "Lys",
-  "dark": "Mørk",
-  "system": "System",
-
-  "shareDataWithHygienistButton": "Del data med hygieniker",
-  "shareDataWithHygienistConfirmation": "Månedlige data delt ✓",
-
-  "dust": "Støv",
-  "vibration": "Vibrasjon",
-  "noise": "Støy",
-  "allSensors": "Oversikt",
-  "all": "Alle sensorer",
-
-  "sensorSelectPlaceholder": "Sensor",
-
-  "views": "Visning",
-  "day": "Dag",
-  "week": "Uke",
-  "month": "Måned",
-  "viewSelectionText": "Du blir vist en {{view}}.",
-  "dateSelectionRecapSingle": "Du har valgt {{date}}.",
-  "dateSelectionRecapMultiple": "Du har valgt {{startDate}} til {{endDate}}.",
-
-  "notifications": "Notifikasjoner",
   "popup": {
     "toDay": "Se detaljer",
     "notesTitle": "Notater denne dagen:",
@@ -137,30 +142,24 @@
     "title": "Min side",
     "location": "Lokasjon",
     "name": "Navn",
-    "prefLanguage": "Foretrukket språk",
-    "secReg": "Gjeldende sikkerhetsreguleringer",
+    "currentSecurityRegulations": "Gjeldende sikkerhetsreguleringer",
     "jobTitle": "Stillingsbetegnelse",
     "jobDescription": "Stillingsbeskrivelse",
-    "deleteButtonInformation": "Slett personlig data"
+    "deletePersonalInformation": "Slett personlig data"
   },
   "atRiskTable": {
     "title": "Risikosårbare arbeidere",
     "noWorkers": "Ingen risikosårbare arbeidere"
   },
   "exposureLevel": {
-    "in_danger": "Arbeidere over grenseverdier",
+    "inDanger": "Arbeidere over grenseverdier",
     "warning": "Arbeidere nær grenseverdier",
     "safe": "Arbeidere innenfor grenseverdier",
-    "no_in_danger": "Ingen arbeidere i denne kategorien"
+    "noInDanger": "Ingen arbeidere i denne kategorien"
   },
   "interactiveCard": {
     "viewDetails": "Se detaljer"
   },
-  "loadingData": "Laster inn data...",
-  "errorLoadingData": "Noe gikk galt under henting av sensordata.",
-  "noData": "Ingen eksponeringsdata funnet for denne dagen",
-  "points": "Poeng",
-  "dust_y_axis": "µg/m³",
   "foremanDashboard": {
     "team": {
       "title": "Ditt team",
@@ -242,7 +241,6 @@
     "all": "Velg alle",
     "row": "Velg rad"
   },
-  "noOptions": "Ingen alternativer tilgjengelig",
   "operatorHeader": {
     "title": {
       "yourExposure": "Din eksponering",
@@ -272,6 +270,12 @@
     "title": "Gjeldene sikkerhetsreguleringer",
     "safetyBoots": "Sikkerhetsstøvler",
     "helmet": "Hjelm"
+  },
+  "share": {
+    "hygienist": {
+      "button": "Del data med hygieniker",
+      "confirmation": "Månedlige data delt ✓"
+    }
   },
   "viewPicker": {
     "today": "I dag",

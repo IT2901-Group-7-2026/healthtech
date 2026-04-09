@@ -29,7 +29,7 @@ export const LiveStatusOverviewCard = ({ sensorDangerLevels }: LiveStatusOvervie
 						key={sensor}
 						className="flex flex-row justify-between rounded-md border border-b-card-highlight p-2"
 					>
-						<div>{t(($) => $[sensor])}</div>
+						<div>{t(($) => $.sensors[sensor])}</div>
 
 						<div
 							className={`flex flex-row items-center text-xs text-${mapDangerLevelToColor(dangerLevel)} gap-1`}

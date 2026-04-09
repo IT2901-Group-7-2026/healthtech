@@ -226,7 +226,7 @@ export function ChartLineDefault({
 								hideLabels
 									? undefined
 									: {
-											value: t(($) => $.time),
+											value: t(($) => $.common.time),
 											position: "insideBottom",
 											offset: 0,
 											className: "text-base",
@@ -347,7 +347,7 @@ export function ThresholdLine({
 }) {
 	const { t } = useTranslation();
 	const color = `var(--${DangerLevels[dangerLevel].color})`;
-	const lineLabel = hideLineLabel ? undefined : (label ?? t(($) => $.line_chart[dangerLevel]));
+	const lineLabel = hideLineLabel ? undefined : (label ?? t(($) => $.lineChart[dangerLevel]));
 
 	return (
 		<ReferenceLine

@@ -42,22 +42,22 @@ export function ViewPicker({ className, withNavigationButtons = false }: ViewPic
 					}
 				}}
 			>
-				<ToggleGroupItem value="day" aria-label={t(($) => $.day)}>
+				<ToggleGroupItem value="day" aria-label={t(($) => $.views.day)}>
 					<div className="flex items-center gap-2">
 						<DayViewIcon className="size-4" />
-						<p className="text-sm">{t(($) => $.day)}</p>
+						<p className="text-sm">{t(($) => $.views.day)}</p>
 					</div>
 				</ToggleGroupItem>
-				<ToggleGroupItem value="week" aria-label={t(($) => $.week)}>
+				<ToggleGroupItem value="week" aria-label={t(($) => $.views.week)}>
 					<div className="flex items-center gap-2">
 						<WeekViewIcon className="size-4" />
-						<p className="text-sm">{t(($) => $.week)}</p>
+						<p className="text-sm">{t(($) => $.views.week)}</p>
 					</div>
 				</ToggleGroupItem>
-				<ToggleGroupItem value="month" aria-label={t(($) => $.month)}>
+				<ToggleGroupItem value="month" aria-label={t(($) => $.views.month)}>
 					<div className="flex items-center gap-2">
 						<MonthViewIcon className="size-4" />
-						<p className="text-sm">{t(($) => $.month)}</p>
+						<p className="text-sm">{t(($) => $.views.month)}</p>
 					</div>
 				</ToggleGroupItem>
 			</ToggleGroup>

@@ -42,19 +42,19 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 
 	const viewLabelConfig: Record<View, SummaryLabel> = {
 		day: {
-			safe: t(($) => $.exposure_summary.greenHourText),
-			warning: t(($) => $.exposure_summary.orangeHourText),
-			danger: t(($) => $.exposure_summary.redHourText),
+			safe: t(($) => $.exposureSummary.greenHourText),
+			warning: t(($) => $.exposureSummary.orangeHourText),
+			danger: t(($) => $.exposureSummary.redHourText),
 		},
 		week: {
-			safe: t(($) => $.exposure_summary.greenHourText),
-			warning: t(($) => $.exposure_summary.orangeHourText),
-			danger: t(($) => $.exposure_summary.redHourText),
+			safe: t(($) => $.exposureSummary.greenHourText),
+			warning: t(($) => $.exposureSummary.orangeHourText),
+			danger: t(($) => $.exposureSummary.redHourText),
 		},
 		month: {
-			safe: t(($) => $.exposure_summary.greenDayText),
-			warning: t(($) => $.exposure_summary.orangeDayText),
-			danger: t(($) => $.exposure_summary.redDayText),
+			safe: t(($) => $.exposureSummary.greenDayText),
+			warning: t(($) => $.exposureSummary.orangeDayText),
+			danger: t(($) => $.exposureSummary.redDayText),
 		},
 	};
 
@@ -68,18 +68,18 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 	const currentDate = useDate().date;
 	// For specific sensor: "<Sensor> exposure for <...>"
 	// For all sensors: "Exposure for <...>"
-	let summaryTitle = exposureType === "all" ? "" : `${t(($) => $[exposureType])} `;
+	let summaryTitle = exposureType === "all" ? "" : `${t(($) => $.sensors[exposureType])} `;
 
 	if (view === "month") {
-		summaryTitle += t(($) => $.exposure_summary.title.month, {
+		summaryTitle += t(($) => $.exposureSummary.title.month, {
 			month: formatDate(currentDate, "MMMM"),
 		});
 	} else if (view === "week") {
-		summaryTitle += t(($) => $.exposure_summary.title.week, {
+		summaryTitle += t(($) => $.exposureSummary.title.week, {
 			week: formatDate(currentDate, "w"),
 		});
 	} else {
-		summaryTitle += t(($) => $.exposure_summary.title.day, {
+		summaryTitle += t(($) => $.exposureSummary.title.day, {
 			day: formatDate(currentDate, i18n.language === "en" ? "MMMM do, yyyy" : "dd. MMMM yyyy"),
 		});
 	}
@@ -120,10 +120,10 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 					const color = highestLevel === null ? undefined : `var(--${DangerLevels[highestLevel].color})`;
 
 					const description = t(($) =>
-						highestLevel ? $.exposure_summary[`${highestLevel}Smiley` as const] : $.exposure_summary.noData,
+						highestLevel ? $.exposureSummary[`${highestLevel}Smiley` as const] : $.exposureSummary.noData,
 					);
 
-					const label = t(($) => $[sensor]);
+					const label = t(($) => $.sensors[sensor]);
 					const Emoji = getEmoji(highestLevel);
 
 					return (

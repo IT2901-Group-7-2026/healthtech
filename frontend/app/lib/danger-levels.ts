@@ -53,7 +53,7 @@ export const DangerLevels: Record<DangerLevel, DangerLevelInfo> = {
 	},
 };
 
-export const mapDangerLevelToLabel = (dangerLevel: DangerLevel): string => t(($) => $[dangerLevel]);
+export const mapDangerLevelToLabel = (dangerLevel: DangerLevel): string => t(($) => $.dangerLevels[dangerLevel]);
 
 export const mapDangerLevelToColor = (dangerLevel: DangerLevel): string => DangerLevels[dangerLevel].color;
 

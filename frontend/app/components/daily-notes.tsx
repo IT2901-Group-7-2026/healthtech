@@ -77,7 +77,7 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 	if (isLoading) {
 		return (
 			<Card muted={true} className="flex h-24 w-full items-center">
-				<p>{t(($) => $.loadingData)}</p>
+				<p>{t(($) => $.common.loading)}</p>
 			</Card>
 		);
 	}
@@ -85,7 +85,7 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 	if (isError) {
 		return (
 			<Card muted={true} className="flex h-24 w-full items-center">
-				<p>{t(($) => $.loadingData)}</p>
+				<p>{t(($) => $.common.loading)}</p>
 			</Card>
 		);
 	}
@@ -98,14 +98,14 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 			formattedDateLabel = formatDate(date, locale === "en" ? "MMMM do" : "do MMMM");
 			break;
 		case "week":
-			formattedDateLabel = `${t(($) => $.week)} ${formatDate(date, "w, yyyy")}`;
+			formattedDateLabel = `${t(($) => $.views.week)} ${formatDate(date, "w, yyyy")}`;
 			break;
 		case "month":
 			formattedDateLabel = formatDate(date, "MMMM yyyy");
 			break;
 	}
 
-	const title = t(($) => $.daily_notes.viewTitle, {
+	const title = t(($) => $.dailyNotes.viewTitle, {
 		date: formattedDateLabel,
 	});
 
@@ -115,7 +115,7 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 		Content =
 			isForDayView && showTextArea ? (
 				<Textarea
-					placeholder={t(($) => $.daily_notes.writeHere)}
+					placeholder={t(($) => $.dailyNotes.writeHere)}
 					value={todayNote?.note ?? ""}
 					className="min-h-15"
 					onChange={(e) =>
@@ -155,8 +155,8 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 				</ul>
 			) : (
 				<p className="text-sm">
-					{t(($) => $.daily_notes.emptyState, {
-						view: t(($$) => $$.daily_notes[view]),
+					{t(($) => $.dailyNotes.emptyState, {
+						view: t(($$) => $$.dailyNotes[view]),
 					})}
 				</p>
 			);
@@ -172,7 +172,7 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 				<CardFooter className="justify-end gap-2">
 					{todayNote !== null && !showTextArea && (
 						<Button size="sm" variant="secondary" onClick={handleEdit}>
-							{t(($) => $.daily_notes.edit)}
+							{t(($) => $.dailyNotes.edit)}
 						</Button>
 					)}
 					{showTextArea && (
@@ -181,7 +181,7 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 							disabled={todayNote === null || todayNote.note.trim() === ""}
 							onClick={handleSubmit}
 						>
-							{t(($) => $.daily_notes.save)}
+							{t(($) => $.dailyNotes.save)}
 						</Button>
 					)}
 				</CardFooter>
