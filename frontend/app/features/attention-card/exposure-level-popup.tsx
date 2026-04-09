@@ -1,9 +1,8 @@
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BasePopup } from "@/features/popups/base-popup";
 import { type DangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto.js";
-import { ArrowRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
@@ -44,11 +43,7 @@ const WorkerRow = ({ worker, status }: { worker: UserWithStatusDto; status: Dang
 	return (
 		<TableRow key={worker.id}>
 			<TableCell>
-				<Link
-					//TODO: change routing to the subs individual page
-					to={`/foreman/team`}
-					className="flex w-full items-center justify-between"
-				>
+				<Link to={`/foreman/?userId=${worker.id}`} className="flex w-full items-center justify-between">
 					<div className="flex items-center gap-5">
 						<div className={`size-3 rounded-sm bg-${mapDangerLevelToColor(worker.status.status)}`} />
 						<p>{worker.username}</p>
@@ -97,20 +92,13 @@ export function AtRiskPopup({
 
 	return (
 		<BasePopup title={exposureTitle} open={open} relevantDate={null} onClose={onClose}>
-			<Link to={`/foreman/team`} className="h-full w-full flex-1 basis-4 rounded-2xl">
-				<Card hoverable={true}>
-					<CardContent>
-						<Table>
-							<TableBody>{tableBody}</TableBody>
-						</Table>
-					</CardContent>
-
-					<CardFooter className="gap-1 text-muted-foreground text-xs">
-						<p>{t(($) => $.atRiskTable.detailText)}</p>
-						<ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
-					</CardFooter>
-				</Card>
-			</Link>
+			<Card hoverable={true}>
+				<CardContent>
+					<Table>
+						<TableBody>{tableBody}</TableBody>
+					</Table>
+				</CardContent>
+			</Card>
 		</BasePopup>
 	);
 }

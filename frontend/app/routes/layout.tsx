@@ -182,7 +182,12 @@ export default function Layout() {
 							onClick={openNotificationPopup}
 							className="cursor-pointer rounded-full"
 						>
-							<Bell className="size-5" />
+							<div className="relative">
+								<Bell className="size-5" />
+								<span className="absolute -top-2 -right-2 flex size-4.75 items-center justify-center rounded-full border-2 border-background bg-red-500 text-[0.625rem] text-white">
+									{"4"}
+								</span>
+							</div>
 						</Button>
 
 						<UserDropdown user={user} users={sortedUsers} setUser={setUser} i18n={i18n} />

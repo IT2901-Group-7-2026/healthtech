@@ -5,26 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
-import { DustChart } from "@/components/ui/dust-chart";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { AttentionCard } from "@/features/attention-card/attention-card.js";
+import { PieChartCard } from "@/features/attention-card/pie-chart-card";
 import { TeamSummary } from "@/features/sidebar/team-summary.js";
 import { useUser } from "@/features/user/user-context";
 import { useFormatDate } from "@/hooks/use-format-date";
-import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions, sensorQueryOptions } from "@/lib/api.js";
+import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions } from "@/lib/api.js";
 import { now, parseAsTZDate, today, toTZDate } from "@/lib/date";
-import { buildSensorQuery } from "@/lib/sensor-query-utils";
+import type { ThresholdSummary } from "@/lib/dto";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
-import { getThreshold } from "@/lib/thresholds";
 import { useQuery } from "@tanstack/react-query";
 import { addWeeks, endOfDay, startOfDay } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import { PieChartCard } from "../../features/attention-card/pie-chart-card";
+import { UserDetails } from "./user-details";
 
 export default function ForemanOverview() {
 	const { t } = useTranslation();
@@ -33,12 +32,7 @@ export default function ForemanOverview() {
 
 	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor);
 	const [date, setDate] = useQueryState("filterDate", parseAsTZDate.withDefault(today()));
-
-	const { data: users } = useQuery(fetchSubordinatesQueryOptions(user.id));
-
-	// TODO: Use this to show data for only that user
 	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString);
-	const selectedUser = users?.find((u) => u.id === selectedUserId);
 
 	const selectedDate = date;
 
@@ -49,62 +43,18 @@ export default function ForemanOverview() {
 	const minSelectableDate = startOfDay(addWeeks(today(), -1));
 	const maxSelectableDate = now();
 
-	const isDustQueriesEnabled = Boolean(selectedUserId);
-
-	const { data: dustTwa1Data } = useQuery(
-		sensorQueryOptions({
-			sensor: "dust",
-			query: buildSensorQuery("dust", "day", selectedDate, {
-				granularity: "day",
-				aggregationFunction: "avg",
-				field: "pm1_twa",
-			}),
-			userId: selectedUserId ?? undefined,
-			enabled: isDustQueriesEnabled,
-		}),
-	);
-
-	const { data: dustTwa25Data } = useQuery(
-		sensorQueryOptions({
-			sensor: "dust",
-			query: buildSensorQuery("dust", "day", selectedDate, {
-				granularity: "day",
-				aggregationFunction: "avg",
-				field: "pm25_twa",
-			}),
-			userId: selectedUserId ?? undefined,
-			enabled: isDustQueriesEnabled,
-		}),
-	);
-
-	const { data: dustTwa10Data } = useQuery(
-		sensorQueryOptions({
-			sensor: "dust",
-			query: buildSensorQuery("dust", "day", selectedDate, {
-				granularity: "day",
-				aggregationFunction: "avg",
-				field: "pm10_twa",
-			}),
-			userId: selectedUserId ?? undefined,
-			enabled: isDustQueriesEnabled,
-		}),
-	);
-
+	const { data: users } = useQuery(fetchSubordinatesQueryOptions(user.id));
 	const { data: subordinates, isLoading: isSubordinatesLoading } = useQuery(
 		fetchSubordinatesQueryOptions(user.id, startDate, endDate),
 	);
-
 	const { data: thresholdSummary, isLoading: isThresholdSummaryLoading } = useQuery(
 		fetchThresholdSummaryQueryOptions(user.id, startDate, endDate),
 	);
 
+	const selectedUser = users?.find((subordinate) => subordinate.id === selectedUserId);
 	const subordinateCount = subordinates?.length ?? 0;
+	const isUserSelected = selectedUser !== undefined;
 	const isUserComboboxDisabled = !users || users.length === 0;
-	const dustThreshold = getThreshold("dust");
-	const dustPm25TwaThreshold = getThreshold("dust", "pm25_twa");
-	const dustPm10TwaThreshold = getThreshold("dust", "pm10_twa");
-
-	//TODO: Update card links to point to stats page
 
 	const userComboboxOptions =
 		users?.map((u) => ({
@@ -186,86 +136,72 @@ export default function ForemanOverview() {
 					</Popover>
 				</div>
 			</Card>
+
 			<div className="flex w-full flex-row gap-6">
 				<aside className="flex flex-col gap-6 md:w-1/5">
 					<TeamSummary subordinateCount={subordinateCount} />
 					<DailyNotes />
 				</aside>
+
 				<div className="flex flex-col gap-12 md:w-3/5">
-					<AttentionCard
-						subordinates={subordinates ?? []}
-						isSubordinatesLoading={isSubordinatesLoading}
-						thresholdSummary={thresholdSummary}
-						isThresholdSummaryLoading={isThresholdSummaryLoading}
-					/>
-
-					{sensor ? (
-						<UserStatusChart
-							users={subordinates ?? []}
-							sensor={sensor}
-							// biome-ignore lint/correctness/noUnusedFunctionParameters: TODO: Filter on user
-							userOnClick={(userId) => {}}
-						/>
+					{isUserSelected ? (
+						<UserDetails selectedUser={selectedUser} selectedDate={selectedDate} sensor={sensor} />
 					) : (
-						<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
-							{/* TODO: add skeleton loading using isThresholdSummaryLoading */}
-							{thresholdSummary !== undefined &&
-								sensors.map((s: Sensor) => (
-									<PieChartCard
-										data={{
-											safe: {
-												name: "Safe",
-												value: thresholdSummary[s].safe,
-												label: t(($) => $.foremanDashboard.overview.statCards.safe.label),
-											},
-											warning: {
-												name: "Warning",
-												value: thresholdSummary[s].warning,
-												label: t(($) => $.foremanDashboard.overview.statCards.warning.label),
-											},
-											danger: {
-												name: "Danger",
-												value: thresholdSummary[s].danger,
-												label: t(($) => $.foremanDashboard.overview.statCards.danger.label),
-											},
-										}}
-										label={t(($) => $[s])}
-										to={`?sensor=${s}`}
-										key={s}
-										sensorType={s}
-									/>
-								))}
-						</div>
-					)}
-					{selectedUserId && (
-						<div className="flex flex-row items-center gap-8">
-							{dustTwa1Data && dustTwa1Data.length > 0 && (
-								<DustChart
-									label="PM1 TWA"
-									value={dustTwa1Data[0].value}
-									thresholdValue={dustThreshold.danger}
-								/>
-							)}
+						<>
+							<AttentionCard
+								subordinates={subordinates ?? []}
+								isSubordinatesLoading={isSubordinatesLoading}
+								thresholdSummary={thresholdSummary}
+								isThresholdSummaryLoading={isThresholdSummaryLoading}
+							/>
 
-							{dustTwa25Data && dustTwa25Data.length > 0 && (
-								<DustChart
-									label="PM2.5 TWA"
-									value={dustTwa25Data[0].value}
-									thresholdValue={dustPm25TwaThreshold.danger}
-								/>
+							{sensor ? (
+								<UserStatusChart users={subordinates ?? []} sensor={sensor} />
+							) : (
+								<SensorSummaryGrid thresholdSummary={thresholdSummary} />
 							)}
-
-							{dustTwa10Data && dustTwa10Data.length > 0 && (
-								<DustChart
-									label="PM10 TWA"
-									value={dustTwa10Data[0].value}
-									thresholdValue={dustPm10TwaThreshold.danger}
-								/>
-							)}
-						</div>
+						</>
 					)}
 				</div>
 			</div>
+		</div>
+	);
+}
+
+function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSummary | undefined }) {
+	const { t } = useTranslation();
+
+	if (thresholdSummary === undefined) {
+		return null;
+	}
+
+	return (
+		<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+			{sensors.map((sensorType: Sensor) => (
+				<PieChartCard
+					data={{
+						safe: {
+							name: "Safe",
+							value: thresholdSummary[sensorType].safe,
+							label: t(($) => $.foremanDashboard.overview.statCards.safe.label),
+						},
+						warning: {
+							name: "Warning",
+							value: thresholdSummary[sensorType].warning,
+							label: t(($) => $.foremanDashboard.overview.statCards.warning.label),
+						},
+						danger: {
+							name: "Danger",
+							value: thresholdSummary[sensorType].danger,
+							label: t(($) => $.foremanDashboard.overview.statCards.danger.label),
+						},
+					}}
+					label={t(($) => $[sensorType])}
+					to={`?sensor=${sensorType}`}
+					key={sensorType}
+					sensorType={sensorType}
+				/>
+			))}
 		</div>
 	);
 }

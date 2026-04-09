@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.15/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.10/schema.json",
   "root": true,
   "vcs": {
     "enabled": true,
@@ -45,10 +45,8 @@
         "noConstantCondition": "error"
       },
       "nursery": {
-        "noJsxLiterals": "error",
         "noShadow": "error",
         "noUnnecessaryConditions": "error",
-        "useConsistentArrowReturn": "error",
         "useExhaustiveSwitchCases": "error",
         "noMultiAssign": "error",
         "useSortedClasses": {
@@ -60,6 +58,8 @@
         }
       },
       "style": {
+        "useConsistentArrowReturn": "error",
+        "noJsxLiterals": "error",
         "noCommonJs": "error",
         "noDefaultExport": "off",
         "noImplicitBoolean": "error",
