@@ -41,7 +41,7 @@ export default function SensorLayout() {
 	// pathname is "/operator" or "/operator/<sensor>"
 	const sensor = toSensor(pathname.split("/").at(-1) ?? "");
 
-	const sensorQuery = sensor !== null ? buildSensorQuery(sensor, view, date, { usePeakAggregation }) : null;
+	const sensorQuery = sensor === null ? null : buildSensorQuery(sensor, view, date, { usePeakAggregation });
 	const sensorQueryEnabled = sensor !== null && sensorQuery !== null;
 
 	const [sensorResponse, allSensorsResponse] = useQueries({
@@ -64,7 +64,7 @@ export default function SensorLayout() {
 		],
 	});
 
-	const response = sensor !== null ? sensorResponse : allSensorsResponse;
+	const response = sensor === null ? allSensorsResponse : sensorResponse;
 
 	const ViewIcon = getViewIcon(view);
 
