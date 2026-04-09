@@ -42,7 +42,7 @@ function Calendar({
 			)}
 			style={
 				{
-					"--wk-label": `'${t(($) => $.week)}'`,
+					"--wk-label": `'${t(($) => $.views.week)}'`,
 				} as React.CSSProperties
 			}
 			captionLayout={captionLayout}

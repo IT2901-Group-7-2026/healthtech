@@ -49,7 +49,7 @@ export function CalendarPopup({
 									"h-fit w-fit px-2",
 								)}
 							>
-								{t(($) => $[sensor as Sensor])}
+								{t(($) => $.sensors[sensor as Sensor])}
 							</span>
 							<span className="text-muted-foreground">{"->"}</span>
 							<div className={`text-${danger}`}>{t(($) => $.popup[danger])}</div>

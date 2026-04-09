@@ -105,8 +105,8 @@ export function DatePicker({
 	);
 
 	const selectionRecap = selectionDetail.date
-		? t(($) => $.dateSelectionRecapSingle, { date: selectionDetail.date })
-		: t(($) => $.dateSelectionRecapMultiple, {
+		? t(($) => $.views.dateSelectionSingle, { date: selectionDetail.date })
+		: t(($) => $.views.dateSelectionMultiple, {
 				startDate: selectionDetail.startDate,
 				endDate: selectionDetail.endDate,
 			});

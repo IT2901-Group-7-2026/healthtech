@@ -18,7 +18,7 @@ export function DustIcon({ className, size = 24, strokeWidth = 2, title, ...prop
 			className={className}
 			{...props}
 		>
-			<title>{title || t(($) => $.dust)}</title>
+			<title>{title || t(($) => $.sensors.dust)}</title>
 			<path d="M8.91235 18.3208C7.60953 17.9472 6.50848 17.0714 5.85141 15.886C5.19433 14.7006 5.03507 13.3028 5.40864 11.9999" />
 			<path d="M18.9541 16.0425C18.6776 17.6103 17.7897 19.0042 16.4855 19.9173C15.1814 20.8305 13.5679 21.1882 12.0001 20.9117" />
 			<path

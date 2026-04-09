@@ -179,7 +179,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 							maxHour={maxHour}
 							chartData={downsampleSensorData(sensor, data ?? [])}
 							chartTitle={formatChartDate(selectedDate, i18n.language)}
-							unit={t(($) => $.dust_y_axis)}
+							unit={t(($) => $.sensors.dustUnit)}
 							maxY={maxY}
 							minY={minY}
 							lineType="monotone"
@@ -197,7 +197,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 										)
 									}
 								>
-									{t(($) => $.vibrationExposure.export)}
+									{t(($) => $.common.exportAsPdf)}
 								</Button>
 							}
 						>
@@ -277,7 +277,7 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 						maxHour={maxHour}
 						chartData={downsampleSensorData(sensor, data ?? [])}
 						chartTitle={formatChartDate(selectedDate, i18n.language)}
-						unit={t(($) => $.points)}
+						unit={t(($) => $.common.points)}
 						maxY={maxY}
 						minY={minY}
 						lineType="monotone"
@@ -294,7 +294,7 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 									)
 								}
 							>
-								{t(($) => $.vibrationExposure.export)}
+								{t(($) => $.common.exportAsPdf)}
 							</Button>
 						}
 					>
@@ -361,8 +361,8 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 		<div className="flex max-w-4xl flex-col gap-4">
 			<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
 				<TabsList>
-					<TabsTrigger value="average">{t(($) => $.average)}</TabsTrigger>
-					<TabsTrigger value="peak">{t(($) => $.peak)}</TabsTrigger>
+					<TabsTrigger value="average">{t(($) => $.measurement.average)}</TabsTrigger>
+					<TabsTrigger value="peak">{t(($) => $.measurement.peak)}</TabsTrigger>
 				</TabsList>
 			</Tabs>
 
@@ -392,7 +392,7 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 										)
 									}
 								>
-									{t(($) => $.vibrationExposure.export)}
+									{t(($) => $.common.exportAsPdf)}
 								</Button>
 							}
 						>
@@ -431,7 +431,7 @@ function SensorChartCard({
 	if (isLoading) {
 		return (
 			<Card className="flex h-24 w-full items-center">
-				<p>{t(($) => $.loadingData)}</p>
+				<p>{t(($) => $.common.loading)}</p>
 			</Card>
 		);
 	}
@@ -439,7 +439,7 @@ function SensorChartCard({
 	if (isError) {
 		return (
 			<Card className="flex h-24 w-full items-center">
-				<p>{t(($) => $.errorLoadingData)}</p>
+				<p>{t(($) => $.common.error)}</p>
 			</Card>
 		);
 	}
@@ -448,7 +448,7 @@ function SensorChartCard({
 		return (
 			<Card className="flex h-24 w-full items-center">
 				<CardTitle>{formatChartDate(selectedDate, i18n.language)}</CardTitle>
-				<p>{t(($) => $.noData)}</p>
+				<p>{t(($) => $.common.noData)}</p>
 			</Card>
 		);
 	}

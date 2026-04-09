@@ -72,7 +72,7 @@ export function AtRiskPopup({
 
 	const exposureTitle =
 		status === "danger"
-			? t((x) => x.exposureLevel.in_danger)
+			? t((x) => x.exposureLevel.inDanger)
 			: status === "warning"
 				? t((x) => x.exposureLevel.warning)
 				: t((x) => x.exposureLevel.safe);
@@ -81,7 +81,7 @@ export function AtRiskPopup({
 
 	const emptyTableBody = (
 		<TableRow>
-			<TableCell className="text-center text-zinc-500">{t((x) => x.exposureLevel.no_in_danger)}</TableCell>
+			<TableCell className="text-center text-zinc-500">{t((x) => x.exposureLevel.noInDanger)}</TableCell>
 		</TableRow>
 	);
 

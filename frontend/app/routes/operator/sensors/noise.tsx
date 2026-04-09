@@ -87,18 +87,18 @@ export default function Noise() {
 		<div className="flex flex-1 flex-col gap-4">
 			<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
 				<TabsList>
-					<TabsTrigger value="average">{t(($) => $.average)}</TabsTrigger>
-					<TabsTrigger value="peak">{t(($) => $.peak)}</TabsTrigger>
+					<TabsTrigger value="average">{t(($) => $.measurement.average)}</TabsTrigger>
+					<TabsTrigger value="peak">{t(($) => $.measurement.peak)}</TabsTrigger>
 				</TabsList>
 			</Tabs>
 
 			{isLoading ? (
 				<Card className="flex h-24 w-full items-center">
-					<p>{t(($) => $.loadingData)}</p>
+					<p>{t(($) => $.common.loading)}</p>
 				</Card>
 			) : isError ? (
 				<Card className="flex h-24 w-full items-center">
-					<p>{t(($) => $.errorLoadingData)}</p>
+					<p>{t(($) => $.common.error)}</p>
 				</Card>
 			) : view === "month" ? (
 				<CalendarWidget selectedDay={date} selectedAggregation={aggregation} data={calendarData} />
@@ -113,7 +113,7 @@ export default function Noise() {
 							year: "numeric",
 						})}
 					</CardTitle>
-					<p>{t(($) => $.noData)}</p>
+					<p>{t(($) => $.common.noData)}</p>
 				</Card>
 			) : (
 				<div className="w-full">
@@ -149,7 +149,7 @@ export default function Noise() {
 										)
 									}
 								>
-									{t(($) => $.vibrationExposure.export)}
+									{t(($) => $.common.exportAsPdf)}
 								</Button>
 							}
 						>

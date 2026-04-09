@@ -70,11 +70,11 @@ export default function Dust() {
 		<div className="flex flex-1 flex-col gap-4">
 			{isLoading ? (
 				<Card className="flex h-24 w-full items-center">
-					<p>{t(($) => $.loadingData)}</p>
+					<p>{t(($) => $.common.loading)}</p>
 				</Card>
 			) : isError ? (
 				<Card className="flex h-24 w-full items-center">
-					<p>{t(($) => $.errorLoadingData)}</p>
+					<p>{t(($) => $.common.error)}</p>
 				</Card>
 			) : view === "month" ? (
 				<CalendarWidget selectedDay={date} data={calendarData} />
@@ -89,7 +89,7 @@ export default function Dust() {
 							year: "numeric",
 						})}
 					</CardTitle>
-					<p>{t(($) => $.noData)}</p>
+					<p>{t(($) => $.common.noData)}</p>
 				</Card>
 			) : (
 				<div className="w-full">
@@ -103,7 +103,7 @@ export default function Dust() {
 								month: "long",
 								year: "numeric",
 							})}
-							unit={t(($) => $.dust_y_axis)}
+							unit={t(($) => $.sensors.dustUnit)}
 							maxY={maxY}
 							minY={minY}
 							lineType="monotone"
@@ -125,7 +125,7 @@ export default function Dust() {
 										)
 									}
 								>
-									{t(($) => $.vibrationExposure.export)}
+									{t(($) => $.common.exportAsPdf)}
 								</Button>
 							}
 						>

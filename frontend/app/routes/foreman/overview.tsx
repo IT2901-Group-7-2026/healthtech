@@ -70,10 +70,10 @@ export default function ForemanOverview() {
 					onValueChange={(value) => setSensor(value === "all" ? null : (value as Sensor))}
 				>
 					<TabsList className="bg-transparent">
-						<SensorTabsTrigger value="all">{t(($) => $.allSensors)}</SensorTabsTrigger>
-						<SensorTabsTrigger value="dust">{t(($) => $.dust)}</SensorTabsTrigger>
-						<SensorTabsTrigger value="noise">{t(($) => $.noise)}</SensorTabsTrigger>
-						<SensorTabsTrigger value="vibration">{t(($) => $.vibration)}</SensorTabsTrigger>
+						<SensorTabsTrigger value="all">{t(($) => $.sensors.overview)}</SensorTabsTrigger>
+						<SensorTabsTrigger value="dust">{t(($) => $.sensors.dust)}</SensorTabsTrigger>
+						<SensorTabsTrigger value="noise">{t(($) => $.sensors.noise)}</SensorTabsTrigger>
+						<SensorTabsTrigger value="vibration">{t(($) => $.sensors.vibration)}</SensorTabsTrigger>
 					</TabsList>
 				</Tabs>
 
@@ -196,7 +196,7 @@ function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSu
 							label: t(($) => $.foremanDashboard.overview.statCards.danger.label),
 						},
 					}}
-					label={t(($) => $[sensorType])}
+					label={t(($) => $.sensors[sensorType])}
 					to={`?sensor=${sensorType}`}
 					key={sensorType}
 					sensorType={sensorType}

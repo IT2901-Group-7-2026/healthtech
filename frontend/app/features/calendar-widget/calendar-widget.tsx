@@ -78,13 +78,13 @@ export function CalendarWidget({ selectedDay, data, selectedAggregation }: Calen
 							}, 5000); // Confirmation message duration in ms
 						}}
 					>
-						{t(($) => $.shareDataWithHygienistButton)}
+						{t(($) => $.hygienist.shareButton)}
 					</Button>
 
 					{showShareDataConfirmationMessage && (
 						<div className="text-green-600 text-xs">
 							<div className="text-green-600 text-xs">
-								{t(($) => $.shareDataWithHygienistConfirmation)}
+								{t(($) => $.hygienist.shareConfirmation)}
 							</div>
 						</div>
 					)}

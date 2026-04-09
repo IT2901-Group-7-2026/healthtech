@@ -143,7 +143,7 @@ export function DailyBarChart({
 										)}
 									>
 										<SensorIcon type={sensor} size="xs" />
-										<p>{t(($) => $[sensor])}</p>
+										<p>{t(($) => $.sensors[sensor])}</p>
 									</div>
 
 									{/* Hourly grid cells */}

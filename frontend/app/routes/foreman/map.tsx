@@ -17,7 +17,7 @@ export default function MapPage() {
 	} = useQuery(fetchSubordinatesQueryOptions(user.id));
 
 	if (isSubordinatesLoading) {
-		return <div className="p-4">{t(($) => $.loadingData)}</div>;
+		return <div className="p-4">{t(($) => $.common.loading)}</div>;
 	}
 
 	if (subordinatesError) {

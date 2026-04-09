@@ -121,7 +121,7 @@ export default function TeamPage() {
 	};
 
 	if (isSubordinatesLoading) {
-		return <div className="p-4">{t(($) => $.loadingData)}</div>;
+		return <div className="p-4">{t(($) => $.common.loading)}</div>;
 	}
 
 	if (subordinatesError) {
@@ -151,7 +151,7 @@ export default function TeamPage() {
 							setUserIdSelection(value);
 						}}
 						disabled={filteredUsers.length === 0}
-						emptyLabel={t(($) => $.noOptions)}
+						emptyLabel={t(($) => $.common.noOptions)}
 					/>
 					<Button onClick={handleAddSubordinates} disabled={userIdSelection.length === 0}>
 						{t(($) => $.foremanDashboard.team.action.addSubordinate)}

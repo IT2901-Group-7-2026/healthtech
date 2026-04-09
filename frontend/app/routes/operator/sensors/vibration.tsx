@@ -71,11 +71,11 @@ export default function Vibration() {
 			<div className="flex flex-1 flex-col gap-4">
 				{isLoading ? (
 					<Card className="flex h-24 w-full items-center">
-						<p>{t(($) => $.loadingData)}</p>
+						<p>{t(($) => $.common.loading)}</p>
 					</Card>
 				) : isError ? (
 					<Card className="flex h-24 w-full items-center">
-						<p>{t(($) => $.errorLoadingData)}</p>
+						<p>{t(($) => $.common.error)}</p>
 					</Card>
 				) : view === "month" ? (
 					<CalendarWidget selectedDay={date} data={calendarData} />
@@ -90,7 +90,7 @@ export default function Vibration() {
 								year: "numeric",
 							})}
 						</CardTitle>
-						<p>{t(($) => $.noData)}</p>
+						<p>{t(($) => $.common.noData)}</p>
 					</Card>
 				) : (
 					<div className="w-full">
@@ -104,7 +104,7 @@ export default function Vibration() {
 									month: "long",
 									year: "numeric",
 								})}
-								unit={t(($) => $.points)}
+								unit={t(($) => $.common.points)}
 								maxY={maxY}
 								minY={minY}
 								lineType="monotone"
@@ -125,7 +125,7 @@ export default function Vibration() {
 											)
 										}
 									>
-										{t(($) => $.vibrationExposure.export)}
+										{t(($) => $.common.exportAsPdf)}
 									</Button>
 								}
 							>

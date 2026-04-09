@@ -22,10 +22,10 @@ export const LanguageSelect = ({ i18n, t }: { i18n: typeof i18nInstance; t: Tran
 		</SelectTrigger>
 		<SelectContent className="w-32">
 			<SelectItem key={"en"} value={"en"}>
-				{t(($) => $.english)}
+				{t(($) => $.language.english)}
 			</SelectItem>
 			<SelectItem key={"no"} value={"no"}>
-				{t(($) => $.norwegian)}
+				{t(($) => $.language.norwegian)}
 			</SelectItem>
 		</SelectContent>
 	</Select>

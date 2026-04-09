@@ -145,14 +145,14 @@ export default function OperatorLiveView() {
 			<div className="flex min-w-0 flex-col gap-4 md:col-start-2">
 				<Card>
 					<CardHeader>
-						<CardTitle>{t(($) => $.dust)}</CardTitle>
+						<CardTitle>{t(($) => $.sensors.dust)}</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<LiveExposureCard
 							sensor="dust"
 							exposureLabel={"PM1 TWA"}
 							exposureUnitLabel="µg/m³"
-							chartUnitLabel={t(($) => $.dust_y_axis)}
+							chartUnitLabel={t(($) => $.sensors.dustUnit)}
 							data={dustTwa1Data ?? []}
 							minTime={start}
 							maxTime={end}
@@ -164,7 +164,7 @@ export default function OperatorLiveView() {
 							exposureLabel={"PM2.5 TWA"}
 							exposureField="pm25_twa"
 							exposureUnitLabel="µg/m³"
-							chartUnitLabel={t(($) => $.dust_y_axis)}
+							chartUnitLabel={t(($) => $.sensors.dustUnit)}
 							data={dustTwa25Data ?? []}
 							minTime={start}
 							maxTime={end}
@@ -176,7 +176,7 @@ export default function OperatorLiveView() {
 							exposureLabel={"PM10 TWA"}
 							exposureField="pm10_twa"
 							exposureUnitLabel="µg/m³"
-							chartUnitLabel={t(($) => $.dust_y_axis)}
+							chartUnitLabel={t(($) => $.sensors.dustUnit)}
 							data={dustTwa10Data ?? []}
 							minTime={start}
 							maxTime={end}
@@ -187,12 +187,12 @@ export default function OperatorLiveView() {
 
 				<Card>
 					<CardHeader>
-						<CardTitle>{t(($) => $.noise)}</CardTitle>
+						<CardTitle>{t(($) => $.sensors.noise)}</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<LiveExposureCard
 							sensor="noise"
-							exposureLabel={t(($) => $.noise)}
+							exposureLabel={t(($) => $.sensors.noise)}
 							exposureUnitLabel="dB"
 							chartUnitLabel="db (TWA)"
 							data={noiseData ?? []}
@@ -205,14 +205,14 @@ export default function OperatorLiveView() {
 
 				<Card>
 					<CardHeader>
-						<CardTitle>{t(($) => $.vibration)}</CardTitle>
+						<CardTitle>{t(($) => $.sensors.vibration)}</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<LiveExposureCard
 							sensor="vibration"
-							exposureLabel={t(($) => $.vibration)}
-							exposureUnitLabel={t(($) => $.points)}
-							chartUnitLabel={t(($) => $.points)}
+							exposureLabel={t(($) => $.sensors.vibration)}
+							exposureUnitLabel={t(($) => $.common.points)}
+							chartUnitLabel={t(($) => $.common.points)}
 							data={vibrationData ?? []}
 							minTime={start}
 							maxTime={end}

@@ -80,7 +80,7 @@ const HallOperatorListItem = ({ operator, sensor }: HallOperatorListItemProps) =
 
 	const dangerLevel = operator.status[sensor]?.dangerLevel ?? "safe";
 	const title = t(($) => $.foremanDashboard.siteMap.operatorSensorStatus[dangerLevel], {
-		sensor: t(($$) => $$[sensor]).toLowerCase(),
+		sensor: t(($$) => $$.sensors[sensor]).toLowerCase(),
 	});
 
 	return (
