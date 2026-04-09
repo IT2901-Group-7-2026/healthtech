@@ -179,14 +179,18 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 									<div className="grid min-w-[8rem] gap-1.5 rounded-lg border border-border/50 bg-background px-2.5 py-1.5 text-xs shadow-xl">
 										<div className="font-medium">{label}</div>
 										<div className="flex items-center justify-between gap-2">
-											<span className="text-muted-foreground">{t(($) => $.measurement.average)}</span>
+											<span className="text-muted-foreground">
+												{t(($) => $.measurement.average)}
+											</span>
 											<span className="font-medium font-mono text-foreground tabular-nums">
 												{`${avg}%`}
 											</span>
 										</div>
 										{peak != null && (
 											<div className="flex items-center justify-between gap-2">
-												<span className="text-muted-foreground">{t(($) => $.measurement.peak)}</span>
+												<span className="text-muted-foreground">
+													{t(($) => $.measurement.peak)}
+												</span>
 												<span className="font-medium font-mono tabular-nums">{`${peak}%`}</span>
 											</div>
 										)}

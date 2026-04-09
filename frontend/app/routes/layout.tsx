@@ -307,7 +307,9 @@ function UserDropdown({
 								}}
 							>
 								<DropdownMenuRadioItem value="en">{t(($) => $.language.english)}</DropdownMenuRadioItem>
-								<DropdownMenuRadioItem value="no">{t(($) => $.language.norwegian)}</DropdownMenuRadioItem>
+								<DropdownMenuRadioItem value="no">
+									{t(($) => $.language.norwegian)}
+								</DropdownMenuRadioItem>
 							</DropdownMenuRadioGroup>
 						</DropdownMenuSubContent>
 					</DropdownMenuSub>

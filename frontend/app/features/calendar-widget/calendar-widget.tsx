@@ -83,9 +83,7 @@ export function CalendarWidget({ selectedDay, data, selectedAggregation }: Calen
 
 					{showShareDataConfirmationMessage && (
 						<div className="text-green-600 text-xs">
-							<div className="text-green-600 text-xs">
-								{t(($) => $.hygienist.shareConfirmation)}
-							</div>
+							<div className="text-green-600 text-xs">{t(($) => $.hygienist.shareConfirmation)}</div>
 						</div>
 					)}
 				</div>
