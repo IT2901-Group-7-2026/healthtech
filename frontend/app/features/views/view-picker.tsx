@@ -1,15 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { TIMEZONE } from "@/i18n/locale";
+import { today } from "@/lib/date";
+import { cn } from "@/lib/utils";
+import { isToday } from "date-fns";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useDate } from "../date-picker/use-date";
 import { useView } from "./use-view";
 import type { View } from "./utils";
 import { DayViewIcon, MonthViewIcon, WeekViewIcon } from "./views";
-import { today } from "@/lib/date";
-import { cn } from "@/lib/utils";
-import { isToday } from "date-fns";
-import { TIMEZONE } from "@/i18n/locale";
 
 interface ViewPickerProps {
 	withNavigationButtons?: boolean;
@@ -23,9 +23,9 @@ export function ViewPicker({ className, withNavigationButtons = false }: ViewPic
 
 	const isTodayDate = isToday(date, { in: TIMEZONE });
 
-	const previousString = t(($) => $.viewPicker.previous)
-	const todayString = t(($) => $.viewPicker.today)
-	const nextString = t(($) => $.viewPicker.next)
+	const previousString = t(($) => $.viewPicker.previous);
+	const todayString = t(($) => $.viewPicker.today);
+	const nextString = t(($) => $.viewPicker.next);
 
 	return (
 		<div className="flex flex-col gap-2">
@@ -64,21 +64,39 @@ export function ViewPicker({ className, withNavigationButtons = false }: ViewPic
 
 			{withNavigationButtons && (
 				<div className="grid grid-cols-3 items-center gap-2">
-					<Button title={previousString} size="xs" variant="ghost" className="px-1!" onClick={() => navigate.previous()}>
+					<Button
+						title={previousString}
+						size="xs"
+						variant="ghost"
+						className="px-1!"
+						onClick={() => navigate.previous()}
+					>
 						<ChevronLeftIcon className="size-3.5 shrink-0" />
-						<p className="text-xs truncate">{previousString}</p>
+						<p className="truncate text-xs">{previousString}</p>
 					</Button>
 
-					<Button title={todayString} size="xs" variant="ghost" className="px-1!" onClick={() => setDate(today())} disabled={isTodayDate}>
+					<Button
+						title={todayString}
+						size="xs"
+						variant="ghost"
+						className="px-1!"
+						onClick={() => setDate(today())}
+						disabled={isTodayDate}
+					>
 						<CalendarIcon className="size-3.5 shrink-0" />
-						<p className="text-xs truncate">{todayString}</p>
+						<p className="truncate text-xs">{todayString}</p>
 					</Button>
 
-					<Button title={nextString} size="xs" variant="ghost" className="px-1!" onClick={() => navigate.next()}>
-						<p className="text-xs truncate">{nextString}</p>
+					<Button
+						title={nextString}
+						size="xs"
+						variant="ghost"
+						className="px-1!"
+						onClick={() => navigate.next()}
+					>
+						<p className="truncate text-xs">{nextString}</p>
 						<ChevronRightIcon className="size-3.5 shrink-0" />
 					</Button>
-					
 				</div>
 			)}
 		</div>
