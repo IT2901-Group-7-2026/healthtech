@@ -30,21 +30,8 @@
       "safe": "Safely within exposure limit"
     }
   },
-  "overview": {
-    "all": "All data",
-    "dust": "",
-    "week": "Week {{week}}, {{start}} to {{end}}.",
-    "month": "{{month}}, {{start}} to {{end}}."
-  },
-  "dustExposure": {
-    "title": "Dust exposure"
-  },
   "vibrationExposure": {
-    "title": "Vibration exposure",
     "export": "Export as PDF"
-  },
-  "noiseExposure": {
-    "title": "Noise exposure"
   },
   "exposure_summary": {
     "title": {
@@ -67,11 +54,6 @@
     "danger": "Exposure Limit",
     "warning": "Action Limit",
     "safe": "Safely within exposure limit"
-  },
-  "monthly_view": {
-    "safe": "Safe day on",
-    "warning": "Warnings issued on",
-    "danger": "Danger: Exposure limits exceeded on"
   },
   "daily_notes": {
     "viewTitle": "Your notes for {{date}}",
@@ -163,7 +145,6 @@
   },
   "atRiskTable": {
     "title": "Workers at Risk",
-    "detailText": "View details",
     "noWorkers": "No workers at risk"
   },
   "exposureLevel": {
@@ -208,23 +189,19 @@
       },
       "statCards": {
         "danger": {
-          "description": "Operators exceeding threshold",
           "label": "In danger",
           "noOperators": "No operators in danger"
         },
         "warning": {
-          "description": "Operators approaching exposure limit",
           "label": "At risk",
           "noOperators": "No operators at risk"
         },
         "safe": {
-          "description": "Operators within safe exposure range",
           "label": "Within limits",
           "noOperators": "No operators within limits"
         }
       },
-      "selectUserPlaceholder": "Select team member",
-      "selectDatePlaceholder": "Pick a date"
+      "selectUserPlaceholder": "Select team member"
     },
     "actionCard": {
       "safe": "All good!",
@@ -232,7 +209,6 @@
       "danger": "Attention may be required!",
       "criticalExposureText": "Operators above the exposure limit. Immediate follow-up recommended.",
       "approachingThresholdText": "Operators approaching the exposure limit. Consider preventive measures.",
-      "safeText": "Operators are within safe levels. No action needed right now.",
       "oldData": "You are viewing old data."
     },
     "userStatusChart": {
@@ -241,7 +217,6 @@
     },
     "siteMap": {
       "title": "Site map",
-      "anonymousOperator": "Anonymous operator",
       "noOperators": "No operators in hall",
       "operatorSensorStatus": {
         "danger": "Above exposure limit for {{sensor}}",
@@ -260,7 +235,6 @@
   "demo": {
     "currentRole": "Current role:",
     "navigate": {
-      "toApp": "Go to app",
       "toRegister": "Go to register page"
     }
   },
