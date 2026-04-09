@@ -1,7 +1,7 @@
 {
   "app": {
-    "title": "HealthTech | Operat\u00f8r Eksponeringsdashboard",
-    "description": "Overv\u00e5k og administrer eksponering for st\u00f8v, vibrasjon og st\u00f8y."
+    "title": "HealthTech | Operatør Eksponeringsdashboard",
+    "description": "Overvåk og administrer eksponering for støv, vibrasjon og støy."
   },
   "common": {
     "loading": "Laster inn data...",
@@ -15,13 +15,13 @@
     "exportAsPdf": "Eksporter som PDF"
   },
   "sensors": {
-    "dust": "St\u00f8v",
+    "dust": "Støv",
     "vibration": "Vibrasjon",
-    "noise": "St\u00f8y",
+    "noise": "Støy",
     "all": "Alle sensorer",
     "overview": "Oversikt",
     "selectPlaceholder": "Sensor",
-    "dustUnit": "\u00b5g/m\u00b3"
+    "dustUnit": "µg/m³"
   },
   "dangerLevels": {
     "safe": "Trygg",
@@ -32,14 +32,14 @@
     "label": "Visning",
     "day": "Dag",
     "week": "Uke",
-    "month": "M\u00e5ned",
+    "month": "Måned",
     "selectionText": "Du blir vist en {{view}}.",
     "dateSelectionSingle": "Du har valgt {{date}}.",
     "dateSelectionMultiple": "Du har valgt {{startDate}} til {{endDate}}."
   },
   "theme": {
     "light": "Lys",
-    "dark": "M\u00f8rk",
+    "dark": "Mørk",
     "system": "System"
   },
   "language": {
@@ -52,7 +52,7 @@
   },
   "hygienist": {
     "shareButton": "Del data med hygieniker",
-    "shareConfirmation": "M\u00e5nedlige data delt \u2713"
+    "shareConfirmation": "Månedlige data delt ✓"
   },
   "layout": {
     "live": "Live",
@@ -62,7 +62,7 @@
     "statistics": "Statistikk",
     "export": "Eksporter oversikt som PDF",
     "theme": "Fargetema",
-    "language": "Spr\u00e5k",
+    "language": "Språk",
     "map": "Kart"
   },
   "live": {
@@ -75,11 +75,11 @@
       }
     },
     "chart": {
-      "now": "N\u00e5"
+      "now": "Nå"
     },
     "overviewCard": {
       "danger": "Over grenseverdi",
-      "warning": "N\u00e6r grenseverdig",
+      "warning": "Nær grenseverdig",
       "safe": "Innenfor grenseverdi"
     }
   },
@@ -91,13 +91,13 @@
     },
     "greenHourText": "Timer med trygg mengde eksponering",
     "greenDayText": "Dager med trygg mengde eksponering",
-    "orangeHourText": "Timer n\u00e6r eksponeringsgrensen",
-    "orangeDayText": "Dager n\u00e6r eksponeringsgrensen",
+    "orangeHourText": "Timer nær eksponeringsgrensen",
+    "orangeDayText": "Dager nær eksponeringsgrensen",
     "redHourText": "Timer over eksponeringsgrensen",
     "redDayText": "Dager over eksponeringsgrensen",
-    "dangerSmiley": "Farlige niv\u00e5er",
+    "dangerSmiley": "Farlige nivåer",
     "safeSmiley": "OK",
-    "warningSmiley": "N\u00e6r farlige niv\u00e5er",
+    "warningSmiley": "Nær farlige nivåer",
     "noData": "Ingen data"
   },
   "lineChart": {
@@ -112,8 +112,8 @@
     "save": "Lagre",
     "day": "dagen",
     "week": "uken",
-    "month": "m\u00e5neden",
-    "emptyState": "Ingen notater for denne {{view}}. Velg en dag for \u00e5 legge til notater."
+    "month": "måneden",
+    "emptyState": "Ingen notater for denne {{view}}. Velg en dag for å legge til notater."
   },
   "table": {
     "numberOfRowsSelected": "{{selected}} av {{total}} rader valgt",
@@ -128,7 +128,7 @@
     "notesTitle": "Notater denne dagen:",
     "exposureTitle": "Eksponering:",
     "safe": "Ingen eksponeringsgrense brutt",
-    "warning": "En eksponeringsgrense var n\u00e6r \u00e5 bli brutt",
+    "warning": "En eksponeringsgrense var nær å bli brutt",
     "danger": "Eksponeringsgrense ble brutt",
     "openDaily": "Se detaljer for informasjon om eksponeringstype",
     "eventTitle": "{{day}}, fra {{start}} til {{end}}",
@@ -140,25 +140,25 @@
     "startDate": "Startdato...",
     "endDate": "Sluttdato...",
     "date": "dato",
-    "invalidDate": "Velg en startdato som starter f\u00f8r sluttdato."
+    "invalidDate": "Velg en startdato som starter før sluttdato."
   },
   "profile": {
     "title": "Min side",
     "location": "Lokasjon",
     "name": "Navn",
-    "prefLanguage": "Foretrukket spr\u00e5k",
+    "prefLanguage": "Foretrukket språk",
     "secReg": "Gjeldende sikkerhetsreguleringer",
     "jobTitle": "Stillingsbetegnelse",
     "jobDescription": "Stillingsbeskrivelse",
     "deleteButtonInformation": "Slett personlig data"
   },
   "atRiskTable": {
-    "title": "Risikos\u00e5rbare arbeidere",
-    "noWorkers": "Ingen risikos\u00e5rbare arbeidere"
+    "title": "Risikosårbare arbeidere",
+    "noWorkers": "Ingen risikosårbare arbeidere"
   },
   "exposureLevel": {
     "inDanger": "Arbeidere over grenseverdier",
-    "warning": "Arbeidere n\u00e6r grenseverdier",
+    "warning": "Arbeidere nær grenseverdier",
     "safe": "Arbeidere innenfor grenseverdier",
     "noInDanger": "Ingen arbeidere i denne kategorien"
   },
@@ -181,9 +181,9 @@
         "removeSubordinate": "Fjern fra teamet",
         "addSubordinate": "Legg til i teamet"
       },
-      "membersCount": "{{count}} operat\u00f8r i teamet",
-      "membersCount_one": "{{count}} operat\u00f8r i teamet",
-      "membersCount_other": "{{count}} operat\u00f8rer i teamet",
+      "membersCount": "{{count}} operatør i teamet",
+      "membersCount_one": "{{count}} operatør i teamet",
+      "membersCount_other": "{{count}} operatører i teamet",
       "mapTitle": "Lokasjonskart"
     },
     "overview": {
@@ -197,8 +197,8 @@
           "noOperators": "Ingen over grenseverdien"
         },
         "warning": {
-          "label": "N\u00e6r grenseverdi",
-          "noOperators": "Ingen n\u00e6rmer grenseverdien"
+          "label": "Nær grenseverdi",
+          "noOperators": "Ingen nærmer grenseverdien"
         },
         "safe": {
           "label": "Innenfor grenseverdi",
@@ -211,35 +211,35 @@
       "safe": "Alt er bra!",
       "warning": "Oppmerksomhet anbefales!",
       "danger": "Oppmerksomhet anbefales!",
-      "criticalExposureText": "Operat\u00f8rer over eksponeringsgrensen. Umiddelbar oppf\u00f8lging anbefales.",
-      "approachingThresholdText": "Operat\u00f8rer n\u00e6rmer seg eksponeringsgrensen. Vurder forebyggende tiltak.",
-      "oldData": "Du ser p\u00e5 tidligere data."
+      "criticalExposureText": "Operatører over eksponeringsgrensen. Umiddelbar oppfølging anbefales.",
+      "approachingThresholdText": "Operatører nærmer seg eksponeringsgrensen. Vurder forebyggende tiltak.",
+      "oldData": "Du ser på tidligere data."
     },
     "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",
-      "noData": "Ingen sensordata tilgjengelig for operat\u00f8rer"
+      "noData": "Ingen sensordata tilgjengelig for operatører"
     },
     "siteMap": {
-      "title": "Omr\u00e5dekart",
-      "noOperators": "Ingen operat\u00f8rer i bygg",
+      "title": "Områdekart",
+      "noOperators": "Ingen operatører i bygg",
       "operatorSensorStatus": {
         "danger": "Over grenseverdi for {{sensor}}",
-        "warning": "N\u00e6r grenseverdi for {{sensor}}",
+        "warning": "Nær grenseverdi for {{sensor}}",
         "safe": "Innenfor grenseverdi for {{sensor}}"
       }
     }
   },
   "user": {
     "role": {
-      "operator": "Operat\u00f8r",
+      "operator": "Operatør",
       "foreman": "Formann"
     },
-    "searchPlaceholder": "S\u00f8k etter brukere..."
+    "searchPlaceholder": "Søk etter brukere..."
   },
   "demo": {
-    "currentRole": "N\u00e5v\u00e6rende rolle:",
+    "currentRole": "Nåværende rolle:",
     "navigate": {
-      "toRegister": "G\u00e5 til registreringssiden"
+      "toRegister": "Gå til registreringssiden"
     }
   },
   "select": {
@@ -255,7 +255,7 @@
       "allExposureTypes": "Alle eksponeringstyper",
       "viewDay": "Dag",
       "viewWeek": "Uke {{week}}",
-      "viewMonth": "M\u00e5ned",
+      "viewMonth": "Måned",
       "dateDay": "{{date}}",
       "dateRange": "{{startDate}} til {{endDate}}"
     }
@@ -266,7 +266,7 @@
     "email": "E-postaddresse",
     "password": "Passord",
     "confirmPassword": "Bekreft passord",
-    "privacyConsent": "Jeg samtykker til \u00e5 dele mine data med mine veiledere av hensyn til helse og sikkerhet.",
+    "privacyConsent": "Jeg samtykker til å dele mine data med mine veiledere av hensyn til helse og sikkerhet.",
     "createAccount": "Opprett konto",
     "haveAccount": "Har du allerede en konto? ",
     "login": "Logg inn"

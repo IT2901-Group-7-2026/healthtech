@@ -21,7 +21,7 @@
     "all": "All sensors",
     "overview": "Overview",
     "selectPlaceholder": "Sensor",
-    "dustUnit": "\u00b5g/m\u00b3"
+    "dustUnit": "µg/m³"
   },
   "dangerLevels": {
     "safe": "Safe",
@@ -52,7 +52,7 @@
   },
   "hygienist": {
     "shareButton": "Share data with hygienist",
-    "shareConfirmation": "Monthly data shared \u2713"
+    "shareConfirmation": "Monthly data shared ✓"
   },
   "layout": {
     "live": "Live",
