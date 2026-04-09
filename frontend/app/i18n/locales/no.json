@@ -50,10 +50,6 @@
     "peak": "Topp",
     "average": "Gjennomsnitt"
   },
-  "hygienist": {
-    "shareButton": "Del data med hygieniker",
-    "shareConfirmation": "Månedlige data delt ✓"
-  },
   "layout": {
     "live": "Live",
     "overview": "Oversikt",
@@ -146,11 +142,10 @@
     "title": "Min side",
     "location": "Lokasjon",
     "name": "Navn",
-    "prefLanguage": "Foretrukket språk",
-    "secReg": "Gjeldende sikkerhetsreguleringer",
+    "currentSecurityRegulations": "Gjeldende sikkerhetsreguleringer",
     "jobTitle": "Stillingsbetegnelse",
     "jobDescription": "Stillingsbeskrivelse",
-    "deleteButtonInformation": "Slett personlig data"
+    "deletePersonalInformation": "Slett personlig data"
   },
   "atRiskTable": {
     "title": "Risikosårbare arbeidere",
@@ -275,5 +270,11 @@
     "title": "Gjeldene sikkerhetsreguleringer",
     "safetyBoots": "Sikkerhetsstøvler",
     "helmet": "Hjelm"
+  },
+  "share": {
+    "hygienist": {
+      "button": "Del data med hygieniker",
+      "confirmation": "Månedlige data delt ✓"
+    }
   }
 }

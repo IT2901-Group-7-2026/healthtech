@@ -50,10 +50,6 @@
     "peak": "Peak",
     "average": "Average"
   },
-  "hygienist": {
-    "shareButton": "Share data with hygienist",
-    "shareConfirmation": "Monthly data shared ✓"
-  },
   "layout": {
     "live": "Live",
     "overview": "Overview",
@@ -146,11 +142,10 @@
     "title": "My account",
     "location": "Location",
     "name": "Name",
-    "prefLanguage": "Preferred language",
-    "secReg": "Current security regulations",
+    "currentSecurityRegulations": "Current security regulations",
     "jobTitle": "Job title",
     "jobDescription": "Job description",
-    "deleteButtonInformation": "Delete personal data"
+    "deletePersonalInformation": "Delete personal data"
   },
   "atRiskTable": {
     "title": "Workers at Risk",
@@ -275,5 +270,11 @@
     "title": "Current safety regulations",
     "safetyBoots": "Safety boots",
     "helmet": "Helmet"
+  },
+  "share": {
+    "hygienist": {
+      "button": "Share data with hygienist",
+      "confirmation": "Monthly data shared ✓"
+    }
   }
 }

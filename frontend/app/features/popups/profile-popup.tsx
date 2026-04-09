@@ -108,7 +108,7 @@ export function ProfilePopup({ user, open, onClose, avatarSrc, children }: Profi
 					</div>
 				</div>
 				<div className="flex flex-col gap-2">
-					<h4 className="text-muted-foreground">{t(($) => $.profile.secReg)}</h4>
+					<h4 className="text-muted-foreground">{t(($) => $.profile.currentSecurityRegulations)}</h4>
 					<div className="w-full rounded-lg bg-card-highlight p-2">
 						<ul className="ml-5 list-disc">
 							{tempListOfRegulations.map((reg) => (
@@ -124,7 +124,7 @@ export function ProfilePopup({ user, open, onClose, avatarSrc, children }: Profi
 					</div>
 				</div>
 				<div className="flex flex-col gap-2">
-					<p className="label text-muted-foreground">{t(($) => $.profile.deleteButtonInformation)}</p>
+					<p className="label text-muted-foreground">{t(($) => $.profile.deletePersonalInformation)}</p>
 					<Card className="p-3">
 						<Form {...form}>
 							<form onSubmit={form.handleSubmit(onSubmit)} className="max-w-sm space-y-2">
