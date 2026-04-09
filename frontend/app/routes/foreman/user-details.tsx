@@ -15,7 +15,7 @@ import { mapOverviewBucketsToChartRows } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { endOfDay, startOfDay } from "date-fns";
+import { addDays, endOfDay, startOfDay, subDays } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { type ReactNode, useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -464,6 +464,12 @@ function DateScopedChart({ selectedDate, children }: { selectedDate: TZDate; chi
 				selection: {
 					start: startOfDay(selectedDate),
 					end: endOfDay(selectedDate),
+				},
+				navigate: {
+					previousValue: subDays(selectedDate, 1),
+					nextValue: addDays(selectedDate, 1),
+					previous: () => {},
+					next: () => {},
 				},
 				setDate: () => {},
 			}}
