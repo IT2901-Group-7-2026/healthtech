@@ -1,15 +1,24 @@
 import type { TZDate } from "@date-fns/tz";
 import { createContext, useContext } from "react";
 
-type ContextValue = {
+export type DateContextValue = {
 	date: TZDate;
-	selection: { start: TZDate; end: TZDate };
 	setDate: (date: TZDate) => void;
+	navigate: {
+		previousValue: TZDate;
+		nextValue: TZDate;
+		previous: () => void;
+		next: () => void;
+	};
+	selection: {
+		start: TZDate;
+		end: TZDate;
+	};
 };
 
-export const DateContext = createContext<ContextValue | null>(null);
+export const DateContext = createContext<DateContextValue | null>(null);
 
-export const useDate = (): ContextValue => {
+export const useDate = (): DateContextValue => {
 	const context = useContext(DateContext);
 
 	if (!context) {

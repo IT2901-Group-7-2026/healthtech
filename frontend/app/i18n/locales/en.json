@@ -272,5 +272,10 @@
     "title": "Current safety regulations",
     "safetyBoots": "Safety boots",
     "helmet": "Helmet"
+  },
+  "viewPicker": {
+    "today": "Today",
+    "previous": "Previous",
+    "next": "Next"
   }
 }

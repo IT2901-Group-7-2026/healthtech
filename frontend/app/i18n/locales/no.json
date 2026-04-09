@@ -272,5 +272,10 @@
     "title": "Gjeldene sikkerhetsreguleringer",
     "safetyBoots": "Sikkerhetsstøvler",
     "helmet": "Hjelm"
+  },
+  "viewPicker": {
+    "today": "I dag",
+    "previous": "Forrige",
+    "next": "Neste"
   }
 }

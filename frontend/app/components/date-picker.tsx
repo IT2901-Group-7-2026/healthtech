@@ -116,6 +116,7 @@ export function DatePicker({
 			mode="single"
 			className={cn("w-65 bg-transparent p-0", className)}
 			required={true}
+			month={selectedDate}
 			selected={selectedDate}
 			onSelect={handleDayClick}
 			modifiers={modifiers}
