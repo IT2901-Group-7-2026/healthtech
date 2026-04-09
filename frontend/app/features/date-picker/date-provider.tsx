@@ -1,3 +1,6 @@
+import { useView } from "@/features/views/use-view";
+import { TIMEZONE } from "@/i18n/locale";
+import { parseAsTZDate, today } from "@/lib/date";
 import type { TZDate } from "@date-fns/tz";
 import {
 	addDays,
@@ -15,9 +18,6 @@ import {
 } from "date-fns";
 import { useQueryState } from "nuqs";
 import { type ReactNode, useCallback } from "react";
-import { useView } from "@/features/views/use-view";
-import { TIMEZONE } from "@/i18n/locale";
-import { parseAsTZDate, today } from "@/lib/date";
 import { DateContext, type DateContextValue } from "./use-date";
 
 export function DateProvider({ children }: { children: ReactNode }) {
