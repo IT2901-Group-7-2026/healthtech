@@ -1,6 +1,59 @@
 {
-  "title": "HealthTech | Operator Exposure Dashboard",
-  "description": "Monitor and manage exposure to dust, vibration, and noise.",
+  "app": {
+    "title": "HealthTech | Operator Exposure Dashboard",
+    "description": "Monitor and manage exposure to dust, vibration, and noise."
+  },
+  "common": {
+    "loading": "Loading data...",
+    "error": "Something went wrong while fetching sensor data.",
+    "noData": "No exposure data found for this day",
+    "noOptions": "No options available",
+    "time": "Time",
+    "today": "Today",
+    "points": "Points",
+    "notifications": "Notifications",
+    "exportAsPdf": "Export as PDF"
+  },
+  "sensors": {
+    "dust": "Dust",
+    "vibration": "Vibration",
+    "noise": "Noise",
+    "all": "All sensors",
+    "overview": "Overview",
+    "selectPlaceholder": "Sensor",
+    "dustUnit": "\u00b5g/m\u00b3"
+  },
+  "dangerLevels": {
+    "safe": "Safe",
+    "warning": "Warning",
+    "danger": "Danger"
+  },
+  "views": {
+    "label": "Views",
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
+    "selectionText": "You are viewing a {{view}}.",
+    "dateSelectionSingle": "You have selected {{date}}.",
+    "dateSelectionMultiple": "You have selected {{startDate}} to {{endDate}}."
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "english": "English",
+    "norwegian": "Norwegian"
+  },
+  "measurement": {
+    "peak": "Peak",
+    "average": "Average"
+  },
+  "hygienist": {
+    "shareButton": "Share data with hygienist",
+    "shareConfirmation": "Monthly data shared \u2713"
+  },
   "layout": {
     "live": "Live",
     "overview": "Overview",
@@ -30,10 +83,7 @@
       "safe": "Safely within exposure limit"
     }
   },
-  "vibrationExposure": {
-    "export": "Export as PDF"
-  },
-  "exposure_summary": {
+  "exposureSummary": {
     "title": {
       "day": "Exposure for {{day}}",
       "week": "Exposure for week {{week}}",
@@ -50,12 +100,12 @@
     "warningSmiley": "Near dangerous levels",
     "noData": "No data"
   },
-  "line_chart": {
+  "lineChart": {
     "danger": "Exposure Limit",
     "warning": "Action Limit",
     "safe": "Safely within exposure limit"
   },
-  "daily_notes": {
+  "dailyNotes": {
     "viewTitle": "Your notes for {{date}}",
     "writeHere": "Write here...",
     "edit": "Edit",
@@ -65,10 +115,6 @@
     "month": "month",
     "emptyState": "No notes for this {{view}}. Select a day to add a note."
   },
-  "buttons": {
-    "confirm": "Ok",
-    "close": "Close"
-  },
   "table": {
     "numberOfRowsSelected": "{{selected}} of {{total}} rows selected",
     "numberOfRowsSelected_one": "{{selected}} of {{total}} row selected",
@@ -77,43 +123,6 @@
   "sidebar": {
     "yourTeam": "Your team"
   },
-  "english": "English",
-  "norwegian": "Norwegian",
-
-  "time": "Time",
-  "today": "Today",
-
-  "safe": "Safe",
-  "warning": "Warning",
-  "danger": "Danger",
-
-  "peak": "Peak",
-  "average": "Average",
-
-  "light": "Light",
-  "dark": "Dark",
-  "system": "System",
-
-  "shareDataWithHygienistButton": "Share data with hygienist",
-  "shareDataWithHygienistConfirmation": "Monthly data shared ✓",
-
-  "dust": "Dust",
-  "vibration": "Vibration",
-  "noise": "Noise",
-  "allSensors": "Overview",
-  "all": "All sensors",
-
-  "sensorSelectPlaceholder": "Sensor",
-
-  "views": "Views",
-  "day": "Day",
-  "week": "Week",
-  "month": "Month",
-  "viewSelectionText": "You are viewing a {{view}}.",
-  "dateSelectionRecapSingle": "You have selected {{date}}.",
-  "dateSelectionRecapMultiple": "You have selected {{startDate}} to {{endDate}}.",
-
-  "notifications": "Notifications",
   "popup": {
     "toDay": "See details",
     "notesTitle": "Note for this day:",
@@ -148,19 +157,14 @@
     "noWorkers": "No workers at risk"
   },
   "exposureLevel": {
-    "in_danger": "Workers In Danger",
+    "inDanger": "Workers In Danger",
     "warning": "Workers at Risk",
     "safe": "Workers Within Limits",
-    "no_in_danger": "No workers in this category"
+    "noInDanger": "No workers in this category"
   },
   "interactiveCard": {
     "viewDetails": "View details"
   },
-  "loadingData": "Loading data...",
-  "errorLoadingData": "Something went wrong while fetching sensor data.",
-  "noData": "No exposure data found for this day",
-  "points": "Points",
-  "dust_y_axis": "µg/m³",
   "foremanDashboard": {
     "team": {
       "title": "Your team",
@@ -242,7 +246,6 @@
     "all": "Select all",
     "row": "Select row"
   },
-  "noOptions": "No options available",
   "operatorHeader": {
     "title": {
       "yourExposure": "Your exposure",
