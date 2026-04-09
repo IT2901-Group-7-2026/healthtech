@@ -300,17 +300,8 @@
     "helmet": "Helmet"
   },
   "viewPicker": {
-    "month": {
-      "previous": "Previous month",
-      "next": "Next month"
-    },
-    "week": {
-      "previous": "Previous week",
-      "next": "Next week"
-    },
-    "day": {
-      "previous": "Previous day",
-      "next": "Next day"
-    }
+    "today": "Today",
+    "previous": "Previous",
+    "next": "Next"
   }
 }
