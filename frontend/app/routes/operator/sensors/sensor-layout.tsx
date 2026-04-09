@@ -128,7 +128,7 @@ export default function SensorLayout() {
 
 			<aside className="col-start-3 row-start-2 flex flex-col gap-4">
 				<Card muted={true}>
-					<ViewPicker />
+					<ViewPicker withNavigationButtons={true} />
 				</Card>
 
 				<Card muted={true}>

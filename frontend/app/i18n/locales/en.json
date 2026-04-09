@@ -276,5 +276,10 @@
       "button": "Share data with hygienist",
       "confirmation": "Monthly data shared ✓"
     }
+  },
+  "viewPicker": {
+    "today": "Today",
+    "previous": "Previous",
+    "next": "Next"
   }
 }

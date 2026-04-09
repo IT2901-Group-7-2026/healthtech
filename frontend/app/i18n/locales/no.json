@@ -276,5 +276,10 @@
       "button": "Del data med hygieniker",
       "confirmation": "Månedlige data delt ✓"
     }
+  },
+  "viewPicker": {
+    "today": "I dag",
+    "previous": "Forrige",
+    "next": "Neste"
   }
 }
