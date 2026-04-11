@@ -49,7 +49,6 @@ const getCellAppearance = (dangerLevel: string | null) => {
 
 interface DailyBarChartProps {
 	data: Array<OverviewChartRow>;
-	chartTitle: string;
 	startHour?: number;
 	endHour?: number;
 	headerRight?: React.ReactNode;
@@ -58,7 +57,6 @@ interface DailyBarChartProps {
 
 export function DailyBarChart({
 	data,
-	chartTitle,
 	startHour = 0,
 	endHour = 23,
 	headerRight,
@@ -107,8 +105,9 @@ export function DailyBarChart({
 	return (
 		<Card className="px-0">
 			<CardHeader className="flex flex-row items-center justify-between px-4">
-				<CardTitle className="text-base">{chartTitle}</CardTitle>
-				{headerRight}
+				<div className="ml-auto">
+					{headerRight}
+				</div>
 			</CardHeader>
 
 			<CardContent>
