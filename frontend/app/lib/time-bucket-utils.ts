@@ -3,6 +3,33 @@ import type { OverviewBucketDto, SensorDataResponseDto } from "./dto";
 import { type Sensor, sensors } from "./sensors";
 import type { OverviewChartRow, SummaryCounts, SummaryLevelCounts, TimeBucketStatus } from "./time-bucket-types";
 
+export function calculateHourSummaryCountsFromMinutes(
+	data: Array<SensorDataResponseDto> | Array<OverviewBucketDto>,
+	sensor?: Sensor,
+	usePeakDangerLevel?: boolean,
+): SummaryCounts {
+	const minuteSummary = calculateSummaryCounts(data, sensor, usePeakDangerLevel);
+
+	const hourSummary: SummaryCounts = {
+		...convertMinutesToHours(minuteSummary),
+		bySensor: {
+			noise: convertMinutesToHours(minuteSummary.bySensor.noise),
+			dust: convertMinutesToHours(minuteSummary.bySensor.dust),
+			vibration: convertMinutesToHours(minuteSummary.bySensor.vibration),
+		},
+	};
+
+	return hourSummary;
+}
+
+function convertMinutesToHours(counts: SummaryLevelCounts): SummaryLevelCounts {
+	return {
+		safeCount: counts.safeCount / 60,
+		warningCount: counts.warningCount / 60,
+		dangerCount: counts.dangerCount / 60,
+	};
+}
+
 export function calculateSummaryCounts(
 	data: Array<SensorDataResponseDto> | Array<OverviewBucketDto>,
 	sensor?: Sensor,

@@ -90,20 +90,31 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 
 	let content: ReactNode;
 
+	const valueFormatter = new Intl.NumberFormat(i18n.language === "no" ? "nb-NO" : "en-US", {
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 1,
+	});
+
 	if (mode === "count") {
 		content = (
 			<CardContent className="grid grid-cols-[auto_1fr] items-center gap-2">
-				<p className={cn("text-right font-bold md:text-center", safeColor)}>{data.safeCount}</p>
+				<p className={cn("text-right font-bold md:text-center", safeColor)}>
+					{valueFormatter.format(data.safeCount)}
+				</p>
 				<p className={cn("text-xs md:text-sm", safeColor)}>
 					{isMobile ? defaultLabels.safe : summaryLabels.safeLabel}
 				</p>
 
-				<p className={cn("text-right font-bold md:text-center", warningColor)}>{data.warningCount}</p>
+				<p className={cn("text-right font-bold md:text-center", warningColor)}>
+					{valueFormatter.format(data.warningCount)}
+				</p>
 				<p className={cn("text-xs md:text-sm", warningColor)}>
 					{isMobile ? defaultLabels.warning : summaryLabels.warningLabel}
 				</p>
 
-				<p className={cn("text-right font-bold md:text-center", dangerColor)}>{data.dangerCount}</p>
+				<p className={cn("text-right font-bold md:text-center", dangerColor)}>
+					{valueFormatter.format(data.dangerCount)}
+				</p>
 				<p className={cn("text-xs md:text-sm", dangerColor)}>
 					{isMobile ? defaultLabels.danger : summaryLabels.dangerLabel}
 				</p>
