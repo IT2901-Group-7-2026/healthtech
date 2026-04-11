@@ -4,6 +4,7 @@ import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import { useIsMobile } from "@/hooks/use-mobile";
+import type { TranslateFn } from "@/i18n/config.js";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import { sensors } from "@/lib/sensors.js";
 import type { SummaryCounts } from "@/lib/time-bucket-types";
@@ -40,33 +41,7 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 		danger: "DANGER",
 	};
 
-	const viewLabelConfig: Record<View, SummaryLabel> = {
-		day: {
-			safe: t(($) => $.exposureSummary.greenText),
-			warning: t(($) => $.exposureSummary.orangeText),
-			danger: t(($) => $.exposureSummary.redText),
-		},
-		week: {
-			safe: t(($) => $.exposureSummary.greenHourText),
-			warning: t(($) => $.exposureSummary.orangeHourText),
-			danger: t(($) => $.exposureSummary.redHourText),
-		},
-		month: {
-			safe: t(($) => $.exposureSummary.greenDayText),
-			warning: t(($) => $.exposureSummary.orangeDayText),
-			danger: t(($) => $.exposureSummary.redDayText),
-		},
-	};
-
-	// For vibration in day view we show summary as hours
-	const labelView = exposureType === "vibration" && view === "day" ? "week" : view;
-
-	const summaryLabels = {
-		exposureType: exposureType === "all" ? "Every sensor" : exposureType,
-		safeLabel: viewLabelConfig[labelView].safe || defaultLabels.safe,
-		warningLabel: viewLabelConfig[labelView].warning || defaultLabels.warning,
-		dangerLabel: viewLabelConfig[labelView].danger || defaultLabels.danger,
-	};
+	const summaryLabels = getSummaryLabels(exposureType, view, t, defaultLabels);
 
 	const currentDate = useDate().date;
 	// For specific sensor: "<Sensor> exposure for <...>"
@@ -100,21 +75,21 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 					{getSensorValueString(data.safeCount, view, exposureType)}
 				</p>
 				<p className={cn("text-xs md:text-sm", safeColor)}>
-					{isMobile ? defaultLabels.safe : summaryLabels.safeLabel}
+					{isMobile ? defaultLabels.safe : summaryLabels.safe}
 				</p>
 
 				<p className={cn("text-right font-bold md:text-center", warningColor)}>
 					{getSensorValueString(data.warningCount, view, exposureType)}
 				</p>
 				<p className={cn("text-xs md:text-sm", warningColor)}>
-					{isMobile ? defaultLabels.warning : summaryLabels.warningLabel}
+					{isMobile ? defaultLabels.warning : summaryLabels.warning}
 				</p>
 
 				<p className={cn("text-right font-bold md:text-center", dangerColor)}>
 					{getSensorValueString(data.dangerCount, view, exposureType)}
 				</p>
 				<p className={cn("text-xs md:text-sm", dangerColor)}>
-					{isMobile ? defaultLabels.danger : summaryLabels.dangerLabel}
+					{isMobile ? defaultLabels.danger : summaryLabels.danger}
 				</p>
 			</CardContent>
 		);
@@ -175,6 +150,39 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 			<CardContent className="gap-5">{content}</CardContent>
 		</Card>
 	);
+}
+
+function getSummaryLabels(
+	exposureType: ExposureType,
+	view: View,
+	t: TranslateFn,
+	defaultLabels: SummaryLabel,
+): SummaryLabel {
+	// Vibration doesn't support minute-level summaries, so show hour labels instead
+	const effectiveView = exposureType === "vibration" && view === "day" ? "week" : view;
+
+	switch (effectiveView) {
+		case "day":
+			return {
+				safe: t(($) => $.exposureSummary.greenText),
+				warning: t(($) => $.exposureSummary.orangeText),
+				danger: t(($) => $.exposureSummary.redText),
+			};
+		case "week":
+			return {
+				safe: t(($) => $.exposureSummary.greenHourText),
+				warning: t(($) => $.exposureSummary.orangeHourText),
+				danger: t(($) => $.exposureSummary.redHourText),
+			};
+		case "month":
+			return {
+				safe: t(($) => $.exposureSummary.greenDayText),
+				warning: t(($) => $.exposureSummary.orangeDayText),
+				danger: t(($) => $.exposureSummary.redDayText),
+			};
+		default:
+			return defaultLabels;
+	}
 }
 
 function getSensorValueString(value: number, view: View, exposureType: ExposureType) {
