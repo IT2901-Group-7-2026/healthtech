@@ -79,7 +79,6 @@ function AllSensorsUserOverview({
 					data={mapOverviewBucketsToChartRows(data ?? [], 0, 23)}
 					startHour={minHour}
 					endHour={maxHour}
-					chartTitle={formatChartDate(selectedDate, i18n.language)}
 					buildLink={(sensor) => {
 						const params = new URLSearchParams();
 						params.set("sensor", sensor);
