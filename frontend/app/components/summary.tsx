@@ -71,22 +71,22 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 	if (mode === "count") {
 		content = (
 			<CardContent className="grid grid-cols-[auto_1fr] items-center gap-2">
-				<p className={cn("text-right font-bold md:text-center", safeColor)}>
-					{getSensorValueString(data.safeCount, view, exposureType)}
+				<p className={cn("text-right font-bold md:text-left", safeColor)}>
+					{getSensorValueString(data.safeCount, view, exposureType, i18n.language)}
 				</p>
 				<p className={cn("text-xs md:text-sm", safeColor)}>
 					{isMobile ? defaultLabels.safe : summaryLabels.safe}
 				</p>
 
-				<p className={cn("text-right font-bold md:text-center", warningColor)}>
-					{getSensorValueString(data.warningCount, view, exposureType)}
+				<p className={cn("text-right font-bold md:text-left", warningColor)}>
+					{getSensorValueString(data.warningCount, view, exposureType, i18n.language)}
 				</p>
 				<p className={cn("text-xs md:text-sm", warningColor)}>
 					{isMobile ? defaultLabels.warning : summaryLabels.warning}
 				</p>
 
-				<p className={cn("text-right font-bold md:text-center", dangerColor)}>
-					{getSensorValueString(data.dangerCount, view, exposureType)}
+				<p className={cn("text-right font-bold md:text-left", dangerColor)}>
+					{getSensorValueString(data.dangerCount, view, exposureType, i18n.language)}
 				</p>
 				<p className={cn("text-xs md:text-sm", dangerColor)}>
 					{isMobile ? defaultLabels.danger : summaryLabels.danger}
@@ -185,7 +185,7 @@ function getSummaryLabels(
 	}
 }
 
-function getSensorValueString(value: number, view: View, exposureType: ExposureType) {
+function getSensorValueString(value: number, view: View, exposureType: ExposureType, locale: string) {
 	if (view === "day" && exposureType !== "vibration") {
 		const hours = Math.floor(value / 60);
 		const minutes = value % 60;
@@ -201,7 +201,10 @@ function getSensorValueString(value: number, view: View, exposureType: ExposureT
 		return `${hours}h ${minutes}m`;
 	}
 
-	return value % 1 === 0 ? `${Math.floor(value)}` : value.toFixed(1);
+	return new Intl.NumberFormat(locale, {
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 1,
+	}).format(value);
 }
 
 function getHighestLevel({
