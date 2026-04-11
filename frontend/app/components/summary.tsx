@@ -42,9 +42,9 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 
 	const viewLabelConfig: Record<View, SummaryLabel> = {
 		day: {
-			safe: t(($) => $.exposureSummary.greenHourText),
-			warning: t(($) => $.exposureSummary.orangeHourText),
-			danger: t(($) => $.exposureSummary.redHourText),
+			safe: t(($) => $.exposureSummary.greenText),
+			warning: t(($) => $.exposureSummary.orangeText),
+			danger: t(($) => $.exposureSummary.redText),
 		},
 		week: {
 			safe: t(($) => $.exposureSummary.greenHourText),
@@ -90,30 +90,25 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 
 	let content: ReactNode;
 
-	const valueFormatter = new Intl.NumberFormat(i18n.language === "no" ? "nb-NO" : "en-US", {
-		minimumFractionDigits: 0,
-		maximumFractionDigits: 1,
-	});
-
 	if (mode === "count") {
 		content = (
 			<CardContent className="grid grid-cols-[auto_1fr] items-center gap-2">
 				<p className={cn("text-right font-bold md:text-center", safeColor)}>
-					{valueFormatter.format(data.safeCount)}
+					{getSensorValueString(data.safeCount, view)}
 				</p>
 				<p className={cn("text-xs md:text-sm", safeColor)}>
 					{isMobile ? defaultLabels.safe : summaryLabels.safeLabel}
 				</p>
 
 				<p className={cn("text-right font-bold md:text-center", warningColor)}>
-					{valueFormatter.format(data.warningCount)}
+					{getSensorValueString(data.warningCount, view)}
 				</p>
 				<p className={cn("text-xs md:text-sm", warningColor)}>
 					{isMobile ? defaultLabels.warning : summaryLabels.warningLabel}
 				</p>
 
 				<p className={cn("text-right font-bold md:text-center", dangerColor)}>
-					{valueFormatter.format(data.dangerCount)}
+					{getSensorValueString(data.dangerCount, view)}
 				</p>
 				<p className={cn("text-xs md:text-sm", dangerColor)}>
 					{isMobile ? defaultLabels.danger : summaryLabels.dangerLabel}
@@ -177,6 +172,25 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 			<CardContent className="gap-5">{content}</CardContent>
 		</Card>
 	);
+}
+
+function getSensorValueString(value: number, view: View) {
+	if (view === "day") {
+		const hours = Math.floor(value / 60);
+		const minutes = value % 60;
+
+		if (hours === 0) {
+			return `${minutes}m`;
+		}
+
+		if (minutes === 0) {
+			return `${hours}h`;
+		}
+
+		return `${hours}h ${minutes}m`;
+	}
+
+	return value % 1 === 0 ? `${Math.floor(value)}` : value.toFixed(1);
 }
 
 function getHighestLevel({

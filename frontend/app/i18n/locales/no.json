@@ -85,10 +85,13 @@
       "week": "Eksponering for uke {{week}}",
       "month": "Eksponering for {{month}}"
     },
+    "greenText": "med trygg mengde eksponering",
     "greenHourText": "Timer med trygg mengde eksponering",
     "greenDayText": "Dager med trygg mengde eksponering",
+    "orangeText": "nær eksponeringsgrensen",
     "orangeHourText": "Timer nær eksponeringsgrensen",
     "orangeDayText": "Dager nær eksponeringsgrensen",
+    "redText": "over eksponeringsgrensen",
     "redHourText": "Timer over eksponeringsgrensen",
     "redDayText": "Dager over eksponeringsgrensen",
     "dangerSmiley": "Farlige nivåer",

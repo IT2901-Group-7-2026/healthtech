@@ -15,7 +15,7 @@ import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
 import { type Aggregation, Aggregations } from "@/lib/dto";
 import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
 import { type Sensor, toSensor } from "@/lib/sensors";
-import { calculateHourSummaryCountsFromMinutes, calculateSummaryCounts } from "@/lib/time-bucket-utils";
+import { calculateSummaryCounts } from "@/lib/time-bucket-utils";
 import type { View } from "@/lib/views";
 import { Card } from "@/ui/card";
 import type { TZDate } from "@date-fns/tz";
@@ -84,10 +84,7 @@ export default function SensorLayout() {
 
 	const ViewIcon = getViewIcon(view);
 
-	const summary =
-		granularity === "minute"
-			? calculateHourSummaryCountsFromMinutes(response.data ?? [], sensor ?? undefined, usePeakAggregation)
-			: calculateSummaryCounts(response.data ?? [], sensor ?? undefined, usePeakAggregation);
+	const summary = calculateSummaryCounts(response.data ?? [], sensor ?? undefined, usePeakAggregation);
 
 	return (
 		<div
