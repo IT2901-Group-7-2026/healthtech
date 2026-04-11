@@ -1,6 +1,4 @@
 import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@/components/ui/item";
-import { NotificationPopup } from "@/features/popups/notification-popup";
-import { usePopup } from "@/features/popups/use-popup";
 import { useUser } from "@/features/user/user-context";
 import { TIMEZONE } from "@/i18n/locale";
 import type { DangerLevel } from "@/lib/danger-levels";
@@ -9,8 +7,8 @@ import { cn } from "@/lib/utils";
 import { Card } from "@/ui/card";
 import { TZDate } from "@date-fns/tz";
 import { formatDate } from "date-fns";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { NavLink } from "react-router";
 import { SensorIcon } from "./sensor-icon";
 
 const notifications: Array<{
@@ -40,48 +38,31 @@ const notifications: Array<{
 	},
 ];
 
-type NotifData = {
-	date: TZDate;
-	sensor: Sensor;
-	dangerLevel: DangerLevel;
-};
-
 export function Notifications({ onParentClose }: { onParentClose: () => void }) {
-	const { t, i18n } = useTranslation();
-	const { visible, openPopup, closePopup } = usePopup();
+	const { t } = useTranslation();
 	const { user } = useUser();
 
-	const [notifData, setNotifData] = useState<NotifData | null>(null);
-
-	// Since notifications are nested in a parent popup we need to close that popup as well as the popup for a specific notification.
-	const closeAll = () => {
-		closePopup();
-		onParentClose();
-	};
-
-	function handleNotifClick(clickedNotif: NotifData): void {
-		setNotifData(clickedNotif);
-		openPopup();
-	}
-
-	const notificationLink = user.role === "foreman" ? `/foreman` : `/operator/${notifData?.sensor}`;
-
-	let notificationLinkSearch = "";
-	if (user.role === "foreman" && notifData) {
-		const formattedDate = formatDate(notifData.date, "yyyy-MM-dd");
-		notificationLinkSearch = `?sensor=${notifData.sensor}&filterDate=${formattedDate}`;
-	}
-
 	return (
-		<>
-			<Card className="h-64 w-full gap-0 overflow-y-auto px-4">
-				<ItemGroup className="gap-1" role="list">
-					{notifications.map(({ sensor, date, dangerLevel }) => (
-						<button
-							type={"button"}
+		<Card className="h-64 w-full gap-0 overflow-y-auto px-4">
+			<ItemGroup className="gap-1" role="list">
+				{notifications.map(({ sensor, date, dangerLevel }) => {
+					const notificationLink = user.role === "foreman" ? `/foreman` : `/operator/${sensor}`;
+					let notificationLinkSearch = "";
+
+					if (user.role === "foreman") {
+						const formattedDate = formatDate(date, "yyyy-MM-dd");
+						notificationLinkSearch = `?sensor=${sensor}&filterDate=${formattedDate}`;
+					} else {
+						const formattedDate = formatDate(date, "yyyy-MM-dd");
+						notificationLinkSearch = `?view=Day&date=${formattedDate}`;
+					}
+
+					return (
+						<NavLink
 							key={`${date} ${sensor} ${dangerLevel}`}
-							onClick={() => handleNotifClick({ date, sensor, dangerLevel })}
+							to={`${notificationLink}${notificationLinkSearch}`}
 							className="cursor-pointer"
+							onClick={onParentClose}
 						>
 							<Item
 								variant="outline"
@@ -100,44 +81,11 @@ export function Notifications({ onParentClose }: { onParentClose: () => void }) 
 									<span>{formatNotificationDate(date)}</span>
 								</ItemContent>
 							</Item>
-						</button>
-					))}
-				</ItemGroup>
-			</Card>
-			{notifData && (
-				<NotificationPopup
-					open={visible}
-					onClose={closeAll}
-					relevantDate={notifData.date}
-					title={t(($) => $.popup.notifTitle, {
-						date: notifData.date.toLocaleDateString(i18n.language, {
-							day: "numeric",
-							month: "long",
-							hour: "2-digit",
-							minute: "2-digit",
-						}),
-					})}
-					pathname={notificationLink}
-					search={notificationLinkSearch}
-				>
-					<div className="flex justify-start gap-2">
-						<span
-							className={cn(
-								"rounded-full text-center font-medium capitalize",
-								`bg-${notifData.dangerLevel} ${notifData.dangerLevel === "danger" && "text-secondary"}`,
-								"h-fit w-fit px-2",
-							)}
-						>
-							{t(($) => $.sensors[notifData.sensor as Sensor])}
-						</span>
-						<span className="text-muted-foreground">{"->"}</span>
-						<div className={`text-${notifData.dangerLevel}`}>
-							{t(($) => $.popup[notifData.dangerLevel])}
-						</div>
-					</div>
-				</NotificationPopup>
-			)}
-		</>
+						</NavLink>
+					);
+				})}
+			</ItemGroup>
+		</Card>
 	);
 }
 
