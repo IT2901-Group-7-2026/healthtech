@@ -81,7 +81,7 @@
   },
   "exposureSummary": {
     "title": {
-      "day": "Exposure for {{day}}",
+      "day": "Exposure for today",
       "week": "Exposure for week {{week}}",
       "month": "Exposure for {{month}}"
     },
@@ -102,7 +102,7 @@
     "safe": "Safely within exposure limit"
   },
   "dailyNotes": {
-    "viewTitle": "Your notes for {{date}}",
+    "viewTitle": "Your notes",
     "writeHere": "Write here...",
     "edit": "Edit",
     "save": "Save",

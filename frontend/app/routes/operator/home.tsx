@@ -101,11 +101,6 @@ export default function OperatorHome() {
 						data={mapOverviewBucketsToChartRows(overviewBuckets ?? [], 0, 23)}
 						startHour={minHour}
 						endHour={maxHour}
-						chartTitle={date.toLocaleDateString(i18n.language, {
-							day: "numeric",
-							month: "long",
-							year: "numeric",
-						})}
 						headerRight={
 							<Button
 								onClick={() =>
