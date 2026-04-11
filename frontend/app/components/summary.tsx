@@ -58,11 +58,14 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 		},
 	};
 
+	// For vibration in day view we show summary as hours
+	const labelView = exposureType === "vibration" && view === "day" ? "week" : view;
+
 	const summaryLabels = {
 		exposureType: exposureType === "all" ? "Every sensor" : exposureType,
-		safeLabel: viewLabelConfig[view].safe || defaultLabels.safe,
-		warningLabel: viewLabelConfig[view].warning || defaultLabels.warning,
-		dangerLabel: viewLabelConfig[view].danger || defaultLabels.danger,
+		safeLabel: viewLabelConfig[labelView].safe || defaultLabels.safe,
+		warningLabel: viewLabelConfig[labelView].warning || defaultLabels.warning,
+		dangerLabel: viewLabelConfig[labelView].danger || defaultLabels.danger,
 	};
 
 	const currentDate = useDate().date;
@@ -94,21 +97,21 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 		content = (
 			<CardContent className="grid grid-cols-[auto_1fr] items-center gap-2">
 				<p className={cn("text-right font-bold md:text-center", safeColor)}>
-					{getSensorValueString(data.safeCount, view)}
+					{getSensorValueString(data.safeCount, view, exposureType)}
 				</p>
 				<p className={cn("text-xs md:text-sm", safeColor)}>
 					{isMobile ? defaultLabels.safe : summaryLabels.safeLabel}
 				</p>
 
 				<p className={cn("text-right font-bold md:text-center", warningColor)}>
-					{getSensorValueString(data.warningCount, view)}
+					{getSensorValueString(data.warningCount, view, exposureType)}
 				</p>
 				<p className={cn("text-xs md:text-sm", warningColor)}>
 					{isMobile ? defaultLabels.warning : summaryLabels.warningLabel}
 				</p>
 
 				<p className={cn("text-right font-bold md:text-center", dangerColor)}>
-					{getSensorValueString(data.dangerCount, view)}
+					{getSensorValueString(data.dangerCount, view, exposureType)}
 				</p>
 				<p className={cn("text-xs md:text-sm", dangerColor)}>
 					{isMobile ? defaultLabels.danger : summaryLabels.dangerLabel}
@@ -174,8 +177,8 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 	);
 }
 
-function getSensorValueString(value: number, view: View) {
-	if (view === "day") {
+function getSensorValueString(value: number, view: View, exposureType: ExposureType) {
+	if (view === "day" && exposureType !== "vibration") {
 		const hours = Math.floor(value / 60);
 		const minutes = value % 60;
 

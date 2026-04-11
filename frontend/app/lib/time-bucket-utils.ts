@@ -3,7 +3,6 @@ import type { OverviewBucketDto, SensorDataResponseDto } from "./dto";
 import { type Sensor, sensors } from "./sensors";
 import type { OverviewChartRow, SummaryCounts, SummaryLevelCounts, TimeBucketStatus } from "./time-bucket-types";
 
-
 export function calculateSummaryCounts(
 	data: Array<SensorDataResponseDto> | Array<OverviewBucketDto>,
 	sensor?: Sensor,
