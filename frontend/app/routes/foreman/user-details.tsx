@@ -166,7 +166,8 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	if (maxValue > maxY) {
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
-	const averageDustExposure = data && data.length > 0 ? data.reduce((sum, current) => sum + current.value, 0) / data.length : 0;
+	const averageDustExposure =
+		data && data.length > 0 ? data.reduce((sum, current) => sum + current.value, 0) / data.length : 0;
 
 	return (
 		<div className="flex max-w-4xl flex-col gap-6">
