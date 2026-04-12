@@ -81,7 +81,7 @@
   },
   "exposureSummary": {
     "title": {
-      "day": "Eksponering for {{day}}",
+      "day": "Eksponering for i dag",
       "week": "Eksponering for uke {{week}}",
       "month": "Eksponering for {{month}}"
     },
@@ -102,7 +102,7 @@
     "safe": "Trygt innenfor eksponeringsgrensen"
   },
   "dailyNotes": {
-    "viewTitle": "Dine notater for {{date}}",
+    "viewTitle": "Dine notater for i dag",
     "writeHere": "Skriv her...",
     "edit": "Rediger",
     "save": "Lagre",
