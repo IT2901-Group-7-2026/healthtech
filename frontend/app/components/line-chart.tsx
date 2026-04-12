@@ -185,7 +185,7 @@ export function ChartLineDefault({
 	}
 
 	return (
-		<Card className={cn("w-full", hideLabels && "pl-0", className)}>
+		<Card className={cn("min-h-[120px] w-full", hideLabels && "pl-0", className)}>
 			{!hideHeader && (
 				<CardHeader className="mb-4 flex flex-row items-center justify-between">
 					<CardTitle>{chartTitle}</CardTitle>
@@ -324,7 +324,11 @@ export function ChartLineDefault({
 					</ChartContainer>
 				</CardContent>
 			)}
-			<p>{t(($) => $.common.noData)}</p>
+			{noData && (
+				<div className="flex min-h-[300px] items-center justify-center">
+					<p>{t(($) => $.common.noData)}</p>
+				</div>
+			)}
 		</Card>
 	);
 }
