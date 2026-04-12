@@ -49,7 +49,8 @@
   },
   "measurement": {
     "peak": "Topp",
-    "average": "Gjennomsnitt"
+    "average": "Gjennomsnitt",
+    "averageExposure": "Gjennomsnittlig eksponering"
   },
   "layout": {
     "live": "Live",
