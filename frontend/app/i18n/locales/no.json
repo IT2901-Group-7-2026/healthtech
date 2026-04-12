@@ -81,7 +81,7 @@
   },
   "exposureSummary": {
     "title": {
-      "day": "Eksponering for i dag",
+      "day": "Eksponering",
       "week": "Eksponering for uke {{week}}",
       "month": "Eksponering for {{month}}"
     },
