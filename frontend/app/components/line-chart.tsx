@@ -186,7 +186,6 @@ export function ChartLineDefault({
 					{headerRight}
 				</CardHeader>
 			)}
-			(
 			<CardContent className={cn("flex h-full flex-1", contentClassName)}>
 				<ChartContainer
 					config={chartConfig}
@@ -317,7 +316,6 @@ export function ChartLineDefault({
 					</LineChart>
 				</ChartContainer>
 			</CardContent>
-			)
 		</Card>
 	);
 }
