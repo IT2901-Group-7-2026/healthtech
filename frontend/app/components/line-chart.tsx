@@ -178,21 +178,15 @@ export function ChartLineDefault({
 	const isAllWarning = dangerThreshold >= dataMax && warning <= dataMin;
 	const isAllSafe = warning >= dataMax;
 
-	const noData = dataMin === 0 && dataMax === 0;
-
-	if (noData) {
-		hideHeader = true;
-	}
-
 	return (
-		<Card className={cn("min-h-[120px] w-full", hideLabels && "pl-0", className)}>
+		<Card className={cn("w-full", hideLabels && "pl-0", className)}>
 			{!hideHeader && (
 				<CardHeader className="mb-4 flex flex-row items-center justify-between">
 					<CardTitle>{chartTitle}</CardTitle>
 					{headerRight}
 				</CardHeader>
 			)}
-			{!noData && (
+			(
 				<CardContent className={cn("flex h-full flex-1", contentClassName)}>
 					<ChartContainer
 						config={chartConfig}
@@ -323,12 +317,7 @@ export function ChartLineDefault({
 						</LineChart>
 					</ChartContainer>
 				</CardContent>
-			)}
-			{noData && (
-				<div className="flex min-h-[300px] items-center justify-center">
-					<p>{t(($) => $.common.noData)}</p>
-				</div>
-			)}
+			)
 		</Card>
 	);
 }
