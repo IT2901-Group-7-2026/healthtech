@@ -98,11 +98,6 @@ export default function Dust() {
 							minHour={minHour}
 							maxHour={maxHour}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={date.toLocaleDateString(locale, {
-								day: "numeric",
-								month: "long",
-								year: "numeric",
-							})}
 							unit={t(($) => $.sensors.dustUnit)}
 							maxY={maxY}
 							minY={minY}

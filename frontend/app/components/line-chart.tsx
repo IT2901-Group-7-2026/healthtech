@@ -23,7 +23,7 @@ const chartConfig = {
 
 interface LineChartProps {
 	chartData: Array<SensorDataResponseDto>;
-	chartTitle: string;
+	chartTitle?: string;
 	maxY: number;
 	minY: number;
 	unit: string;

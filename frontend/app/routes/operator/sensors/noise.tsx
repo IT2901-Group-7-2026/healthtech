@@ -123,11 +123,6 @@ export default function Noise() {
 							maxHour={maxHour}
 							usePeakData={usePeakAggregation}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={date.toLocaleDateString(i18n.language, {
-								day: "numeric",
-								month: "long",
-								year: "numeric",
-							})}
 							unit="db (TWA)"
 							maxY={maxY}
 							minY={minY}
