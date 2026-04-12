@@ -65,6 +65,8 @@ export default function Dust() {
 	}
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor);
+	const averageExposure =
+		data && data.length > 0 ? data.reduce((sum, current) => sum + current.value, 0) / data.length : 0;
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">
@@ -98,6 +100,7 @@ export default function Dust() {
 							minHour={minHour}
 							maxHour={maxHour}
 							chartData={downsampleSensorData(sensor, data ?? [])}
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageExposure)} ${t(($) => $.sensors.dustUnit)}`}
 							unit={t(($) => $.sensors.dustUnit)}
 							maxY={maxY}
 							minY={minY}

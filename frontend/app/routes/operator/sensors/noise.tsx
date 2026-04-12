@@ -83,6 +83,12 @@ export default function Noise() {
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, usePeakAggregation);
 
+	const averageExposure =
+		data && data.length > 0
+			? data.reduce((sum, d) => sum + (usePeakAggregation && d.peakValue ? d.peakValue : d.value), 0) /
+				data.length
+			: 0;
+
 	return (
 		<div className="flex flex-1 flex-col gap-4">
 			<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
@@ -123,6 +129,7 @@ export default function Noise() {
 							maxHour={maxHour}
 							usePeakData={usePeakAggregation}
 							chartData={downsampleSensorData(sensor, data ?? [])}
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageExposure)} db`}
 							unit="db (TWA)"
 							maxY={maxY}
 							minY={minY}

@@ -59,7 +59,6 @@ function AllSensorsUserOverview({
 	selectedUser: UserWithStatusDto;
 	selectedDate: TZDate;
 }) {
-	const { i18n } = useTranslation();
 	const [selectedUserId] = useQueryState("userId");
 	const [filterDate] = useQueryState("filterDate");
 
@@ -167,6 +166,8 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	if (maxValue > maxY) {
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
+	const averageDustExposure =
+		data && data.length > 0 ? data.reduce((sum, current) => sum + current.value, 0) / data.length : 0;
 
 	return (
 		<div className="flex max-w-4xl flex-col gap-6">
@@ -177,7 +178,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 							minHour={minHour}
 							maxHour={maxHour}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={formatChartDate(selectedDate, i18n.language)}
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageDustExposure)} ${t(($) => $.sensors.dustUnit)}`}
 							unit={t(($) => $.sensors.dustUnit)}
 							maxY={maxY}
 							minY={minY}
@@ -266,6 +267,7 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 	if (maxValue > maxY) {
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
+	const totalVibrationExposure = data && data.length > 0 ? data[data.length - 1].value : 0;
 
 	return (
 		<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={selectedDate}>
@@ -275,7 +277,7 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 						minHour={minHour}
 						maxHour={maxHour}
 						chartData={downsampleSensorData(sensor, data ?? [])}
-						chartTitle={formatChartDate(selectedDate, i18n.language)}
+						chartTitle={`${t(($) => $.common.total)}: ${Math.trunc(totalVibrationExposure)} ${t(($) => $.common.points)}`}
 						unit={t(($) => $.common.points)}
 						maxY={maxY}
 						minY={minY}
@@ -355,6 +357,13 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 			step: usePeakAggregation ? 130 : undefined,
 		}).maxY;
 	}
+	const averageNoiseExposure =
+		data && data.length > 0
+			? data.reduce(
+					(sum, point) => sum + (usePeakAggregation && point.peakValue ? point.peakValue : point.value),
+					0,
+				) / data.length
+			: 0;
 
 	return (
 		<div className="flex max-w-4xl flex-col gap-4">
@@ -373,7 +382,7 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 							maxHour={maxHour}
 							usePeakData={usePeakAggregation}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={formatChartDate(selectedDate, i18n.language)}
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageNoiseExposure)} db`}
 							unit="db (TWA)"
 							maxY={maxY}
 							minY={minY}

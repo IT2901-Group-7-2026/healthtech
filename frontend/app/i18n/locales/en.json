@@ -10,6 +10,7 @@
     "noOptions": "No options available",
     "time": "Time",
     "today": "Today",
+    "total": "Total exposure",
     "points": "Points",
     "notifications": "Notifications",
     "exportAsPdf": "Export as PDF"
@@ -48,7 +49,8 @@
   },
   "measurement": {
     "peak": "Peak",
-    "average": "Average"
+    "average": "Average",
+    "averageExposure": "Average exposure"
   },
   "layout": {
     "live": "Live",
