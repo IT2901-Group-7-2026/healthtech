@@ -84,7 +84,7 @@
   },
   "exposureSummary": {
     "title": {
-      "day": "Exposure for today",
+      "day": "Exposure",
       "week": "Exposure for week {{week}}",
       "month": "Exposure for {{month}}"
     },
