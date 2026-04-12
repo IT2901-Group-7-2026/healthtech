@@ -67,9 +67,10 @@
     "timeRange": {
       "label": "Tidsrom",
       "options": {
-        "thirtyMinutes": "30 minutter",
+        "thirtyMinutes": "30 min",
         "oneHour": "1 time",
-        "threeHours": "3 timer"
+        "threeHours": "3 timer",
+        "eightHours": "8 timer"
       }
     },
     "chart": {

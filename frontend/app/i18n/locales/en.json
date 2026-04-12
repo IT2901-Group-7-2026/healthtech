@@ -67,9 +67,10 @@
     "timeRange": {
       "label": "Time range",
       "options": {
-        "thirtyMinutes": "30 minutes",
+        "thirtyMinutes": "30 min",
         "oneHour": "1 hour",
-        "threeHours": "3 hours"
+        "threeHours": "3 hours",
+        "eightHours": "8 hours"
       }
     },
     "chart": {
