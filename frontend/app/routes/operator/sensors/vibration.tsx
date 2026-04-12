@@ -99,11 +99,6 @@ export default function Vibration() {
 								minHour={minHour}
 								maxHour={maxHour}
 								chartData={downsampleSensorData(sensor, data ?? [])}
-								chartTitle={date.toLocaleDateString(i18n.language, {
-									day: "numeric",
-									month: "long",
-									year: "numeric",
-								})}
 								unit={t(($) => $.common.points)}
 								maxY={maxY}
 								minY={minY}
