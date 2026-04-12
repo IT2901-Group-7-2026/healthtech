@@ -65,6 +65,8 @@ export default function Vibration() {
 	}
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], "vibration");
+	const lastValue = data && data.length > 0 ? data[data.length - 1].value : 0;
+
 
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
@@ -99,11 +101,7 @@ export default function Vibration() {
 								minHour={minHour}
 								maxHour={maxHour}
 								chartData={downsampleSensorData(sensor, data ?? [])}
-								chartTitle={date.toLocaleDateString(i18n.language, {
-									day: "numeric",
-									month: "long",
-									year: "numeric",
-								})}
+								chartTitle={`${t(($) => $.common.total)}: ${Math.trunc(lastValue)} ${t(($) => $.common.points)}`}
 								unit={t(($) => $.common.points)}
 								maxY={maxY}
 								minY={minY}
