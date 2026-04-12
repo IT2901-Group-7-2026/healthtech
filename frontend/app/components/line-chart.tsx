@@ -187,136 +187,136 @@ export function ChartLineDefault({
 				</CardHeader>
 			)}
 			(
-				<CardContent className={cn("flex h-full flex-1", contentClassName)}>
-					<ChartContainer
-						config={chartConfig}
-						className={cn("h-full w-full", chartContainerClassName, hideLabels && "!aspect-auto")}
+			<CardContent className={cn("flex h-full flex-1", contentClassName)}>
+				<ChartContainer
+					config={chartConfig}
+					className={cn("h-full w-full", chartContainerClassName, hideLabels && "!aspect-auto")}
+				>
+					<LineChart
+						accessibilityLayer={true}
+						data={transformedData}
+						margin={
+							hideLabels
+								? undefined
+								: {
+										left: 12,
+										right: 12,
+									}
+						}
 					>
-						<LineChart
-							accessibilityLayer={true}
-							data={transformedData}
-							margin={
+						<CartesianGrid vertical={true} strokeDasharray="3 3" />
+						<XAxis
+							dataKey="time"
+							type="number"
+							domain={[xMin, xMax]}
+							ticks={ticks}
+							interval={0}
+							allowDataOverflow={true}
+							tickLine={false}
+							axisLine={false}
+							tickMargin={8}
+							tick={(props) => (
+								<CustomXAxisTick
+									{...props}
+									ticks={ticks}
+									getLabel={getXAxisTickLabel}
+									muteTickLabels={muteTickLabels}
+								/>
+							)}
+							label={
 								hideLabels
 									? undefined
 									: {
-											left: 12,
-											right: 12,
+											value: t(($) => $.common.time),
+											position: "insideBottom",
+											offset: 0,
+											className: "text-base",
+											fill: "var(--color-muted-foreground)",
 										}
 							}
-						>
-							<CartesianGrid vertical={true} strokeDasharray="3 3" />
-							<XAxis
-								dataKey="time"
-								type="number"
-								domain={[xMin, xMax]}
-								ticks={ticks}
-								interval={0}
-								allowDataOverflow={true}
-								tickLine={false}
-								axisLine={false}
-								tickMargin={8}
-								tick={(props) => (
-									<CustomXAxisTick
-										{...props}
-										ticks={ticks}
-										getLabel={getXAxisTickLabel}
-										muteTickLabels={muteTickLabels}
-									/>
-								)}
-								label={
-									hideLabels
-										? undefined
-										: {
-												value: t(($) => $.common.time),
-												position: "insideBottom",
-												offset: 0,
-												className: "text-base",
-												fill: "var(--color-muted-foreground)",
-											}
-								}
-							/>
-							<YAxis
-								dataKey="value"
-								width={hideLabels ? 48 : undefined}
-								tickLine={false}
-								axisLine={false}
-								tick={{
-									className: muteTickLabels ? "text-sm" : "text-base",
-									fill: "var(--color-muted-foreground)",
-								}}
-								domain={[minY, maxY]}
-								label={
-									hideLabels
-										? undefined
-										: {
-												value: unit,
-												position: "inside",
-												dx: -32,
-												angle: -90,
-												className: "text-lg mr-4",
-												fill: "var(--color-muted-foreground)",
-											}
-								}
-							/>
-							<ChartTooltip
-								cursor={false}
-								content={<ChartTooltipContent hideLabel={true} />}
-								formatter={(value?: number) => [`${value?.toFixed(2) ?? "N/A"}`, ` ${unit}`]}
-							/>
+						/>
+						<YAxis
+							dataKey="value"
+							width={hideLabels ? 48 : undefined}
+							tickLine={false}
+							axisLine={false}
+							tick={{
+								className: muteTickLabels ? "text-sm" : "text-base",
+								fill: "var(--color-muted-foreground)",
+							}}
+							domain={[minY, maxY]}
+							label={
+								hideLabels
+									? undefined
+									: {
+											value: unit,
+											position: "inside",
+											dx: -32,
+											angle: -90,
+											className: "text-lg mr-4",
+											fill: "var(--color-muted-foreground)",
+										}
+							}
+						/>
+						<ChartTooltip
+							cursor={false}
+							content={<ChartTooltipContent hideLabel={true} />}
+							formatter={(value?: number) => [`${value?.toFixed(2) ?? "N/A"}`, ` ${unit}`]}
+						/>
 
-							<defs>
-								<linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-									{isAllDanger ? (
-										<>
-											<stop offset="0%" stopColor="var(--danger)" />
-											<stop offset="100%" stopColor="var(--danger)" />
-										</>
-									) : isAllWarning ? (
-										<>
-											<stop offset="0%" stopColor="var(--warning)" />
-											<stop offset="100%" stopColor="var(--warning)" />
-										</>
-									) : isAllSafe ? (
-										<>
-											<stop offset="0%" stopColor="var(--safe)" />
-											<stop offset="100%" stopColor="var(--safe)" />
-										</>
-									) : usePeakData ? (
-										<>
-											{/* ONLY green → red */}
-											<stop offset={getOffset(dangerThreshold)} stopColor="var(--danger)" />
-											<stop offset={getOffset(dangerThreshold)} stopColor="var(--safe)" />
-											<stop offset="100%" stopColor="var(--safe)" />
-										</>
-									) : (
-										<>
-											{/* normal 3-level */}
-											<stop offset={getOffset(dangerThreshold)} stopColor="var(--danger)" />
-											<stop offset={getOffset(dangerThreshold)} stopColor="var(--warning)" />
-											<stop offset={getOffset(warning)} stopColor="var(--warning)" />
-											<stop offset={getOffset(warning)} stopColor="var(--safe)" />
+						<defs>
+							<linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+								{isAllDanger ? (
+									<>
+										<stop offset="0%" stopColor="var(--danger)" />
+										<stop offset="100%" stopColor="var(--danger)" />
+									</>
+								) : isAllWarning ? (
+									<>
+										<stop offset="0%" stopColor="var(--warning)" />
+										<stop offset="100%" stopColor="var(--warning)" />
+									</>
+								) : isAllSafe ? (
+									<>
+										<stop offset="0%" stopColor="var(--safe)" />
+										<stop offset="100%" stopColor="var(--safe)" />
+									</>
+								) : usePeakData ? (
+									<>
+										{/* ONLY green → red */}
+										<stop offset={getOffset(dangerThreshold)} stopColor="var(--danger)" />
+										<stop offset={getOffset(dangerThreshold)} stopColor="var(--safe)" />
+										<stop offset="100%" stopColor="var(--safe)" />
+									</>
+								) : (
+									<>
+										{/* normal 3-level */}
+										<stop offset={getOffset(dangerThreshold)} stopColor="var(--danger)" />
+										<stop offset={getOffset(dangerThreshold)} stopColor="var(--warning)" />
+										<stop offset={getOffset(warning)} stopColor="var(--warning)" />
+										<stop offset={getOffset(warning)} stopColor="var(--safe)" />
 
-											<stop offset="100%" stopColor="var(--safe)" />
-										</>
-									)}
-								</linearGradient>
-							</defs>
-							<Line
-								dataKey="value"
-								type={lineType as CurveType}
-								stroke={`url(#${id})`}
-								strokeWidth={1.25}
-								isAnimationActive={!disableAnimation}
-								animationDuration={0}
-								dot={false}
-								activeDot={(props) => (
-									<Dot {...props} warning={warning} danger={dangerThreshold} isPeak={usePeakData} />
+										<stop offset="100%" stopColor="var(--safe)" />
+									</>
 								)}
-							/>
-							{children}
-						</LineChart>
-					</ChartContainer>
-				</CardContent>
+							</linearGradient>
+						</defs>
+						<Line
+							dataKey="value"
+							type={lineType as CurveType}
+							stroke={`url(#${id})`}
+							strokeWidth={1.25}
+							isAnimationActive={!disableAnimation}
+							animationDuration={0}
+							dot={false}
+							activeDot={(props) => (
+								<Dot {...props} warning={warning} danger={dangerThreshold} isPeak={usePeakData} />
+							)}
+						/>
+						{children}
+					</LineChart>
+				</ChartContainer>
+			</CardContent>
 			)
 		</Card>
 	);
