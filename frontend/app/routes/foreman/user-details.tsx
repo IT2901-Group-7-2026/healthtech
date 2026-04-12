@@ -59,7 +59,6 @@ function AllSensorsUserOverview({
 	selectedUser: UserWithStatusDto;
 	selectedDate: TZDate;
 }) {
-	const { i18n } = useTranslation();
 	const [selectedUserId] = useQueryState("userId");
 	const [filterDate] = useQueryState("filterDate");
 

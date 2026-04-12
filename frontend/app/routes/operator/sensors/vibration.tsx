@@ -67,7 +67,6 @@ export default function Vibration() {
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], "vibration");
 	const lastValue = data && data.length > 0 ? data[data.length - 1].value : 0;
 
-
 	return (
 		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex flex-1 flex-col gap-4">

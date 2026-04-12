@@ -65,8 +65,7 @@ export default function Dust() {
 	}
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor);
-	const averageExposure =
-		data && data.length > 0 ? data.reduce((sum, d) => sum + d.value, 0) / data.length : 0;
+	const averageExposure = data && data.length > 0 ? data.reduce((sum, d) => sum + d.value, 0) / data.length : 0;
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">

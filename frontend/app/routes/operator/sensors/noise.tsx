@@ -84,9 +84,10 @@ export default function Noise() {
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, usePeakAggregation);
 
 	const averageExposure =
-    data && data.length > 0
-        ? data.reduce((sum, d) => sum + (usePeakAggregation && d.peakValue ? d.peakValue : d.value), 0) / data.length
-        : 0;
+		data && data.length > 0
+			? data.reduce((sum, d) => sum + (usePeakAggregation && d.peakValue ? d.peakValue : d.value), 0) /
+				data.length
+			: 0;
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">
