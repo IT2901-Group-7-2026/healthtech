@@ -14,7 +14,7 @@ import type { TranslateFn } from "@/i18n/config";
 import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
 import { type Aggregation, Aggregations } from "@/lib/dto";
 import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
-import { toSensor } from "@/lib/sensors";
+import { type Sensor, toSensor } from "@/lib/sensors";
 import { calculateSummaryCounts } from "@/lib/time-bucket-utils";
 import type { View } from "@/lib/views";
 import { Card } from "@/ui/card";
@@ -24,6 +24,20 @@ import { getISOWeek } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
 import { Outlet, useLocation } from "react-router";
+
+function getGranularity(view: View, sensor: Sensor | null) {
+	if (!sensor) {
+		return view === "month" ? "day" : "hour";
+	}
+
+	// Because vibration data is cumulative and has few data points, we never fetch it with minute granularity
+	// TODO: When we take vibration disconnectedOn into account we could fetch it with minute granularity for the day view as well
+	if (sensor === "vibration") {
+		return view === "month" ? "day" : "hour";
+	}
+
+	return view === "month" ? "day" : view === "week" ? "hour" : "minute";
+}
 
 export default function SensorLayout() {
 	const { date, selection, setDate } = useDate();
@@ -44,12 +58,14 @@ export default function SensorLayout() {
 	const sensorQuery = sensor === null ? null : buildSensorQuery(sensor, view, date, { usePeakAggregation });
 	const sensorQueryEnabled = sensor !== null && sensorQuery !== null;
 
+	const granularity = getGranularity(view, sensor);
+
 	const [sensorResponse, allSensorsResponse] = useQueries({
 		queries: [
 			sensorQueryOptions({
 				sensor: sensor as NonNullable<typeof sensor>,
 				query: buildSensorQuery(sensor as NonNullable<typeof sensor>, view, date, {
-					granularity: "hour",
+					granularity,
 				}),
 				enabled: sensorQueryEnabled,
 				userId: user.id,
@@ -67,6 +83,8 @@ export default function SensorLayout() {
 	const response = sensor === null ? allSensorsResponse : sensorResponse;
 
 	const ViewIcon = getViewIcon(view);
+
+	const summary = calculateSummaryCounts(response.data ?? [], sensor ?? undefined, usePeakAggregation);
 
 	return (
 		<div
@@ -116,7 +134,7 @@ export default function SensorLayout() {
 				<Summary
 					exposureType={sensor ?? "all"}
 					view={view}
-					data={calculateSummaryCounts(response.data ?? [], sensor ?? undefined, usePeakAggregation)}
+					data={summary}
 					mode={sensor === null ? "sensor" : "count"}
 				/>
 				<DailyNotes />
