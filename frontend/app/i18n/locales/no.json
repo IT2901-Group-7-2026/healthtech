@@ -1,7 +1,7 @@
 {
   "app": {
-    "title": "HealthTech | Operatør Eksponeringsdashboard",
-    "description": "Overvåk og administrer eksponering for støv, vibrasjon og støy."
+    "title": "HealthTech | Eksponeringsdashboard",
+    "description": "Overvåk eksponering for støv, vibrasjon og støy."
   },
   "common": {
     "loading": "Laster inn data...",

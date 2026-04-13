@@ -53,7 +53,7 @@ export const PieChartCard = ({ className, to, label, data, sensorType }: PieChar
 					</h2>
 				</CardHeader>
 				<CardContent className="flex flex-row items-center gap-0">
-					<div className="flex w-1/2 flex-col gap-2 text-xs">
+					<div className="flex w-1/3 flex-col gap-2 text-xs">
 						{DangerLevelSchema.options
 							.toSorted((a, b) => DANGER_LEVEL_SEVERITY[b] - DANGER_LEVEL_SEVERITY[a])
 							.map((level) => (
@@ -71,8 +71,9 @@ export const PieChartCard = ({ className, to, label, data, sensorType }: PieChar
 								</div>
 							))}
 					</div>
-
-					<UserStatusPieChart safe={data.safe} warning={data.warning} danger={data.danger} />
+					<div className="h-full w-2/3">
+						<UserStatusPieChart safe={data.safe} warning={data.warning} danger={data.danger} />
+					</div>
 				</CardContent>
 
 				<CardFooter className="gap-1 text-muted-foreground text-xs">

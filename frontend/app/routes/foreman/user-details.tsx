@@ -60,7 +60,6 @@ function AllSensorsUserOverview({
 	selectedDate: TZDate;
 }) {
 	const [selectedUserId] = useQueryState("userId");
-	const [filterDate] = useQueryState("filterDate");
 
 	const { data, isLoading, isError } = useQuery(
 		sensorOverviewQueryOptions({
@@ -78,7 +77,7 @@ function AllSensorsUserOverview({
 					data={mapOverviewBucketsToChartRows(data ?? [], 0, 23)}
 					startHour={minHour}
 					endHour={maxHour}
-					buildLink={(sensor) => {
+					buildLink={(sensor, dateQueryParam) => {
 						const params = new URLSearchParams();
 						params.set("sensor", sensor);
 
@@ -86,9 +85,7 @@ function AllSensorsUserOverview({
 							params.set("userId", selectedUserId);
 						}
 
-						if (filterDate) {
-							params.set("filterDate", filterDate);
-						}
+						params.set("date", dateQueryParam);
 
 						return `?${params.toString()}`;
 					}}
@@ -209,23 +206,27 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 			</SensorChartCard>
 
 			<div className="flex flex-wrap items-center gap-4">
-				{dustTwa1Data && dustTwa1Data.length > 0 && (
-					<DustChart label="PM1 TWA" value={dustTwa1Data[0].value} thresholdValue={dustThreshold.danger} />
-				)}
-				{dustTwa25Data && dustTwa25Data.length > 0 && (
+				{
+					<DustChart
+						label="PM1 TWA"
+						value={dustTwa1Data?.[0]?.value ?? null}
+						thresholdValue={dustThreshold.danger}
+					/>
+				}
+				{
 					<DustChart
 						label="PM2.5 TWA"
-						value={dustTwa25Data[0].value}
+						value={dustTwa25Data?.[0]?.value ?? null}
 						thresholdValue={dustPm25TwaThreshold.danger}
 					/>
-				)}
-				{dustTwa10Data && dustTwa10Data.length > 0 && (
+				}
+				{
 					<DustChart
 						label="PM10 TWA"
-						value={dustTwa10Data[0].value}
+						value={dustTwa10Data?.[0]?.value ?? null}
 						thresholdValue={dustPm10TwaThreshold.danger}
 					/>
-				)}
+				}
 			</div>
 		</div>
 	);
