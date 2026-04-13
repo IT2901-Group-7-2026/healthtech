@@ -21,7 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import { addWeeks, endOfDay, startOfDay } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { UserDetails } from "./user-details";
 
@@ -33,11 +33,13 @@ export default function ForemanOverview() {
 	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor);
 	const [date, setDate] = useQueryState("filterDate", parseAsTZDate.withDefault(today()));
 	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString);
+	const [isWeekly, setIsWeekly] = useState(false);
 
 	const selectedDate = date;
 
-	const startDate = startOfDay(selectedDate);
-	const endDate = endOfDay(selectedDate);
+	const startDate = isWeekly ? toTZDate(startOfDay(addWeeks(selectedDate, -1))) : toTZDate(startOfDay(selectedDate));
+
+	const endDate = toTZDate(endOfDay(selectedDate));
 
 	// Foremen can only see dates within the last week
 	const minSelectableDate = startOfDay(addWeeks(today(), -1));
@@ -153,10 +155,11 @@ export default function ForemanOverview() {
 								isSubordinatesLoading={isSubordinatesLoading}
 								thresholdSummary={thresholdSummary}
 								isThresholdSummaryLoading={isThresholdSummaryLoading}
+								isWeekly={isWeekly}
+								onToggleWeekly={() => setIsWeekly((prev) => !prev)}
 							/>
-
 							{sensor ? (
-								<UserStatusChart users={subordinates ?? []} sensor={sensor} />
+								<UserStatusChart users={subordinates ?? []} sensor={sensor} isWeekly={isWeekly} />
 							) : (
 								<SensorSummaryGrid thresholdSummary={thresholdSummary} />
 							)}

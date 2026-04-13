@@ -50,7 +50,8 @@
   "measurement": {
     "peak": "Topp",
     "average": "Gjennomsnitt",
-    "averageExposure": "Gjennomsnittlig eksponering"
+    "averageExposure": "Gjennomsnittlig eksponering",
+    "dustWeek": "Høyeste daglige verdi"
   },
   "layout": {
     "live": "Live",
@@ -214,7 +215,11 @@
       "danger": "Oppmerksomhet anbefales!",
       "criticalExposureText": "Operatører over eksponeringsgrensen. Umiddelbar oppfølging anbefales.",
       "approachingThresholdText": "Operatører nærmer seg eksponeringsgrensen. Vurder forebyggende tiltak.",
-      "oldData": "Du ser på tidligere data."
+      "weekCriticalExposureText": "Operatører over ukentlig eksponeringsgrense. Umiddelbar oppfølging anbefales.",
+      "weekApproachingExposureText": "Operatører nærmer seg ukentlig eksponeringsgrense. Umiddelbar oppfølging anbefales.",
+      "oldData": "Du ser på tidligere data.",
+      "day": "Dag",
+      "week": "Uke"
     },
     "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",

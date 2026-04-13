@@ -50,7 +50,8 @@
   "measurement": {
     "peak": "Peak",
     "average": "Average",
-    "averageExposure": "Average exposure"
+    "averageExposure": "Average exposure",
+    "dustWeek": "Daily peak value"
   },
   "layout": {
     "live": "Live",
@@ -214,7 +215,11 @@
       "danger": "Attention may be required!",
       "criticalExposureText": "Operators above the exposure limit. Immediate follow-up recommended.",
       "approachingThresholdText": "Operators approaching the exposure limit. Consider preventive measures.",
-      "oldData": "You are viewing old data."
+      "weekCriticalExposureText": "Operators above the weekly exposure limit. Immediate follow-up recommended.",
+      "weekApproachingExposureText": "Operators approaching the weekly exposure limit. Consider preventive measures.",
+      "oldData": "You are viewing old data.",
+      "day": "Day",
+      "week": "Week"
     },
     "userStatusChart": {
       "xAxisLabel": "Percentage of exposure limit",

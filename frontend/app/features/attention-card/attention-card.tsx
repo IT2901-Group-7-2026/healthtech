@@ -1,6 +1,7 @@
 import { ExposureRiskCard } from "@/components/exposure-level-card";
 import { Card, CardContent, CardHeader } from "@/components/ui/card.js";
 import { Skeleton } from "@/components/ui/skeleton.js";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { AtRiskPopup } from "@/features/attention-card/exposure-level-popup.js";
 import { StatCard } from "@/features/attention-card/stat-card";
 import { TIMEZONE } from "@/i18n/locale";
@@ -13,12 +14,15 @@ import { isSameDay } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { DayViewIcon, WeekViewIcon } from "../views/views";
 
 interface AttentionCardProps {
 	subordinates: Array<UserWithStatusDto>;
 	isSubordinatesLoading?: boolean;
 	thresholdSummary?: ThresholdSummary;
 	isThresholdSummaryLoading?: boolean;
+	isWeekly?: boolean;
+	onToggleWeekly?: (value: boolean) => void;
 }
 
 export const AttentionCard = ({
@@ -26,6 +30,8 @@ export const AttentionCard = ({
 	isSubordinatesLoading,
 	thresholdSummary,
 	isThresholdSummaryLoading,
+	isWeekly,
+	onToggleWeekly,
 }: AttentionCardProps) => {
 	const { t } = useTranslation();
 	const [sensor] = useQueryState("sensor", parseAsSensor);
@@ -66,10 +72,11 @@ export const AttentionCard = ({
 	}, [thresholdSummary, subordinates, sensor]);
 
 	const selectedSensorKey = sensor ?? "total";
-	const showActionCard = date ? isSameDay(date, now(), { in: TIMEZONE }) : false;
+	const showActionCard = !isWeekly && date ? isSameDay(date, now(), { in: TIMEZONE }) : false;
 
 	const dangerLevelColor = highestDangerLevel === null ? null : `text-${mapDangerLevelToColor(highestDangerLevel)}`;
 
+	// Daily granularity text
 	const attentionHeaderText =
 		highestDangerLevel === null ? null : t(($) => $.foremanDashboard.actionCard[highestDangerLevel]);
 
@@ -78,6 +85,16 @@ export const AttentionCard = ({
 
 	const approachingThresholdText =
 		highestDangerLevel === "warning" ? t(($) => $.foremanDashboard.actionCard.approachingThresholdText) : null;
+
+	// Weekly granularity text
+	const weeklyHeaderText =
+		highestDangerLevel === null ? null : t(($) => $.foremanDashboard.actionCard[highestDangerLevel]);
+
+	const weekCriticalExposureText =
+		highestDangerLevel === "danger" ? t(($) => $.foremanDashboard.actionCard.weekCriticalExposureText) : null;
+
+	const weekApproachingThresholdText =
+		highestDangerLevel === "warning" ? t(($) => $.foremanDashboard.actionCard.weekApproachingExposureText) : null;
 
 	if (isThresholdSummaryLoading || thresholdSummary === undefined || highestDangerLevel === null) {
 		return (
@@ -88,13 +105,40 @@ export const AttentionCard = ({
 		);
 	}
 
-	const actionCardHeader = showActionCard && (
-		<CardHeader>
+	const actionCardHeader = (
+		<CardHeader className="flex flex-row items-center justify-between">
 			{isSubordinatesLoading ? (
 				<Skeleton className="h-8 w-[50%] rounded-full bg-zinc-100 dark:bg-accent" />
 			) : (
-				<h2 className={cn("font-bold text-2xl", dangerLevelColor)}>{attentionHeaderText}</h2>
+				<h2 className={cn("font-bold text-2xl", dangerLevelColor)}>
+					{isWeekly ? weeklyHeaderText : attentionHeaderText}
+				</h2>
 			)}
+
+			<ToggleGroup
+				type="single"
+				value={isWeekly ? "week" : "day"}
+				variant="outline"
+				className="grid w-[140px] grid-cols-2"
+				onValueChange={(value) => {
+					if (!value) return;
+					onToggleWeekly?.(value === "week");
+				}}
+			>
+				<ToggleGroupItem value="day">
+					<div className="flex items-center gap-2">
+						<DayViewIcon className="size-4" />
+						<p className="text-sm">{t(($) => $.foremanDashboard.actionCard.day)}</p>
+					</div>
+				</ToggleGroupItem>
+
+				<ToggleGroupItem value="week">
+					<div className="flex items-center gap-2">
+						<WeekViewIcon className="size-4" />
+						<p className="text-sm">{t(($) => $.foremanDashboard.actionCard.week)}</p>
+					</div>
+				</ToggleGroupItem>
+			</ToggleGroup>
 		</CardHeader>
 	);
 
@@ -104,14 +148,19 @@ export const AttentionCard = ({
 				{actionCardHeader}
 
 				<CardContent className="gap-2">
-					{showActionCard ? (
+					{isWeekly ? (
 						<>
-							{" "}
-							<p>{criticalExposureText}</p> <p>{approachingThresholdText}</p>{" "}
+							{weekCriticalExposureText && <p>{weekCriticalExposureText}</p>}
+							{weekApproachingThresholdText && <p>{weekApproachingThresholdText}</p>}
+						</>
+					) : showActionCard ? (
+						<>
+							{criticalExposureText && <p>{criticalExposureText}</p>}
+							{approachingThresholdText && <p>{approachingThresholdText}</p>}
 						</>
 					) : (
 						<p>{t(($) => $.foremanDashboard.actionCard.oldData)}</p>
-					)}{" "}
+					)}
 					<div className="mt-5 grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
 						{!sensor && (
 							<>
