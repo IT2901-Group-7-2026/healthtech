@@ -1,7 +1,6 @@
 import { ExposureRiskCard } from "@/components/exposure-level-card";
 import { Card, CardContent, CardHeader } from "@/components/ui/card.js";
 import { Skeleton } from "@/components/ui/skeleton.js";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { AtRiskPopup } from "@/features/attention-card/exposure-level-popup.js";
 import { StatCard } from "@/features/attention-card/stat-card";
 import { TIMEZONE } from "@/i18n/locale";
@@ -14,7 +13,6 @@ import { isSameDay } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DayViewIcon, WeekViewIcon } from "../views/views";
 
 interface AttentionCardProps {
 	subordinates: Array<UserWithStatusDto>;
@@ -22,7 +20,6 @@ interface AttentionCardProps {
 	thresholdSummary?: ThresholdSummary;
 	isThresholdSummaryLoading?: boolean;
 	isWeekly?: boolean;
-	onToggleWeekly?: (value: boolean) => void;
 }
 
 export const AttentionCard = ({
@@ -31,7 +28,6 @@ export const AttentionCard = ({
 	thresholdSummary,
 	isThresholdSummaryLoading,
 	isWeekly,
-	onToggleWeekly,
 }: AttentionCardProps) => {
 	const { t } = useTranslation();
 	const [sensor] = useQueryState("sensor", parseAsSensor);
@@ -114,31 +110,6 @@ export const AttentionCard = ({
 					{isWeekly ? weeklyHeaderText : attentionHeaderText}
 				</h2>
 			)}
-
-			<ToggleGroup
-				type="single"
-				value={isWeekly ? "week" : "day"}
-				variant="outline"
-				className="grid w-[140px] grid-cols-2"
-				onValueChange={(value) => {
-					if (!value) return;
-					onToggleWeekly?.(value === "week");
-				}}
-			>
-				<ToggleGroupItem value="day">
-					<div className="flex items-center gap-2">
-						<DayViewIcon className="size-4" />
-						<p className="text-sm">{t(($) => $.foremanDashboard.actionCard.day)}</p>
-					</div>
-				</ToggleGroupItem>
-
-				<ToggleGroupItem value="week">
-					<div className="flex items-center gap-2">
-						<WeekViewIcon className="size-4" />
-						<p className="text-sm">{t(($) => $.foremanDashboard.actionCard.week)}</p>
-					</div>
-				</ToggleGroupItem>
-			</ToggleGroup>
 		</CardHeader>
 	);
 
