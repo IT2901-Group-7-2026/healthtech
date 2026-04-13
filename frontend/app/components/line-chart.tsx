@@ -1,5 +1,5 @@
 "use client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
 import { useFormatDate } from "@/hooks/use-format-date";
@@ -182,15 +182,7 @@ export function ChartLineDefault({
 		<Card className={cn("w-full", hideLabels && "pl-0", className)}>
 			{!hideHeader && (
 				<CardHeader className="mb-4 flex flex-row items-center justify-between">
-					<div className="flex items-center gap-14">
-						<CardTitle>{chartTitle}</CardTitle>
-						<ThresholdLegend
-							items={[
-								{ label: "Exposure Limit", color: "var(--danger)" },
-								{ label: "Action Limit", color: "var(--warning)" },
-							]}
-						/>
-					</div>
+					<CardTitle>{chartTitle}</CardTitle>
 					{headerRight}
 				</CardHeader>
 			)}
@@ -324,6 +316,20 @@ export function ChartLineDefault({
 					</LineChart>
 				</ChartContainer>
 			</CardContent>
+			<CardFooter>
+				<ThresholdLegend
+					items={[
+						{
+							dangerLevel: "danger",
+							color: `var(--${DangerLevels.danger.color})`,
+						},
+						{
+							dangerLevel: "warning",
+							color: `var(--${DangerLevels.warning.color})`,
+						},
+					]}
+				/>
+			</CardFooter>
 		</Card>
 	);
 }
@@ -348,13 +354,20 @@ export function ThresholdLine({ y, dangerLevel }: { y: number; dangerLevel: Dang
 	return <ReferenceLine y={y} stroke={color} strokeDasharray="4 4" />;
 }
 
-function ThresholdLegend({ items }: { items: Array<{ label: string; color: string }> }) {
+type ThresholdLegendItem = {
+	dangerLevel: DangerLevel;
+	color: string;
+};
+
+function ThresholdLegend({ items }: { items: Array<ThresholdLegendItem> }) {
+	const { t } = useTranslation();
+
 	return (
 		<div className="flex items-center gap-6 text-sm">
 			{items.map((item) => (
-				<div key={item.label} className="flex items-center gap-2">
+				<div key={item.dangerLevel} className="flex items-center gap-2">
 					<span className="inline-block w-6 border-t-2 border-dashed" style={{ borderColor: item.color }} />
-					<span>{item.label}</span>
+					<span>{t(($) => $.lineChart[item.dangerLevel])}</span>
 				</div>
 			))}
 		</div>

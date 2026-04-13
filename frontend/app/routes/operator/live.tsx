@@ -342,8 +342,8 @@ const LiveExposureCard = ({
 					hideHeader={true}
 					muteTickLabels={true}
 				>
-					<ThresholdLine y={threshold.danger} dangerLevel="danger" hideLineLabel={true} />
-					<ThresholdLine y={threshold.warning} dangerLevel="warning" hideLineLabel={true} />
+					<ThresholdLine y={threshold.danger} dangerLevel="danger" />
+					<ThresholdLine y={threshold.warning} dangerLevel="warning" />
 				</ChartLineDefault>
 			</div>
 		</div>
