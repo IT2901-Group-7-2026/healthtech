@@ -3,15 +3,16 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BasePopup } from "@/features/popups/base-popup";
 import { type DangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto.js";
+import { sensors } from "@/lib/sensors.js";
+import { ExposureBadge } from "app/components/exposure-badge";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 const getExposureBadges = (worker: UserWithStatusDto, popupStatus: DangerLevel) => {
-	const exposures = [
-		{ key: "noise", data: worker.status.noise },
-		{ key: "dust", data: worker.status.dust },
-		{ key: "vibration", data: worker.status.vibration },
-	];
+	const exposures = sensors.map((key) => ({
+		key,
+		data: worker.status[key],
+	}));
 
 	return exposures.filter(({ data }) => {
 		if (!data) return false;
@@ -30,25 +31,14 @@ const getExposureBadges = (worker: UserWithStatusDto, popupStatus: DangerLevel) 
 
 const WorkerRow = ({ worker, status }: { worker: UserWithStatusDto; status: DangerLevel }) => {
 	const exposureBadges = getExposureBadges(worker, status).map(({ key, data }) => (
-		<span
-			key={key}
-			className={`rounded-md px-2 py-0.5 font-medium text-white text-xs bg-${mapDangerLevelToColor(
-				data?.dangerLevel ?? "safe",
-			)}`}
-		>
-			{key}
-		</span>
+		<ExposureBadge sensor={key} dangerLevel={data?.dangerLevel ?? "safe"} />
 	));
 
 	return (
 		<TableRow key={worker.id}>
 			<TableCell>
 				<Link to={`/foreman/?userId=${worker.id}`} className="flex w-full items-center justify-between">
-					<div className="flex items-center gap-5">
-						<div className={`size-3 rounded-sm bg-${mapDangerLevelToColor(worker.status.status)}`} />
-						<p>{worker.username}</p>
-					</div>
-
+					<p>{worker.username}</p>
 					<div className="flex gap-2">{exposureBadges}</div>
 				</Link>
 			</TableCell>
@@ -92,13 +82,13 @@ export function AtRiskPopup({
 
 	return (
 		<BasePopup title={exposureTitle} open={open} relevantDate={null} onClose={onClose}>
-			<Card hoverable={true}>
-				<CardContent>
-					<Table>
-						<TableBody>{tableBody}</TableBody>
-					</Table>
-				</CardContent>
-			</Card>
+			{/* <Card hoverable={true}>
+				<CardContent> */}
+			<Table>
+				<TableBody>{tableBody}</TableBody>
+			</Table>
+			{/* </CardContent>
+			</Card> */}
 		</BasePopup>
 	);
 }
