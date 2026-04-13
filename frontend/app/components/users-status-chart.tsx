@@ -134,9 +134,27 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 							dataKey="name"
 							tickLine={false}
 							axisLine={false}
-							tickFormatter={(v) => `${v}`}
-							tick={{
-								fill: "var(--color-muted-foreground)",
+							width={120}
+							tick={({ x, y, payload }) => {
+								const user = chartData.find((d) => d.name === payload.value);
+
+								return (
+									<g transform={`translate(${x},${y})`}>
+										<foreignObject x={-100} y={-10} width={100} height={40}>
+											<button
+												type="button"
+												onClick={() => {
+													if (user?.id) {
+														userOnClick?.(user.id);
+													}
+												}}
+												className="w-full cursor-pointer whitespace-normal break-words text-left text-muted-foreground text-sm leading-tight"
+											>
+												{payload.value}
+											</button>
+										</foreignObject>
+									</g>
+								);
 							}}
 						/>
 						<ReferenceLine
