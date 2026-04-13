@@ -1,10 +1,9 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { ExposureBadge } from "@/components/exposure-badge";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BasePopup } from "@/features/popups/base-popup";
-import { type DangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
+import type { DangerLevel } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto.js";
 import { sensors } from "@/lib/sensors.js";
-import { ExposureBadge } from "app/components/exposure-badge";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
@@ -31,7 +30,7 @@ const getExposureBadges = (worker: UserWithStatusDto, popupStatus: DangerLevel) 
 
 const WorkerRow = ({ worker, status }: { worker: UserWithStatusDto; status: DangerLevel }) => {
 	const exposureBadges = getExposureBadges(worker, status).map(({ key, data }) => (
-		<ExposureBadge sensor={key} dangerLevel={data?.dangerLevel ?? "safe"} />
+		<ExposureBadge key={key} sensor={key} dangerLevel={data?.dangerLevel ?? "safe"} />
 	));
 
 	return (
@@ -82,13 +81,9 @@ export function AtRiskPopup({
 
 	return (
 		<BasePopup title={exposureTitle} open={open} relevantDate={null} onClose={onClose}>
-			{/* <Card hoverable={true}>
-				<CardContent> */}
 			<Table>
 				<TableBody>{tableBody}</TableBody>
 			</Table>
-			{/* </CardContent>
-			</Card> */}
 		</BasePopup>
 	);
 }

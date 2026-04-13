@@ -46,7 +46,11 @@ export const ExposureBadge = ({ sensor, dangerLevel, className }: ExposureBadgeP
 
 	return (
 		<div
-			className={cn("flex items-center gap-1.5 rounded-full border px-1.5 py-0.5", dangerLevelClasses, className)}
+			className={cn(
+				"flex h-fit items-center gap-1.5 rounded-full border px-2 py-0.5 text-sm",
+				dangerLevelClasses,
+				className,
+			)}
 		>
 			{Icon && <Icon title={sensor} className="inline-block h-4 w-4" />}
 			<span>{t(($) => $.sensors[sensor])}</span>
