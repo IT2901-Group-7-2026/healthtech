@@ -4,6 +4,7 @@ import { useView } from "@/features/views/use-view";
 import type { View } from "@/features/views/views";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import { useIsMobile } from "@/hooks/use-mobile";
+import type { TranslateFn } from "@/i18n/config.js";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import { sensors } from "@/lib/sensors.js";
 import type { SummaryCounts } from "@/lib/time-bucket-types";
@@ -40,30 +41,7 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 		danger: "DANGER",
 	};
 
-	const viewLabelConfig: Record<View, SummaryLabel> = {
-		day: {
-			safe: t(($) => $.exposureSummary.greenHourText),
-			warning: t(($) => $.exposureSummary.orangeHourText),
-			danger: t(($) => $.exposureSummary.redHourText),
-		},
-		week: {
-			safe: t(($) => $.exposureSummary.greenHourText),
-			warning: t(($) => $.exposureSummary.orangeHourText),
-			danger: t(($) => $.exposureSummary.redHourText),
-		},
-		month: {
-			safe: t(($) => $.exposureSummary.greenDayText),
-			warning: t(($) => $.exposureSummary.orangeDayText),
-			danger: t(($) => $.exposureSummary.redDayText),
-		},
-	};
-
-	const summaryLabels = {
-		exposureType: exposureType === "all" ? "Every sensor" : exposureType,
-		safeLabel: viewLabelConfig[view].safe || defaultLabels.safe,
-		warningLabel: viewLabelConfig[view].warning || defaultLabels.warning,
-		dangerLabel: viewLabelConfig[view].danger || defaultLabels.danger,
-	};
+	const summaryLabels = getSummaryLabels(exposureType, view, t, defaultLabels);
 
 	const currentDate = useDate().date;
 	// For specific sensor: "<Sensor> exposure for <...>"
@@ -93,19 +71,25 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 	if (mode === "count") {
 		content = (
 			<CardContent className="grid grid-cols-[auto_1fr] items-center gap-2">
-				<p className={cn("text-right font-bold md:text-center", safeColor)}>{data.safeCount}</p>
+				<p className={cn("text-right font-bold md:text-left", safeColor)}>
+					{getSensorValueString(data.safeCount, view, exposureType, i18n.language)}
+				</p>
 				<p className={cn("text-xs md:text-sm", safeColor)}>
-					{isMobile ? defaultLabels.safe : summaryLabels.safeLabel}
+					{isMobile ? defaultLabels.safe : summaryLabels.safe}
 				</p>
 
-				<p className={cn("text-right font-bold md:text-center", warningColor)}>{data.warningCount}</p>
+				<p className={cn("text-right font-bold md:text-left", warningColor)}>
+					{getSensorValueString(data.warningCount, view, exposureType, i18n.language)}
+				</p>
 				<p className={cn("text-xs md:text-sm", warningColor)}>
-					{isMobile ? defaultLabels.warning : summaryLabels.warningLabel}
+					{isMobile ? defaultLabels.warning : summaryLabels.warning}
 				</p>
 
-				<p className={cn("text-right font-bold md:text-center", dangerColor)}>{data.dangerCount}</p>
+				<p className={cn("text-right font-bold md:text-left", dangerColor)}>
+					{getSensorValueString(data.dangerCount, view, exposureType, i18n.language)}
+				</p>
 				<p className={cn("text-xs md:text-sm", dangerColor)}>
-					{isMobile ? defaultLabels.danger : summaryLabels.dangerLabel}
+					{isMobile ? defaultLabels.danger : summaryLabels.danger}
 				</p>
 			</CardContent>
 		);
@@ -166,6 +150,61 @@ export function Summary({ exposureType, data, mode = "count" }: SummaryProps) {
 			<CardContent className="gap-5">{content}</CardContent>
 		</Card>
 	);
+}
+
+function getSummaryLabels(
+	exposureType: ExposureType,
+	view: View,
+	t: TranslateFn,
+	defaultLabels: SummaryLabel,
+): SummaryLabel {
+	// Vibration doesn't support minute-level summaries, so show hour labels instead
+	const effectiveView = exposureType === "vibration" && view === "day" ? "week" : view;
+
+	switch (effectiveView) {
+		case "day":
+			return {
+				safe: t(($) => $.exposureSummary.greenText),
+				warning: t(($) => $.exposureSummary.orangeText),
+				danger: t(($) => $.exposureSummary.redText),
+			};
+		case "week":
+			return {
+				safe: t(($) => $.exposureSummary.greenHourText),
+				warning: t(($) => $.exposureSummary.orangeHourText),
+				danger: t(($) => $.exposureSummary.redHourText),
+			};
+		case "month":
+			return {
+				safe: t(($) => $.exposureSummary.greenDayText),
+				warning: t(($) => $.exposureSummary.orangeDayText),
+				danger: t(($) => $.exposureSummary.redDayText),
+			};
+		default:
+			return defaultLabels;
+	}
+}
+
+function getSensorValueString(value: number, view: View, exposureType: ExposureType, locale: string) {
+	if (view === "day" && exposureType !== "vibration") {
+		const hours = Math.floor(value / 60);
+		const minutes = value % 60;
+
+		if (hours === 0) {
+			return `${minutes}m`;
+		}
+
+		if (minutes === 0) {
+			return `${hours}h`;
+		}
+
+		return `${hours}h ${minutes}m`;
+	}
+
+	return new Intl.NumberFormat(locale, {
+		minimumFractionDigits: 0,
+		maximumFractionDigits: 1,
+	}).format(value);
 }
 
 function getHighestLevel({

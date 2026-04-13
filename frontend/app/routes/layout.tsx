@@ -172,7 +172,7 @@ export default function Layout() {
 	return (
 		<SidebarProvider defaultOpen={false}>
 			<SidebarInset>
-				<header className="mx-5 my-2 flex items-center justify-between">
+				<header className="sticky top-0 z-40 mx-5 flex items-center justify-between bg-background/95 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80">
 					{desktopHeader}
 
 					<div className="flex flex-row items-center gap-4">

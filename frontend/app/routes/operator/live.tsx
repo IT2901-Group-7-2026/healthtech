@@ -20,13 +20,14 @@ import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-type TimeRangeOption = "30" | "60" | "180";
-const parseTimeRange = parseAsStringLiteral(["30", "60", "180"]);
+type TimeRangeOption = "30" | "60" | "180" | "480";
+const parseTimeRange = parseAsStringLiteral(["30", "60", "180", "480"]);
 
 const TIME_RANGE_MINUTES: Record<TimeRangeOption, number> = {
 	"30": 30,
 	"60": 60,
 	"180": 180,
+	"480": 480,
 };
 
 export default function OperatorLiveView() {
@@ -236,14 +237,33 @@ export default function OperatorLiveView() {
 							setTimeRange(value);
 						}}
 					>
-						<ToggleGroupItem value="30" aria-label={t(($) => $.live.timeRange.options.thirtyMinutes)}>
+						<ToggleGroupItem
+							className="text-xs"
+							value="30"
+							aria-label={t(($) => $.live.timeRange.options.thirtyMinutes)}
+						>
 							<p>{t(($) => $.live.timeRange.options.thirtyMinutes)}</p>
 						</ToggleGroupItem>
-						<ToggleGroupItem value="60" aria-label={t(($) => $.live.timeRange.options.oneHour)}>
+						<ToggleGroupItem
+							className="text-xs"
+							value="60"
+							aria-label={t(($) => $.live.timeRange.options.oneHour)}
+						>
 							<p>{t(($) => $.live.timeRange.options.oneHour)}</p>
 						</ToggleGroupItem>
-						<ToggleGroupItem value="180" aria-label={t(($) => $.live.timeRange.options.threeHours)}>
+						<ToggleGroupItem
+							className="text-xs"
+							value="180"
+							aria-label={t(($) => $.live.timeRange.options.threeHours)}
+						>
 							<p>{t(($) => $.live.timeRange.options.threeHours)}</p>
+						</ToggleGroupItem>
+						<ToggleGroupItem
+							className="text-xs"
+							value="480"
+							aria-label={t(($) => $.live.timeRange.options.eightHours)}
+						>
+							<p>{t(($) => $.live.timeRange.options.eightHours)}</p>
 						</ToggleGroupItem>
 					</ToggleGroup>
 				</Card>

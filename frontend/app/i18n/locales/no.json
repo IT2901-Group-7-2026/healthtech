@@ -10,6 +10,7 @@
     "noOptions": "Ingen alternativer tilgjengelig",
     "time": "Tid",
     "today": "I dag",
+    "total": "Total eksponering",
     "points": "Poeng",
     "notifications": "Notifikasjoner",
     "exportAsPdf": "Eksporter som PDF"
@@ -43,12 +44,13 @@
     "system": "System"
   },
   "language": {
-    "english": "Engelsk",
+    "english": "English",
     "norwegian": "Norsk"
   },
   "measurement": {
     "peak": "Topp",
-    "average": "Gjennomsnitt"
+    "average": "Gjennomsnitt",
+    "averageExposure": "Gjennomsnittlig eksponering"
   },
   "layout": {
     "live": "Live",
@@ -65,9 +67,10 @@
     "timeRange": {
       "label": "Tidsrom",
       "options": {
-        "thirtyMinutes": "30 minutter",
+        "thirtyMinutes": "30 min",
         "oneHour": "1 time",
-        "threeHours": "3 timer"
+        "threeHours": "3 timer",
+        "eightHours": "8 timer"
       }
     },
     "chart": {
@@ -81,14 +84,17 @@
   },
   "exposureSummary": {
     "title": {
-      "day": "Eksponering for {{day}}",
+      "day": "Eksponering",
       "week": "Eksponering for uke {{week}}",
       "month": "Eksponering for {{month}}"
     },
+    "greenText": "med trygg mengde eksponering",
     "greenHourText": "Timer med trygg mengde eksponering",
     "greenDayText": "Dager med trygg mengde eksponering",
+    "orangeText": "nær eksponeringsgrensen",
     "orangeHourText": "Timer nær eksponeringsgrensen",
     "orangeDayText": "Dager nær eksponeringsgrensen",
+    "redText": "over eksponeringsgrensen",
     "redHourText": "Timer over eksponeringsgrensen",
     "redDayText": "Dager over eksponeringsgrensen",
     "dangerSmiley": "Farlige nivåer",
@@ -102,7 +108,7 @@
     "safe": "Trygt innenfor eksponeringsgrensen"
   },
   "dailyNotes": {
-    "viewTitle": "Dine notater for {{date}}",
+    "viewTitle": "Dine notater",
     "writeHere": "Skriv her...",
     "edit": "Rediger",
     "save": "Lagre",

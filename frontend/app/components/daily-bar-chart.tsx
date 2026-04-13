@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useDate } from "@/features/date-picker/use-date";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useFormatDate } from "@/hooks/use-format-date";
@@ -49,21 +49,13 @@ const getCellAppearance = (dangerLevel: string | null) => {
 
 interface DailyBarChartProps {
 	data: Array<OverviewChartRow>;
-	chartTitle: string;
 	startHour?: number;
 	endHour?: number;
 	headerRight?: React.ReactNode;
 	buildLink?: (sensor: string, dateQueryParam: string) => To | null;
 }
 
-export function DailyBarChart({
-	data,
-	chartTitle,
-	startHour = 0,
-	endHour = 23,
-	headerRight,
-	buildLink,
-}: DailyBarChartProps) {
+export function DailyBarChart({ data, startHour = 0, endHour = 23, headerRight, buildLink }: DailyBarChartProps) {
 	const { t } = useTranslation();
 	const { date } = useDate();
 	const formatDate = useFormatDate();
@@ -107,8 +99,7 @@ export function DailyBarChart({
 	return (
 		<Card className="px-0">
 			<CardHeader className="flex flex-row items-center justify-between px-4">
-				<CardTitle className="text-base">{chartTitle}</CardTitle>
-				{headerRight}
+				<div className="ml-auto">{headerRight}</div>
 			</CardHeader>
 
 			<CardContent>
