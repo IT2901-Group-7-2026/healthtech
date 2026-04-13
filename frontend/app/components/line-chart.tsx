@@ -182,7 +182,15 @@ export function ChartLineDefault({
 		<Card className={cn("w-full", hideLabels && "pl-0", className)}>
 			{!hideHeader && (
 				<CardHeader className="mb-4 flex flex-row items-center justify-between">
-					<CardTitle>{chartTitle}</CardTitle>
+					<div className="flex items-center gap-14">
+						<CardTitle>{chartTitle}</CardTitle>
+						<ThresholdLegend
+							items={[
+								{ label: "Exposure Limit", color: "var(--danger)" },
+								{ label: "Action Limit", color: "var(--warning)" },
+							]}
+						/>
+					</div>
 					{headerRight}
 				</CardHeader>
 			)}
@@ -334,36 +342,21 @@ const Dot = ({ cx, cy, value, warning, danger, isPeak }: DotProps & { isPeak?: b
 	return <circle cx={cx} cy={cy} r={6} fill={fillColor} />;
 };
 
-export function ThresholdLine({
-	y,
-	dangerLevel,
-	label,
-	hideLineLabel,
-}: {
-	y: number;
-	dangerLevel: DangerLevel;
-	label?: string;
-	hideLineLabel?: boolean;
-}) {
-	const { t } = useTranslation();
+export function ThresholdLine({ y, dangerLevel }: { y: number; dangerLevel: DangerLevel }) {
 	const color = `var(--${DangerLevels[dangerLevel].color})`;
-	const lineLabel = hideLineLabel ? undefined : (label ?? t(($) => $.lineChart[dangerLevel]));
 
+	return <ReferenceLine y={y} stroke={color} strokeDasharray="4 4" />;
+}
+
+function ThresholdLegend({ items }: { items: Array<{ label: string; color: string }> }) {
 	return (
-		<ReferenceLine
-			y={y}
-			stroke={color}
-			strokeDasharray="4 4"
-			label={{
-				value: lineLabel,
-				position: "left",
-				fill: color,
-				offset: 64,
-				dy: -20,
-				fontSize: "75%",
-				textAnchor: "start",
-				className: "text-base",
-			}}
-		/>
+		<div className="flex items-center gap-6 text-sm">
+			{items.map((item) => (
+				<div key={item.label} className="flex items-center gap-2">
+					<span className="inline-block w-6 border-t-2 border-dashed" style={{ borderColor: item.color }} />
+					<span>{item.label}</span>
+				</div>
+			))}
+		</div>
 	);
 }
