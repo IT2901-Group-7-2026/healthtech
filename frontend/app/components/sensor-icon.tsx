@@ -5,6 +5,7 @@ import type { Sensor } from "@/lib/sensors.js";
 import { cn } from "@/lib/utils.js";
 import { ShieldAlertIcon } from "lucide-react";
 import type { ComponentType } from "react";
+import { DangerLevelDots } from "./danger-level-dots.js";
 import { NoiseIcon } from "./icons/noise-icon";
 
 export type IconProps = Omit<React.SVGProps<SVGSVGElement>, "width" | "height" | "strokeWidth"> & {
@@ -59,10 +60,15 @@ export const SensorIcon = ({ type, size, dangerLevel, className, iconClassName, 
 		: defaultIconContainerClass;
 
 	return (
-		<Component className={cn("h-fit w-fit rounded-full border", dangerLevelIconClasses, className)}>
+		<Component className={cn("relative h-fit w-fit rounded-full border", dangerLevelIconClasses, className)}>
 			<Icon
 				className={cn(iconSizeClass[resolvedIconSize], inline && "inline-block", iconClassName)}
 				title={title}
+			/>
+			<DangerLevelDots
+				dangerLevel={dangerLevel ?? null}
+				horizontal={true}
+				className="absolute -right-0.25 -bottom-0.25"
 			/>
 		</Component>
 	);

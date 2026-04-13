@@ -1,3 +1,4 @@
+import { DangerLevelDots } from "@/components/danger-level-dots.js";
 import { useDate } from "@/features/date-picker/use-date";
 import { WeeklyPopup } from "@/features/popups/weekly-popup";
 import { useFormatDate } from "@/hooks/use-format-date.js";
@@ -279,7 +280,13 @@ function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: Cel
 							bottom: `calc(${bottomPercent}% + 1px)`,
 						}}
 						onClick={() => onSegmentClick(timeBucket)}
-					/>
+					>
+						<div className={cn(rounding)} style={{ backgroundColor: dangerColor }} />
+						<DangerLevelDots
+							dangerLevel={timeBucket.dangerLevel ?? null}
+							className="absolute right-1 bottom-1"
+						/>
+					</button>
 				);
 			})}
 		</div>
