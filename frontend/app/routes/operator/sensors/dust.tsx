@@ -1,6 +1,7 @@
 import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
 import { useUser } from "@/features/user/user-context";
@@ -14,8 +15,24 @@ import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
-import { useId } from "react";
+import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
+
+type DustUnit = "μg/m³" | "mg/m³";
+
+const UG_TO_MG = 0.001;
+
+function convertValue(value: number, unit: DustUnit) {
+	return unit === "mg/m³" ? value * UG_TO_MG : value;
+}
+
+function convertThreshold(threshold: number, unit: DustUnit) {
+	return unit === "mg/m³" ? threshold * UG_TO_MG : threshold;
+}
+
+function formatAverage(value: number, unit: DustUnit) {
+	return unit === "mg/m³" ? value.toFixed(4) : Math.trunc(value);
+}
 
 export default function Dust() {
 	const { view } = useView();
@@ -26,11 +43,12 @@ export default function Dust() {
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 
+	const [displayUnit, setDisplayUnit] = useState<DustUnit>("μg/m³");
+
 	const sensor: Sensor = "dust";
 
 	const query = buildSensorQuery(sensor, view, date);
 
-	// Retrieve week data to find the min and max hour the user has data
 	const weekHourRangeQuery = buildSensorQuery(sensor, "week", date, {
 		granularity: "hour",
 	});
@@ -53,20 +71,28 @@ export default function Dust() {
 	});
 
 	const { data, isLoading, isError } = dataResult;
-
 	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
 
-	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
+	const convertedData = data?.map((d) => ({
+		...d,
+		value: convertValue(d.value, displayUnit),
+		peakValue: d.peakValue == null ? d.peakValue : convertValue(d.peakValue, displayUnit),
+	}));
+
+	const maxValue = convertedData ? Math.max(...convertedData.map((d) => d.value)) : 0;
 
 	const minY = 0;
-	let maxY = 45;
-	if (maxValue > maxY) {
-		maxY = computeYAxisRange(data ?? []).maxY;
-	}
+	const baseMaxY = convertValue(45, displayUnit);
+	const maxY = maxValue > baseMaxY ? computeYAxisRange(convertedData ?? []).maxY : baseMaxY;
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor);
 	const averageExposure =
-		data && data.length > 0 ? data.reduce((sum, current) => sum + current.value, 0) / data.length : 0;
+		convertedData && convertedData.length > 0
+			? convertedData.reduce((sum, d) => sum + d.value, 0) / convertedData.length
+			: 0;
+
+	const dangerThreshold = convertThreshold(dustThreshold.danger, displayUnit);
+	const warningThreshold = convertThreshold(dustThreshold.warning, displayUnit);
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">
@@ -85,11 +111,7 @@ export default function Dust() {
 			) : !data || data.length === 0 ? (
 				<Card className="flex h-24 w-full items-center">
 					<CardTitle>
-						{date.toLocaleDateString(locale, {
-							day: "numeric",
-							month: "long",
-							year: "numeric",
-						})}
+						{date.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" })}
 					</CardTitle>
 					<p>{t(($) => $.common.noData)}</p>
 				</Card>
@@ -99,37 +121,44 @@ export default function Dust() {
 						<ChartLineDefault
 							minHour={minHour}
 							maxHour={maxHour}
-							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageExposure)} ${t(($) => $.sensors.dustUnit)}`}
-							unit={t(($) => $.sensors.dustUnit)}
+							chartData={downsampleSensorData(sensor, convertedData ?? [])}
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatAverage(averageExposure, displayUnit)} ${displayUnit}`}
+							unit={displayUnit}
 							maxY={maxY}
 							minY={minY}
 							lineType="monotone"
 							sensor={sensor}
 							dustField={query.field}
 							headerRight={
-								<Button
-									size="sm"
-									variant="outline"
-									onClick={() =>
-										exportToPDF(
-											chartContainerId,
-											`${date.toLocaleDateString(locale, {
-												day: "numeric",
-												month: "long",
-												year: "numeric",
-											})}-${user.username}-Dust-Exposure-Overview`,
-											`Dust Exposure - ${user.username} - ${date.toLocaleDateString(locale)}`,
-										)
-									}
-								>
-									{t(($) => $.common.exportAsPdf)}
-								</Button>
+								<div className="flex items-center gap-2">
+									<Tabs value={displayUnit} onValueChange={(v) => setDisplayUnit(v as DustUnit)}>
+										<TabsList>
+											<TabsTrigger value="μg/m³">{"μg/m³"}</TabsTrigger>
+											<TabsTrigger value="mg/m³">{"mg/m³"}</TabsTrigger>
+										</TabsList>
+									</Tabs>
+									<Button
+										size="sm"
+										variant="outline"
+										onClick={() =>
+											exportToPDF(
+												chartContainerId,
+												`${date.toLocaleDateString(locale, {
+													day: "numeric",
+													month: "long",
+													year: "numeric",
+												})}-${user.username}-Dust-Exposure-Overview`,
+												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(locale)}`,
+											)
+										}
+									>
+										{t(($) => $.common.exportAsPdf)}
+									</Button>
+								</div>
 							}
 						>
-							<div className="mb-2 flex justify-end"></div>
-							<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
-							<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
+							<ThresholdLine y={dangerThreshold} dangerLevel="danger" />
+							<ThresholdLine y={warningThreshold} dangerLevel="warning" />
 						</ChartLineDefault>
 					</div>
 				</div>
