@@ -10,11 +10,12 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { AttentionCard } from "@/features/attention-card/attention-card.js";
 import { PieChartCard } from "@/features/attention-card/pie-chart-card";
+import { useDate } from "@/features/date-picker/use-date.js";
 import { TeamSummary } from "@/features/sidebar/team-summary.js";
 import { useUser } from "@/features/user/user-context";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions } from "@/lib/api.js";
-import { now, parseAsTZDate, today, toTZDate } from "@/lib/date";
+import { now, today, toTZDate } from "@/lib/date";
 import type { ThresholdSummary } from "@/lib/dto";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
 import { useQuery } from "@tanstack/react-query";
@@ -31,7 +32,7 @@ export default function ForemanOverview() {
 	const { user } = useUser();
 
 	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor);
-	const [date, setDate] = useQueryState("filterDate", parseAsTZDate.withDefault(today()));
+	const { date, setDate } = useDate();
 	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString);
 
 	const selectedDate = date;
@@ -116,17 +117,13 @@ export default function ForemanOverview() {
 						<PopoverContent className="w-auto p-0" align="start">
 							<Calendar
 								mode="single"
+								required={true}
 								disabled={{
 									before: minSelectableDate,
 									after: maxSelectableDate,
 								}}
 								selected={selectedDate}
 								onSelect={(val) => {
-									if (!val) {
-										setDate(null);
-										return;
-									}
-
 									const nextDate = startOfDay(toTZDate(val));
 									setDate(nextDate);
 								}}
