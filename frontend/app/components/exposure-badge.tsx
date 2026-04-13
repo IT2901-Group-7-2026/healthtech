@@ -35,7 +35,7 @@ export const ExposureBadge = ({ sensor, dangerLevel, className }: ExposureBadgeP
 				className,
 			)}
 		>
-			{Icon && <Icon title={sensor} className="inline-block h-4 w-4" />}
+			{<Icon title={sensor} className="inline-block h-4 w-4" />}
 			<span>{t(($) => $.sensors[sensor])}</span>
 		</div>
 	);
