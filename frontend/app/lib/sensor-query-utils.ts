@@ -6,7 +6,7 @@ import type {
 	AggregateFnKey,
 	GranularityKey,
 	SensorDataRequestDto,
-	SensorOverviewDataRequestDto,
+	SensorOverviewRequestDto,
 	SensorTypeField,
 } from "./dto";
 
@@ -113,7 +113,7 @@ export function buildSensorOverviewQuery(
 	options?: {
 		usePeakAggregation?: boolean;
 	},
-): SensorOverviewDataRequestDto {
+): SensorOverviewRequestDto {
 	return Object.fromEntries(
 		sensors.map((sensor) => [
 			sensor,

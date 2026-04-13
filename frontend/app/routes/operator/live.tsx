@@ -8,7 +8,7 @@ import { SecurityRegulationsCard } from "@/features/security-regulations-card/se
 import { useUser } from "@/features/user/user-context";
 import { sensorQueryOptions } from "@/lib/api";
 import { now, toTZDate } from "@/lib/date";
-import type { SensorDataResponseDto } from "@/lib/dto";
+import type { SensorDto } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import { getThreshold } from "@/lib/thresholds";
 import { computeYAxisRange } from "@/lib/utils";
@@ -46,7 +46,7 @@ export default function OperatorLiveView() {
 	// We have at most 1 data point every minute so we don't need a shorter refetch interval than that
 	const dataRefetchInterval = minutesToMilliseconds(1);
 
-	const { data: dustTwa1Data } = useQuery(
+	const { data: { data: dustTwa1Data } = {} } = useQuery(
 		sensorQueryOptions({
 			sensor: "dust",
 			query: buildSensorQuery("dust", "day", end, {
@@ -62,7 +62,7 @@ export default function OperatorLiveView() {
 		}),
 	);
 
-	const { data: dustTwa25Data } = useQuery(
+	const { data: { data: dustTwa25Data } = {} } = useQuery(
 		sensorQueryOptions({
 			sensor: "dust",
 			query: buildSensorQuery("dust", "day", end, {
@@ -78,7 +78,7 @@ export default function OperatorLiveView() {
 		}),
 	);
 
-	const { data: dustTwa10Data } = useQuery(
+	const { data: { data: dustTwa10Data } = {} } = useQuery(
 		sensorQueryOptions({
 			sensor: "dust",
 			query: buildSensorQuery("dust", "day", end, {
@@ -94,7 +94,7 @@ export default function OperatorLiveView() {
 		}),
 	);
 
-	const { data: noiseData } = useQuery(
+	const { data: { data: noiseData } = {} } = useQuery(
 		sensorQueryOptions({
 			sensor: "noise",
 			query: buildSensorQuery("noise", "day", end, {
@@ -108,7 +108,7 @@ export default function OperatorLiveView() {
 		}),
 	);
 
-	const { data: rawVibrationData } = useQuery(
+	const { data: { data: rawVibrationData } = {} } = useQuery(
 		sensorQueryOptions({
 			sensor: "vibration",
 			query: buildSensorQuery("vibration", "day", end, {
@@ -278,7 +278,7 @@ interface LiveExposureCardProps {
 	exposureField?: "pm1_twa" | "pm25_twa" | "pm10_twa";
 	exposureUnitLabel: string;
 	chartUnitLabel: string;
-	data: Array<SensorDataResponseDto>;
+	data: Array<SensorDto>;
 	minTime: TZDate;
 	maxTime: TZDate;
 	chartClassName?: string;

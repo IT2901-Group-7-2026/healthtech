@@ -2,6 +2,7 @@ using Backend.Data;
 using Backend.DTOs;
 using Backend.Models;
 using Backend.Services;
+using Backend.Utils;
 using Backend.Validation;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +16,7 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
 
 	[HttpPost("{sensorType}/{userId}")]
 	[ServiceFilter(typeof(ValidateFieldForSensorTypeFilter))]
-	public async Task<ActionResult<IEnumerable<SensorDataDto>>> GetAggregatedData(
+	public async Task<ActionResult<SensorResponseDto>> GetAggregatedData(
 		[FromBody] SensorDataRequestDto request,
 		[FromRoute] Guid? userId,
 		[FromRoute] SensorType sensorType
@@ -28,12 +29,20 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
 
 		try
 		{
-			var response = await _sensorDataService.GetAggregatedDataAsync(
+			IEnumerable<SensorDataDto> data = await _sensorDataService.GetAggregatedDataAsync(
 				request,
 				userId,
 				sensorType
 			);
-			return Ok(response);
+
+			HourDomainDto hourDomain = await _sensorDataService.GetHourDomainForWeekAsync(
+				new Dictionary<SensorType, SensorDataRequestDto> { { sensorType, request } },
+				userId
+			);
+
+			SensorResponseDto response = new() { Data = data, HourDomain = hourDomain };
+
+			return response;
 		}
 		catch (ArgumentException ex)
 		{
@@ -55,7 +64,18 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
 		[FromRoute] Guid? userId
 	)
 	{
-		var response = await _sensorDataService.GetOverviewDataAsync(requests, userId);
+		IEnumerable<CombinedSensorBucketDto> data = await _sensorDataService.GetOverviewDataAsync(
+			requests,
+			userId
+		);
+
+		HourDomainDto hourDomain = await _sensorDataService.GetHourDomainForWeekAsync(
+			requests,
+			userId
+		);
+
+		SensorOverviewResponse response = new() { Data = data, HourDomain = hourDomain };
+
 		return Ok(response);
 	}
 }

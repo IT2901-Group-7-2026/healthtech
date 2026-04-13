@@ -12,8 +12,8 @@ import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
-import { useQueries } from "@tanstack/react-query";
+import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,29 +32,22 @@ export default function Vibration() {
 
 	const query = buildSensorQuery(sensor, view, date);
 
-	// Retrieve week data to find the min and max hour the user has data
-	const weekHourRangeQuery = buildSensorQuery(sensor, "week", date, {
-		granularity: "hour",
-	});
+	const {data: response, isLoading, isError} = useQuery(
+		sensorQueryOptions({
+			sensor,
+			query,
+			userId: user.id,
+		}),
+	);
 
-	const [dataResult, weekHourRangeResult] = useQueries({
-		queries: [
-			sensorQueryOptions({
-				sensor,
-				query,
-				userId: user.id,
-			}),
-			sensorQueryOptions({
-				sensor,
-				query: weekHourRangeQuery,
-				userId: user.id,
-			}),
-		],
-	});
+	const data = response?.data;
+	const hourDomain = response?.hourDomain;
 
-	const { data, isLoading, isError } = dataResult;
-
-	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
+	const { minHour, maxHour } = getHourDomain(
+		hourDomain,
+		data?.map((d) => d.time),
+		view,
+	);
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
