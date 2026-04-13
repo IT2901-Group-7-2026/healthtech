@@ -1,32 +1,15 @@
-import { DustIcon } from "@/components/icons/dust-icon";
-import { VibrationIcon } from "@/components/icons/vibration-icon";
+import { type IconType, sensorIconConfig } from "@/components/icons/sensor-icons";
 import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.js";
 import type { Sensor } from "@/lib/sensors.js";
 import { cn } from "@/lib/utils.js";
-import type { ComponentType } from "react";
 import { useTranslation } from "react-i18next";
-import { NoiseIcon } from "./icons/noise-icon";
 
-export type IconProps = Omit<React.SVGProps<SVGSVGElement>, "width" | "height" | "strokeWidth"> & {
-	size?: number | string;
-	strokeWidth?: number | string;
-	title?: string;
-};
-
-type IconType = ComponentType<IconProps>;
-
-const iconConfig: Record<Sensor, IconType> = {
-	noise: NoiseIcon,
-	dust: DustIcon,
-	vibration: VibrationIcon,
-};
+const iconConfig: Record<Sensor, IconType> = sensorIconConfig;
 
 interface ExposureBadgeProps {
 	sensor: Sensor;
 	dangerLevel?: DangerLevel;
 	className?: string;
-	title?: string;
-	inline?: boolean;
 }
 
 const defaultBadgeClasses = "bg-muted text-foreground border border-border";

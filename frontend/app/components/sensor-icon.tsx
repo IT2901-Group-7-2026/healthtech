@@ -1,27 +1,7 @@
-import { DustIcon } from "@/components/icons/dust-icon";
-import { VibrationIcon } from "@/components/icons/vibration-icon";
+import { sensorIconConfig } from "@/components/icons/sensor-icons";
 import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.js";
 import type { Sensor } from "@/lib/sensors.js";
 import { cn } from "@/lib/utils.js";
-import { ShieldAlertIcon } from "lucide-react";
-import type { ComponentType } from "react";
-import { NoiseIcon } from "./icons/noise-icon";
-
-export type IconProps = Omit<React.SVGProps<SVGSVGElement>, "width" | "height" | "strokeWidth"> & {
-	size?: number | string;
-	strokeWidth?: number | string;
-	title?: string;
-};
-
-type IconType = ComponentType<IconProps>;
-
-// TODO: The icons shouldn't have titles we can't change when using SensorIcon. Vibration (EarIcon) also doesn't have a title
-const iconConfig: Record<Sensor | "all", IconType> = {
-	all: ShieldAlertIcon,
-	noise: NoiseIcon,
-	dust: DustIcon,
-	vibration: VibrationIcon,
-};
 
 type SensorIconSize = "xs" | "sm" | "md" | "lg" | "xl";
 
@@ -46,7 +26,7 @@ interface SensorIconProps {
 const defaultIconContainerClass = "bg-muted text-foreground border border-border";
 
 export const SensorIcon = ({ type, size, dangerLevel, className, iconClassName, title, inline }: SensorIconProps) => {
-	const Icon = iconConfig[type];
+	const Icon = sensorIconConfig[type];
 	const Component = inline ? "span" : "div";
 
 	const resolvedIconSize = size ?? "md";
