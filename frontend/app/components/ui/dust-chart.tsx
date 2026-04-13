@@ -4,15 +4,14 @@ import { Card } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 
 interface Props {
-	value: number;
+	value: number | null;
 	thresholdValue: number;
 	unit?: string;
 	label?: string;
-	noData: boolean;
 }
 
 // NOTE: This is just a proof of concept. The code will be rewritten completely later on.
-export function DustChart({ value, thresholdValue, unit, label, noData }: Props) {
+export function DustChart({ value, thresholdValue, unit, label }: Props) {
 	const { t } = useTranslation();
 	const resolvedUnit = unit ?? t(($) => $.sensors.dustUnit);
 	const resolvedLabel = label ?? t(($) => $.sensors.dust);
@@ -20,7 +19,7 @@ export function DustChart({ value, thresholdValue, unit, label, noData }: Props)
 	const min = 0;
 	const max = thresholdValue;
 
-	const clampedValue = Math.max(min, Math.min(value, max));
+	const clampedValue = Math.max(min, Math.min(value ?? 0, max));
 	const percent = (clampedValue - min) / (max - min);
 
 	const cx = 100;
@@ -42,7 +41,7 @@ export function DustChart({ value, thresholdValue, unit, label, noData }: Props)
 
 	return (
 		<Card className="w-fit">
-			{!noData && <div className="relative h-[170px] w-[200px]">
+			{value !== null ? <div className="relative h-[170px] w-[200px]">
 				<ChartContainer config={{}} className="h-full w-full">
 					<PieChart width={200} height={170}>
 						<defs>
@@ -125,13 +124,12 @@ export function DustChart({ value, thresholdValue, unit, label, noData }: Props)
 						{resolvedUnit}
 					</text>
 				</svg>
-			</div>}
-
-			{!noData && <div className="mt-2 w-full text-center text-sm font-medium">
+			</div>
+			: <div className="mt-2 w-full text-center text-sm font-medium">
 				{resolvedLabel}
 			</div>}
 
-			{noData && <div className="flex items-center text-center h-[170px] w-[200px]"><p>{t(($) => $.common.noData)}</p></div>}
+			{value === null && <div className="flex items-center text-center h-[170px] w-[200px]"><p>{t(($) => $.common.noData)}</p></div>}
 		</Card>
 	);
 }

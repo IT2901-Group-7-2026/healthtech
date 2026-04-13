@@ -160,10 +160,6 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	const dustTwa25Data = dustTwa25Result.data;
 	const dustTwa10Data = dustTwa10Result.data;
 
-	const noDustTwa1Data = !(dustTwa1Data && dustTwa1Data.length > 0);
-	const noDustTwa25Data = !(dustTwa25Data && dustTwa25Data.length > 0);
-	const noDustTwa10Data = !(dustTwa10Data && dustTwa10Data.length > 0);
-
 	const maxValue = data ? Math.max(...data.map((point) => point.value)) : 0;
 	const minY = 0;
 	let maxY = 45;
@@ -216,25 +212,22 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 				{
 					<DustChart
 						label="PM1 TWA"
-						value={dustTwa1Data?.[0]?.value ?? 0}
+						value={dustTwa1Data?.[0]?.value ?? null}
 						thresholdValue={dustThreshold.danger}
-						noData={noDustTwa1Data}
 					/>
 				}
 				{
 					<DustChart
 						label="PM2.5 TWA"
-						value={dustTwa25Data?.[0]?.value ?? 0}
+						value={dustTwa25Data?.[0]?.value ?? null}
 						thresholdValue={dustPm25TwaThreshold.danger}
-						noData={noDustTwa25Data}
 					/>
 				}
 				{
 					<DustChart
 						label="PM10 TWA"
-						value={dustTwa10Data?.[0]?.value ?? 0}
+						value={dustTwa10Data?.[0]?.value ?? null}
 						thresholdValue={dustPm10TwaThreshold.danger}
-						noData={noDustTwa10Data}
 					/>
 				}
 			</div>
