@@ -60,7 +60,6 @@ function AllSensorsUserOverview({
 	selectedDate: TZDate;
 }) {
 	const [selectedUserId] = useQueryState("userId");
-	const [filterDate] = useQueryState("filterDate");
 
 	const { data, isLoading, isError } = useQuery(
 		sensorOverviewQueryOptions({
@@ -78,7 +77,7 @@ function AllSensorsUserOverview({
 					data={mapOverviewBucketsToChartRows(data ?? [], 0, 23)}
 					startHour={minHour}
 					endHour={maxHour}
-					buildLink={(sensor) => {
+					buildLink={(sensor, dateQueryParam) => {
 						const params = new URLSearchParams();
 						params.set("sensor", sensor);
 
@@ -86,9 +85,7 @@ function AllSensorsUserOverview({
 							params.set("userId", selectedUserId);
 						}
 
-						if (filterDate) {
-							params.set("filterDate", filterDate);
-						}
+						params.set("date", dateQueryParam);
 
 						return `?${params.toString()}`;
 					}}
