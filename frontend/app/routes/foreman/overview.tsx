@@ -4,8 +4,18 @@ import { DailyNotes } from "@/components/daily-notes.js";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
-import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+	Combobox,
+	ComboboxContent,
+	ComboboxInput,
+	ComboboxItem,
+	ComboboxList,
+} from "@/components/ui/combobox";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { AttentionCard } from "@/features/attention-card/attention-card.js";
@@ -13,7 +23,10 @@ import { PieChartCard } from "@/features/attention-card/pie-chart-card";
 import { TeamSummary } from "@/features/sidebar/team-summary.js";
 import { useUser } from "@/features/user/user-context";
 import { useFormatDate } from "@/hooks/use-format-date";
-import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions } from "@/lib/api.js";
+import {
+	fetchSubordinatesQueryOptions,
+	fetchThresholdSummaryQueryOptions,
+} from "@/lib/api.js";
 import { now, parseAsTZDate, today, toTZDate } from "@/lib/date";
 import type { ThresholdSummary } from "@/lib/dto";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
@@ -31,8 +44,14 @@ export default function ForemanOverview() {
 	const { user } = useUser();
 
 	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor);
-	const [date, setDate] = useQueryState("filterDate", parseAsTZDate.withDefault(today()));
-	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString);
+	const [date, setDate] = useQueryState(
+		"filterDate",
+		parseAsTZDate.withDefault(today()),
+	);
+	const [selectedUserId, setSelectedUserId] = useQueryState(
+		"userId",
+		parseAsString,
+	);
 
 	const selectedDate = date;
 
@@ -47,11 +66,12 @@ export default function ForemanOverview() {
 	const { data: subordinates, isLoading: isSubordinatesLoading } = useQuery(
 		fetchSubordinatesQueryOptions(user.id, startDate, endDate),
 	);
-	const { data: thresholdSummary, isLoading: isThresholdSummaryLoading } = useQuery(
-		fetchThresholdSummaryQueryOptions(user.id, startDate, endDate),
-	);
+	const { data: thresholdSummary, isLoading: isThresholdSummaryLoading } =
+		useQuery(fetchThresholdSummaryQueryOptions(user.id, startDate, endDate));
 
-	const selectedUser = users?.find((subordinate) => subordinate.id === selectedUserId);
+	const selectedUser = users?.find(
+		(subordinate) => subordinate.id === selectedUserId,
+	);
 	const subordinateCount = subordinates?.length ?? 0;
 	const isUserSelected = selectedUser !== undefined;
 	const isUserComboboxDisabled = !users || users.length === 0;
@@ -67,13 +87,23 @@ export default function ForemanOverview() {
 			<Card muted={true} className="flex flex-row justify-between p-2">
 				<Tabs
 					value={sensor ?? "all"}
-					onValueChange={(value) => setSensor(value === "all" ? null : (value as Sensor))}
+					onValueChange={(value) =>
+						setSensor(value === "all" ? null : (value as Sensor))
+					}
 				>
 					<TabsList className="bg-transparent">
-						<SensorTabsTrigger value="all">{t(($) => $.sensors.overview)}</SensorTabsTrigger>
-						<SensorTabsTrigger value="dust">{t(($) => $.sensors.dust)}</SensorTabsTrigger>
-						<SensorTabsTrigger value="noise">{t(($) => $.sensors.noise)}</SensorTabsTrigger>
-						<SensorTabsTrigger value="vibration">{t(($) => $.sensors.vibration)}</SensorTabsTrigger>
+						<SensorTabsTrigger value="all">
+							{t(($) => $.sensors.overview)}
+						</SensorTabsTrigger>
+						<SensorTabsTrigger value="dust">
+							{t(($) => $.sensors.dust)}
+						</SensorTabsTrigger>
+						<SensorTabsTrigger value="noise">
+							{t(($) => $.sensors.noise)}
+						</SensorTabsTrigger>
+						<SensorTabsTrigger value="vibration">
+							{t(($) => $.sensors.vibration)}
+						</SensorTabsTrigger>
 					</TabsList>
 				</Tabs>
 
@@ -85,7 +115,9 @@ export default function ForemanOverview() {
 						onValueChange={(value) => setSelectedUserId(value)}
 					>
 						<ComboboxInput
-							placeholder={t(($) => $.foremanDashboard.overview.selectUserPlaceholder)}
+							placeholder={t(
+								($) => $.foremanDashboard.overview.selectUserPlaceholder,
+							)}
 							showClear={true}
 							disabled={isUserComboboxDisabled}
 							className="bg-background dark:bg-input/30"
@@ -145,7 +177,11 @@ export default function ForemanOverview() {
 
 				<div className="flex flex-col gap-12 md:w-3/5">
 					{isUserSelected ? (
-						<UserDetails selectedUser={selectedUser} selectedDate={selectedDate} sensor={sensor} />
+						<UserDetails
+							selectedUser={selectedUser}
+							selectedDate={selectedDate}
+							sensor={sensor}
+						/>
 					) : (
 						<>
 							<AttentionCard
@@ -168,7 +204,11 @@ export default function ForemanOverview() {
 	);
 }
 
-function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSummary | undefined }) {
+function SensorSummaryGrid({
+	thresholdSummary,
+}: {
+	thresholdSummary: ThresholdSummary | undefined;
+}) {
 	const { t } = useTranslation();
 
 	if (thresholdSummary === undefined) {
@@ -176,7 +216,7 @@ function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSu
 	}
 
 	return (
-		<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+		<div className="grid grid-cols-1 w-full gap-6 lg:grid-cols-3">
 			{sensors.map((sensorType: Sensor) => (
 				<PieChartCard
 					data={{
@@ -188,12 +228,16 @@ function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSu
 						warning: {
 							name: "Warning",
 							value: thresholdSummary[sensorType].warning,
-							label: t(($) => $.foremanDashboard.overview.statCards.warning.label),
+							label: t(
+								($) => $.foremanDashboard.overview.statCards.warning.label,
+							),
 						},
 						danger: {
 							name: "Danger",
 							value: thresholdSummary[sensorType].danger,
-							label: t(($) => $.foremanDashboard.overview.statCards.danger.label),
+							label: t(
+								($) => $.foremanDashboard.overview.statCards.danger.label,
+							),
 						},
 					}}
 					label={t(($) => $.sensors[sensorType])}
@@ -206,9 +250,18 @@ function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSu
 	);
 }
 
-function SensorTabsTrigger({ value, children }: { value: Sensor | "all"; children: ReactNode }) {
+function SensorTabsTrigger({
+	value,
+	children,
+}: {
+	value: Sensor | "all";
+	children: ReactNode;
+}) {
 	return (
-		<TabsTrigger value={value} className="p-4 data-[state=active]:bg-neutral-900 data-[state=active]:text-white">
+		<TabsTrigger
+			value={value}
+			className="p-4 data-[state=active]:bg-neutral-900 data-[state=active]:text-white"
+		>
 			{children}
 		</TabsTrigger>
 	);
