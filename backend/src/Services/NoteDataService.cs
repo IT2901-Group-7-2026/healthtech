@@ -6,7 +6,7 @@ namespace Backend.Services;
 
 public interface INoteDataService
 {
-	Task<IEnumerable<NoteData>> GetNotesAsync(NoteDataRequestDto request);
+	Task<IEnumerable<NoteData>> GetNotesAsync(NoteDataRequestDto request, Guid userId);
 	Task<NoteData> CreateNoteAsync(NoteDataCreateDto createDto, Guid userId);
 	Task<NoteData> UpdateNoteAsync(NoteDataDto updateDto);
 	Task<NoteData?> DeleteNoteAsync(NoteDataDto request, Guid userId);
@@ -16,7 +16,7 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
 {
 	private readonly AppDbContext _dbContext = dbContext;
 
-	public async Task<IEnumerable<NoteData>> GetNotesAsync(NoteDataRequestDto request)
+	public async Task<IEnumerable<NoteData>> GetNotesAsync(NoteDataRequestDto request, Guid userId)
 	{
 		if (
 			request.StartTime!.Value.Offset != TimeSpan.Zero
@@ -28,7 +28,8 @@ public class NoteDataService(AppDbContext dbContext) : INoteDataService
 
 		return await _dbContext
 			.NoteData.Where(n =>
-				n.Time >= request.StartTime
+				n.UserId == userId
+				&& n.Time >= request.StartTime
 				&& n.Time <= request.EndTime
 				&& !string.IsNullOrEmpty(n.Note)
 			)
