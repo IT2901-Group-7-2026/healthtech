@@ -19,7 +19,7 @@ export interface UserStatusData {
 
 export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
 	return (
-		<ChartContainer config={{}} className="size-1/1">
+		<ChartContainer config={{}} className="size-full">
 			<PieChart responsive={true}>
 				<Pie
 					dataKey={"value"}
