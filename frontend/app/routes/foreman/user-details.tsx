@@ -8,11 +8,11 @@ import { DateContext } from "@/features/date-picker/use-date";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
 import {
-    type Aggregation,
-    Aggregations,
-    type SensorDto,
-    type SensorOverviewBucketDto,
-    type UserWithStatusDto,
+	type Aggregation,
+	Aggregations,
+	type SensorDto,
+	type SensorOverviewBucketDto,
+	type UserWithStatusDto,
 } from "@/lib/dto";
 import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
 import { type Sensor, sensors } from "@/lib/sensors";
@@ -126,12 +126,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	const dustPm25TwaThreshold = getThreshold(sensor, "pm25_twa");
 	const dustPm10TwaThreshold = getThreshold(sensor, "pm10_twa");
 
-	const [
-		dataResult,
-		dustTwa1Result,
-		dustTwa25Result,
-		dustTwa10Result,
-	] = useQueries({
+	const [dataResult, dustTwa1Result, dustTwa25Result, dustTwa10Result] = useQueries({
 		queries: [
 			sensorQueryOptions({
 				sensor,
@@ -236,11 +231,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 
 			<div className="flex flex-wrap items-center gap-4">
 				{dustTwa1Data && dustTwa1Data.length > 0 && (
-					<DustChart
-						label="PM1 TWA"
-						value={dustTwa1Data[0].value}
-						thresholdValue={dustThreshold.danger}
-					/>
+					<DustChart label="PM1 TWA" value={dustTwa1Data[0].value} thresholdValue={dustThreshold.danger} />
 				)}
 				{dustTwa25Data && dustTwa25Data.length > 0 && (
 					<DustChart
@@ -270,7 +261,11 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 
 	const query = buildSensorQuery(sensor, "day", selectedDate);
 
-	const {data: response, isLoading, isError} = useQuery(
+	const {
+		data: response,
+		isLoading,
+		isError,
+	} = useQuery(
 		sensorQueryOptions({
 			sensor,
 			query,
@@ -351,7 +346,11 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 		usePeakAggregation,
 	});
 
-	const {data: response, isLoading, isError} = useQuery(
+	const {
+		data: response,
+		isLoading,
+		isError,
+	} = useQuery(
 		sensorQueryOptions({
 			sensor,
 			query,

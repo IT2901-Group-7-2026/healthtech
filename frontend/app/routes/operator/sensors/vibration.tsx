@@ -32,7 +32,11 @@ export default function Vibration() {
 
 	const query = buildSensorQuery(sensor, view, date);
 
-	const {data: response, isLoading, isError} = useQuery(
+	const {
+		data: response,
+		isLoading,
+		isError,
+	} = useQuery(
 		sensorQueryOptions({
 			sensor,
 			query,
