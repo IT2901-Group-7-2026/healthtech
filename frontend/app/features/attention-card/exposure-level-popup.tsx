@@ -8,9 +8,9 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 const getExposureBadges = (worker: UserWithStatusDto, popupStatus: DangerLevel) => {
-	const exposures = sensors.map((key) => ({
-		key,
-		data: worker.status[key],
+	const exposures = sensors.map((sensor) => ({
+		sensor,
+		data: worker.status[sensor],
 	}));
 
 	return exposures.filter(({ data }) => {
@@ -29,8 +29,8 @@ const getExposureBadges = (worker: UserWithStatusDto, popupStatus: DangerLevel) 
 };
 
 const WorkerRow = ({ worker, status }: { worker: UserWithStatusDto; status: DangerLevel }) => {
-	const exposureBadges = getExposureBadges(worker, status).map(({ key, data }) => (
-		<ExposureBadge key={key} sensor={key} dangerLevel={data?.dangerLevel ?? "safe"} />
+	const exposureBadges = getExposureBadges(worker, status).map(({ sensor, data }) => (
+		<ExposureBadge key={sensor} sensor={sensor} dangerLevel={data?.dangerLevel ?? "safe"} />
 	));
 
 	return (
