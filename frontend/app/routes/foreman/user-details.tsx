@@ -160,6 +160,10 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	const dustTwa25Data = dustTwa25Result.data;
 	const dustTwa10Data = dustTwa10Result.data;
 
+	const noDustTwa1Data = !(dustTwa1Data && dustTwa1Data.length > 0);
+	const noDustTwa25Data = !(dustTwa25Data && dustTwa25Data.length > 0);
+	const noDustTwa10Data = !(dustTwa10Data && dustTwa10Data.length > 0);
+
 	const maxValue = data ? Math.max(...data.map((point) => point.value)) : 0;
 	const minY = 0;
 	let maxY = 45;
@@ -209,23 +213,30 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 			</SensorChartCard>
 
 			<div className="flex flex-wrap items-center gap-4">
-				{dustTwa1Data && dustTwa1Data.length > 0 && (
-					<DustChart label="PM1 TWA" value={dustTwa1Data[0].value} thresholdValue={dustThreshold.danger} />
-				)}
-				{dustTwa25Data && dustTwa25Data.length > 0 && (
+				{
+					<DustChart
+						label="PM1 TWA"
+						value={dustTwa1Data?.[0]?.value ?? 0}
+						thresholdValue={dustThreshold.danger}
+						noData={noDustTwa1Data}
+					/>
+				}
+				{
 					<DustChart
 						label="PM2.5 TWA"
-						value={dustTwa25Data[0].value}
+						value={dustTwa25Data?.[0]?.value ?? 0}
 						thresholdValue={dustPm25TwaThreshold.danger}
+						noData={noDustTwa25Data}
 					/>
-				)}
-				{dustTwa10Data && dustTwa10Data.length > 0 && (
+				}
+				{
 					<DustChart
 						label="PM10 TWA"
-						value={dustTwa10Data[0].value}
+						value={dustTwa10Data?.[0]?.value ?? 0}
 						thresholdValue={dustPm10TwaThreshold.danger}
+						noData={noDustTwa10Data}
 					/>
-				)}
+				}
 			</div>
 		</div>
 	);

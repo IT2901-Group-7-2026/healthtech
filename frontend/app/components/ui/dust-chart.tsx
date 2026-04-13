@@ -8,10 +8,11 @@ interface Props {
 	thresholdValue: number;
 	unit?: string;
 	label?: string;
+	noData: boolean;
 }
 
 // NOTE: This is just a proof of concept. The code will be rewritten completely later on.
-export function DustChart({ value, thresholdValue, unit, label }: Props) {
+export function DustChart({ value, thresholdValue, unit, label, noData }: Props) {
 	const { t } = useTranslation();
 	const resolvedUnit = unit ?? t(($) => $.sensors.dustUnit);
 	const resolvedLabel = label ?? t(($) => $.sensors.dust);
@@ -41,7 +42,7 @@ export function DustChart({ value, thresholdValue, unit, label }: Props) {
 
 	return (
 		<Card className="w-fit">
-			<div className="relative h-[170px] w-[200px]">
+			{!noData && <div className="relative h-[170px] w-[200px]">
 				<ChartContainer config={{}} className="h-full w-full">
 					<PieChart width={200} height={170}>
 						<defs>
@@ -124,11 +125,13 @@ export function DustChart({ value, thresholdValue, unit, label }: Props) {
 						{resolvedUnit}
 					</text>
 				</svg>
-			</div>
+			</div>}
 
-			<div className="mt-2 w-full text-center text-sm font-medium">
+			{!noData && <div className="mt-2 w-full text-center text-sm font-medium">
 				{resolvedLabel}
-			</div>
+			</div>}
+
+			{noData && <div className="flex items-center text-center h-[170px] w-[200px]"><p>{t(($) => $.common.noData)}</p></div>}
 		</Card>
 	);
 }
