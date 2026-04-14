@@ -136,11 +136,8 @@ export default function ForemanOverview() {
 						<Card muted={true}>
 							<ViewPicker allowedViews={["day", "week"]} withNavigationButtons={true} />
 						</Card>
-					</aside>
-				</div>
 
-				<aside className="col-start-3 row-start-2 flex flex-col gap-4">
-					<Card muted={true}>
+						<Card muted={true}>
 						<DatePicker
 							mode={"day"}
 							showWeekNumber={true}
@@ -153,7 +150,8 @@ export default function ForemanOverview() {
 							captionLayout="label"
 						/>
 					</Card>
-				</aside>
+					</aside>
+				</div>
 			</div>
 		</div>
 	);
