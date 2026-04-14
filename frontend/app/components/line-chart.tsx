@@ -115,6 +115,8 @@ export function ChartLineDefault({
 	const id = useId();
 	const formatDate = useFormatDate();
 
+	const Y_AXIS_WIDTH = 60;
+
 	const { warning, danger, peakDanger } = getThreshold(sensor, dustField);
 	const dangerThreshold = usePeakData && peakDanger ? peakDanger : danger;
 
@@ -238,7 +240,7 @@ export function ChartLineDefault({
 						/>
 						<YAxis
 							dataKey="value"
-							width={hideLabels ? 48 : undefined}
+							width={hideLabels ? Y_AXIS_WIDTH : undefined}
 							tickLine={false}
 							axisLine={false}
 							tick={{
@@ -320,7 +322,7 @@ export function ChartLineDefault({
 								verticalAlign="bottom"
 								align="left"
 								content={() => (
-									<div className={cn(hideLabels ? "pl-12" : "pl-15")}>
+									<div style={{ paddingLeft: Y_AXIS_WIDTH }}>
 										<ThresholdLegend
 											items={[
 												{
