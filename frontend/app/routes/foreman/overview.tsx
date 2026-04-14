@@ -138,18 +138,18 @@ export default function ForemanOverview() {
 						</Card>
 
 						<Card muted={true}>
-						<DatePicker
-							mode={"day"}
-							showWeekNumber={true}
-							date={date}
-							onDateChange={setDate}
-							disabled={{ before: minSelectableDate, after: maxSelectableDate }}
-							pagedNavigation={false}
-							hideNavigation={true}
-							disableNavigation={true}
-							captionLayout="label"
-						/>
-					</Card>
+							<DatePicker
+								mode={"day"}
+								showWeekNumber={true}
+								date={date}
+								onDateChange={setDate}
+								disabled={{ before: minSelectableDate, after: maxSelectableDate }}
+								pagedNavigation={false}
+								hideNavigation={true}
+								disableNavigation={true}
+								captionLayout="label"
+							/>
+						</Card>
 					</aside>
 				</div>
 			</div>
