@@ -14,12 +14,14 @@ import { DayViewIcon, MonthViewIcon, WeekViewIcon } from "./views";
 interface ViewPickerProps {
 	withNavigationButtons?: boolean;
 	className?: string;
+	allowedViews?: Array<View>;
 }
 
-export function ViewPicker({ className, withNavigationButtons = false }: ViewPickerProps) {
+export function ViewPicker({ className, withNavigationButtons = false, allowedViews }: ViewPickerProps) {
 	const { view, setView } = useView();
 	const { date, navigate, setDate } = useDate();
 	const { t } = useTranslation();
+	const views = allowedViews ?? ["day", "week", "month"];
 
 	const isTodayDate = isToday(date, { in: TIMEZONE });
 
@@ -29,38 +31,48 @@ export function ViewPicker({ className, withNavigationButtons = false }: ViewPic
 
 	return (
 		<div className="flex flex-col gap-2">
-			<ToggleGroup
-				type="single"
-				value={view}
-				variant="outline"
-				className={cn("grid grid-cols-3", className)}
-				onValueChange={(value: View) => {
-					// Value is an empty string when clicking the already selected item, so we need this check to avoid
-					// deselecting.
-					if (value) {
-						setView(value);
-					}
-				}}
-			>
-				<ToggleGroupItem value="day" aria-label={t(($) => $.views.day)}>
-					<div className="flex items-center gap-2">
-						<DayViewIcon className="size-4" />
-						<p className="text-sm">{t(($) => $.views.day)}</p>
-					</div>
-				</ToggleGroupItem>
-				<ToggleGroupItem value="week" aria-label={t(($) => $.views.week)}>
-					<div className="flex items-center gap-2">
-						<WeekViewIcon className="size-4" />
-						<p className="text-sm">{t(($) => $.views.week)}</p>
-					</div>
-				</ToggleGroupItem>
-				<ToggleGroupItem value="month" aria-label={t(($) => $.views.month)}>
-					<div className="flex items-center gap-2">
-						<MonthViewIcon className="size-4" />
-						<p className="text-sm">{t(($) => $.views.month)}</p>
-					</div>
-				</ToggleGroupItem>
-			</ToggleGroup>
+			<div className="flex justify-center">
+				<ToggleGroup
+					type="single"
+					value={view}
+					variant="outline"
+					className={cn("inline-grid w-fit auto-cols-fr grid-flow-col", className)}
+					onValueChange={(value: View) => {
+						// Value is an empty string when clicking the already selected item, so we need this check to avoid
+						// deselecting.
+						if (value) {
+							setView(value);
+						}
+					}}
+				>
+					{views.includes("day") && (
+						<ToggleGroupItem value="day" aria-label={t(($) => $.views.day)}>
+							<div className="flex items-center gap-2">
+								<DayViewIcon className="size-4" />
+								<p className="text-sm">{t(($) => $.views.day)}</p>
+							</div>
+						</ToggleGroupItem>
+					)}
+
+					{views.includes("week") && (
+						<ToggleGroupItem value="week" aria-label={t(($) => $.views.week)}>
+							<div className="flex items-center gap-2">
+								<WeekViewIcon className="size-4" />
+								<p className="text-sm">{t(($) => $.views.week)}</p>
+							</div>
+						</ToggleGroupItem>
+					)}
+
+					{views.includes("month") && (
+						<ToggleGroupItem value="month" aria-label={t(($) => $.views.month)}>
+							<div className="flex items-center gap-2">
+								<MonthViewIcon className="size-4" />
+								<p className="text-sm">{t(($) => $.views.month)}</p>
+							</div>
+						</ToggleGroupItem>
+					)}
+				</ToggleGroup>
+			</div>
 
 			{withNavigationButtons && (
 				<div className="grid grid-cols-3 items-center gap-2">

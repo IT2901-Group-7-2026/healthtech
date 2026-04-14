@@ -13,9 +13,10 @@ interface Props {
 	users: Array<UserWithStatusDto>;
 	sensor: Sensor;
 	userOnClick?: (userId: string) => void;
+	isWeekly?: boolean;
 }
 
-export function UserStatusChart({ users, sensor, userOnClick }: Props) {
+export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props) {
 	const [t] = useTranslation();
 	const threshold = getThreshold(sensor);
 	const getPercent = (value: number) => Math.round((value / threshold.danger) * 100);
@@ -33,7 +34,12 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 			return [];
 		}
 
-		const percent = getPercent(sensorStatus.value);
+		const days = isWeekly ? 7 : 1;
+
+		// Vibration should show average value in graph
+		const normalizedValue = sensor === "vibration" ? sensorStatus.value / days : sensorStatus.value;
+
+		const percent = getPercent(normalizedValue);
 		// Only show peak if it's above the current value
 		const peakPercent =
 			sensorStatus.peakValue && sensorStatus.peakValue > sensorStatus.value
