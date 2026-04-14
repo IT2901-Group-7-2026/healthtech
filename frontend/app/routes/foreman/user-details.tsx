@@ -210,8 +210,8 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 								<div className="flex items-center gap-2">
 									<Tabs value={displayUnit} onValueChange={(v) => setDisplayUnit(v as SensorUnit)}>
 										<TabsList>
-											<TabsTrigger value="μg/m³">{"μg/m³"}</TabsTrigger>
-											<TabsTrigger value="mg/m³">{"mg/m³"}</TabsTrigger>
+											<TabsTrigger value="μg/m³">{t(($) => $.sensors.dustUnitUg)}</TabsTrigger>
+											<TabsTrigger value="mg/m³">{t(($) => $.sensors.dustUnitMg)}</TabsTrigger>
 										</TabsList>
 									</Tabs>
 									<Button

@@ -22,7 +22,8 @@
     "all": "Alle sensorer",
     "overview": "Oversikt",
     "selectPlaceholder": "Sensor",
-    "dustUnit": "µg/m³"
+    "dustUnitUg": "µg/m³",
+    "dustUnitMg": "mg/m³"
   },
   "dangerLevels": {
     "safe": "Trygg",
