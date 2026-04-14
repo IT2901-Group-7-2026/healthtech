@@ -1,10 +1,12 @@
 import { parseAsStringLiteral } from "nuqs";
 
-export type Sensor = (typeof sensors)[number];
 export const sensors = ["dust", "noise", "vibration"] as const;
+export type Sensor = (typeof sensors)[number];
 export const parseAsSensor = parseAsStringLiteral(sensors);
 
-export type SensorUnit = "μg/m³" | "mg/m³" | "points" | "db" | "db (TWA)";
+export const sensorUnits = ["μg/m³", "mg/m³", "points", "db", "db (TWA)"] as const;
+export type SensorUnit = (typeof sensorUnits)[number];
+export const parseAsSensorUnit = parseAsStringLiteral(sensorUnits);
 
 export function isSensor(input: string): input is Sensor {
 	// biome-ignore lint/suspicious/noExplicitAny: Array#includes requires argument to be a sensor, not a string

@@ -15,7 +15,7 @@ import {
 	type UserWithStatusDto,
 } from "@/lib/dto";
 import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
-import { type Sensor, type SensorUnit, sensors } from "@/lib/sensors";
+import { parseAsSensorUnit, type Sensor, type SensorUnit, sensors } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapOverviewBucketsToChartRows } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
@@ -23,7 +23,7 @@ import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { addDays, endOfDay, startOfDay, subDays } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import { type ReactNode, useId, useState } from "react";
+import { type ReactNode, useId } from "react";
 import { useTranslation } from "react-i18next";
 export function UserDetails({
 	selectedUser,
@@ -118,7 +118,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	const chartContainerId = useId();
 	const sensor: Sensor = "dust";
 
-	const [displayUnit, setDisplayUnit] = useState<SensorUnit>("μg/m³");
+	const [displayUnit, setDisplayUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("μg/m³"));
 
 	const query = buildSensorQuery(sensor, "day", selectedDate);
 	const dustThreshold = getThreshold(sensor, query.field);

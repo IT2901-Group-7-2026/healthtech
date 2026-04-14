@@ -10,12 +10,13 @@ import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorQueryOptions } from "@/lib/api";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import type { Sensor, SensorUnit } from "@/lib/sensors";
+import { parseAsSensorUnit, type Sensor, type SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { useId, useState } from "react";
+import { useQueryState } from "nuqs";
+import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function Dust() {
@@ -27,7 +28,7 @@ export default function Dust() {
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 
-	const [displayUnit, setDisplayUnit] = useState<SensorUnit>("μg/m³");
+	const [displayUnit, setDisplayUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("μg/m³"));
 
 	const sensor: Sensor = "dust";
 
