@@ -22,6 +22,7 @@ import { addWeeks, endOfDay, startOfDay, subDays } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import { UserDetails } from "./user-details";
 
 export default function ForemanOverview() {
 	const { t } = useTranslation();
@@ -54,6 +55,7 @@ export default function ForemanOverview() {
 	const selectedUser = users?.find((subordinate) => subordinate.id === selectedUserId);
 	const subordinateCount = subordinates?.length ?? 0;
 	const isUserComboboxDisabled = !users || users.length === 0;
+	const isUserSelected = selectedUser !== undefined;
 
 	const userComboboxOptions =
 		users?.map((u) => ({
@@ -113,33 +115,38 @@ export default function ForemanOverview() {
 					className="grid w-full gap-6"
 					style={{
 						gridTemplateColumns: "minmax(0, 3fr) calc(var(--spacing) * 73)",
-						gridTemplateRows: "auto",
 					}}
 				>
-					<div className="col-start-1 flex flex-col gap-12">
-						<AttentionCard
-							subordinates={subordinates ?? []}
-							isSubordinatesLoading={isSubordinatesLoading}
-							thresholdSummary={thresholdSummary}
-							isThresholdSummaryLoading={isThresholdSummaryLoading}
-							isWeekly={isWeekly}
-						/>
-
-						{sensor ? (
-							<UserStatusChart users={subordinates ?? []} sensor={sensor} isWeekly={isWeekly} />
+					<div className="flex flex-col gap-12">
+						{isUserSelected ? (
+							<UserDetails selectedUser={selectedUser} selectedDate={selectedDate} sensor={sensor} />
 						) : (
-							<SensorSummaryGrid thresholdSummary={thresholdSummary} />
+							<>
+								<AttentionCard
+									subordinates={subordinates ?? []}
+									isSubordinatesLoading={isSubordinatesLoading}
+									thresholdSummary={thresholdSummary}
+									isThresholdSummaryLoading={isThresholdSummaryLoading}
+									isWeekly={isWeekly}
+								/>
+
+								{sensor && (
+									<UserStatusChart users={subordinates ?? []} sensor={sensor} isWeekly={isWeekly} />
+								)}
+
+								<SensorSummaryGrid thresholdSummary={thresholdSummary} />
+							</>
 						)}
 					</div>
 
-					<aside className="col-start-2 flex flex-col gap-4">
+					<aside className="flex flex-col gap-4">
 						<Card muted={true}>
 							<ViewPicker allowedViews={["day", "week"]} withNavigationButtons={true} />
 						</Card>
 
 						<Card muted={true}>
 							<DatePicker
-								mode={"day"}
+								mode="day"
 								showWeekNumber={true}
 								date={date}
 								onDateChange={setDate}
