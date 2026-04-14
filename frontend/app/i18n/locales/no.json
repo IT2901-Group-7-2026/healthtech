@@ -1,7 +1,7 @@
 {
   "app": {
-    "title": "HealthTech | Operatør Eksponeringsdashboard",
-    "description": "Overvåk og administrer eksponering for støv, vibrasjon og støy."
+    "title": "HealthTech | Eksponeringsdashboard",
+    "description": "Overvåk eksponering for støv, vibrasjon og støy."
   },
   "common": {
     "loading": "Laster inn data...",
@@ -212,9 +212,17 @@
       "safe": "Alt er bra!",
       "warning": "Oppmerksomhet anbefales!",
       "danger": "Oppmerksomhet anbefales!",
-      "criticalExposureText": "Operatører over eksponeringsgrensen. Umiddelbar oppfølging anbefales.",
-      "approachingThresholdText": "Operatører nærmer seg eksponeringsgrensen. Vurder forebyggende tiltak.",
-      "oldData": "Du ser på tidligere data."
+      "dayView": {
+        "danger": "Operatører over eksponeringsgrensen. Umiddelbar oppfølging anbefales.",
+        "warning": "Operatører nærmer seg eksponeringsgrensen. Vurder forebyggende tiltak."
+      },
+      "weekView": {
+        "danger": "Operatører over ukentlig eksponeringsgrense. Umiddelbar oppfølging anbefales.",
+        "warning": "Operatører nærmer seg ukentlig eksponeringsgrense. Umiddelbar oppfølging anbefales."
+      },
+      "oldData": "Du ser på tidligere data.",
+      "day": "Dag",
+      "week": "Uke"
     },
     "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",

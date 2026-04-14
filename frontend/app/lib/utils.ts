@@ -1,14 +1,15 @@
 import type { View } from "@/features/views/views";
 import type { TranslateFn } from "@/i18n/config.js";
-import type { TZDate } from "@date-fns/tz";
+import { TIMEZONE_NAME } from "@/i18n/locale";
+import { TZDate } from "@date-fns/tz";
 import { type ClassValue, clsx } from "clsx";
-import { addDays, addMonths, addWeeks, getHours, subDays, subMonths, subWeeks } from "date-fns";
+import { addDays, addMonths, addWeeks, subDays, subMonths, subWeeks } from "date-fns";
 import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import type { DangerLevel } from "./danger-levels";
-import type { SensorDataResponseDto, User } from "./dto";
+import { now } from "./date";
+import { DEFAULT_MAX_HOUR_DOMAIN, DEFAULT_MIN_HOUR_DOMAIN, type HourDomainDto, type SensorDto, type User } from "./dto";
 import type { Sensor } from "./sensors";
-import type { TimeBucketStatus } from "./time-bucket-types";
 
 const MAX_CHART_HOUR = 23;
 const MIN_CHART_HOUR = 0;
@@ -44,7 +45,7 @@ export const getNextDay = (selectedDay: TZDate, view: View): TZDate => {
 };
 
 export function computeYAxisRange(
-	data: Array<SensorDataResponseDto>,
+	data: Array<SensorDto>,
 	options?: {
 		topPadding?: number;
 		bottomPadding?: number;
@@ -80,11 +81,8 @@ export const userRoleToString = (role: User["role"], t: TranslateFn) => {
 	}
 };
 
-export function downsampleDataPoints(
-	data: Array<SensorDataResponseDto>,
-	bucketSize: number,
-): Array<SensorDataResponseDto> {
-	const result: Array<SensorDataResponseDto> = [];
+export function downsampleDataPoints(data: Array<SensorDto>, bucketSize: number): Array<SensorDto> {
+	const result: Array<SensorDto> = [];
 
 	for (let i = 0; i < data.length; i += bucketSize) {
 		const bucket = data.slice(i, i + bucketSize);
@@ -109,7 +107,7 @@ export function downsampleDataPoints(
 	return result;
 }
 
-export function downsampleSensorData(sensor: Sensor, data: Array<SensorDataResponseDto>): Array<SensorDataResponseDto> {
+export function downsampleSensorData(sensor: Sensor, data: Array<SensorDto>): Array<SensorDto> {
 	if (sensor === "vibration") {
 		return data;
 	}
@@ -156,19 +154,40 @@ export function getEmoji(dangerLevel: DangerLevel | null) {
 
 export const clampHour = (hour: number) => Math.max(Math.min(hour, MAX_CHART_HOUR), MIN_CHART_HOUR);
 
-export function getHourDomainFromBuckets(buckets: Array<TimeBucketStatus>) {
-	if (buckets.length === 0) {
+export function getHourDomain(
+	hourDomain: HourDomainDto | undefined,
+	dates: Array<TZDate> | undefined,
+	viewForPadding: View,
+): {
+	minHour: number;
+	maxHour: number;
+} {
+	if (!(dates && hourDomain)) {
+		const today = now();
 		return {
-			minHour: MIN_CHART_HOUR,
-			maxHour: MAX_CHART_HOUR,
+			minHour: convertUtcHourToLocalHour(hourDomain?.minHourUtc ?? DEFAULT_MIN_HOUR_DOMAIN, today),
+			maxHour: convertUtcHourToLocalHour(hourDomain?.maxHourUtc ?? DEFAULT_MAX_HOUR_DOMAIN, today),
 		};
 	}
 
-	const hours = buckets.map(({ time }) => getHours(time));
+	const minHours = dates.map((date) => convertUtcHourToLocalHour(hourDomain.minHourUtc, date));
 
-	// We want to show an hour before and after the actual data. We clamp the values to chart.
-	const minHour = clampHour(Math.min(...hours) - 1);
-	const maxHour = clampHour(Math.max(...hours) + 1);
+	const maxHours = dates.map((date) => convertUtcHourToLocalHour(hourDomain.maxHourUtc, date));
 
-	return { minHour, maxHour };
+	// maxHour in day views are non-inclusive, meaning if the last data point is 14:30,
+	// maxHour needs to be at least 15 to include that data point in the chart. While week and month views are inclusive.
+	// We add an additional hour of padding to ensure that the data doesn't look cut off
+	const minHourPadding = 1;
+	const maxHourPadding = viewForPadding === "day" ? 2 : 1;
+
+	return {
+		minHour: clampHour(Math.min(...minHours) - minHourPadding),
+		maxHour: clampHour(Math.max(...maxHours) + maxHourPadding),
+	};
+}
+
+function convertUtcHourToLocalHour(utcHour: number, date: TZDate): number {
+	const localDate = new TZDate(date, TIMEZONE_NAME);
+	localDate.setUTCHours(utcHour);
+	return localDate.getHours();
 }

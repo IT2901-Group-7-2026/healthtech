@@ -51,7 +51,7 @@ export function Notifications({ onParentClose }: { onParentClose: () => void }) 
 
 					if (user.role === "foreman") {
 						const formattedDate = formatDate(date, "yyyy-MM-dd");
-						notificationLinkSearch = `?sensor=${sensor}&filterDate=${formattedDate}`;
+						notificationLinkSearch = `?sensor=${sensor}&date=${formattedDate}`;
 					} else {
 						const formattedDate = formatDate(date, "yyyy-MM-dd");
 						notificationLinkSearch = `?view=Day&date=${formattedDate}`;

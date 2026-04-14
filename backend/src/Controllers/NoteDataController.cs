@@ -14,12 +14,12 @@ public class NoteDataController(INoteDataService noteDataService) : ControllerBa
 	[HttpPost("{userId}")]
 	public async Task<ActionResult<IEnumerable<NoteDataDto>>> GetNotesAsync(
 		[FromBody] NoteDataRequestDto request,
-		[FromRoute] string userId
+		[FromRoute] Guid userId
 	)
 	{
 		try
 		{
-			IEnumerable<NoteData> notes = await _noteDataService.GetNotesAsync(request);
+			IEnumerable<NoteData> notes = await _noteDataService.GetNotesAsync(request, userId);
 			var dtos = notes.Select(NoteDataDto.FromEntity).ToList();
 
 			return dtos;
