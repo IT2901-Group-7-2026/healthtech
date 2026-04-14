@@ -5,9 +5,9 @@ import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
 import type { SensorDataResponseDto, SensorTypeField } from "@/lib/dto";
-import type { Sensor } from "@/lib/sensors";
+import type { Sensor, SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import { cn } from "@/lib/utils";
+import { cn, formatSensorValue } from "@/lib/utils";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import { type ActiveDotProps, CartesianGrid, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
@@ -255,11 +255,12 @@ export function ChartLineDefault({
 											fill: "var(--color-muted-foreground)",
 										}
 							}
+							tickFormatter={(value) => formatSensorValue(value, unit as SensorUnit)}
 						/>
 						<ChartTooltip
 							cursor={false}
 							content={<ChartTooltipContent hideLabel={true} />}
-							formatter={(value?: number) => [`${value?.toFixed(2) ?? "N/A"}`, ` ${unit}`]}
+							formatter={(value?: number) => [formatSensorValue(value, unit as SensorUnit), ` ${unit}`]}
 						/>
 
 						<defs>

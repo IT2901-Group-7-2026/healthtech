@@ -10,29 +10,13 @@ import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorQueryOptions } from "@/lib/api";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import type { Sensor } from "@/lib/sensors";
+import type { Sensor, SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
+import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomainFromBuckets } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
-
-type DustUnit = "μg/m³" | "mg/m³";
-
-const UG_TO_MG = 0.001;
-
-function convertValue(value: number, unit: DustUnit) {
-	return unit === "mg/m³" ? value * UG_TO_MG : value;
-}
-
-function convertThreshold(threshold: number, unit: DustUnit) {
-	return unit === "mg/m³" ? threshold * UG_TO_MG : threshold;
-}
-
-function formatAverage(value: number, unit: DustUnit) {
-	return unit === "mg/m³" ? value.toFixed(4) : Math.trunc(value);
-}
 
 export default function Dust() {
 	const { view } = useView();
@@ -43,7 +27,7 @@ export default function Dust() {
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 
-	const [displayUnit, setDisplayUnit] = useState<DustUnit>("μg/m³");
+	const [displayUnit, setDisplayUnit] = useState<SensorUnit>("μg/m³");
 
 	const sensor: Sensor = "dust";
 
@@ -73,26 +57,15 @@ export default function Dust() {
 	const { data, isLoading, isError } = dataResult;
 	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
 
-	const convertedData = data?.map((d) => ({
-		...d,
-		value: convertValue(d.value, displayUnit),
-		peakValue: d.peakValue == null ? d.peakValue : convertValue(d.peakValue, displayUnit),
-	}));
-
-	const maxValue = convertedData ? Math.max(...convertedData.map((d) => d.value)) : 0;
+	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
 	const minY = 0;
-	const baseMaxY = convertValue(45, displayUnit);
-	const maxY = maxValue > baseMaxY ? computeYAxisRange(convertedData ?? []).maxY : baseMaxY;
+	const baseMaxY = 45;
+	const maxY = maxValue > baseMaxY ? computeYAxisRange(data ?? []).maxY : baseMaxY;
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor);
 	const averageExposure =
-		convertedData && convertedData.length > 0
-			? convertedData.reduce((sum, d) => sum + d.value, 0) / convertedData.length
-			: 0;
-
-	const dangerThreshold = convertThreshold(dustThreshold.danger, displayUnit);
-	const warningThreshold = convertThreshold(dustThreshold.warning, displayUnit);
+		data && data.length > 0 ? data.reduce((sum, current) => sum + current.value, 0) / data.length : 0;
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">
@@ -121,8 +94,8 @@ export default function Dust() {
 						<ChartLineDefault
 							minHour={minHour}
 							maxHour={maxHour}
-							chartData={downsampleSensorData(sensor, convertedData ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatAverage(averageExposure, displayUnit)} ${displayUnit}`}
+							chartData={downsampleSensorData(sensor, data ?? [])}
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageExposure, displayUnit)} ${displayUnit}`}
 							unit={displayUnit}
 							maxY={maxY}
 							minY={minY}
@@ -131,7 +104,7 @@ export default function Dust() {
 							dustField={query.field}
 							headerRight={
 								<div className="flex items-center gap-2">
-									<Tabs value={displayUnit} onValueChange={(v) => setDisplayUnit(v as DustUnit)}>
+									<Tabs value={displayUnit} onValueChange={(v) => setDisplayUnit(v as SensorUnit)}>
 										<TabsList>
 											<TabsTrigger value="μg/m³">{"μg/m³"}</TabsTrigger>
 											<TabsTrigger value="mg/m³">{"mg/m³"}</TabsTrigger>
@@ -157,8 +130,8 @@ export default function Dust() {
 								</div>
 							}
 						>
-							<ThresholdLine y={dangerThreshold} dangerLevel="danger" />
-							<ThresholdLine y={warningThreshold} dangerLevel="warning" />
+							<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
+							<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
 						</ChartLineDefault>
 					</div>
 				</div>

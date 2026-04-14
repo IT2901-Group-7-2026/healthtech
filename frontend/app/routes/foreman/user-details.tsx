@@ -9,15 +9,15 @@ import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
 import { type Aggregation, Aggregations, type UserWithStatusDto } from "@/lib/dto";
 import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
-import { type Sensor, sensors } from "@/lib/sensors";
+import { type Sensor, type SensorUnit, sensors } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapOverviewBucketsToChartRows } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
+import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomainFromBuckets } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { addDays, endOfDay, startOfDay, subDays } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import { type ReactNode, useId } from "react";
+import { type ReactNode, useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 export function UserDetails({
 	selectedUser,
@@ -101,6 +101,8 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	const chartContainerId = useId();
 	const sensor: Sensor = "dust";
 
+	const [displayUnit, setDisplayUnit] = useState<SensorUnit>("μg/m³");
+
 	const query = buildSensorQuery(sensor, "day", selectedDate);
 	const weekHourRangeQuery = buildSensorQuery(sensor, "week", selectedDate, {
 		granularity: "hour",
@@ -175,27 +177,35 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 							minHour={minHour}
 							maxHour={maxHour}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageDustExposure)} ${t(($) => $.sensors.dustUnit)}`}
-							unit={t(($) => $.sensors.dustUnit)}
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageDustExposure, displayUnit)} ${displayUnit}`}
+							unit={displayUnit}
 							maxY={maxY}
 							minY={minY}
 							lineType="monotone"
 							sensor={sensor}
 							dustField={query.field}
 							headerRight={
-								<Button
-									size="sm"
-									variant="outline"
-									onClick={() =>
-										exportToPDF(
-											chartContainerId,
-											`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.username}-Dust-Exposure-Overview`,
-											`Dust Exposure - ${selectedUser.username} - ${selectedDate.toLocaleDateString(i18n.language)}`,
-										)
-									}
-								>
-									{t(($) => $.common.exportAsPdf)}
-								</Button>
+								<div className="flex items-center gap-2">
+									<Tabs value={displayUnit} onValueChange={(v) => setDisplayUnit(v as DustUnit)}>
+										<TabsList>
+											<TabsTrigger value="μg/m³">{"μg/m³"}</TabsTrigger>
+											<TabsTrigger value="mg/m³">{"mg/m³"}</TabsTrigger>
+										</TabsList>
+									</Tabs>
+									<Button
+										size="sm"
+										variant="outline"
+										onClick={() =>
+											exportToPDF(
+												chartContainerId,
+												`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.username}-Dust-Exposure-Overview`,
+												`Dust Exposure - ${selectedUser.username} - ${selectedDate.toLocaleDateString(i18n.language)}`,
+											)
+										}
+									>
+										{t(($) => $.common.exportAsPdf)}
+									</Button>
+								</div>
 							}
 						>
 							<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />

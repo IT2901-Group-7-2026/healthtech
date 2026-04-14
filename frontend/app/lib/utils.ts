@@ -7,11 +7,12 @@ import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import type { DangerLevel } from "./danger-levels";
 import type { SensorDataResponseDto, User } from "./dto";
-import type { Sensor } from "./sensors";
+import type { Sensor, SensorUnit } from "./sensors";
 import type { TimeBucketStatus } from "./time-bucket-types";
 
 const MAX_CHART_HOUR = 23;
 const MIN_CHART_HOUR = 0;
+const UG_TO_MG = 0.001;
 
 export function cn(...inputs: Array<ClassValue>) {
 	return twMerge(clsx(inputs));
@@ -171,4 +172,23 @@ export function getHourDomainFromBuckets(buckets: Array<TimeBucketStatus>) {
 	const maxHour = clampHour(Math.max(...hours) + 1);
 
 	return { minHour, maxHour };
+}
+
+export function formatSensorValue(
+	value: number | undefined,
+	unit: SensorUnit,
+	options?: { digitsMg?: number; digitsDefault?: number },
+) {
+	if (value == null) {
+		return "N/A";
+	}
+
+	const { digitsMg = 4, digitsDefault = 2 } = options ?? {};
+
+	// convert if mg
+	if (unit === "mg/m³") {
+		return (value * UG_TO_MG).toFixed(digitsMg);
+	}
+
+	return value.toFixed(digitsDefault);
 }
