@@ -1,5 +1,5 @@
 "use client";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
 import { useFormatDate } from "@/hooks/use-format-date";
@@ -315,21 +315,21 @@ export function ChartLineDefault({
 						{children}
 					</LineChart>
 				</ChartContainer>
+				<div className="flex justify-center">
+					<ThresholdLegend
+						items={[
+							{
+								dangerLevel: "danger",
+								color: `var(--${DangerLevels.danger.color})`,
+							},
+							{
+								dangerLevel: "warning",
+								color: `var(--${DangerLevels.warning.color})`,
+							},
+						]}
+					/>
+				</div>
 			</CardContent>
-			<CardFooter>
-				<ThresholdLegend
-					items={[
-						{
-							dangerLevel: "danger",
-							color: `var(--${DangerLevels.danger.color})`,
-						},
-						{
-							dangerLevel: "warning",
-							color: `var(--${DangerLevels.warning.color})`,
-						},
-					]}
-				/>
-			</CardFooter>
 		</Card>
 	);
 }
