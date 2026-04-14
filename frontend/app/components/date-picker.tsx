@@ -31,6 +31,7 @@ export function DatePicker({
 	const { t, i18n } = useTranslation();
 
 	const [selectedDate, setSelectedDate] = useState<TZDate>(date);
+	const [month, setMonth] = useState<Date>(date);
 
 	useEffect(() => {
 		if (!date) {
@@ -38,6 +39,7 @@ export function DatePicker({
 		}
 
 		setSelectedDate((prev) => (prev.getTime() === date.getTime() ? prev : date));
+		setMonth(date);
 	}, [date]);
 
 	const rangeStart = useMemo(() => {
@@ -116,7 +118,8 @@ export function DatePicker({
 			mode="single"
 			className={cn("w-65 bg-transparent p-0", className)}
 			required={true}
-			month={selectedDate}
+			month={month}
+			onMonthChange={(monthDate) => setMonth(monthDate)}
 			selected={selectedDate}
 			onSelect={handleDayClick}
 			modifiers={modifiers}
