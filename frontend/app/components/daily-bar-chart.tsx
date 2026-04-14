@@ -8,6 +8,7 @@ import { setHours, startOfDay } from "date-fns";
 import { Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, type To } from "react-router";
+import { DangerLevelDots } from "./danger-level-dots.js";
 import { SensorIcon } from "./sensor-icon.js";
 
 const CELL_SIZE = 10;
@@ -160,9 +161,15 @@ export function DailyBarChart({ data, startHour = 0, endHour = 23, headerRight, 
 												key={`${sensor}-${localHour}`}
 												to={linkTarget}
 												title={`${timeLabel} - ${dangerLevel}`}
-												className={className}
+												className="relative"
 												aria-label={`View ${sensor} data for ${timeLabel}`}
-											/>
+											>
+												<div className={className} />
+												<DangerLevelDots
+													dangerLevel={dangerLevel ?? null}
+													className="absolute right-1 bottom-1"
+												/>
+											</Link>
 										);
 									})}
 								</Fragment>

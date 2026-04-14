@@ -5,7 +5,7 @@ import { useDate } from "@/features/date-picker/use-date";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
-import type { SensorDataResponseDto, SensorTypeField } from "@/lib/dto";
+import type { SensorDto, SensorTypeField } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { cn } from "@/lib/utils";
@@ -13,6 +13,7 @@ import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import { type ActiveDotProps, CartesianGrid, Legend, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
+import { Skeleton } from "./ui/skeleton";
 
 const chartConfig = {
 	desktop: {
@@ -22,7 +23,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 interface LineChartProps {
-	chartData: Array<SensorDataResponseDto>;
+	chartData: Array<SensorDto>;
 	chartTitle?: string;
 	maxY: number;
 	minY: number;
@@ -120,7 +121,7 @@ export function ChartLineDefault({
 	const { warning, danger, peakDanger } = getThreshold(sensor, dustField);
 	const dangerThreshold = usePeakData && peakDanger ? peakDanger : danger;
 
-	const getValue = (data: SensorDataResponseDto) => (usePeakData ? (data.peakValue ?? data.value) : data.value);
+	const getValue = (data: SensorDto) => (usePeakData ? (data.peakValue ?? data.value) : data.value);
 
 	const maxData = chartData.toSorted((a, b) => getValue(b) - getValue(a))?.[0];
 	const minData = chartData.toSorted((a, b) => getValue(a) - getValue(b))?.[0];
@@ -360,10 +361,27 @@ const Dot = ({ cx, cy, value, warning, danger, isPeak }: DotProps & { isPeak?: b
 	return <circle cx={cx} cy={cy} r={6} fill={fillColor} />;
 };
 
-export function ThresholdLine({ y, dangerLevel }: { y: number; dangerLevel: DangerLevel }) {
+const getThresholdStrokeDasharray = (dangerLevel: DangerLevel) => (dangerLevel === "danger" ? "8 4" : "4 4");
+
+interface ThresholdLineProps {
+	dangerLevel: DangerLevel;
+	label?: string;
+	hideLineLabel?: boolean;
+}
+
+export function ThresholdLine({
+	dangerLevel,
+	label,
+	hideLineLabel,
+	...props
+}: ThresholdLineProps & ({ y: number } | { x: number })) {
+	const y = "y" in props ? props.y : undefined;
+	const x = "x" in props ? props.x : undefined;
+
+	const strokeDasharray = getThresholdStrokeDasharray(dangerLevel);
 	const color = `var(--${DangerLevels[dangerLevel].color})`;
 
-	return <ReferenceLine y={y} stroke={color} strokeDasharray="4 4" />;
+	return <ReferenceLine x={x} y={y} stroke={color} strokeDasharray={strokeDasharray} />;
 }
 
 type ThresholdLegendItem = {
@@ -376,12 +394,38 @@ function ThresholdLegend({ items }: { items: Array<ThresholdLegendItem> }) {
 
 	return (
 		<div className="flex items-center gap-6 text-sm">
-			{items.map((item) => (
-				<div key={item.dangerLevel} className="flex items-center gap-2">
-					<span className="inline-block w-6 border-t-2 border-dashed" style={{ borderColor: item.color }} />
-					<span>{t(($) => $.lineChart[item.dangerLevel])}</span>
-				</div>
-			))}
+			{items.map((item) => {
+				const strokeDasharray = getThresholdStrokeDasharray(item.dangerLevel);
+
+				return (
+					<div key={item.dangerLevel} className="flex items-center gap-2">
+						<svg width="24" height="8" className="shrink-0" aria-label={item.dangerLevel}>
+							<line
+								x1="0"
+								y1="4"
+								x2="24"
+								y2="4"
+								stroke={item.color}
+								strokeWidth="2"
+								strokeDasharray={strokeDasharray}
+							/>
+						</svg>
+						<span>{t(($) => $.lineChart[item.dangerLevel])}</span>
+					</div>
+				);
+			})}
 		</div>
+	);
+}
+
+export function ChartLineSkeleton() {
+	return (
+		<Card className="flex aspect-video w-full flex-col items-center gap-5">
+			<div className="flex w-full flex-row justify-between">
+				<Skeleton className="h-8 w-50" /> <Skeleton className="h-8 w-30" />
+			</div>
+
+			<Skeleton className="size-full"></Skeleton>
+		</Card>
 	);
 }
