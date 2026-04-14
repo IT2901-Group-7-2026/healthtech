@@ -5,7 +5,7 @@ import { useDate } from "@/features/date-picker/use-date";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
-import type { SensorDataResponseDto, SensorTypeField } from "@/lib/dto";
+import type { SensorDto, SensorTypeField } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { cn } from "@/lib/utils";
@@ -23,7 +23,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 interface LineChartProps {
-	chartData: Array<SensorDataResponseDto>;
+	chartData: Array<SensorDto>;
 	chartTitle?: string;
 	maxY: number;
 	minY: number;
@@ -117,7 +117,7 @@ export function ChartLineDefault({
 	const { warning, danger, peakDanger } = getThreshold(sensor, dustField);
 	const dangerThreshold = usePeakData && peakDanger ? peakDanger : danger;
 
-	const getValue = (data: SensorDataResponseDto) => (usePeakData ? (data.peakValue ?? data.value) : data.value);
+	const getValue = (data: SensorDto) => (usePeakData ? (data.peakValue ?? data.value) : data.value);
 
 	const maxData = chartData.toSorted((a, b) => getValue(b) - getValue(a))?.[0];
 	const minData = chartData.toSorted((a, b) => getValue(a) - getValue(b))?.[0];

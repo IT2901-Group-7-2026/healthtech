@@ -7,12 +7,12 @@ import {
 	type Note,
 	type NoteDataRequest,
 	NoteSchema,
-	type OverviewBucketDto,
-	OverviewBucketDtoSchema,
 	type SensorDataRequestDto,
-	type SensorDataResponseDto,
-	SensorDataResponseDtoSchema,
-	type SensorOverviewDataRequestDto,
+	type SensorOverviewRequestDto,
+	type SensorOverviewResponseDto,
+	SensorOverviewResponseDtoSchema,
+	type SensorResponseDto,
+	SensorResponseDtoSchema,
 	ThresholdSummarySchema,
 	UserSchema,
 	UserWithStatusSchema,
@@ -43,7 +43,7 @@ const fetchSensorData = async (
 	sensor: Sensor,
 	sensorDataRequest: SensorDataRequestDto,
 	userId?: string,
-): Promise<Array<SensorDataResponseDto>> => {
+): Promise<SensorResponseDto> => {
 	const response = await fetchWithUserId(`sensor/${sensor}/${userId}`, {
 		method: "POST",
 		body: JSON.stringify(sensorDataRequest),
@@ -54,13 +54,13 @@ const fetchSensorData = async (
 	}
 
 	const json = await response.json();
-	return SensorDataResponseDtoSchema.array().parseAsync(json);
+	return SensorResponseDtoSchema.parseAsync(json);
 };
 
 const fetchSensorOverviewData = async (
-	requests: SensorOverviewDataRequestDto,
+	requests: SensorOverviewRequestDto,
 	userId?: string,
-): Promise<Array<OverviewBucketDto>> => {
+): Promise<SensorOverviewResponseDto> => {
 	const response = await fetchWithUserId(`sensor/overview/${userId}`, {
 		method: "POST",
 		body: JSON.stringify(requests),
@@ -71,7 +71,7 @@ const fetchSensorOverviewData = async (
 	}
 
 	const json = await response.json();
-	return OverviewBucketDtoSchema.array().parseAsync(json);
+	return SensorOverviewResponseDtoSchema.parseAsync(json);
 };
 
 export function sensorOverviewQueryOptions({
@@ -79,7 +79,7 @@ export function sensorOverviewQueryOptions({
 	userId,
 	enabled,
 }: {
-	query: SensorOverviewDataRequestDto;
+	query: SensorOverviewRequestDto;
 	userId?: string;
 	enabled?: boolean;
 }) {
