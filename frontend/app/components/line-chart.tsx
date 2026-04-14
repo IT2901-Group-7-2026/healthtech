@@ -1,11 +1,6 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-	type ChartConfig,
-	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
-} from "@/components/ui/chart";
+import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
@@ -16,15 +11,7 @@ import { getThreshold } from "@/lib/thresholds";
 import { cn } from "@/lib/utils";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
-import {
-	type ActiveDotProps,
-	CartesianGrid,
-	Line,
-	LineChart,
-	ReferenceLine,
-	XAxis,
-	YAxis,
-} from "recharts";
+import { type ActiveDotProps, CartesianGrid, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
 import { Skeleton } from "./ui/skeleton";
 
@@ -71,14 +58,7 @@ type CustomXAxisTickProps = {
 	muteTickLabels?: boolean;
 };
 
-function CustomXAxisTick({
-	x = 0,
-	y = 0,
-	payload,
-	ticks,
-	getLabel,
-	muteTickLabels,
-}: CustomXAxisTickProps) {
+function CustomXAxisTick({ x = 0, y = 0, payload, ticks, getLabel, muteTickLabels }: CustomXAxisTickProps) {
 	const xPos = typeof x === "number" ? x : Number(x) || 0;
 	const yPos = typeof y === "number" ? y : Number(y) || 0;
 
@@ -137,16 +117,13 @@ export function ChartLineDefault({
 	const { warning, danger, peakDanger } = getThreshold(sensor, dustField);
 	const dangerThreshold = usePeakData && peakDanger ? peakDanger : danger;
 
-	const getValue = (data: SensorDataResponseDto) =>
-		usePeakData ? (data.peakValue ?? data.value) : data.value;
+	const getValue = (data: SensorDataResponseDto) => (usePeakData ? (data.peakValue ?? data.value) : data.value);
 
 	const maxData = chartData.toSorted((a, b) => getValue(b) - getValue(a))?.[0];
 	const minData = chartData.toSorted((a, b) => getValue(a) - getValue(b))?.[0];
 
 	const getOffset = (y: number) =>
-		maxData && minData
-			? `${((getValue(maxData) - y) / (getValue(maxData) - getValue(minData))) * 100}%`
-			: "0%";
+		maxData && minData ? `${((getValue(maxData) - y) / (getValue(maxData) - getValue(minData))) * 100}%` : "0%";
 
 	const transformedData = chartData.map((item) => ({
 		time: item.time.getTime(),
@@ -156,16 +133,10 @@ export function ChartLineDefault({
 	const resolvedMinTime = minTime instanceof Date ? minTime.getTime() : minTime;
 	const resolvedMaxTime = maxTime instanceof Date ? maxTime.getTime() : maxTime;
 
-	const usesExplicitTimeRange =
-		resolvedMinTime !== undefined && resolvedMaxTime !== undefined;
+	const usesExplicitTimeRange = resolvedMinTime !== undefined && resolvedMaxTime !== undefined;
 
-	if (
-		!usesExplicitTimeRange &&
-		(minHour === undefined || maxHour === undefined)
-	) {
-		throw new Error(
-			"ChartLineDefault requires either minTime/maxTime or minHour/maxHour.",
-		);
+	if (!usesExplicitTimeRange && (minHour === undefined || maxHour === undefined)) {
+		throw new Error("ChartLineDefault requires either minTime/maxTime or minHour/maxHour.");
 	}
 
 	const getHourTimestamp = (hour: number) => {
@@ -187,18 +158,15 @@ export function ChartLineDefault({
 		const boundedMaxHour = maxHour ?? 23;
 		xMin = getHourTimestamp(boundedMinHour);
 		xMax = getHourTimestamp(boundedMaxHour);
-		ticks = Array.from(
-			{ length: boundedMaxHour - boundedMinHour + 1 },
-			(_, i) => getHourTimestamp(boundedMinHour + i),
+		ticks = Array.from({ length: boundedMaxHour - boundedMinHour + 1 }, (_, i) =>
+			getHourTimestamp(boundedMinHour + i),
 		);
 	}
 
 	const getXAxisTickLabel = (time: number, index: number) => {
 		if (usesExplicitTimeRange) {
-			if (index === 0)
-				return startTickLabel ?? formatDate(toTZDate(time), "HH:mm");
-			if (index === ticks.length - 1)
-				return endTickLabel ?? formatDate(toTZDate(time), "HH:mm");
+			if (index === 0) return startTickLabel ?? formatDate(toTZDate(time), "HH:mm");
+			if (index === ticks.length - 1) return endTickLabel ?? formatDate(toTZDate(time), "HH:mm");
 		}
 
 		return formatDate(toTZDate(time), "HH:mm");
@@ -222,11 +190,7 @@ export function ChartLineDefault({
 			<CardContent className={cn("flex h-full flex-1", contentClassName)}>
 				<ChartContainer
 					config={chartConfig}
-					className={cn(
-						"h-full w-full",
-						chartContainerClassName,
-						hideLabels && "!aspect-auto",
-					)}
+					className={cn("h-full w-full", chartContainerClassName, hideLabels && "!aspect-auto")}
 				>
 					<LineChart
 						accessibilityLayer={true}
@@ -297,10 +261,7 @@ export function ChartLineDefault({
 						<ChartTooltip
 							cursor={false}
 							content={<ChartTooltipContent hideLabel={true} />}
-							formatter={(value?: number) => [
-								`${value?.toFixed(2) ?? "N/A"}`,
-								` ${unit}`,
-							]}
+							formatter={(value?: number) => [`${value?.toFixed(2) ?? "N/A"}`, ` ${unit}`]}
 						/>
 
 						<defs>
@@ -323,31 +284,16 @@ export function ChartLineDefault({
 								) : usePeakData ? (
 									<>
 										{/* ONLY green → red */}
-										<stop
-											offset={getOffset(dangerThreshold)}
-											stopColor="var(--danger)"
-										/>
-										<stop
-											offset={getOffset(dangerThreshold)}
-											stopColor="var(--safe)"
-										/>
+										<stop offset={getOffset(dangerThreshold)} stopColor="var(--danger)" />
+										<stop offset={getOffset(dangerThreshold)} stopColor="var(--safe)" />
 										<stop offset="100%" stopColor="var(--safe)" />
 									</>
 								) : (
 									<>
 										{/* normal 3-level */}
-										<stop
-											offset={getOffset(dangerThreshold)}
-											stopColor="var(--danger)"
-										/>
-										<stop
-											offset={getOffset(dangerThreshold)}
-											stopColor="var(--warning)"
-										/>
-										<stop
-											offset={getOffset(warning)}
-											stopColor="var(--warning)"
-										/>
+										<stop offset={getOffset(dangerThreshold)} stopColor="var(--danger)" />
+										<stop offset={getOffset(dangerThreshold)} stopColor="var(--warning)" />
+										<stop offset={getOffset(warning)} stopColor="var(--warning)" />
 										<stop offset={getOffset(warning)} stopColor="var(--safe)" />
 
 										<stop offset="100%" stopColor="var(--safe)" />
@@ -364,12 +310,7 @@ export function ChartLineDefault({
 							animationDuration={0}
 							dot={false}
 							activeDot={(props) => (
-								<Dot
-									{...props}
-									warning={warning}
-									danger={dangerThreshold}
-									isPeak={usePeakData}
-								/>
+								<Dot {...props} warning={warning} danger={dangerThreshold} isPeak={usePeakData} />
 							)}
 						/>
 						{children}
@@ -382,14 +323,7 @@ export function ChartLineDefault({
 
 type DotProps = ActiveDotProps & { warning: number; danger: number };
 
-const Dot = ({
-	cx,
-	cy,
-	value,
-	warning,
-	danger,
-	isPeak,
-}: DotProps & { isPeak?: boolean }) => {
+const Dot = ({ cx, cy, value, warning, danger, isPeak }: DotProps & { isPeak?: boolean }) => {
 	let fillColor: string;
 
 	if (isPeak) {
@@ -414,9 +348,7 @@ export function ThresholdLine({
 }) {
 	const { t } = useTranslation();
 	const color = `var(--${DangerLevels[dangerLevel].color})`;
-	const lineLabel = hideLineLabel
-		? undefined
-		: (label ?? t(($) => $.lineChart[dangerLevel]));
+	const lineLabel = hideLineLabel ? undefined : (label ?? t(($) => $.lineChart[dangerLevel]));
 
 	return (
 		<ReferenceLine
@@ -439,12 +371,12 @@ export function ThresholdLine({
 
 export function ChartLineSkeleton() {
 	return (
-		<Card className="flex flex-col gap-5 aspect-video w-full items-center">
-			<div className="flex flex-row justify-between w-full">
+		<Card className="flex aspect-video w-full flex-col items-center gap-5">
+			<div className="flex w-full flex-row justify-between">
 				<Skeleton className="h-8 w-50" /> <Skeleton className="h-8 w-30" />
 			</div>
 
-			<Skeleton className="size-full "></Skeleton>
+			<Skeleton className="size-full"></Skeleton>
 		</Card>
 	);
 }
