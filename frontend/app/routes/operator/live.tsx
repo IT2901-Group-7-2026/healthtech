@@ -216,8 +216,10 @@ export default function OperatorLiveView() {
 						type="single"
 						value={timeRange}
 						variant="outline"
-						onValueChange={(value: TimeRangeOption) => {
-							setTimeRange(value);
+						onValueChange={(value: TimeRangeOption | "") => {
+							if (value) {
+								setTimeRange(value);
+							}
 						}}
 					>
 						<ToggleGroupItem
