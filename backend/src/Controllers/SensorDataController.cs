@@ -42,7 +42,7 @@ public class SensorDataController(ISensorDataService sensorDataService) : Contro
 
 			SensorResponseDto response = new() { Data = data, HourDomain = hourDomain };
 
-			return response;
+			return Ok(response);
 		}
 		catch (ArgumentException ex)
 		{
