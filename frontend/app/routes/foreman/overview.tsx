@@ -1,25 +1,22 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
 import { DailyNotes } from "@/components/daily-notes.js";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
+import { DatePicker } from "@/components/date-picker";
 import { Card } from "@/components/ui/card";
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { AttentionCard } from "@/features/attention-card/attention-card.js";
 import { PieChartCard } from "@/features/attention-card/pie-chart-card";
+import { useDate } from "@/features/date-picker/use-date.js";
 import { TeamSummary } from "@/features/sidebar/team-summary.js";
 import { useUser } from "@/features/user/user-context";
-import { useFormatDate } from "@/hooks/use-format-date";
 import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions } from "@/lib/api.js";
-import { now, parseAsTZDate, today, toTZDate } from "@/lib/date";
+import { today } from "@/lib/date";
 import type { ThresholdSummary } from "@/lib/dto";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
 import { useQuery } from "@tanstack/react-query";
-import { addWeeks, endOfDay, startOfDay } from "date-fns";
-import { ChevronDownIcon } from "lucide-react";
+import { endOfDay, startOfDay, subDays } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -27,11 +24,10 @@ import { UserDetails } from "./user-details";
 
 export default function ForemanOverview() {
 	const { t } = useTranslation();
-	const formatDate = useFormatDate();
 	const { user } = useUser();
 
 	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor);
-	const [date, setDate] = useQueryState("filterDate", parseAsTZDate.withDefault(today()));
+	const { date, setDate } = useDate();
 	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString);
 
 	const selectedDate = date;
@@ -40,8 +36,8 @@ export default function ForemanOverview() {
 	const endDate = endOfDay(selectedDate);
 
 	// Foremen can only see dates within the last week
-	const minSelectableDate = startOfDay(addWeeks(today(), -1));
-	const maxSelectableDate = now();
+	const minSelectableDate = subDays(today(), 7);
+	const maxSelectableDate = today();
 
 	const { data: users } = useQuery(fetchSubordinatesQueryOptions(user.id));
 	const { data: subordinates, isLoading: isSubordinatesLoading } = useQuery(
@@ -101,39 +97,6 @@ export default function ForemanOverview() {
 							</ComboboxList>
 						</ComboboxContent>
 					</Combobox>
-
-					<Popover>
-						<PopoverTrigger asChild={true}>
-							<Button
-								variant={"outline"}
-								data-empty={!date}
-								className="w-52 justify-between text-left font-normal data-[empty=true]:text-muted-foreground"
-							>
-								{formatDate(selectedDate, "PPP")}
-								<ChevronDownIcon data-icon="inline-end" />
-							</Button>
-						</PopoverTrigger>
-						<PopoverContent className="w-auto p-0" align="start">
-							<Calendar
-								mode="single"
-								disabled={{
-									before: minSelectableDate,
-									after: maxSelectableDate,
-								}}
-								selected={selectedDate}
-								onSelect={(val) => {
-									if (!val) {
-										setDate(null);
-										return;
-									}
-
-									const nextDate = startOfDay(toTZDate(val));
-									setDate(nextDate);
-								}}
-								defaultMonth={selectedDate}
-							/>
-						</PopoverContent>
-					</Popover>
 				</div>
 			</Card>
 
@@ -163,6 +126,22 @@ export default function ForemanOverview() {
 						</>
 					)}
 				</div>
+
+				<aside className="col-start-3 row-start-2 flex flex-col gap-4">
+					<Card muted={true}>
+						<DatePicker
+							mode={"day"}
+							showWeekNumber={true}
+							date={date}
+							onDateChange={setDate}
+							disabled={{ before: minSelectableDate, after: maxSelectableDate }}
+							pagedNavigation={false}
+							hideNavigation={true}
+							disableNavigation={true}
+							captionLayout="label"
+						/>
+					</Card>
+				</aside>
 			</div>
 		</div>
 	);
@@ -176,7 +155,7 @@ function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSu
 	}
 
 	return (
-		<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+		<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
 			{sensors.map((sensorType: Sensor) => (
 				<PieChartCard
 					data={{

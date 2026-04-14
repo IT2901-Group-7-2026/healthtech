@@ -13,6 +13,7 @@ import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import { type ActiveDotProps, CartesianGrid, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
+import { Skeleton } from "./ui/skeleton";
 
 const chartConfig = {
 	desktop: {
@@ -365,5 +366,17 @@ export function ThresholdLine({
 				className: "text-base",
 			}}
 		/>
+	);
+}
+
+export function ChartLineSkeleton() {
+	return (
+		<Card className="flex aspect-video w-full flex-col items-center gap-5">
+			<div className="flex w-full flex-row justify-between">
+				<Skeleton className="h-8 w-50" /> <Skeleton className="h-8 w-30" />
+			</div>
+
+			<Skeleton className="size-full"></Skeleton>
+		</Card>
 	);
 }

@@ -1,5 +1,5 @@
 import { DailyBarChart } from "@/components/daily-bar-chart";
-import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
+import { ChartLineDefault, ChartLineSkeleton, ThresholdLine } from "@/components/line-chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { DustChart } from "@/components/ui/dust-chart";
@@ -66,7 +66,6 @@ function AllSensorsUserOverview({
 	selectedDate: TZDate;
 }) {
 	const [selectedUserId] = useQueryState("userId");
-	const [filterDate] = useQueryState("filterDate");
 
 	const {
 		data: response,
@@ -95,7 +94,7 @@ function AllSensorsUserOverview({
 					data={mapOverviewBucketsToChartRows(data ?? [], 0, 23)}
 					startHour={minHour}
 					endHour={maxHour}
-					buildLink={(sensor) => {
+					buildLink={(sensor, dateQueryParam) => {
 						const params = new URLSearchParams();
 						params.set("sensor", sensor);
 
@@ -103,9 +102,7 @@ function AllSensorsUserOverview({
 							params.set("userId", selectedUserId);
 						}
 
-						if (filterDate) {
-							params.set("filterDate", filterDate);
-						}
+						params.set("date", dateQueryParam);
 
 						return `?${params.toString()}`;
 					}}
@@ -166,6 +163,10 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	const data = dataResult?.data?.data;
 	const hourDomain = dataResult?.data?.hourDomain;
 
+	const dustTwa1Data = dustTwa1Result.data?.data;
+	const dustTwa25Data = dustTwa25Result.data?.data;
+	const dustTwa10Data = dustTwa10Result.data?.data;
+
 	const maxValue = data ? Math.max(...data.map((point) => point.value)) : 0;
 	const minY = 0;
 	let maxY = 45;
@@ -181,10 +182,6 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 		"day", // TODO: When we add a view picker we should use that here
 	);
 
-	const dustTwa1Data = dustTwa1Result?.data?.data;
-	const dustTwa25Data = dustTwa25Result?.data?.data;
-	const dustTwa10Data = dustTwa10Result?.data?.data;
-
 	return (
 		<div className="flex max-w-4xl flex-col gap-6">
 			<SensorChartCard
@@ -192,6 +189,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 				isError={dataResult.isError}
 				data={data}
 				selectedDate={selectedDate}
+				isSensor={true}
 			>
 				<DateScopedChart selectedDate={selectedDate}>
 					<div id={chartContainerId}>
@@ -230,23 +228,27 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 			</SensorChartCard>
 
 			<div className="flex flex-wrap items-center gap-4">
-				{dustTwa1Data && dustTwa1Data.length > 0 && (
-					<DustChart label="PM1 TWA" value={dustTwa1Data[0].value} thresholdValue={dustThreshold.danger} />
-				)}
-				{dustTwa25Data && dustTwa25Data.length > 0 && (
+				{
+					<DustChart
+						label="PM1 TWA"
+						value={dustTwa1Data?.[0]?.value ?? null}
+						thresholdValue={dustThreshold.danger}
+					/>
+				}
+				{
 					<DustChart
 						label="PM2.5 TWA"
-						value={dustTwa25Data[0].value}
+						value={dustTwa25Data?.[0]?.value ?? null}
 						thresholdValue={dustPm25TwaThreshold.danger}
 					/>
-				)}
-				{dustTwa10Data && dustTwa10Data.length > 0 && (
+				}
+				{
 					<DustChart
 						label="PM10 TWA"
-						value={dustTwa10Data[0].value}
+						value={dustTwa10Data?.[0]?.value ?? null}
 						thresholdValue={dustPm10TwaThreshold.danger}
 					/>
-				)}
+				}
 			</div>
 		</div>
 	);
@@ -291,7 +293,13 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 	);
 
 	return (
-		<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={selectedDate}>
+		<SensorChartCard
+			isLoading={isLoading}
+			isError={isError}
+			data={data}
+			selectedDate={selectedDate}
+			isSensor={true}
+		>
 			<DateScopedChart selectedDate={selectedDate}>
 				<div id={chartContainerId}>
 					<ChartLineDefault
@@ -394,7 +402,13 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 				</TabsList>
 			</Tabs>
 
-			<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={selectedDate}>
+			<SensorChartCard
+				isLoading={isLoading}
+				isError={isError}
+				data={data}
+				selectedDate={selectedDate}
+				isSensor={true}
+			>
 				<DateScopedChart selectedDate={selectedDate}>
 					<div id={chartContainerId}>
 						<ChartLineDefault
@@ -445,20 +459,26 @@ function SensorChartCard({
 	isLoading,
 	isError,
 	data,
+	isSensor,
 	selectedDate,
 	children,
 }: {
 	isLoading: boolean;
 	isError: boolean;
 	data: Array<SensorDto> | Array<SensorOverviewBucketDto> | undefined;
+	isSensor?: boolean;
 	selectedDate: TZDate;
 	children: ReactNode;
 }) {
 	const { t, i18n } = useTranslation();
 
+	if (isLoading && isSensor) {
+		return <ChartLineSkeleton />;
+	}
+
 	if (isLoading) {
 		return (
-			<Card className="flex h-24 w-full items-center">
+			<Card className="flex w-full items-center">
 				<p>{t(($) => $.common.loading)}</p>
 			</Card>
 		);
@@ -466,7 +486,7 @@ function SensorChartCard({
 
 	if (isError) {
 		return (
-			<Card className="flex h-24 w-full items-center">
+			<Card className="flex w-full items-center">
 				<p>{t(($) => $.common.error)}</p>
 			</Card>
 		);
@@ -474,7 +494,7 @@ function SensorChartCard({
 
 	if (!data || data.length === 0) {
 		return (
-			<Card className="flex h-24 w-full items-center">
+			<Card className="flex w-full items-center">
 				<CardTitle>{formatChartDate(selectedDate, i18n.language)}</CardTitle>
 				<p>{t(($) => $.common.noData)}</p>
 			</Card>

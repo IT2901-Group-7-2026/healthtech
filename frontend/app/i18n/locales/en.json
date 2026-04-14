@@ -1,7 +1,7 @@
 {
   "app": {
-    "title": "HealthTech | Operator Exposure Dashboard",
-    "description": "Monitor and manage exposure to dust, vibration, and noise."
+    "title": "HealthTech | Exposure Dashboard",
+    "description": "Monitor exposure to dust, vibration, and noise."
   },
   "common": {
     "loading": "Loading data...",

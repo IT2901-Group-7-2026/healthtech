@@ -1,4 +1,4 @@
-import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
+import { ChartLineDefault, ChartLineSkeleton, ThresholdLine } from "@/components/line-chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -95,11 +95,9 @@ export default function Noise() {
 			</Tabs>
 
 			{isLoading ? (
-				<Card className="flex h-24 w-full items-center">
-					<p>{t(($) => $.common.loading)}</p>
-				</Card>
+				<ChartLineSkeleton />
 			) : isError ? (
-				<Card className="flex h-24 w-full items-center">
+				<Card className="flex h-full w-full items-center">
 					<p>{t(($) => $.common.error)}</p>
 				</Card>
 			) : view === "month" ? (
