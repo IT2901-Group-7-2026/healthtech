@@ -136,7 +136,7 @@ export default function OperatorLiveView() {
 							sensor="dust"
 							exposureLabel={"PM1 TWA"}
 							exposureUnitLabel="µg/m³"
-							chartUnitLabel={t(($) => $.sensors.dustUnit)}
+							chartUnitLabel={t(($) => $.sensors.dustUnitUg)}
 							data={dustTwa1Data ?? []}
 							minTime={start}
 							maxTime={end}
@@ -148,7 +148,7 @@ export default function OperatorLiveView() {
 							exposureLabel={"PM2.5 TWA"}
 							exposureField="pm25_twa"
 							exposureUnitLabel="µg/m³"
-							chartUnitLabel={t(($) => $.sensors.dustUnit)}
+							chartUnitLabel={t(($) => $.sensors.dustUnitUg)}
 							data={dustTwa25Data ?? []}
 							minTime={start}
 							maxTime={end}
@@ -160,7 +160,7 @@ export default function OperatorLiveView() {
 							exposureLabel={"PM10 TWA"}
 							exposureField="pm10_twa"
 							exposureUnitLabel="µg/m³"
-							chartUnitLabel={t(($) => $.sensors.dustUnit)}
+							chartUnitLabel={t(($) => $.sensors.dustUnitUg)}
 							data={dustTwa10Data ?? []}
 							minTime={start}
 							maxTime={end}
