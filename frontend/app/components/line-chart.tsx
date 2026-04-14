@@ -46,6 +46,7 @@ interface LineChartProps {
 	chartContainerClassName?: string;
 	hideHeader?: boolean;
 	muteTickLabels?: boolean;
+	hideLegend?: boolean;
 }
 
 type CustomXAxisTickProps = {
@@ -107,6 +108,7 @@ export function ChartLineDefault({
 	chartContainerClassName,
 	hideHeader,
 	muteTickLabels,
+	hideLegend,
 }: LineChartProps) {
 	const { date: selectedDay } = useDate();
 	const { t } = useTranslation();
@@ -315,20 +317,22 @@ export function ChartLineDefault({
 						{children}
 					</LineChart>
 				</ChartContainer>
-				<div className="flex justify-center">
-					<ThresholdLegend
-						items={[
-							{
-								dangerLevel: "danger",
-								color: `var(--${DangerLevels.danger.color})`,
-							},
-							{
-								dangerLevel: "warning",
-								color: `var(--${DangerLevels.warning.color})`,
-							},
-						]}
-					/>
-				</div>
+				{!hideLegend && (
+					<div className="flex justify-center pl-12">
+						<ThresholdLegend
+							items={[
+								{
+									dangerLevel: "danger",
+									color: `var(--${DangerLevels.danger.color})`,
+								},
+								{
+									dangerLevel: "warning",
+									color: `var(--${DangerLevels.warning.color})`,
+								},
+							]}
+						/>
+					</div>
+				)}
 			</CardContent>
 		</Card>
 	);
