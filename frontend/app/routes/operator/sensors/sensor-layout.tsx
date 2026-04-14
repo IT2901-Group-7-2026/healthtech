@@ -84,7 +84,7 @@ export default function SensorLayout() {
 
 	const ViewIcon = getViewIcon(view);
 
-	const summary = calculateSummaryCounts(response.data ?? [], sensor ?? undefined, usePeakAggregation);
+	const summary = calculateSummaryCounts(response.data?.data ?? [], sensor ?? undefined, usePeakAggregation);
 
 	return (
 		<div

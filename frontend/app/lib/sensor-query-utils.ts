@@ -6,7 +6,7 @@ import type {
 	AggregateFnKey,
 	GranularityKey,
 	SensorDataRequestDto,
-	SensorOverviewDataRequestDto,
+	SensorOverviewRequestDto,
 	SensorTypeField,
 } from "./dto";
 
@@ -81,7 +81,6 @@ export function buildSensorQuery(
 		isOverview?: boolean;
 		startTime?: TZDate;
 		endTime?: TZDate;
-		clampEndTimeToNow?: boolean;
 	},
 ): SensorDataRequestDto {
 	const { startTime: defaultStartTime, endTime: defaultEndTime } = getStartEnd(view, selectedDay);
@@ -100,7 +99,6 @@ export function buildSensorQuery(
 		granularity,
 		function: aggregationFunction,
 		field,
-		clampEndTimeToNow: options?.clampEndTimeToNow,
 	};
 
 	return query;
@@ -113,7 +111,7 @@ export function buildSensorOverviewQuery(
 	options?: {
 		usePeakAggregation?: boolean;
 	},
-): SensorOverviewDataRequestDto {
+): SensorOverviewRequestDto {
 	return Object.fromEntries(
 		sensors.map((sensor) => [
 			sensor,
