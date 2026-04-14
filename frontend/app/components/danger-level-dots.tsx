@@ -13,24 +13,38 @@ export function DangerLevelDots({ dangerLevel, className, horizontal = false }: 
 	}
 
 	const dotCount = DANGER_LEVEL_SEVERITY[dangerLevel] + 1;
-	const dots = Array.from({ length: dotCount }, () => (
-		<div
-			key={`dot-${dangerLevel}`}
-			className="size-1 rounded-full"
-			style={{ backgroundColor: `var(--${dangerLevel}-text)` }}
-		/>
-	));
 
-	if (dotCount < 3) {
+	if (dotCount === 1) {
 		return (
-			<div className={cn("flex", horizontal ? "flex-row gap-0.5" : "flex-col gap-0.5", className)}>{dots}</div>
+			<div className={className}>
+				<Dot dangerLevel={dangerLevel} />
+			</div>
+		);
+	}
+
+	if (dotCount === 2) {
+		return (
+			<div className={cn("flex", horizontal ? "flex-row gap-0.5" : "flex-col gap-0.5", className)}>
+				<Dot dangerLevel={dangerLevel} />
+				<Dot dangerLevel={dangerLevel} />
+			</div>
 		);
 	}
 
 	return (
 		<div className={cn("grid grid-cols-2 justify-items-center gap-0.5", className)}>
-			<div className="col-span-2">{dots[0]}</div>
-			{dots.slice(1)}
+			<Dot dangerLevel={dangerLevel} className="col-span-2" />
+			<Dot dangerLevel={dangerLevel} />
+			<Dot dangerLevel={dangerLevel} />
 		</div>
+	);
+}
+
+function Dot({ dangerLevel, className }: { dangerLevel: DangerLevel; className?: string }) {
+	return (
+		<div
+			className={cn("size-1 rounded-full", className)}
+			style={{ backgroundColor: `var(--${dangerLevel}-text)` }}
+		/>
 	);
 }
