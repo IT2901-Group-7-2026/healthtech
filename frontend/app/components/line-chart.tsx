@@ -318,7 +318,7 @@ export function ChartLineDefault({
 					</LineChart>
 				</ChartContainer>
 				{!hideLegend && (
-					<div className="flex justify-center pl-12">
+					<div className="flex justify-start pl-12">
 						<ThresholdLegend
 							items={[
 								{
