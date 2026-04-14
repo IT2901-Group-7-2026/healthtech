@@ -260,7 +260,17 @@ export function ChartLineDefault({
 						/>
 						<ChartTooltip
 							cursor={false}
-							content={<ChartTooltipContent hideLabel={true} />}
+							content={
+								<ChartTooltipContent
+									labelFormatter={(_label, payload) => {
+										const time = payload?.[0]?.payload?.time;
+
+										if (!time) return "";
+
+										return formatDate(toTZDate(time), "HH:mm");
+									}}
+								/>
+							}
 							formatter={(value?: number) => [`${value?.toFixed(2) ?? "N/A"}`, ` ${unit}`]}
 						/>
 
