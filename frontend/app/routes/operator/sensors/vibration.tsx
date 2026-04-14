@@ -1,4 +1,8 @@
-import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
+import {
+	ChartLineDefault,
+	ChartLineSkeleton,
+	ThresholdLine,
+} from "@/components/line-chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
@@ -12,7 +16,11 @@ import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
+import {
+	computeYAxisRange,
+	downsampleSensorData,
+	getHourDomainFromBuckets,
+} from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
 import { useId } from "react";
@@ -54,7 +62,9 @@ export default function Vibration() {
 
 	const { data, isLoading, isError } = dataResult;
 
-	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
+	const { minHour, maxHour } = getHourDomainFromBuckets(
+		weekHourRangeResult.data ?? [],
+	);
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
@@ -64,26 +74,32 @@ export default function Vibration() {
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
 
-	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], "vibration");
-	const totalExposure = data && data.length > 0 ? data[data.length - 1].value : 0;
+	const calendarData = mapSensorDataToTimeBucketStatuses(
+		data ?? [],
+		"vibration",
+	);
+	const totalExposure =
+		data && data.length > 0 ? data[data.length - 1].value : 0;
 
 	return (
-		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
+		<div className="flex h-full w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex flex-1 flex-col gap-4">
 				{isLoading ? (
-					<Card className="flex h-24 w-full items-center">
-						<p>{t(($) => $.common.loading)}</p>
-					</Card>
+					<ChartLineSkeleton />
 				) : isError ? (
-					<Card className="flex h-24 w-full items-center">
+					<Card className="flex h-full w-full items-center">
 						<p>{t(($) => $.common.error)}</p>
 					</Card>
 				) : view === "month" ? (
 					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
-					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
+					<WeekWidget
+						dayStartHour={minHour}
+						dayEndHour={maxHour}
+						data={calendarData}
+					/>
 				) : !data || data.length === 0 ? (
-					<Card className="flex h-24 w-full items-center">
+					<Card className="flex h-full w-full items-center">
 						<CardTitle>
 							{date.toLocaleDateString(i18n.language, {
 								day: "numeric",
@@ -126,8 +142,14 @@ export default function Vibration() {
 									</Button>
 								}
 							>
-								<ThresholdLine y={vibrationThreshold.danger} dangerLevel="danger" />
-								<ThresholdLine y={vibrationThreshold.warning} dangerLevel="warning" />
+								<ThresholdLine
+									y={vibrationThreshold.danger}
+									dangerLevel="danger"
+								/>
+								<ThresholdLine
+									y={vibrationThreshold.warning}
+									dangerLevel="warning"
+								/>
 							</ChartLineDefault>
 						</div>
 					</div>

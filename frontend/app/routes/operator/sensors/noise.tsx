@@ -1,4 +1,8 @@
-import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
+import {
+	ChartLineDefault,
+	ChartLineSkeleton,
+	ThresholdLine,
+} from "@/components/line-chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,7 +18,11 @@ import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
+import {
+	computeYAxisRange,
+	downsampleSensorData,
+	getHourDomainFromBuckets,
+} from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useId } from "react";
@@ -67,10 +75,16 @@ export default function Noise() {
 
 	const { data, isLoading, isError } = dataResult;
 
-	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
+	const { minHour, maxHour } = getHourDomainFromBuckets(
+		weekHourRangeResult.data ?? [],
+	);
 
 	const maxValue = data
-		? Math.max(...data.map((d) => (usePeakAggregation && d.peakValue ? d.peakValue : d.value)))
+		? Math.max(
+				...data.map((d) =>
+					usePeakAggregation && d.peakValue ? d.peakValue : d.value,
+				),
+			)
 		: 0;
 
 	const minY = 0;
@@ -81,35 +95,53 @@ export default function Noise() {
 		}).maxY;
 	}
 
-	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, usePeakAggregation);
+	const calendarData = mapSensorDataToTimeBucketStatuses(
+		data ?? [],
+		sensor,
+		usePeakAggregation,
+	);
 
 	const averageExposure =
 		data && data.length > 0
-			? data.reduce((sum, d) => sum + (usePeakAggregation && d.peakValue ? d.peakValue : d.value), 0) /
-				data.length
+			? data.reduce(
+					(sum, d) =>
+						sum + (usePeakAggregation && d.peakValue ? d.peakValue : d.value),
+					0,
+				) / data.length
 			: 0;
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">
-			<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
+			<Tabs
+				value={aggregation}
+				onValueChange={(value) => setAggregation(value as Aggregation)}
+			>
 				<TabsList>
-					<TabsTrigger value="average">{t(($) => $.measurement.average)}</TabsTrigger>
+					<TabsTrigger value="average">
+						{t(($) => $.measurement.average)}
+					</TabsTrigger>
 					<TabsTrigger value="peak">{t(($) => $.measurement.peak)}</TabsTrigger>
 				</TabsList>
 			</Tabs>
 
 			{isLoading ? (
-				<Card className="flex h-24 w-full items-center">
-					<p>{t(($) => $.common.loading)}</p>
-				</Card>
+				<ChartLineSkeleton />
 			) : isError ? (
-				<Card className="flex h-24 w-full items-center">
+				<Card className="flex h-full w-full items-center">
 					<p>{t(($) => $.common.error)}</p>
 				</Card>
 			) : view === "month" ? (
-				<CalendarWidget selectedDay={date} selectedAggregation={aggregation} data={calendarData} />
+				<CalendarWidget
+					selectedDay={date}
+					selectedAggregation={aggregation}
+					data={calendarData}
+				/>
 			) : view === "week" ? (
-				<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
+				<WeekWidget
+					dayStartHour={minHour}
+					dayEndHour={maxHour}
+					data={calendarData}
+				/>
 			) : !data || data.length === 0 ? (
 				<Card className="flex h-24 w-full items-center">
 					<CardTitle>
@@ -164,7 +196,12 @@ export default function Noise() {
 								}
 								dangerLevel="danger"
 							/>
-							{!usePeakAggregation && <ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />}
+							{!usePeakAggregation && (
+								<ThresholdLine
+									y={noiseThreshold.warning}
+									dangerLevel="warning"
+								/>
+							)}
 						</ChartLineDefault>
 					</div>
 				</div>

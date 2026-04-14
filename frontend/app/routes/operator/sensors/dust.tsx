@@ -1,4 +1,8 @@
-import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
+import {
+	ChartLineDefault,
+	ChartLineSkeleton,
+	ThresholdLine,
+} from "@/components/line-chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
@@ -12,7 +16,11 @@ import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
+import {
+	computeYAxisRange,
+	downsampleSensorData,
+	getHourDomainFromBuckets,
+} from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -54,7 +62,9 @@ export default function Dust() {
 
 	const { data, isLoading, isError } = dataResult;
 
-	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
+	const { minHour, maxHour } = getHourDomainFromBuckets(
+		weekHourRangeResult.data ?? [],
+	);
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
@@ -66,22 +76,26 @@ export default function Dust() {
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor);
 	const averageExposure =
-		data && data.length > 0 ? data.reduce((sum, current) => sum + current.value, 0) / data.length : 0;
+		data && data.length > 0
+			? data.reduce((sum, current) => sum + current.value, 0) / data.length
+			: 0;
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">
 			{isLoading ? (
-				<Card className="flex h-24 w-full items-center">
-					<p>{t(($) => $.common.loading)}</p>
-				</Card>
+				<ChartLineSkeleton />
 			) : isError ? (
-				<Card className="flex h-24 w-full items-center">
+				<Card className="flex h-full w-full items-center">
 					<p>{t(($) => $.common.error)}</p>
 				</Card>
 			) : view === "month" ? (
 				<CalendarWidget selectedDay={date} data={calendarData} />
 			) : view === "week" ? (
-				<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
+				<WeekWidget
+					dayStartHour={minHour}
+					dayEndHour={maxHour}
+					data={calendarData}
+				/>
 			) : !data || data.length === 0 ? (
 				<Card className="flex h-24 w-full items-center">
 					<CardTitle>
