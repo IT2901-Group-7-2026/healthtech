@@ -20,6 +20,9 @@ import {
 import { getStartEnd } from "./sensor-query-utils";
 import type { View } from "./views";
 
+// We have at most 1 data point every minute so we don't need a shorter refetch interval than that
+const DEFAULT_REFETCH_INTERVAL = minutesToMilliseconds(1);
+
 const fetchAllUsers = async () => {
 	const response = await fetchWithUserId("users");
 
@@ -36,6 +39,7 @@ export function usersQueryOptions() {
 		queryKey: ["users"],
 		queryFn: () => fetchAllUsers(),
 		staleTime: minutesToMilliseconds(10),
+		refetchInterval: DEFAULT_REFETCH_INTERVAL,
 	});
 }
 
@@ -88,6 +92,7 @@ export function sensorOverviewQueryOptions({
 		queryFn: () => fetchSensorOverviewData(query, userId),
 		staleTime: minutesToMilliseconds(10),
 		enabled,
+		refetchInterval: DEFAULT_REFETCH_INTERVAL,
 	});
 }
 
@@ -96,20 +101,18 @@ export function sensorQueryOptions({
 	query,
 	userId,
 	enabled,
-	refetchInterval,
 }: {
 	sensor: Sensor;
 	query: SensorDataRequestDto;
 	userId?: string;
 	enabled?: boolean;
-	refetchInterval?: number;
 }) {
 	return queryOptions({
 		queryKey: [sensor, query, userId],
 		queryFn: () => fetchSensorData(sensor, query, userId),
 		staleTime: minutesToMilliseconds(10),
 		enabled,
-		refetchInterval,
+		refetchInterval: DEFAULT_REFETCH_INTERVAL,
 	});
 }
 
@@ -134,6 +137,7 @@ export function notesQueryOptions({ view, selectedDay, userId }: { view: View; s
 		queryKey: ["notes", query, userId],
 		queryFn: () => fetchNoteData(query, userId),
 		staleTime: minutesToMilliseconds(10),
+		refetchInterval: DEFAULT_REFETCH_INTERVAL,
 	});
 }
 
@@ -189,6 +193,7 @@ export const fetchSubordinatesQueryOptions = (userId: string, startTime?: TZDate
 			return UserWithStatusSchema.array().parseAsync(json);
 		},
 		staleTime: minutesToMilliseconds(10),
+		refetchInterval: DEFAULT_REFETCH_INTERVAL,
 	});
 };
 
@@ -271,4 +276,5 @@ export const fetchThresholdSummaryQueryOptions = (managerUserId: string, startTi
 			return ThresholdSummarySchema.parseAsync(json);
 		},
 		staleTime: minutesToMilliseconds(10),
+		refetchInterval: DEFAULT_REFETCH_INTERVAL,
 	});

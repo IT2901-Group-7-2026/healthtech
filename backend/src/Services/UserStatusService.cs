@@ -36,6 +36,7 @@ public class UserStatusService(AppDbContext _context, SignedInUserContext _signe
 			startTime,
 			_signedInUserContext?.User?.Role
 		);
+		endTime = TimeWindowUtils.ClampRequestEndDateToCurrentDateTime(endTime);
 
 		DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
 
