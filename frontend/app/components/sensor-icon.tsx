@@ -3,9 +3,6 @@ import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.js";
 import type { Sensor } from "@/lib/sensors.js";
 import { cn } from "@/lib/utils.js";
 import { DangerLevelDots } from "./danger-level-dots.js";
-import { ShieldAlertIcon } from "lucide-react";
-import type { ComponentType } from "react";
-import { NoiseIcon } from "./icons/noise-icon";
 
 type SensorIconSize = "xs" | "sm" | "md" | "lg" | "xl";
 
@@ -43,7 +40,7 @@ export const SensorIcon = ({ type, size, dangerLevel, className, iconClassName, 
 		: defaultIconContainerClass;
 
 	return (
-		<Component className={cn("relative h-fit w-fit rounded-full border", dangerLevelIconClasses, className)}>
+		<Component className={cn("relative flex h-fit w-fit rounded-full border", dangerLevelIconClasses, className)}>
 			<Icon
 				className={cn(iconSizeClass[resolvedIconSize], inline && "inline-block", iconClassName)}
 				title={title}

@@ -42,7 +42,9 @@ export function CalendarPopup({
 				<Card className="p-2 md:p-5">
 					{Object.entries(exposureData).map(([sensor, danger]) => (
 						<div key={sensor} className="flex justify-start gap-2">
-							<ExposureBadge sensor={sensor as Sensor} dangerLevel={danger} />
+							<ExposureBadge sensor={sensor as Sensor} dangerLevel={danger}>
+								{t(($) => $.sensors[sensor as Sensor])}
+							</ExposureBadge>
 
 							<span className="text-muted-foreground">{"->"}</span>
 							<div className={`text-${danger}`}>{t(($) => $.popup[danger])}</div>

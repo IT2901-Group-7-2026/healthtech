@@ -29,8 +29,12 @@ const getExposureBadges = (worker: UserWithStatusDto, popupStatus: DangerLevel) 
 };
 
 const WorkerRow = ({ worker, status }: { worker: UserWithStatusDto; status: DangerLevel }) => {
+	const { t } = useTranslation();
+
 	const exposureBadges = getExposureBadges(worker, status).map(({ sensor, data }) => (
-		<ExposureBadge key={sensor} sensor={sensor} dangerLevel={data?.dangerLevel ?? "safe"} />
+		<ExposureBadge key={sensor} sensor={sensor} dangerLevel={data?.dangerLevel ?? "safe"}>
+			{t(($) => $.sensors[sensor])}
+		</ExposureBadge>
 	));
 
 	return (

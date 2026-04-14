@@ -2,19 +2,17 @@ import { type IconType, sensorIconConfig } from "@/components/icons/sensor-icons
 import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.js";
 import type { Sensor } from "@/lib/sensors.js";
 import { cn } from "@/lib/utils.js";
-import { useTranslation } from "react-i18next";
+import type { PropsWithChildren } from "react";
 
 const iconConfig: Record<Sensor, IconType> = sensorIconConfig;
 
-interface ExposureBadgeProps {
+interface ExposureBadgeProps extends PropsWithChildren {
 	sensor: Sensor;
-	dangerLevel?: DangerLevel;
+	dangerLevel: DangerLevel;
 	className?: string;
 }
 
-export const ExposureBadge = ({ sensor, dangerLevel, className }: ExposureBadgeProps) => {
-	const { t } = useTranslation();
-
+export const ExposureBadge = ({ sensor, dangerLevel, className, children }: ExposureBadgeProps) => {
 	const Icon = iconConfig[sensor];
 
 	const dangerLevelClasses = dangerLevel
@@ -33,8 +31,8 @@ export const ExposureBadge = ({ sensor, dangerLevel, className }: ExposureBadgeP
 				className,
 			)}
 		>
-			{<Icon title={sensor} className="inline-block h-4 w-4" />}
-			<span>{t(($) => $.sensors[sensor])}</span>
+			<Icon title={sensor} className="inline-block h-4 w-4" />
+			{children}
 		</div>
 	);
 };
