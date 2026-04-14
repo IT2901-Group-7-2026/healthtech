@@ -124,7 +124,9 @@ public class ThresholdsUtilsTests
 		};
 
 		// Act
-		var result = ThresholdUtils.CalculateDangerLevels(SensorType.Vibration, rawSensorData).ToList();
+		var result = ThresholdUtils
+			.CalculateDangerLevels(SensorType.Vibration, rawSensorData)
+			.ToList();
 
 		// Assert
 		Assert.Equal(3, result.Count);
@@ -148,7 +150,11 @@ public class ThresholdsUtilsTests
 	public void CalculateDangerLevel_Noise_WhenValueBelowWarning_ReturnsSafeAndPeakSafe()
 	{
 		// Act
-		var result = ThresholdUtils.CalculateDangerLevel(SensorType.Noise, value: 79, maxValue: 120);
+		var result = ThresholdUtils.CalculateDangerLevel(
+			SensorType.Noise,
+			value: 79,
+			maxValue: 120
+		);
 
 		// Assert
 		Assert.Equal(DangerLevel.Safe, result.dangerLevel);
@@ -179,7 +185,11 @@ public class ThresholdsUtilsTests
 	public void CalculateDangerLevel_Noise_WhenValueAtDangerAndPeakAtLimit_ReturnsDangerAndPeakDanger()
 	{
 		// Act
-		var result = ThresholdUtils.CalculateDangerLevel(SensorType.Noise, value: 85, maxValue: 130);
+		var result = ThresholdUtils.CalculateDangerLevel(
+			SensorType.Noise,
+			value: 85,
+			maxValue: 130
+		);
 
 		// Assert
 		Assert.Equal(DangerLevel.Danger, result.dangerLevel);
@@ -224,7 +234,12 @@ public class ThresholdsUtilsTests
 	public void GetHighestDangerLevel_WithNullAndLowerValues_ReturnsWorst()
 	{
 		// Act
-		var result = ThresholdUtils.GetHighestDangerLevel(null, DangerLevel.Warning, DangerLevel.Safe, null);
+		var result = ThresholdUtils.GetHighestDangerLevel(
+			null,
+			DangerLevel.Warning,
+			DangerLevel.Safe,
+			null
+		);
 
 		// Assert
 		Assert.Equal(DangerLevel.Warning, result);
