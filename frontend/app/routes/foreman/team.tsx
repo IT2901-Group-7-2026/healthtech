@@ -11,7 +11,10 @@ import {
 	useRemoveSubordinatesMutation,
 	usersQueryOptions,
 } from "@/lib/api";
-import { mapDangerLevelToColor, mapDangerLevelToLabel } from "@/lib/danger-levels";
+import {
+	mapDangerLevelToColor,
+	mapDangerLevelToLabel,
+} from "@/lib/danger-levels";
 import { type User, UserRole, type UserWithStatusDto } from "@/lib/dto";
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
@@ -30,7 +33,10 @@ export default function TeamPage() {
 			id: "select",
 			header: ({ table }) => (
 				<Checkbox
-					checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+					checked={
+						table.getIsAllPageRowsSelected() ||
+						(table.getIsSomePageRowsSelected() && "indeterminate")
+					}
 					onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
 					aria-label={t(($) => $.select.all)}
 				/>
@@ -61,16 +67,50 @@ export default function TeamPage() {
 			header: t(($) => $.foremanDashboard.team.table.jobDescription),
 		},
 		{
-			id: "status",
-			header: t(($) => $.foremanDashboard.team.table.status),
+			id: "dust",
+			header: t(($) => $.sensors.dust),
 			cell: ({ row }) => {
-				const status = row.original.status.status;
-				const label = mapDangerLevelToLabel(status);
-				const color = mapDangerLevelToColor(status);
+				const status = row.original.status.dust?.dangerLevel;
 
-				//TODO: Use a badge component instead of just coloring the text
-				// Also add a tooltip with more information about the status and which sensor data is causing it
-				return <span className={`text-${color}`}>{label}</span>;
+				if (status) {
+					const label = mapDangerLevelToLabel(status);
+					const color = mapDangerLevelToColor(status);
+
+					//TODO: Use a badge component instead of just coloring the text
+					// Also add a tooltip with more information about the status and which sensor data is causing it
+					return <span className={`text-${color}`}>{label}</span>;
+				}
+			},
+		},
+		{
+			id: "noise",
+			header: t(($) => $.sensors.noise),
+			cell: ({ row }) => {
+				const status = row.original.status.noise?.dangerLevel;
+
+				if (status) {
+					const label = mapDangerLevelToLabel(status);
+					const color = mapDangerLevelToColor(status);
+
+					//TODO: Use a badge component instead of just coloring the text
+					// Also add a tooltip with more information about the status and which sensor data is causing it
+					return <span className={`text-${color}`}>{label}</span>;
+				}
+			},
+		},
+		{
+			id: "vibration",
+			header: t(($) => $.sensors.vibration),
+			cell: ({ row }) => {
+				const status = row.original.status.vibration?.dangerLevel;
+				if (status) {
+					const label = mapDangerLevelToLabel(status);
+					const color = mapDangerLevelToColor(status);
+
+					//TODO: Use a badge component instead of just coloring the text
+					// Also add a tooltip with more information about the status and which sensor data is causing it
+					return <span className={`text-${color}`}>{label}</span>;
+				}
 			},
 		},
 	];
@@ -90,7 +130,9 @@ export default function TeamPage() {
 
 		const subordinateIds = new Set(subordinates.map((s) => s.id));
 
-		return users.filter((user) => user.role === UserRole.Operator && !subordinateIds.has(user.id));
+		return users.filter(
+			(user) => user.role === UserRole.Operator && !subordinateIds.has(user.id),
+		);
 	}, [users, subordinates]);
 
 	const addSubordinates = useAddSubordinatesMutation(user.id);
@@ -125,17 +167,27 @@ export default function TeamPage() {
 	}
 
 	if (subordinatesError) {
-		return <div className="p-4 text-destructive">{t(($) => $.foremanDashboard.team.failedToLoadMembers)}</div>;
+		return (
+			<div className="p-4 text-destructive">
+				{t(($) => $.foremanDashboard.team.failedToLoadMembers)}
+			</div>
+		);
 	}
 
 	if (!subordinates || subordinates.length === 0) {
-		return <div className="p-4">{t(($) => $.foremanDashboard.team.noMembersFound)}</div>;
+		return (
+			<div className="p-4">
+				{t(($) => $.foremanDashboard.team.noMembersFound)}
+			</div>
+		);
 	}
 
 	return (
 		<div className="flex flex-col gap-8">
 			<div className="flex flex-col gap-4">
-				<h1 className="font-bold text-2xl">{t(($) => $.foremanDashboard.team.title)}</h1>
+				<h1 className="font-bold text-2xl">
+					{t(($) => $.foremanDashboard.team.title)}
+				</h1>
 				<div className="flex items-center gap-2">
 					<UserSearch
 						users={filteredUsers}
@@ -153,7 +205,10 @@ export default function TeamPage() {
 						disabled={filteredUsers.length === 0}
 						emptyLabel={t(($) => $.common.noOptions)}
 					/>
-					<Button onClick={handleAddSubordinates} disabled={userIdSelection.length === 0}>
+					<Button
+						onClick={handleAddSubordinates}
+						disabled={userIdSelection.length === 0}
+					>
 						{t(($) => $.foremanDashboard.team.action.addSubordinate)}
 					</Button>
 				</div>
