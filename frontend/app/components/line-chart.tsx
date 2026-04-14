@@ -11,7 +11,7 @@ import { getThreshold } from "@/lib/thresholds";
 import { cn } from "@/lib/utils";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
-import { type ActiveDotProps, CartesianGrid, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
+import { type ActiveDotProps, CartesianGrid, Legend, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
 
 const chartConfig = {
@@ -315,24 +315,30 @@ export function ChartLineDefault({
 							)}
 						/>
 						{children}
+						{!hideLegend && (
+							<Legend
+								verticalAlign="bottom"
+								align="left"
+								content={() => (
+									<div className={cn(hideLabels ? "pl-12" : "pl-15")}>
+										<ThresholdLegend
+											items={[
+												{
+													dangerLevel: "danger",
+													color: `var(--${DangerLevels.danger.color})`,
+												},
+												{
+													dangerLevel: "warning",
+													color: `var(--${DangerLevels.warning.color})`,
+												},
+											]}
+										/>
+									</div>
+								)}
+							></Legend>
+						)}
 					</LineChart>
 				</ChartContainer>
-				{!hideLegend && (
-					<div className="flex justify-start pl-12">
-						<ThresholdLegend
-							items={[
-								{
-									dangerLevel: "danger",
-									color: `var(--${DangerLevels.danger.color})`,
-								},
-								{
-									dangerLevel: "warning",
-									color: `var(--${DangerLevels.warning.color})`,
-								},
-							]}
-						/>
-					</div>
-				)}
 			</CardContent>
 		</Card>
 	);
