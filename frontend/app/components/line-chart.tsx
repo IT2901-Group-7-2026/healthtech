@@ -335,26 +335,33 @@ const Dot = ({ cx, cy, value, warning, danger, isPeak }: DotProps & { isPeak?: b
 	return <circle cx={cx} cy={cy} r={6} fill={fillColor} />;
 };
 
-export function ThresholdLine({
-	y,
-	dangerLevel,
-	label,
-	hideLineLabel,
-}: {
-	y: number;
+interface ThresholdLineProps {
 	dangerLevel: DangerLevel;
 	label?: string;
 	hideLineLabel?: boolean;
-}) {
+}
+
+export function ThresholdLine({
+	dangerLevel,
+	label,
+	hideLineLabel,
+	...props
+}: ThresholdLineProps & ({ y: number } | { x: number })) {
 	const { t } = useTranslation();
 	const color = `var(--${DangerLevels[dangerLevel].color})`;
 	const lineLabel = hideLineLabel ? undefined : (label ?? t(($) => $.lineChart[dangerLevel]));
 
+	const y = "y" in props ? props.y : undefined;
+	const x = "x" in props ? props.x : undefined;
+
+	const strokeDasharray = dangerLevel === "danger" ? "8 4" : "4 4";
+
 	return (
 		<ReferenceLine
 			y={y}
+			x={x}
 			stroke={color}
-			strokeDasharray="4 4"
+			strokeDasharray={strokeDasharray}
 			label={{
 				value: lineLabel,
 				position: "left",

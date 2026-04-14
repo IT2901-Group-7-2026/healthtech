@@ -7,7 +7,8 @@ import type { UserWithStatusDto } from "@/lib/dto";
 import { getThreshold } from "@/lib/thresholds";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import { Bar, BarChart, type BarProps, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, type BarProps, CartesianGrid, XAxis, YAxis } from "recharts";
+import { ThresholdLine } from "./line-chart.js";
 
 interface Props {
 	users: Array<UserWithStatusDto>;
@@ -145,32 +146,8 @@ export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props)
 								fill: "var(--color-muted-foreground)",
 							}}
 						/>
-						<ReferenceLine
-							x={warningThresholdLine}
-							stroke="var(--warning)"
-							strokeDasharray="6 4"
-							strokeWidth={2}
-							label={{
-								value: t(($) => $.dangerLevels.warning),
-								position: "insideTopRight",
-								dy: -16,
-								fill: "var(--warning)",
-								className: "text-base",
-							}}
-						/>
-						<ReferenceLine
-							x={dangerThresholdLine}
-							stroke="var(--danger)"
-							strokeDasharray="6 4"
-							strokeWidth={2}
-							label={{
-								value: t(($) => $.dangerLevels.danger),
-								position: "insideTopLeft",
-								dy: -16,
-								fill: "var(--danger)",
-								className: "text-base",
-							}}
-						/>
+						<ThresholdLine x={warningThresholdLine} dangerLevel="warning" />
+						<ThresholdLine x={dangerThresholdLine} dangerLevel="danger" />
 						<ChartTooltip
 							cursor={false}
 							content={({ active, payload, label }) => {
