@@ -12,12 +12,10 @@ interface ExposureBadgeProps {
 	className?: string;
 }
 
-const defaultBadgeClasses = "bg-muted text-foreground border border-border";
-
 export const ExposureBadge = ({ sensor, dangerLevel, className }: ExposureBadgeProps) => {
-	const Icon = iconConfig[sensor];
-
 	const { t } = useTranslation();
+
+	const Icon = iconConfig[sensor];
 
 	const dangerLevelClasses = dangerLevel
 		? cn(
@@ -25,7 +23,7 @@ export const ExposureBadge = ({ sensor, dangerLevel, className }: ExposureBadgeP
 				dangerlevelStyles[dangerLevel].text,
 				dangerlevelStyles[dangerLevel].border,
 			)
-		: defaultBadgeClasses;
+		: "bg-muted text-foreground border border-border";
 
 	return (
 		<div
