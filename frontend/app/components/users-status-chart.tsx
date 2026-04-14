@@ -7,15 +7,17 @@ import type { UserWithStatusDto } from "@/lib/dto";
 import { getThreshold } from "@/lib/thresholds";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import { Bar, BarChart, type BarProps, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, type BarProps, CartesianGrid, XAxis, YAxis } from "recharts";
+import { ThresholdLine } from "./line-chart.js";
 
 interface Props {
 	users: Array<UserWithStatusDto>;
 	sensor: Sensor;
 	userOnClick?: (userId: string) => void;
+	isWeekly?: boolean;
 }
 
-export function UserStatusChart({ users, sensor, userOnClick }: Props) {
+export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props) {
 	const [t] = useTranslation();
 	const threshold = getThreshold(sensor);
 	const getPercent = (value: number) => Math.round((value / threshold.danger) * 100);
@@ -33,7 +35,12 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 			return [];
 		}
 
-		const percent = getPercent(sensorStatus.value);
+		const days = isWeekly ? 7 : 1;
+
+		// Vibration should show average value in graph
+		const normalizedValue = sensor === "vibration" ? sensorStatus.value / days : sensorStatus.value;
+
+		const percent = getPercent(normalizedValue);
 		// Only show peak if it's above the current value
 		const peakPercent =
 			sensorStatus.peakValue && sensorStatus.peakValue > sensorStatus.value
@@ -156,32 +163,8 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 								);
 							}}
 						/>
-						<ReferenceLine
-							x={warningThresholdLine}
-							stroke="var(--warning)"
-							strokeDasharray="6 4"
-							strokeWidth={2}
-							label={{
-								value: t(($) => $.dangerLevels.warning),
-								position: "insideTopRight",
-								dy: -16,
-								fill: "var(--warning)",
-								className: "text-base",
-							}}
-						/>
-						<ReferenceLine
-							x={dangerThresholdLine}
-							stroke="var(--danger)"
-							strokeDasharray="6 4"
-							strokeWidth={2}
-							label={{
-								value: t(($) => $.dangerLevels.danger),
-								position: "insideTopLeft",
-								dy: -16,
-								fill: "var(--danger)",
-								className: "text-base",
-							}}
-						/>
+						<ThresholdLine x={warningThresholdLine} dangerLevel="warning" />
+						<ThresholdLine x={dangerThresholdLine} dangerLevel="danger" />
 						<ChartTooltip
 							cursor={false}
 							content={({ active, payload, label }) => {

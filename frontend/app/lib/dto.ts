@@ -24,18 +24,27 @@ export const aggregateFnEnum = {
 export type AggregateFnKey = keyof typeof aggregateFnEnum;
 export type AggregateFnValue = keyof (typeof aggregateFnEnum)[AggregateFnKey];
 
+export const DEFAULT_MIN_HOUR_DOMAIN = 0;
+export const DEFAULT_MAX_HOUR_DOMAIN = 23;
+
+export const HourDomainDtoSchema = z.object({
+	minHourUtc: z.int().min(0),
+	maxHourUtc: z.int().max(23),
+});
+
+export type HourDomainDto = z.infer<typeof HourDomainDtoSchema>;
+
 export type SensorDataRequestDto = {
 	startTime: TZDate;
 	endTime: TZDate;
 	granularity: GranularityKey;
 	function: AggregateFnKey;
 	field?: SensorTypeField;
-	clampEndTimeToNow?: boolean;
 };
 
-export type SensorOverviewDataRequestDto = Partial<Record<Sensor, SensorDataRequestDto>>;
+export type SensorOverviewRequestDto = Partial<Record<Sensor, SensorDataRequestDto>>;
 
-export const SensorDataResponseDtoSchema = z.object({
+export const SensorDtoSchema = z.object({
 	time: tzDateSchema,
 	value: z.number(),
 	peakValue: z.number().nullable(),
@@ -43,19 +52,33 @@ export const SensorDataResponseDtoSchema = z.object({
 	peakDangerLevel: DangerLevelSchema.nullable(),
 });
 
-export type SensorDataResponseDto = z.infer<typeof SensorDataResponseDtoSchema>;
+export type SensorDto = z.infer<typeof SensorDtoSchema>;
+
+export const SensorResponseDtoSchema = z.object({
+	data: SensorDtoSchema.array(),
+	hourDomain: HourDomainDtoSchema,
+});
+
+export type SensorResponseDto = z.infer<typeof SensorResponseDtoSchema>;
 
 // TODO: This should (maybe) include peakDangerLevel
-export const OverviewBucketDtoSchema = z.object({
+export const SensorOverviewBucketDtoSchema = z.object({
 	time: tzDateSchema,
 	dangerLevel: DangerLevelSchema,
 	sensorDangerLevels: z.partialRecord(SensorSchema, DangerLevelSchema),
 });
 
-export type OverviewBucketDto = z.infer<typeof OverviewBucketDtoSchema>;
+export type SensorOverviewBucketDto = z.infer<typeof SensorOverviewBucketDtoSchema>;
+
+export const SensorOverviewResponseDtoSchema = z.object({
+	data: SensorOverviewBucketDtoSchema.array(),
+	hourDomain: HourDomainDtoSchema,
+});
+
+export type SensorOverviewResponseDto = z.infer<typeof SensorOverviewResponseDtoSchema>;
 
 export type SensorDataResult = {
-	data: Array<SensorDataResponseDto> | undefined;
+	data: Array<SensorDto> | undefined;
 	isLoading: boolean;
 	isError: boolean;
 };
