@@ -5,8 +5,18 @@ using Backend.Utils;
 
 namespace Backend.Tests.UnitTests.Utils;
 
+/// <summary>
+/// Unit tests for ThresholdUtils to verify danger level calculation logic.
+/// </summary>
+/// <remarks>
+/// These tests cover the public helper methods used to evaluate threshold states for noise, dust, and vibration data.
+/// They focus on threshold boundaries, peak evaluation, field-specific overrides, and the cumulative day-based vibration flow.
+/// </remarks>
 public class ThresholdsUtilsTests
 {
+	/// <summary>
+	/// Verifies that calculating danger levels returns an empty result when no raw sensor data is provided.
+	/// </summary>
 	[Fact]
 	public void CalculateDangerLevels_NoData_ReturnsEmpty()
 	{
@@ -21,6 +31,9 @@ public class ThresholdsUtilsTests
 		Assert.Empty(result);
 	}
 
+	/// <summary>
+	/// Verifies that a single noise data point returns danger for the average value and safe for the peak value.
+	/// </summary>
 	[Fact]
 	public void CalculateDangerLevels_SingleNoiseDataPoint_ReturnsExpectedLevels()
 	{
@@ -41,6 +54,12 @@ public class ThresholdsUtilsTests
 		Assert.Equal(DangerLevel.Safe, dangerLevels.peakDangerLevel);
 	}
 
+	/// <summary>
+	/// Verifies that a single noise data point returns peak danger when the maximum value exceeds the peak threshold.
+	/// </summary>
+	/// <remarks>
+	/// This test isolates the peak calculation path by keeping the average value below the warning threshold while exceeding the noise peak threshold.
+	/// </remarks>
 	[Fact]
 	public void CalculateDangerLevels_SingleNoiseDataPoint_WithPeakBreach_ReturnsPeakDanger()
 	{
@@ -60,6 +79,9 @@ public class ThresholdsUtilsTests
 		Assert.Equal(DangerLevel.Danger, dangerLevels.peakDangerLevel);
 	}
 
+	/// <summary>
+	/// Verifies that dust danger level calculations use the average value and do not produce a peak danger level.
+	/// </summary>
 	[Fact]
 	public void CalculateDangerLevels_Dust_UsesAverageValueAndHasNoPeakLevel()
 	{
@@ -79,6 +101,12 @@ public class ThresholdsUtilsTests
 		Assert.Null(dangerLevels.peakDangerLevel);
 	}
 
+	/// <summary>
+	/// Verifies that vibration danger level calculations use cumulative daily values and reset when the day changes.
+	/// </summary>
+	/// <remarks>
+	/// The input is intentionally out of order to verify that vibration readings are sorted by time before cumulative totals are calculated.
+	/// </remarks>
 	[Fact]
 	public void CalculateDangerLevels_Vibration_UsesDailyCumulativeAndResetsPerDay()
 	{
@@ -113,6 +141,9 @@ public class ThresholdsUtilsTests
 		Assert.Null(result[2].dangerLevels.peakDangerLevel);
 	}
 
+	/// <summary>
+	/// Verifies that noise danger level calculation returns safe values when the average value is below the warning threshold.
+	/// </summary>
 	[Fact]
 	public void CalculateDangerLevel_Noise_WhenValueBelowWarning_ReturnsSafeAndPeakSafe()
 	{
@@ -124,6 +155,9 @@ public class ThresholdsUtilsTests
 		Assert.Equal(DangerLevel.Safe, result.peakDangerLevel);
 	}
 
+	/// <summary>
+	/// Verifies that noise danger level calculation returns warning when the average value is at the warning threshold.
+	/// </summary>
 	[Fact]
 	public void CalculateDangerLevel_Noise_WhenValueAtWarning_ReturnsWarning()
 	{
@@ -135,6 +169,12 @@ public class ThresholdsUtilsTests
 		Assert.Equal(DangerLevel.Safe, result.peakDangerLevel);
 	}
 
+	/// <summary>
+	/// Verifies that noise danger level calculation returns danger and peak danger when both thresholds are reached.
+	/// </summary>
+	/// <remarks>
+	/// This exercises the inclusive boundary behavior because the implementation uses greater-than-or-equal comparisons for both thresholds.
+	/// </remarks>
 	[Fact]
 	public void CalculateDangerLevel_Noise_WhenValueAtDangerAndPeakAtLimit_ReturnsDangerAndPeakDanger()
 	{
@@ -146,6 +186,12 @@ public class ThresholdsUtilsTests
 		Assert.Equal(DangerLevel.Danger, result.peakDangerLevel);
 	}
 
+	/// <summary>
+	/// Verifies that dust calculations use field-specific thresholds when a supported field override is provided.
+	/// </summary>
+	/// <remarks>
+	/// Field.Pm10_twa uses a different warning threshold than the default dust threshold, which makes it a useful case for verifying override selection.
+	/// </remarks>
 	[Fact]
 	public void CalculateDangerLevel_DustFieldOverride_Pm10Twa_UsesFieldThresholds()
 	{
@@ -171,6 +217,9 @@ public class ThresholdsUtilsTests
 		Assert.Null(dangerResult.peakDangerLevel);
 	}
 
+	/// <summary>
+	/// Verifies that the highest danger level helper returns the most severe non-null value.
+	/// </summary>
 	[Fact]
 	public void GetHighestDangerLevel_WithNullAndLowerValues_ReturnsWorst()
 	{
@@ -181,6 +230,9 @@ public class ThresholdsUtilsTests
 		Assert.Equal(DangerLevel.Warning, result);
 	}
 
+	/// <summary>
+	/// Verifies that the highest danger level helper returns safe when all provided values are null.
+	/// </summary>
 	[Fact]
 	public void GetHighestDangerLevel_AllNull_ReturnsSafe()
 	{
