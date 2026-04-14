@@ -58,7 +58,7 @@ export function DustChart({ value, thresholdValue, unit, label }: Props) {
 							</linearGradient>
 						</defs>
 
-						{/* background track */}
+						{/* background track
 						<Pie
 							data={[{ value: 1 }]}
 							dataKey="value"
@@ -71,12 +71,11 @@ export function DustChart({ value, thresholdValue, unit, label }: Props) {
 							fill="#3f3f46"
 							stroke="none"
 							isAnimationActive={false}
-						/>
+						/> */}
 
 						{/* gradient arc */}
 						<Pie
 							data={[{ value: 1 }]}
-							dataKey="value"
 							cx={cx}
 							cy={cy}
 							startAngle={180}
@@ -84,8 +83,6 @@ export function DustChart({ value, thresholdValue, unit, label }: Props) {
 							innerRadius={61}
 							outerRadius={79}
 							fill="url(#gaugeGradient)"
-							stroke="none"
-							isAnimationActive={false}
 						/>
 					</PieChart>
 				</ChartContainer>
