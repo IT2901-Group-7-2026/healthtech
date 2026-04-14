@@ -1,4 +1,5 @@
 "use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
@@ -14,6 +15,8 @@ import { useTranslation } from "react-i18next";
 import { type ActiveDotProps, CartesianGrid, Legend, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
 import { Skeleton } from "./ui/skeleton";
+
+const Y_AXIS_WIDTH = 60;
 
 const chartConfig = {
 	desktop: {
@@ -115,8 +118,6 @@ export function ChartLineDefault({
 	const { t } = useTranslation();
 	const id = useId();
 	const formatDate = useFormatDate();
-
-	const Y_AXIS_WIDTH = 60;
 
 	const { warning, danger, peakDanger } = getThreshold(sensor, dustField);
 	const dangerThreshold = usePeakData && peakDanger ? peakDanger : danger;
@@ -323,7 +324,7 @@ export function ChartLineDefault({
 								verticalAlign="bottom"
 								align="left"
 								content={() => (
-									<div style={{ paddingLeft: Y_AXIS_WIDTH }}>
+									<div style={{ marginLeft: Y_AXIS_WIDTH }}>
 										<ThresholdLegend
 											items={[
 												{
