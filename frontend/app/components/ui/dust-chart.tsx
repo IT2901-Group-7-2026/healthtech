@@ -52,9 +52,9 @@ export function DustChart({ value, thresholdValue, unit, label }: Props) {
 								x2="100%"
 								y2="0%"
 							>
-								<stop offset="0%" stopColor="#67d48b" />
-								<stop offset="50%" stopColor="#c9a56a" />
-								<stop offset="100%" stopColor="#f35d5d" />
+								<stop offset="0%" stopColor="var(--safe)" />
+								<stop offset="50%" stopColor="var(--warning)" />
+								<stop offset="100%" stopColor="var(--danger)" />
 							</linearGradient>
 						</defs>
 
