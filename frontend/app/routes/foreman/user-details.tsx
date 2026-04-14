@@ -1,9 +1,5 @@
 import { DailyBarChart } from "@/components/daily-bar-chart";
-import {
-	ChartLineDefault,
-	ChartLineSkeleton,
-	ThresholdLine,
-} from "@/components/line-chart";
+import { ChartLineDefault, ChartLineSkeleton, ThresholdLine } from "@/components/line-chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { DustChart } from "@/components/ui/dust-chart";
@@ -11,23 +7,12 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DateContext } from "@/features/date-picker/use-date";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
-import {
-	type Aggregation,
-	Aggregations,
-	type UserWithStatusDto,
-} from "@/lib/dto";
-import {
-	buildSensorOverviewQuery,
-	buildSensorQuery,
-} from "@/lib/sensor-query-utils";
+import { type Aggregation, Aggregations, type UserWithStatusDto } from "@/lib/dto";
+import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
 import { type Sensor, sensors } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapOverviewBucketsToChartRows } from "@/lib/time-bucket-utils";
-import {
-	computeYAxisRange,
-	downsampleSensorData,
-	getHourDomainFromBuckets,
-} from "@/lib/utils";
+import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { addDays, endOfDay, startOfDay, subDays } from "date-fns";
@@ -54,25 +39,13 @@ export function UserDetails({
 
 			<div className="flex flex-col gap-6">
 				{sensor === null ? (
-					<AllSensorsUserOverview
-						selectedUser={selectedUser}
-						selectedDate={selectedDate}
-					/>
+					<AllSensorsUserOverview selectedUser={selectedUser} selectedDate={selectedDate} />
 				) : sensor === "dust" ? (
-					<DustUserChart
-						selectedUser={selectedUser}
-						selectedDate={selectedDate}
-					/>
+					<DustUserChart selectedUser={selectedUser} selectedDate={selectedDate} />
 				) : sensor === "noise" ? (
-					<NoiseUserChart
-						selectedUser={selectedUser}
-						selectedDate={selectedDate}
-					/>
+					<NoiseUserChart selectedUser={selectedUser} selectedDate={selectedDate} />
 				) : (
-					<VibrationUserChart
-						selectedUser={selectedUser}
-						selectedDate={selectedDate}
-					/>
+					<VibrationUserChart selectedUser={selectedUser} selectedDate={selectedDate} />
 				)}
 			</div>
 		</section>
@@ -99,12 +72,7 @@ function AllSensorsUserOverview({
 	const { minHour, maxHour } = getHourDomainFromBuckets(data ?? []);
 
 	return (
-		<SensorChartCard
-			isLoading={isLoading}
-			isError={isError}
-			data={data}
-			selectedDate={selectedDate}
-		>
+		<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={selectedDate}>
 			<DateScopedChart selectedDate={selectedDate}>
 				<DailyBarChart
 					data={mapOverviewBucketsToChartRows(data ?? [], 0, 23)}
@@ -130,13 +98,7 @@ function AllSensorsUserOverview({
 	);
 }
 
-function DustUserChart({
-	selectedUser,
-	selectedDate,
-}: {
-	selectedUser: UserWithStatusDto;
-	selectedDate: TZDate;
-}) {
+function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithStatusDto; selectedDate: TZDate }) {
 	const { t, i18n } = useTranslation();
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
@@ -150,13 +112,7 @@ function DustUserChart({
 	const dustPm25TwaThreshold = getThreshold(sensor, "pm25_twa");
 	const dustPm10TwaThreshold = getThreshold(sensor, "pm10_twa");
 
-	const [
-		dataResult,
-		weekHourRangeResult,
-		dustTwa1Result,
-		dustTwa25Result,
-		dustTwa10Result,
-	] = useQueries({
+	const [dataResult, weekHourRangeResult, dustTwa1Result, dustTwa25Result, dustTwa10Result] = useQueries({
 		queries: [
 			sensorQueryOptions({
 				sensor,
@@ -200,9 +156,7 @@ function DustUserChart({
 
 	const { data, isLoading, isError } = dataResult;
 
-	const { minHour, maxHour } = getHourDomainFromBuckets(
-		weekHourRangeResult.data ?? [],
-	);
+	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
 	const dustTwa1Data = dustTwa1Result.data;
 	const dustTwa25Data = dustTwa25Result.data;
 	const dustTwa10Data = dustTwa10Result.data;
@@ -214,9 +168,7 @@ function DustUserChart({
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
 	const averageDustExposure =
-		data && data.length > 0
-			? data.reduce((sum, current) => sum + current.value, 0) / data.length
-			: 0;
+		data && data.length > 0 ? data.reduce((sum, current) => sum + current.value, 0) / data.length : 0;
 
 	return (
 		<div className="flex max-w-4xl flex-col gap-6">
@@ -265,11 +217,7 @@ function DustUserChart({
 
 			<div className="flex flex-wrap items-center gap-4">
 				{dustTwa1Data && dustTwa1Data.length > 0 && (
-					<DustChart
-						label="PM1 TWA"
-						value={dustTwa1Data[0].value}
-						thresholdValue={dustThreshold.danger}
-					/>
+					<DustChart label="PM1 TWA" value={dustTwa1Data[0].value} thresholdValue={dustThreshold.danger} />
 				)}
 				{dustTwa25Data && dustTwa25Data.length > 0 && (
 					<DustChart
@@ -290,13 +238,7 @@ function DustUserChart({
 	);
 }
 
-function VibrationUserChart({
-	selectedUser,
-	selectedDate,
-}: {
-	selectedUser: UserWithStatusDto;
-	selectedDate: TZDate;
-}) {
+function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithStatusDto; selectedDate: TZDate }) {
 	const { t, i18n } = useTranslation();
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
@@ -324,9 +266,7 @@ function VibrationUserChart({
 	});
 
 	const { data, isLoading, isError } = dataResult;
-	const { minHour, maxHour } = getHourDomainFromBuckets(
-		weekHourRangeResult.data ?? [],
-	);
+	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
 
 	const maxValue = data ? Math.max(...data.map((point) => point.value)) : 0;
 	const minY = 0;
@@ -334,8 +274,7 @@ function VibrationUserChart({
 	if (maxValue > maxY) {
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
-	const totalVibrationExposure =
-		data && data.length > 0 ? data[data.length - 1].value : 0;
+	const totalVibrationExposure = data && data.length > 0 ? data[data.length - 1].value : 0;
 
 	return (
 		<SensorChartCard
@@ -374,10 +313,7 @@ function VibrationUserChart({
 						}
 					>
 						<ThresholdLine y={vibrationThreshold.danger} dangerLevel="danger" />
-						<ThresholdLine
-							y={vibrationThreshold.warning}
-							dangerLevel="warning"
-						/>
+						<ThresholdLine y={vibrationThreshold.warning} dangerLevel="warning" />
 					</ChartLineDefault>
 				</div>
 			</DateScopedChart>
@@ -385,13 +321,7 @@ function VibrationUserChart({
 	);
 }
 
-function NoiseUserChart({
-	selectedUser,
-	selectedDate,
-}: {
-	selectedUser: UserWithStatusDto;
-	selectedDate: TZDate;
-}) {
+function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithStatusDto; selectedDate: TZDate }) {
 	const { t, i18n } = useTranslation();
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
@@ -428,16 +358,10 @@ function NoiseUserChart({
 	});
 
 	const { data, isLoading, isError } = dataResult;
-	const { minHour, maxHour } = getHourDomainFromBuckets(
-		weekHourRangeResult.data ?? [],
-	);
+	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
 
 	const maxValue = data
-		? Math.max(
-				...data.map((point) =>
-					usePeakAggregation && point.peakValue ? point.peakValue : point.value,
-				),
-			)
+		? Math.max(...data.map((point) => (usePeakAggregation && point.peakValue ? point.peakValue : point.value)))
 		: 0;
 	const minY = 0;
 	let maxY = 150;
@@ -449,25 +373,16 @@ function NoiseUserChart({
 	const averageNoiseExposure =
 		data && data.length > 0
 			? data.reduce(
-					(sum, point) =>
-						sum +
-						(usePeakAggregation && point.peakValue
-							? point.peakValue
-							: point.value),
+					(sum, point) => sum + (usePeakAggregation && point.peakValue ? point.peakValue : point.value),
 					0,
 				) / data.length
 			: 0;
 
 	return (
 		<div className="flex max-w-4xl flex-col gap-4">
-			<Tabs
-				value={aggregation}
-				onValueChange={(value) => setAggregation(value as Aggregation)}
-			>
+			<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
 				<TabsList>
-					<TabsTrigger value="average">
-						{t(($) => $.measurement.average)}
-					</TabsTrigger>
+					<TabsTrigger value="average">{t(($) => $.measurement.average)}</TabsTrigger>
 					<TabsTrigger value="peak">{t(($) => $.measurement.peak)}</TabsTrigger>
 				</TabsList>
 			</Tabs>
@@ -516,12 +431,7 @@ function NoiseUserChart({
 								}
 								dangerLevel="danger"
 							/>
-							{!usePeakAggregation && (
-								<ThresholdLine
-									y={noiseThreshold.warning}
-									dangerLevel="warning"
-								/>
-							)}
+							{!usePeakAggregation && <ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />}
 						</ChartLineDefault>
 					</div>
 				</DateScopedChart>
@@ -579,13 +489,7 @@ function SensorChartCard({
 	return <div className="w-full max-w-4xl">{children}</div>;
 }
 
-function DateScopedChart({
-	selectedDate,
-	children,
-}: {
-	selectedDate: TZDate;
-	children: ReactNode;
-}) {
+function DateScopedChart({ selectedDate, children }: { selectedDate: TZDate; children: ReactNode }) {
 	return (
 		<DateContext
 			value={{
