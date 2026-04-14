@@ -130,11 +130,11 @@ export default function ForemanOverview() {
 									isWeekly={isWeekly}
 								/>
 
-								{sensor && (
+								{sensor ? (
 									<UserStatusChart users={subordinates ?? []} sensor={sensor} isWeekly={isWeekly} />
+								) : (
+									<SensorSummaryGrid thresholdSummary={thresholdSummary} />
 								)}
-
-								<SensorSummaryGrid thresholdSummary={thresholdSummary} />
 							</>
 						)}
 					</div>

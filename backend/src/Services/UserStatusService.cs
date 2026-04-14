@@ -56,7 +56,7 @@ public class UserStatusService(AppDbContext _context, SignedInUserContext _signe
 		var dustRows = await _context
 			.Database.SqlQuery<UserAggRow>(
 				$"""
-				SELECT "user_id" as "UserId", MAX(max_dust_Pm1_twa) as Value, null as MaxValue
+				SELECT "user_id" as "UserId", AVG(max_dust_Pm1_twa) as Value, null as MaxValue
 				FROM dust_data_minutely
 				WHERE bucket between {startTime} and {endTime}
 				  AND "user_id" = ANY({ids})

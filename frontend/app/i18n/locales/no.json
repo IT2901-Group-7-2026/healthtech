@@ -50,8 +50,7 @@
   "measurement": {
     "peak": "Topp",
     "average": "Gjennomsnitt",
-    "averageExposure": "Gjennomsnittlig eksponering",
-    "dustWeek": "Høyeste daglige verdi"
+    "averageExposure": "Gjennomsnittlig eksponering"
   },
   "layout": {
     "live": "Live",

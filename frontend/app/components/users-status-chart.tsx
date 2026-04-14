@@ -186,9 +186,7 @@ export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props)
 										<div className="font-medium">{label}</div>
 										<div className="flex items-center justify-between gap-2">
 											<span className="text-muted-foreground">
-												{sensor === "dust" && isWeekly
-													? t(($) => $.measurement.dustWeek)
-													: t(($) => $.measurement.average)}
+												{t(($) => $.measurement.average)}
 											</span>
 											<span className="font-medium font-mono text-foreground tabular-nums">
 												{`${avg}%`}

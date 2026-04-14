@@ -50,8 +50,7 @@
   "measurement": {
     "peak": "Peak",
     "average": "Average",
-    "averageExposure": "Average exposure",
-    "dustWeek": "Daily peak value"
+    "averageExposure": "Average exposure"
   },
   "layout": {
     "live": "Live",
