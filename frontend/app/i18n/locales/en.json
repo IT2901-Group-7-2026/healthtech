@@ -213,10 +213,14 @@
       "safe": "All good!",
       "warning": "Attention may be required!",
       "danger": "Attention may be required!",
-      "criticalExposureText": "Operators above the exposure limit. Immediate follow-up recommended.",
-      "approachingThresholdText": "Operators approaching the exposure limit. Consider preventive measures.",
-      "weekCriticalExposureText": "Operators above the weekly exposure limit. Immediate follow-up recommended.",
-      "weekApproachingExposureText": "Operators approaching the weekly exposure limit. Consider preventive measures.",
+      "dayView": {
+        "danger": "Operators above the exposure limit. Immediate follow-up recommended.",
+        "warning": "Operators approaching the exposure limit. Consider preventive measures."
+      },
+      "weekView": {
+        "danger": "Operators above the weekly exposure limit. Immediate follow-up recommended.",
+        "warning": "Operators approaching the weekly exposure limit. Consider preventive measures."
+      },
       "oldData": "You are viewing old data.",
       "day": "Day",
       "week": "Week"

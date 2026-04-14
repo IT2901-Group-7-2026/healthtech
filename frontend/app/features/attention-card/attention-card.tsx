@@ -72,26 +72,15 @@ export const AttentionCard = ({
 	const showActionCard = !isWeekly && date ? isSameDay(date, now(), { in: TIMEZONE }) : false;
 
 	const dangerLevelColor = highestDangerLevel === null ? null : `text-${mapDangerLevelToColor(highestDangerLevel)}`;
+	const viewKey = isWeekly ? "weekView" : "dayView";
 
-	// Daily granularity text
 	const attentionHeaderText =
 		highestDangerLevel === null ? null : t(($) => $.foremanDashboard.actionCard[highestDangerLevel]);
 
-	const criticalExposureText =
-		highestDangerLevel === "danger" ? t(($) => $.foremanDashboard.actionCard.criticalExposureText) : null;
-
-	const approachingThresholdText =
-		highestDangerLevel === "warning" ? t(($) => $.foremanDashboard.actionCard.approachingThresholdText) : null;
-
-	// Weekly granularity text
-	const weeklyHeaderText =
-		highestDangerLevel === null ? null : t(($) => $.foremanDashboard.actionCard[highestDangerLevel]);
-
-	const weekCriticalExposureText =
-		highestDangerLevel === "danger" ? t(($) => $.foremanDashboard.actionCard.weekCriticalExposureText) : null;
-
-	const weekApproachingThresholdText =
-		highestDangerLevel === "warning" ? t(($) => $.foremanDashboard.actionCard.weekApproachingExposureText) : null;
+	const detailText =
+		highestDangerLevel === "danger" || highestDangerLevel === "warning"
+			? t(($) => $.foremanDashboard.actionCard[viewKey][highestDangerLevel])
+			: null;
 
 	if (isThresholdSummaryLoading || thresholdSummary === undefined || highestDangerLevel === null) {
 		return (
@@ -107,9 +96,7 @@ export const AttentionCard = ({
 			{isSubordinatesLoading ? (
 				<Skeleton className="h-8 w-[50%] rounded-full bg-zinc-100 dark:bg-accent" />
 			) : (
-				<h2 className={cn("font-bold text-2xl", dangerLevelColor)}>
-					{isWeekly ? weeklyHeaderText : attentionHeaderText}
-				</h2>
+				<h2 className={cn("font-bold text-2xl", dangerLevelColor)}>{attentionHeaderText}</h2>
 			)}
 		</CardHeader>
 	);
@@ -120,16 +107,8 @@ export const AttentionCard = ({
 				{actionCardHeader}
 
 				<CardContent className="gap-2">
-					{isWeekly ? (
-						<>
-							{weekCriticalExposureText && <p>{weekCriticalExposureText}</p>}
-							{weekApproachingThresholdText && <p>{weekApproachingThresholdText}</p>}
-						</>
-					) : showActionCard ? (
-						<>
-							{criticalExposureText && <p>{criticalExposureText}</p>}
-							{approachingThresholdText && <p>{approachingThresholdText}</p>}
-						</>
+					{showActionCard || isWeekly ? (
+						detailText && <p>{detailText}</p>
 					) : (
 						<p>{t(($) => $.foremanDashboard.actionCard.oldData)}</p>
 					)}
