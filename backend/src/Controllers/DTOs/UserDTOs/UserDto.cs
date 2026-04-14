@@ -27,7 +27,7 @@ public class UserDto
 
 public class UserWithStatusDto : UserDto
 {
-	public UserStatusDto Status { get; set; }
+	public required UserStatusDto Status { get; set; }
 
 	public static UserWithStatusDto FromEntity(User user, UserStatusDto status) =>
 		new UserWithStatusDto
