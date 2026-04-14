@@ -134,13 +134,12 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 							dataKey="name"
 							tickLine={false}
 							axisLine={false}
-							width={120}
-							tick={({ x, y, payload }) => {
+							tick={({ payload }) => {
 								const user = chartData.find((d) => d.name === payload.value);
 
 								return (
-									<g transform={`translate(${x},${y})`}>
-										<foreignObject x={-100} y={-10} width={100} height={40}>
+									<g>
+										<foreignObject>
 											<button
 												type="button"
 												onClick={() => {
