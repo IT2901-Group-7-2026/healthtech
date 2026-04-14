@@ -1,12 +1,12 @@
+import { DailyNotes } from "@/components/daily-notes";
+import { ExposureBadge } from "@/components/exposure-badge";
+import { Card } from "@/components/ui/card";
 import { BasePopup } from "@/features/popups/base-popup";
 import type { DangerLevel } from "@/lib/danger-levels";
 import type { Aggregation } from "@/lib/dto";
 import type { Sensor } from "@/lib/sensors";
-import { cn } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { t } from "i18next";
-import { DailyNotes } from "../../components/daily-notes";
-import { Card } from "../../components/ui/card";
 
 type CalendarPopupProps = {
 	title: string;
@@ -42,15 +42,10 @@ export function CalendarPopup({
 				<Card className="p-2 md:p-5">
 					{Object.entries(exposureData).map(([sensor, danger]) => (
 						<div key={sensor} className="flex justify-start gap-2">
-							<span
-								className={cn(
-									"rounded-full text-center font-medium capitalize",
-									`bg-${danger} ${danger === "danger" && "text-secondary"}`,
-									"h-fit w-fit px-2",
-								)}
-							>
+							<ExposureBadge sensor={sensor as Sensor} dangerLevel={danger}>
 								{t(($) => $.sensors[sensor as Sensor])}
-							</span>
+							</ExposureBadge>
+
 							<span className="text-muted-foreground">{"->"}</span>
 							<div className={`text-${danger}`}>{t(($) => $.popup[danger])}</div>
 						</div>
