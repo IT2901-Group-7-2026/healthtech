@@ -205,7 +205,7 @@ export function formatSensorValue(
 	const { digitsMg = 4, digitsDefault = 2 } = options ?? {};
 
 	// convert if mg
-	if (unit === "mg/m³") {
+	if (unit === "mg") {
 		return (value * UG_TO_MG).toFixed(digitsMg);
 	}
 

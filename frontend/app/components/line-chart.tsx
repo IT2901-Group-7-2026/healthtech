@@ -28,7 +28,7 @@ interface LineChartProps {
 	chartTitle?: string;
 	maxY: number;
 	minY: number;
-	unit: string;
+	unit: SensorUnit;
 	lineType?: string;
 	children: React.ReactNode;
 	sensor: Sensor;
@@ -252,7 +252,7 @@ export function ChartLineDefault({
 								hideLabels
 									? undefined
 									: {
-											value: unit,
+											value: t(($) => $.sensors.units[unit]),
 											position: "inside",
 											dx: -32,
 											angle: -90,
@@ -265,7 +265,9 @@ export function ChartLineDefault({
 						<ChartTooltip
 							cursor={false}
 							content={<ChartTooltipContent hideLabel={true} />}
-							formatter={(value?: number) => [formatSensorValue(value, unit as SensorUnit), ` ${unit}`]}
+							formatter={(value?: number) => [
+								`${formatSensorValue(value, unit as SensorUnit)} ${t(($) => $.sensors.units[unit])}`,
+							]}
 						/>
 
 						<defs>

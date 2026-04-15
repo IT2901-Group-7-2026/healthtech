@@ -28,7 +28,7 @@ export default function Dust() {
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 
-	const [displayUnit, setDisplayUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("μg/m³"));
+	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
 
 	const sensor: Sensor = "dust";
 
@@ -89,8 +89,8 @@ export default function Dust() {
 							minHour={minHour}
 							maxHour={maxHour}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageExposure, displayUnit)} ${displayUnit}`}
-							unit={displayUnit}
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageExposure, dustUnit)} ${t(($) => $.sensors.units[dustUnit])}`}
+							unit={dustUnit}
 							maxY={maxY}
 							minY={minY}
 							lineType="monotone"
@@ -98,10 +98,10 @@ export default function Dust() {
 							dustField={query.field}
 							headerRight={
 								<div className="flex items-center gap-2">
-									<Tabs value={displayUnit} onValueChange={(v) => setDisplayUnit(v as SensorUnit)}>
+									<Tabs value={dustUnit} onValueChange={(v) => setDustUnit(v as SensorUnit)}>
 										<TabsList>
-											<TabsTrigger value="μg/m³">{t(($) => $.sensors.dustUnitUg)}</TabsTrigger>
-											<TabsTrigger value="mg/m³">{t(($) => $.sensors.dustUnitMg)}</TabsTrigger>
+											<TabsTrigger value="ug">{t(($) => $.sensors.units.ug)}</TabsTrigger>
+											<TabsTrigger value="mg">{t(($) => $.sensors.units.mg)}</TabsTrigger>
 										</TabsList>
 									</Tabs>
 									<Button

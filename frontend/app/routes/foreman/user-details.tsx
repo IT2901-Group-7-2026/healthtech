@@ -118,7 +118,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	const chartContainerId = useId();
 	const sensor: Sensor = "dust";
 
-	const [displayUnit, setDisplayUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("μg/m³"));
+	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
 
 	const query = buildSensorQuery(sensor, "day", selectedDate);
 	const dustThreshold = getThreshold(sensor, query.field);
@@ -199,8 +199,8 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 							minHour={minHour}
 							maxHour={maxHour}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageDustExposure, displayUnit)} ${displayUnit}`}
-							unit={displayUnit}
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageDustExposure, dustUnit)} ${t(($) => $.sensors.units[dustUnit])}`}
+							unit={dustUnit}
 							maxY={maxY}
 							minY={minY}
 							lineType="monotone"
@@ -208,10 +208,10 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 							dustField={query.field}
 							headerRight={
 								<div className="flex items-center gap-2">
-									<Tabs value={displayUnit} onValueChange={(v) => setDisplayUnit(v as SensorUnit)}>
+									<Tabs value={dustUnit} onValueChange={(v) => setDustUnit(v as SensorUnit)}>
 										<TabsList>
-											<TabsTrigger value="μg/m³">{t(($) => $.sensors.dustUnitUg)}</TabsTrigger>
-											<TabsTrigger value="mg/m³">{t(($) => $.sensors.dustUnitMg)}</TabsTrigger>
+											<TabsTrigger value="ug">{t(($) => $.sensors.units.ug)}</TabsTrigger>
+											<TabsTrigger value="mg">{t(($) => $.sensors.units.mg)}</TabsTrigger>
 										</TabsList>
 									</Tabs>
 									<Button
@@ -316,8 +316,8 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 						minHour={minHour}
 						maxHour={maxHour}
 						chartData={downsampleSensorData(sensor, data ?? [])}
-						chartTitle={`${t(($) => $.common.total)}: ${Math.trunc(totalVibrationExposure)} ${t(($) => $.common.points)}`}
-						unit={t(($) => $.common.points)}
+						chartTitle={`${t(($) => $.common.total)}: ${Math.trunc(totalVibrationExposure)} ${t(($) => $.sensors.units.points)}`}
+						unit={"points"}
 						maxY={maxY}
 						minY={minY}
 						lineType="monotone"
@@ -426,8 +426,8 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 							maxHour={maxHour}
 							usePeakData={usePeakAggregation}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageNoiseExposure)} db`}
-							unit="db (TWA)"
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageNoiseExposure)} ${t(($) => $.sensors.units.db)}`}
+							unit={"dbTwa"}
 							maxY={maxY}
 							minY={minY}
 							lineType="monotone"

@@ -13,7 +13,7 @@ interface Props {
 // NOTE: This is just a proof of concept. The code will be rewritten completely later on.
 export function DustChart({ value, thresholdValue, unit, label }: Props) {
 	const { t } = useTranslation();
-	const resolvedUnit = unit ?? t(($) => $.sensors.dustUnitUg);
+	const resolvedUnit = unit ?? t(($) => $.sensors.units.ug);
 	const resolvedLabel = label ?? t(($) => $.sensors.dust);
 
 	const min = 0;

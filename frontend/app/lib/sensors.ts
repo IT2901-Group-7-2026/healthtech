@@ -4,7 +4,7 @@ export const sensors = ["dust", "noise", "vibration"] as const;
 export type Sensor = (typeof sensors)[number];
 export const parseAsSensor = parseAsStringLiteral(sensors);
 
-export const sensorUnits = ["μg/m³", "mg/m³", "points", "db", "db (TWA)"] as const;
+export const sensorUnits = ["mg", "ug", "points", "db", "dbTwa"] as const;
 export type SensorUnit = (typeof sensorUnits)[number];
 export const parseAsSensorUnit = parseAsStringLiteral(sensorUnits);
 
