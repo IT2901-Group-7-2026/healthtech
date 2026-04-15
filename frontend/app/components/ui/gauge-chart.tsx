@@ -2,7 +2,7 @@ import { ChartContainer } from "@/components/ui/chart";
 import { Pie, PieChart } from "recharts";
 import { Card } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
-import type { Sensor } from "app/lib/sensors";
+import type { Sensor, SensorUnit } from "@/lib/sensors";
 
 // Convert polar coordinates to cartesian, needed because SVG uses xy but gauges are circular
 function polarToCartesian(cx: number, cy: number, radius: number, angleInDegrees: number) {
@@ -52,14 +52,15 @@ function GaugeNeedle({
 interface GaugeChartProps {
 	value: number | null;
 	thresholdValue: number;
-	unit?: string;
+	unit?: SensorUnit;
 	label?: string;
 	sensor: Sensor;
 }
 
 export function GaugeChart({ value, thresholdValue, unit, label, sensor }: GaugeChartProps) {
 	const { t } = useTranslation();
-	const resolvedUnit = unit ?? t(($) => $.sensors.dustUnit);
+
+	const resolvedUnit = unit ? t(($) => $.sensors.units[unit]) : undefined;
 	const resolvedLabel = label ?? t(($) => $.sensors[sensor]);
 
 	// Gauge geometry constants

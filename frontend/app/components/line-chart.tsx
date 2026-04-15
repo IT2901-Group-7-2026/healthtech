@@ -1,5 +1,3 @@
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { useDate } from "@/features/date-picker/use-date";
@@ -7,9 +5,9 @@ import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
 import type { SensorDto, SensorTypeField } from "@/lib/dto";
-import type { Sensor } from "@/lib/sensors";
+import type { Sensor, SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import { cn } from "@/lib/utils";
+import { cn, formatSensorValue } from "@/lib/utils";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import { type ActiveDotProps, CartesianGrid, Legend, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
@@ -30,7 +28,7 @@ interface LineChartProps {
 	chartTitle?: string;
 	maxY: number;
 	minY: number;
-	unit: string;
+	unit: SensorUnit;
 	lineType?: string;
 	children: React.ReactNode;
 	sensor: Sensor;
@@ -254,7 +252,7 @@ export function ChartLineDefault({
 								hideLabels
 									? undefined
 									: {
-											value: unit,
+											value: t(($) => $.sensors.units[unit]),
 											position: "inside",
 											dx: -32,
 											angle: -90,
@@ -262,11 +260,15 @@ export function ChartLineDefault({
 											fill: "var(--color-muted-foreground)",
 										}
 							}
+							// only dustchart with mg unit need to show decimals on y axis
+							tickFormatter={(value) => formatSensorValue(value, unit as SensorUnit, 0, { mg: 3 })}
 						/>
 						<ChartTooltip
 							cursor={false}
 							content={<ChartTooltipContent hideLabel={true} />}
-							formatter={(value?: number) => [`${value?.toFixed(2) ?? "N/A"}`, ` ${unit}`]}
+							formatter={(value?: number) => [
+								`${formatSensorValue(value, unit as SensorUnit)} ${t(($) => $.sensors.units[unit])}`,
+							]}
 						/>
 
 						<defs>
