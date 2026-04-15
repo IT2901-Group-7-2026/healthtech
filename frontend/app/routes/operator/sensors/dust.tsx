@@ -9,18 +9,23 @@ import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorQueryOptions } from "@/lib/api";
-import type { SensorTypeField } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import { parseAsSensorUnit, type Sensor, type SensorUnit } from "@/lib/sensors";
+import {
+	defaultDustField,
+	dustFields,
+	parseAsDustField,
+	parseAsSensorUnit,
+	type DustField,
+	type Sensor,
+	type SensorUnit,
+} from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { parseAsStringLiteral, useQueryState } from "nuqs";
+import { useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
-
-const dustFields = ["pm1_twa", "pm25_twa", "pm10_twa"] as const satisfies ReadonlyArray<SensorTypeField>;
 
 export default function Dust() {
 	const { view } = useView();
@@ -31,11 +36,7 @@ export default function Dust() {
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 
-	const parseAsDustField = parseAsStringLiteral(dustFields);
-	const [dustField, setDustField] = useQueryState<(typeof dustFields)[number]>(
-		"dustField",
-		parseAsDustField.withDefault("pm1_twa"),
-	);
+	const [dustField, setDustField] = useQueryState<DustField>("dustField", parseAsDustField.withDefault(defaultDustField));
 	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
 
 	const sensor: Sensor = "dust";
@@ -75,7 +76,7 @@ export default function Dust() {
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">
-			<Tabs value={dustField} onValueChange={(value) => setDustField(value as (typeof dustFields)[number])}>
+			<Tabs value={dustField} onValueChange={(value) => setDustField(value as DustField)}>
 				<TabsList>
 					{dustFields.map((field) => (
 						<TabsTrigger key={field} value={field}>
