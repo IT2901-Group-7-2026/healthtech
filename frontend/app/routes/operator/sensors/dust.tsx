@@ -11,11 +11,12 @@ import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorTypeField } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import type { Sensor } from "@/lib/sensors";
+import { parseAsSensorUnit, type Sensor, type SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
+import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { useQueryState } from "nuqs";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -29,6 +30,8 @@ export default function Dust() {
 	const { user } = useUser();
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
+
+	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
 
 	const sensor: Sensor = "dust";
 	const [dustField, setDustField] = useState<(typeof dustFields)[number]>("pm1_twa");
@@ -57,10 +60,8 @@ export default function Dust() {
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
 	const minY = 0;
-	let maxY = 45;
-	if (maxValue > maxY) {
-		maxY = computeYAxisRange(data ?? []).maxY;
-	}
+	const baseMaxY = 45;
+	const maxY = maxValue > baseMaxY ? computeYAxisRange(data ?? []).maxY : baseMaxY;
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor);
 	const averageExposure =
@@ -93,11 +94,7 @@ export default function Dust() {
 			) : !data || data.length === 0 ? (
 				<Card className="flex h-24 w-full items-center">
 					<CardTitle>
-						{date.toLocaleDateString(locale, {
-							day: "numeric",
-							month: "long",
-							year: "numeric",
-						})}
+						{date.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" })}
 					</CardTitle>
 					<p>{t(($) => $.common.noData)}</p>
 				</Card>
@@ -108,34 +105,41 @@ export default function Dust() {
 							minHour={minHour}
 							maxHour={maxHour}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageExposure)} ${t(($) => $.sensors.dustUnit)}`}
-							unit={t(($) => $.sensors.dustUnit)}
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageExposure, dustUnit, 2, { mg: 4 })} ${t(($) => $.sensors.units[dustUnit])}`}
+							unit={dustUnit}
 							maxY={maxY}
 							minY={minY}
 							lineType="monotone"
 							sensor={sensor}
 							dustField={query.field}
 							headerRight={
-								<Button
-									size="sm"
-									variant="outline"
-									onClick={() =>
-										exportToPDF(
-											chartContainerId,
-											`${date.toLocaleDateString(locale, {
-												day: "numeric",
-												month: "long",
-												year: "numeric",
-											})}-${user.username}-Dust-Exposure-Overview`,
-											`Dust Exposure - ${user.username} - ${date.toLocaleDateString(locale)}`,
-										)
-									}
-								>
-									{t(($) => $.common.exportAsPdf)}
-								</Button>
+								<div className="flex items-center gap-2">
+									<Tabs value={dustUnit} onValueChange={(v) => setDustUnit(v as SensorUnit)}>
+										<TabsList>
+											<TabsTrigger value="ug">{t(($) => $.sensors.units.ug)}</TabsTrigger>
+											<TabsTrigger value="mg">{t(($) => $.sensors.units.mg)}</TabsTrigger>
+										</TabsList>
+									</Tabs>
+									<Button
+										size="sm"
+										variant="outline"
+										onClick={() =>
+											exportToPDF(
+												chartContainerId,
+												`${date.toLocaleDateString(locale, {
+													day: "numeric",
+													month: "long",
+													year: "numeric",
+												})}-${user.username}-Dust-Exposure-Overview`,
+												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(locale)}`,
+											)
+										}
+									>
+										{t(($) => $.common.exportAsPdf)}
+									</Button>
+								</div>
 							}
 						>
-							<div className="mb-2 flex justify-end"></div>
 							<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
 							<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
 						</ChartLineDefault>

@@ -2,7 +2,7 @@ import { DailyBarChart } from "@/components/daily-bar-chart";
 import { ChartLineDefault, ChartLineSkeleton, ThresholdLine } from "@/components/line-chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
-import { DustChart } from "@/components/ui/dust-chart";
+import { GaugeChart } from "@/components/ui/gauge-chart";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DateContext } from "@/features/date-picker/use-date";
 import { useExportPDF } from "@/hooks/use-export-pdf";
@@ -16,10 +16,10 @@ import {
 	type UserWithStatusDto,
 } from "@/lib/dto";
 import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
-import { type Sensor, sensors } from "@/lib/sensors";
+import { parseAsSensorUnit, type Sensor, type SensorUnit, sensors } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapOverviewBucketsToChartRows } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
+import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { addDays, endOfDay, startOfDay, subDays } from "date-fns";
@@ -126,6 +126,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 		"dustField",
 		parseAsDustField.withDefault("pm1_twa"),
 	);
+	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
 
 	const query = buildSensorQuery(sensor, "day", selectedDate, {
 		field: dustField,
@@ -219,27 +220,35 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 							minHour={minHour}
 							maxHour={maxHour}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageDustExposure)} ${t(($) => $.sensors.dustUnit)}`}
-							unit={t(($) => $.sensors.dustUnit)}
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageDustExposure, dustUnit, 2, { mg: 4 })} ${t(($) => $.sensors.units[dustUnit])}`}
+							unit={dustUnit}
 							maxY={maxY}
 							minY={minY}
 							lineType="monotone"
 							sensor={sensor}
 							dustField={query.field}
 							headerRight={
-								<Button
-									size="sm"
-									variant="outline"
-									onClick={() =>
-										exportToPDF(
-											chartContainerId,
-											`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.username}-Dust-Exposure-Overview`,
-											`Dust Exposure - ${selectedUser.username} - ${selectedDate.toLocaleDateString(i18n.language)}`,
-										)
-									}
-								>
-									{t(($) => $.common.exportAsPdf)}
-								</Button>
+								<div className="flex items-center gap-2">
+									<Tabs value={dustUnit} onValueChange={(v) => setDustUnit(v as SensorUnit)}>
+										<TabsList>
+											<TabsTrigger value="ug">{t(($) => $.sensors.units.ug)}</TabsTrigger>
+											<TabsTrigger value="mg">{t(($) => $.sensors.units.mg)}</TabsTrigger>
+										</TabsList>
+									</Tabs>
+									<Button
+										size="sm"
+										variant="outline"
+										onClick={() =>
+											exportToPDF(
+												chartContainerId,
+												`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.username}-Dust-Exposure-Overview`,
+												`Dust Exposure - ${selectedUser.username} - ${selectedDate.toLocaleDateString(i18n.language)}`,
+											)
+										}
+									>
+										{t(($) => $.common.exportAsPdf)}
+									</Button>
+								</div>
 							}
 						>
 							<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
@@ -251,24 +260,30 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 
 			<div className="flex flex-wrap items-center gap-4">
 				{
-					<DustChart
+					<GaugeChart
 						label={t(($) => $.sensors.dustExposureLabels.pm1_twa)}
 						value={dustTwa1Data?.[0]?.value ?? null}
 						thresholdValue={dustPm1TwaThreshold.danger}
+						sensor={sensor}
+						unit="ug"
 					/>
 				}
 				{
-					<DustChart
+					<GaugeChart
 						label={t(($) => $.sensors.dustExposureLabels.pm25_twa)}
 						value={dustTwa25Data?.[0]?.value ?? null}
 						thresholdValue={dustPm25TwaThreshold.danger}
+						sensor={sensor}
+						unit="ug"
 					/>
 				}
 				{
-					<DustChart
+					<GaugeChart
 						label={t(($) => $.sensors.dustExposureLabels.pm10_twa)}
 						value={dustTwa10Data?.[0]?.value ?? null}
 						thresholdValue={dustPm10TwaThreshold.danger}
+						sensor={sensor}
+						unit="ug"
 					/>
 				}
 			</div>
@@ -328,8 +343,8 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 						minHour={minHour}
 						maxHour={maxHour}
 						chartData={downsampleSensorData(sensor, data ?? [])}
-						chartTitle={`${t(($) => $.common.total)}: ${Math.trunc(totalVibrationExposure)} ${t(($) => $.common.points)}`}
-						unit={t(($) => $.common.points)}
+						chartTitle={`${t(($) => $.common.total)}: ${Math.trunc(totalVibrationExposure)} ${t(($) => $.sensors.units.points)}`}
+						unit={"points"}
 						maxY={maxY}
 						minY={minY}
 						lineType="monotone"
@@ -438,8 +453,8 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 							maxHour={maxHour}
 							usePeakData={usePeakAggregation}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageNoiseExposure)} db`}
-							unit="db (TWA)"
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageNoiseExposure)} ${t(($) => $.sensors.units.db)}`}
+							unit={"dbTwa"}
 							maxY={maxY}
 							minY={minY}
 							lineType="monotone"
