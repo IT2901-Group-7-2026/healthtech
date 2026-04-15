@@ -145,12 +145,12 @@ export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props)
 							tick={({ x, y, payload, index }) => {
 								const user = chartData[index];
 
-								const WIDTH = 120;
-								const HEIGHT = 40;
+								const width = 120;
+								const height = 40;
 
 								return (
 									<g transform={`translate(${x},${y})`}>
-										<foreignObject x={-WIDTH} y={-HEIGHT / 2} width={WIDTH} height={HEIGHT}>
+										<foreignObject x={-width} y={-height / 2} width={width} height={height}>
 											<div className="flex h-full items-center">
 												<button
 													type="button"
