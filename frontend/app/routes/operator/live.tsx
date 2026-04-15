@@ -11,6 +11,7 @@ import { sensorQueryOptions } from "@/lib/api";
 import { now, toTZDate } from "@/lib/date";
 import type { SensorDto } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
+import type { SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { computeYAxisRange } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
@@ -137,7 +138,7 @@ export default function OperatorLiveView() {
 							sensor="dust"
 							exposureLabel={"PM1 TWA"}
 							exposureUnitLabel="µg/m³"
-							chartUnitLabel={t(($) => $.sensors.dustUnit)}
+							chartUnit={"ug"}
 							data={dustTwa1Data ?? []}
 							minTime={start}
 							maxTime={end}
@@ -149,7 +150,7 @@ export default function OperatorLiveView() {
 							exposureLabel={"PM2.5 TWA"}
 							exposureField="pm25_twa"
 							exposureUnitLabel="µg/m³"
-							chartUnitLabel={t(($) => $.sensors.dustUnit)}
+							chartUnit={"ug"}
 							data={dustTwa25Data ?? []}
 							minTime={start}
 							maxTime={end}
@@ -161,7 +162,7 @@ export default function OperatorLiveView() {
 							exposureLabel={"PM10 TWA"}
 							exposureField="pm10_twa"
 							exposureUnitLabel="µg/m³"
-							chartUnitLabel={t(($) => $.sensors.dustUnit)}
+							chartUnit={"ug"}
 							data={dustTwa10Data ?? []}
 							minTime={start}
 							maxTime={end}
@@ -179,7 +180,7 @@ export default function OperatorLiveView() {
 							sensor="noise"
 							exposureLabel={t(($) => $.sensors.noise)}
 							exposureUnitLabel="dB"
-							chartUnitLabel="db (TWA)"
+							chartUnit="dbTwa"
 							data={noiseData ?? []}
 							minTime={start}
 							maxTime={end}
@@ -196,8 +197,8 @@ export default function OperatorLiveView() {
 						<LiveExposureCard
 							sensor="vibration"
 							exposureLabel={t(($) => $.sensors.vibration)}
-							exposureUnitLabel={t(($) => $.common.points)}
-							chartUnitLabel={t(($) => $.common.points)}
+							exposureUnitLabel={t(($) => $.sensors.units.points)}
+							chartUnit={"points"}
 							data={vibrationData ?? []}
 							minTime={start}
 							maxTime={end}
@@ -263,7 +264,7 @@ interface LiveExposureCardProps {
 	exposureLabel: string;
 	exposureField?: "pm1_twa" | "pm25_twa" | "pm10_twa";
 	exposureUnitLabel: string;
-	chartUnitLabel: string;
+	chartUnit: SensorUnit;
 	data: Array<SensorDto>;
 	minTime: TZDate;
 	maxTime: TZDate;
@@ -275,7 +276,7 @@ const LiveExposureCard = ({
 	exposureLabel,
 	exposureField,
 	exposureUnitLabel,
-	chartUnitLabel,
+	chartUnit,
 	minTime,
 	data,
 	maxTime,
@@ -313,7 +314,7 @@ const LiveExposureCard = ({
 					maxTime={maxTime}
 					chartData={data}
 					chartTitle=""
-					unit={chartUnitLabel}
+					unit={chartUnit}
 					maxY={maxY}
 					minY={minY}
 					lineType="monotone"

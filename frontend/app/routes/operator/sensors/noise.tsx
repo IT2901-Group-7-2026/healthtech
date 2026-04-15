@@ -130,8 +130,8 @@ export default function Noise() {
 							minTime={minTime}
 							maxTime={maxTime}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageExposure)} db`}
-							unit="db (TWA)"
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageExposure)} ${t(($) => $.sensors.units.db)}`}
+							unit="dbTwa"
 							maxY={maxY}
 							minY={minY}
 							lineType="monotone"

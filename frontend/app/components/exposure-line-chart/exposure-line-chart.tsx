@@ -1,13 +1,11 @@
-"use client";
-
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, DangerLevels, dangerlevelStyles, getDangerLevel } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
 import type { SensorDto, SensorTypeField } from "@/lib/dto";
-import type { Sensor } from "@/lib/sensors";
+import type { Sensor, SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import { cn } from "@/lib/utils";
+import { cn, formatSensorValue } from "@/lib/utils";
 import { TZDate } from "@date-fns/tz";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -44,7 +42,7 @@ export interface ExposureLineChartProps {
 	chartData: Array<SensorDto>;
 	maxY: number;
 	minY: number;
-	unit: string;
+	unit: SensorUnit;
 	lineType?: CurveType;
 	children?: React.ReactNode;
 	sensor: Sensor;
@@ -181,7 +179,7 @@ export function ExposureLineChart({
 						compact
 							? undefined
 							: {
-									value: unit,
+									value: t(($) => $.sensors.units[unit]),
 									position: "inside",
 									dx: -32,
 									angle: -90,
@@ -189,11 +187,15 @@ export function ExposureLineChart({
 									fill: "var(--color-muted-foreground)",
 								}
 					}
+					// only dustchart with mg unit need to show decimals on y axis
+					tickFormatter={(value) => formatSensorValue(value, unit as SensorUnit, 0, { mg: 3 })}
 				/>
 				<ChartTooltip
 					cursor={false}
 					content={<ChartTooltipContent hideLabel={true} />}
-					formatter={(value?: number) => [`${value?.toFixed(2) ?? "N/A"}`, ` ${unit}`]}
+					formatter={(value?: number) => [
+						`${formatSensorValue(value, unit as SensorUnit)} ${t(($) => $.sensors.units[unit])}`,
+					]}
 				/>
 
 				<defs>

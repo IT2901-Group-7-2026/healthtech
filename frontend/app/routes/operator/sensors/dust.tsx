@@ -5,6 +5,7 @@ import {
 import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
 import { useUser } from "@/features/user/user-context";
@@ -14,11 +15,20 @@ import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorQueryOptions } from "@/lib/api";
 import { hourToTZDate } from "@/lib/date";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import type { Sensor } from "@/lib/sensors";
+import {
+	type DustField,
+	defaultDustField,
+	dustFields,
+	parseAsDustField,
+	parseAsSensorUnit,
+	type Sensor,
+	type SensorUnit,
+} from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
+import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -31,9 +41,17 @@ export default function Dust() {
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 
+	const [dustField, setDustField] = useQueryState<DustField>(
+		"dustField",
+		parseAsDustField.withDefault(defaultDustField),
+	);
+	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
+
 	const sensor: Sensor = "dust";
 
-	const query = buildSensorQuery(sensor, view, date);
+	const query = buildSensorQuery(sensor, view, date, {
+		field: dustField,
+	});
 
 	const dustThreshold = getThreshold(sensor, query.field);
 
@@ -55,10 +73,8 @@ export default function Dust() {
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
 	const minY = 0;
-	let maxY = 45;
-	if (maxValue > maxY) {
-		maxY = computeYAxisRange(data ?? []).maxY;
-	}
+	const baseMaxY = 45;
+	const maxY = maxValue > baseMaxY ? computeYAxisRange(data ?? []).maxY : baseMaxY;
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor);
 	const averageExposure =
@@ -71,6 +87,16 @@ export default function Dust() {
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">
+			<Tabs value={dustField} onValueChange={(value) => setDustField(value as DustField)}>
+				<TabsList>
+					{dustFields.map((field) => (
+						<TabsTrigger key={field} value={field}>
+							{t(($) => $.sensors.dustFields[field])}
+						</TabsTrigger>
+					))}
+				</TabsList>
+			</Tabs>
+
 			{isLoading ? (
 				<ExposureLineChartCardSkeleton />
 			) : isError ? (
@@ -84,11 +110,7 @@ export default function Dust() {
 			) : !data || data.length === 0 ? (
 				<Card className="flex h-24 w-full items-center">
 					<CardTitle>
-						{date.toLocaleDateString(locale, {
-							day: "numeric",
-							month: "long",
-							year: "numeric",
-						})}
+						{date.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" })}
 					</CardTitle>
 					<p>{t(($) => $.common.noData)}</p>
 				</Card>
@@ -99,34 +121,41 @@ export default function Dust() {
 							minTime={minTime}
 							maxTime={maxTime}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageExposure)} ${t(($) => $.sensors.dustUnit)}`}
-							unit={t(($) => $.sensors.dustUnit)}
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageExposure, dustUnit, 2, { mg: 4 })} ${t(($) => $.sensors.units[dustUnit])}`}
+							unit={dustUnit}
 							maxY={maxY}
 							minY={minY}
 							lineType="monotone"
 							sensor={sensor}
 							dustField={query.field}
 							headerRight={
-								<Button
-									size="sm"
-									variant="outline"
-									onClick={() =>
-										exportToPDF(
-											chartContainerId,
-											`${date.toLocaleDateString(locale, {
-												day: "numeric",
-												month: "long",
-												year: "numeric",
-											})}-${user.username}-Dust-Exposure-Overview`,
-											`Dust Exposure - ${user.username} - ${date.toLocaleDateString(locale)}`,
-										)
-									}
-								>
-									{t(($) => $.common.exportAsPdf)}
-								</Button>
+								<div className="flex items-center gap-2">
+									<Tabs value={dustUnit} onValueChange={(v) => setDustUnit(v as SensorUnit)}>
+										<TabsList>
+											<TabsTrigger value="ug">{t(($) => $.sensors.units.ug)}</TabsTrigger>
+											<TabsTrigger value="mg">{t(($) => $.sensors.units.mg)}</TabsTrigger>
+										</TabsList>
+									</Tabs>
+									<Button
+										size="sm"
+										variant="outline"
+										onClick={() =>
+											exportToPDF(
+												chartContainerId,
+												`${date.toLocaleDateString(locale, {
+													day: "numeric",
+													month: "long",
+													year: "numeric",
+												})}-${user.username}-Dust-Exposure-Overview`,
+												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(locale)}`,
+											)
+										}
+									>
+										{t(($) => $.common.exportAsPdf)}
+									</Button>
+								</div>
 							}
 						>
-							<div className="mb-2 flex justify-end"></div>
 							<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
 							<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
 						</ExposureLineChartCard>
