@@ -16,11 +16,11 @@ import {
 } from "@/lib/dto";
 import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
 import {
+	type DustField,
 	defaultDustField,
 	dustFields,
 	parseAsDustField,
 	parseAsSensorUnit,
-	type DustField,
 	type Sensor,
 	type SensorUnit,
 	sensors,
@@ -127,7 +127,10 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 	const sensor: Sensor = "dust";
-	const [dustField, setDustField] = useQueryState<DustField>("dustField", parseAsDustField.withDefault(defaultDustField));
+	const [dustField, setDustField] = useQueryState<DustField>(
+		"dustField",
+		parseAsDustField.withDefault(defaultDustField),
+	);
 	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
 
 	const query = buildSensorQuery(sensor, "day", selectedDate, {

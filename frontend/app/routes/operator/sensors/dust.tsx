@@ -11,11 +11,11 @@ import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorQueryOptions } from "@/lib/api";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import {
+	type DustField,
 	defaultDustField,
 	dustFields,
 	parseAsDustField,
 	parseAsSensorUnit,
-	type DustField,
 	type Sensor,
 	type SensorUnit,
 } from "@/lib/sensors";
@@ -36,7 +36,10 @@ export default function Dust() {
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 
-	const [dustField, setDustField] = useQueryState<DustField>("dustField", parseAsDustField.withDefault(defaultDustField));
+	const [dustField, setDustField] = useQueryState<DustField>(
+		"dustField",
+		parseAsDustField.withDefault(defaultDustField),
+	);
 	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
 
 	const sensor: Sensor = "dust";
