@@ -2,7 +2,7 @@ import { DailyBarChart } from "@/components/daily-bar-chart";
 import { ChartLineDefault, ChartLineSkeleton, ThresholdLine } from "@/components/line-chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
-import { DustChart } from "@/components/ui/dust-chart";
+import { GaugeChart } from "@/components/ui/gauge-chart";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DateContext } from "@/features/date-picker/use-date";
 import { useExportPDF } from "@/hooks/use-export-pdf";
@@ -229,24 +229,27 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 
 			<div className="flex flex-wrap items-center gap-4">
 				{
-					<DustChart
+					<GaugeChart
 						label="PM1 TWA"
 						value={dustTwa1Data?.[0]?.value ?? null}
 						thresholdValue={dustThreshold.danger}
+						sensor={sensor}
 					/>
 				}
 				{
-					<DustChart
+					<GaugeChart
 						label="PM2.5 TWA"
 						value={dustTwa25Data?.[0]?.value ?? null}
 						thresholdValue={dustPm25TwaThreshold.danger}
+						sensor={sensor}
 					/>
 				}
 				{
-					<DustChart
+					<GaugeChart
 						label="PM10 TWA"
 						value={dustTwa10Data?.[0]?.value ?? null}
 						thresholdValue={dustPm10TwaThreshold.danger}
+						sensor={sensor}
 					/>
 				}
 			</div>
