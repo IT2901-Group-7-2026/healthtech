@@ -276,7 +276,9 @@ export function ChartLineDefault({
 									}}
 								/>
 							}
-							formatter={(value?: number) => [`${value?.toFixed(2) ?? "N/A"}`, ` ${unit}`]}
+							formatter={(value?: number) => [
+								`${formatSensorValue(value, unit as SensorUnit)} ${t(($) => $.sensors.units[unit])}`,
+							]}
 						/>
 
 						<defs>

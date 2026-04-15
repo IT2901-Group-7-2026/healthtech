@@ -1,4 +1,8 @@
-import { ChartLineDefault, ChartLineSkeleton, ThresholdLine } from "@/components/line-chart";
+import {
+	ExposureLineChartCard,
+	ExposureLineChartCardSkeleton,
+} from "@/components/exposure-line-chart/exposure-line-chart-card";
+import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
@@ -14,6 +18,7 @@ import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { setHours } from "date-fns";
 import { useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -64,11 +69,14 @@ export default function Vibration() {
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], "vibration");
 	const totalExposure = data && data.length > 0 ? data[data.length - 1].value : 0;
 
+	const minTime = setHours(date, minHour);
+	const maxTime = setHours(date, maxHour);
+
 	return (
 		<div className="flex h-full w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex flex-1 flex-col gap-4">
 				{isLoading ? (
-					<ChartLineSkeleton />
+					<ExposureLineChartCardSkeleton />
 				) : isError ? (
 					<Card className="flex h-full w-full items-center">
 						<p>{t(($) => $.common.error)}</p>
@@ -91,9 +99,9 @@ export default function Vibration() {
 				) : (
 					<div className="w-full">
 						<div id={chartContainerId}>
-							<ChartLineDefault
-								minHour={minHour}
-								maxHour={maxHour}
+							<ExposureLineChartCard
+								minTime={minTime}
+								maxTime={maxTime}
 								chartData={downsampleSensorData(sensor, data ?? [])}
 								chartTitle={`${t(($) => $.common.total)}: ${Math.trunc(totalExposure)} ${t(($) => $.sensors.units.points)}`}
 								unit={"points"}
@@ -123,7 +131,7 @@ export default function Vibration() {
 							>
 								<ThresholdLine y={vibrationThreshold.danger} dangerLevel="danger" />
 								<ThresholdLine y={vibrationThreshold.warning} dangerLevel="warning" />
-							</ChartLineDefault>
+							</ExposureLineChartCard>
 						</div>
 					</div>
 				)}

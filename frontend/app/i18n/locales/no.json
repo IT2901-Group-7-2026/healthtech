@@ -22,6 +22,16 @@
     "all": "Alle sensorer",
     "overview": "Oversikt",
     "selectPlaceholder": "Sensor",
+    "dustFields": {
+      "pm1_twa": "PM1",
+      "pm25_twa": "PM2.5",
+      "pm10_twa": "PM10"
+    },
+    "dustExposureLabels": {
+      "pm1_twa": "PM1 (TWA)",
+      "pm25_twa": "PM2.5 (TWA)",
+      "pm10_twa": "PM10 (TWA)"
+    },
     "units": {
       "ug": "µg/m³",
       "mg": "mg/m³",
