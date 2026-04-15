@@ -147,12 +147,12 @@ export function GaugeChart({ value, thresholdValue, unit, label, sensor }: Gauge
    const needleAngle = START_ANGLE - percent * SWEEP_ANGLE;
 
    return (
-   	<Card className="w-fit">
+   	<Card className="w-fit p-2">
    		<div className="mt-2 w-full text-center text-sm font-medium">
    			{resolvedLabel}
    		</div>
    		{value !== null ? <div className="relative h-[170px] w-[200px]">
-   			<ChartContainer config={{}} className="h-full w-full">
+   			<ChartContainer config={{}} className="h-full w-full flex items-center justify-center">
    				<PieChart width={VIEWBOX_WIDTH} height={VIEWBOX_HEIGHT}>
    					<defs>
    						<linearGradient
