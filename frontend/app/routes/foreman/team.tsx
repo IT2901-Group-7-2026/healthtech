@@ -1,5 +1,6 @@
 // biome-ignore-all lint/nursery/noShadow: Allow us to use the variable name "user" in different scopes
 
+import { ExposureBadge } from "@/components/exposure-badge";
 import { Button } from "@/components/ui/button.js";
 import { Checkbox } from "@/components/ui/checkbox.js";
 import { DataTable } from "@/components/ui/data-table";
@@ -11,12 +12,10 @@ import {
 	useRemoveSubordinatesMutation,
 	usersQueryOptions,
 } from "@/lib/api";
-import { mapDangerLevelToColor, mapDangerLevelToLabel } from "@/lib/danger-levels";
+import { mapDangerLevelToLabel } from "@/lib/danger-levels";
 import { type User, UserRole, type UserWithStatusDto } from "@/lib/dto";
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
-import { ExposureBadge } from "app/components/exposure-badge";
-import { sensors } from "app/lib/sensors";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
