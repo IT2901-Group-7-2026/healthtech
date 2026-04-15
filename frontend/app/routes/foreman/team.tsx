@@ -66,18 +66,17 @@ export default function TeamPage() {
 			id: "dust",
 			header: t(($) => $.sensors.dust),
 			cell: ({ row }) => {
-				const status = row.original.status.dust?.dangerLevel;
-				if (status) {
-					const label = mapDangerLevelToLabel(status);
+				const status = row.original.status.dust?.dangerLevel ?? "safe";
 
-					return (
-						<div className="w-fit">
-							<ExposureBadge sensor={"dust"} dangerLevel={status}>
-								{label}
-							</ExposureBadge>
-						</div>
-					);
-				}
+				const label = mapDangerLevelToLabel(status);
+
+				return (
+					<div className="w-fit">
+						<ExposureBadge sensor="dust" dangerLevel={status}>
+							{label}
+						</ExposureBadge>
+					</div>
+				);
 			},
 		},
 
@@ -85,36 +84,33 @@ export default function TeamPage() {
 			id: "noise",
 			header: t(($) => $.sensors.noise),
 			cell: ({ row }) => {
-				const status = row.original.status.noise?.dangerLevel;
-				if (status) {
-					const label = mapDangerLevelToLabel(status);
+				const status = row.original.status.noise?.dangerLevel ?? "safe";
+				const label = mapDangerLevelToLabel(status);
 
-					return (
-						<div className="w-fit">
-							<ExposureBadge sensor={"noise"} dangerLevel={status}>
-								{label}
-							</ExposureBadge>
-						</div>
-					);
-				}
+				return (
+					<div className="w-fit">
+						<ExposureBadge sensor="noise" dangerLevel={status}>
+							{label}
+						</ExposureBadge>
+					</div>
+				);
 			},
 		},
 		{
 			id: "vibration",
 			header: t(($) => $.sensors.vibration),
 			cell: ({ row }) => {
-				const status = row.original.status.vibration?.dangerLevel;
-				if (status) {
-					const label = mapDangerLevelToLabel(status);
+				const status = row.original.status.vibration?.dangerLevel ?? "safe";
 
-					return (
-						<div className="w-fit">
-							<ExposureBadge sensor={"vibration"} dangerLevel={status}>
-								{label}
-							</ExposureBadge>
-						</div>
-					);
-				}
+				const label = mapDangerLevelToLabel(status);
+
+				return (
+					<div className="w-fit">
+						<ExposureBadge sensor="vibration" dangerLevel={status}>
+							{label}
+						</ExposureBadge>
+					</div>
+				);
 			},
 		},
 	];
