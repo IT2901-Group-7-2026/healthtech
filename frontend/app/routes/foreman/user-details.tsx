@@ -244,6 +244,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 						value={dustTwa1Data?.[0]?.value ?? null}
 						thresholdValue={dustThreshold.danger}
 						sensor={sensor}
+						unit="ug"
 					/>
 				}
 				{
@@ -252,6 +253,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 						value={dustTwa25Data?.[0]?.value ?? null}
 						thresholdValue={dustPm25TwaThreshold.danger}
 						sensor={sensor}
+						unit="ug"
 					/>
 				}
 				{
@@ -260,6 +262,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 						value={dustTwa10Data?.[0]?.value ?? null}
 						thresholdValue={dustPm10TwaThreshold.danger}
 						sensor={sensor}
+						unit="ug"
 					/>
 				}
 			</div>
