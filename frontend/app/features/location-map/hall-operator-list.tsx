@@ -7,6 +7,7 @@ import type { UserWithStatusDto } from "@/lib/dto";
 import { type Sensor, sensors } from "@/lib/sensors";
 import { ChevronDownIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 
 export interface HallOperatorListProps {
 	sensor: Sensor | "all";
@@ -47,21 +48,31 @@ export const HallOperatorList = ({
 								</TableCell>
 							</TableRow>
 						) : (
-							operators.map((operator) => {
-								return (
-									<TableRow key={operator.id} className="text-muted-foreground">
-										{/* TODO: Link to user stats page */}
-										<TableCell>{operator.username}</TableCell>
-										{sensor === "all" ? (
-											sensors.map((s) => (
-												<HallOperatorListItem key={s} operator={operator} sensor={s} />
-											))
-										) : (
-											<HallOperatorListItem operator={operator} sensor={sensor} />
-										)}
-									</TableRow>
-								);
-							})
+							operators.map((operator) => (
+								<TableRow key={operator.id} className="text-muted-foreground">
+									<TableCell>
+										<Link
+											to={`/foreman/?userId=${operator.id}`}
+											title={t(($) => $.foremanDashboard.siteMap.viewUser, {
+												username: operator.username,
+											})}
+											aria-label={t(($) => $.foremanDashboard.siteMap.viewUserAria, {
+												username: operator.username,
+											})}
+											className="relative block text-muted-foreground hover:text-white"
+										>
+											{operator.username}
+										</Link>
+									</TableCell>
+									{sensor === "all" ? (
+										sensors.map((s) => (
+											<HallOperatorListItem key={s} operator={operator} sensor={s} />
+										))
+									) : (
+										<HallOperatorListItem operator={operator} sensor={sensor} />
+									)}
+								</TableRow>
+							))
 						)}
 					</TableBody>
 				</Table>
@@ -85,7 +96,22 @@ const HallOperatorListItem = ({ operator, sensor }: HallOperatorListItemProps) =
 
 	return (
 		<TableCell className="items-center">
-			<SensorIcon type={sensor} size="xs" dangerLevel={dangerLevel ?? "safe"} className="w-fit" title={title} />
+			<Link
+				to={`/foreman?userId=${operator.id}&sensor=${sensor}`}
+				title={title}
+				aria-label={t(($) => $.foremanDashboard.siteMap.viewSensorData, {
+					username: operator.username,
+					sensor: t(($$) => $$.sensors[sensor]).toLowerCase(),
+				})}
+				className="block w-fit"
+			>
+				<SensorIcon
+					type={sensor}
+					size="xs"
+					dangerLevel={dangerLevel}
+					className="w-fit cursor-pointer transition-transform hover:scale-110"
+				/>
+			</Link>
 		</TableCell>
 	);
 };
