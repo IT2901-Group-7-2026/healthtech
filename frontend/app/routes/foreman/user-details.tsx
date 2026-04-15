@@ -12,6 +12,7 @@ import {
 	Aggregations,
 	type SensorDto,
 	type SensorOverviewBucketDto,
+	type SensorTypeField,
 	type UserWithStatusDto,
 } from "@/lib/dto";
 import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
@@ -25,6 +26,9 @@ import { addDays, endOfDay, startOfDay, subDays } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { type ReactNode, useId } from "react";
 import { useTranslation } from "react-i18next";
+
+const dustFields = ["pm1_twa", "pm25_twa", "pm10_twa"] as const satisfies ReadonlyArray<SensorTypeField>;
+
 export function UserDetails({
 	selectedUser,
 	selectedDate,
@@ -117,9 +121,17 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 	const sensor: Sensor = "dust";
+	const parseAsDustField = parseAsStringLiteral(dustFields);
+	const [dustField, setDustField] = useQueryState<(typeof dustFields)[number]>(
+		"dustField",
+		parseAsDustField.withDefault("pm1_twa"),
+	);
 
-	const query = buildSensorQuery(sensor, "day", selectedDate);
+	const query = buildSensorQuery(sensor, "day", selectedDate, {
+		field: dustField,
+	});
 	const dustThreshold = getThreshold(sensor, query.field);
+	const dustPm1TwaThreshold = getThreshold(sensor, "pm1_twa");
 	const dustPm25TwaThreshold = getThreshold(sensor, "pm25_twa");
 	const dustPm10TwaThreshold = getThreshold(sensor, "pm10_twa");
 
@@ -184,6 +196,16 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 
 	return (
 		<div className="flex max-w-4xl flex-col gap-6">
+			<Tabs value={dustField} onValueChange={(value) => setDustField(value as (typeof dustFields)[number])}>
+				<TabsList>
+					{dustFields.map((field) => (
+						<TabsTrigger key={field} value={field}>
+							{t(($) => $.sensors.dustFields[field])}
+						</TabsTrigger>
+					))}
+				</TabsList>
+			</Tabs>
+
 			<SensorChartCard
 				isLoading={dataResult.isLoading}
 				isError={dataResult.isError}
@@ -230,21 +252,21 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 			<div className="flex flex-wrap items-center gap-4">
 				{
 					<DustChart
-						label="PM1 TWA"
+						label={t(($) => $.sensors.dustExposureLabels.pm1_twa)}
 						value={dustTwa1Data?.[0]?.value ?? null}
-						thresholdValue={dustThreshold.danger}
+						thresholdValue={dustPm1TwaThreshold.danger}
 					/>
 				}
 				{
 					<DustChart
-						label="PM2.5 TWA"
+						label={t(($) => $.sensors.dustExposureLabels.pm25_twa)}
 						value={dustTwa25Data?.[0]?.value ?? null}
 						thresholdValue={dustPm25TwaThreshold.danger}
 					/>
 				}
 				{
 					<DustChart
-						label="PM10 TWA"
+						label={t(($) => $.sensors.dustExposureLabels.pm10_twa)}
 						value={dustTwa10Data?.[0]?.value ?? null}
 						thresholdValue={dustPm10TwaThreshold.danger}
 					/>

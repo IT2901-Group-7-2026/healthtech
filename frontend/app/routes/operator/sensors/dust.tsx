@@ -1,6 +1,7 @@
 import { ChartLineDefault, ChartLineSkeleton, ThresholdLine } from "@/components/line-chart";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
 import { useUser } from "@/features/user/user-context";
@@ -8,14 +9,17 @@ import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorQueryOptions } from "@/lib/api";
+import type { SensorTypeField } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { useId } from "react";
+import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
+
+const dustFields = ["pm1_twa", "pm25_twa", "pm10_twa"] as const satisfies ReadonlyArray<SensorTypeField>;
 
 export default function Dust() {
 	const { view } = useView();
@@ -27,8 +31,11 @@ export default function Dust() {
 	const chartContainerId = useId();
 
 	const sensor: Sensor = "dust";
+	const [dustField, setDustField] = useState<(typeof dustFields)[number]>("pm1_twa");
 
-	const query = buildSensorQuery(sensor, view, date);
+	const query = buildSensorQuery(sensor, view, date, {
+		field: dustField,
+	});
 
 	const dustThreshold = getThreshold(sensor, query.field);
 
@@ -63,6 +70,16 @@ export default function Dust() {
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">
+			<Tabs value={dustField} onValueChange={(value) => setDustField(value as (typeof dustFields)[number])}>
+				<TabsList>
+					{dustFields.map((field) => (
+						<TabsTrigger key={field} value={field}>
+							{t(($) => $.sensors.dustFields[field])}
+						</TabsTrigger>
+					))}
+				</TabsList>
+			</Tabs>
+
 			{isLoading ? (
 				<ChartLineSkeleton />
 			) : isError ? (
