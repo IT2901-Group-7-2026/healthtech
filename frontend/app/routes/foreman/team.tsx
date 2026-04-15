@@ -18,6 +18,8 @@ import {
 import { type User, UserRole, type UserWithStatusDto } from "@/lib/dto";
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
+import { ExposureBadge } from "app/components/exposure-badge";
+import { sensors } from "app/lib/sensors";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -66,35 +68,41 @@ export default function TeamPage() {
 			accessorKey: "jobDescription",
 			header: t(($) => $.foremanDashboard.team.table.jobDescription),
 		},
+
 		{
 			id: "dust",
 			header: t(($) => $.sensors.dust),
 			cell: ({ row }) => {
 				const status = row.original.status.dust?.dangerLevel;
-
 				if (status) {
 					const label = mapDangerLevelToLabel(status);
-					const color = mapDangerLevelToColor(status);
 
-					//TODO: Use a badge component instead of just coloring the text
-					// Also add a tooltip with more information about the status and which sensor data is causing it
-					return <span className={`text-${color}`}>{label}</span>;
+					return (
+						<div className="w-fit">
+							<ExposureBadge sensor={"dust"} dangerLevel={status}>
+								{label}
+							</ExposureBadge>
+						</div>
+					);
 				}
 			},
 		},
+
 		{
 			id: "noise",
 			header: t(($) => $.sensors.noise),
 			cell: ({ row }) => {
 				const status = row.original.status.noise?.dangerLevel;
-
 				if (status) {
 					const label = mapDangerLevelToLabel(status);
-					const color = mapDangerLevelToColor(status);
 
-					//TODO: Use a badge component instead of just coloring the text
-					// Also add a tooltip with more information about the status and which sensor data is causing it
-					return <span className={`text-${color}`}>{label}</span>;
+					return (
+						<div className="w-fit">
+							<ExposureBadge sensor={"noise"} dangerLevel={status}>
+								{label}
+							</ExposureBadge>
+						</div>
+					);
 				}
 			},
 		},
@@ -105,11 +113,14 @@ export default function TeamPage() {
 				const status = row.original.status.vibration?.dangerLevel;
 				if (status) {
 					const label = mapDangerLevelToLabel(status);
-					const color = mapDangerLevelToColor(status);
 
-					//TODO: Use a badge component instead of just coloring the text
-					// Also add a tooltip with more information about the status and which sensor data is causing it
-					return <span className={`text-${color}`}>{label}</span>;
+					return (
+						<div className="w-fit">
+							<ExposureBadge sensor={"vibration"} dangerLevel={status}>
+								{label}
+							</ExposureBadge>
+						</div>
+					);
 				}
 			},
 		},
