@@ -146,25 +146,12 @@ export function GaugeChart({ value, thresholdValue, unit, label, sensor }: Gauge
    const percent = thresholdValue > 0 ? clampedValue / thresholdValue : 0;
    const needleAngle = START_ANGLE - percent * SWEEP_ANGLE;
 
-   if (value === null) {
-   	return (
-   		<Card className="w-fit">
-   			<div className="flex h-[170px] w-[200px] flex-col items-center justify-center gap-1 text-center">
-   				<span className="text-sm font-medium text-muted-foreground">
-   					{resolvedLabel}
-   				</span>
-   				<span className="text-sm">{t(($) => $.common.noData)}</span>
-   			</div>
-   		</Card>
-   	);
-   }
-
    return (
    	<Card className="w-fit">
    		<div className="mt-2 w-full text-center text-sm font-medium">
    			{resolvedLabel}
    		</div>
-   		<div className="relative h-[170px] w-[200px]">
+   		{value !== null ? <div className="relative h-[170px] w-[200px]">
    			<ChartContainer config={{}} className="h-full w-full">
    				<PieChart width={VIEWBOX_WIDTH} height={VIEWBOX_HEIGHT}>
    					<defs>
@@ -207,6 +194,10 @@ export function GaugeChart({ value, thresholdValue, unit, label, sensor }: Gauge
    				unit={resolvedUnit}
    			/>
    		</div>
+		: <div className="flex h-[170px] w-[200px] flex-col items-center justify-center gap-1 text-center">
+    				<span className="text-sm">{t(($) => $.common.noData)}</span>
+   			</div>
+		}
    	</Card>
    );
 }
