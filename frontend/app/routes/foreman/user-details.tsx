@@ -15,7 +15,16 @@ import {
 	type UserWithStatusDto,
 } from "@/lib/dto";
 import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
-import { parseAsSensorUnit, type Sensor, type SensorUnit, sensors } from "@/lib/sensors";
+import {
+	type DustField,
+	defaultDustField,
+	dustFields,
+	parseAsDustField,
+	parseAsSensorUnit,
+	type Sensor,
+	type SensorUnit,
+	sensors,
+} from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapOverviewBucketsToChartRows } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
@@ -25,6 +34,7 @@ import { addDays, endOfDay, startOfDay, subDays } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { type ReactNode, useId } from "react";
 import { useTranslation } from "react-i18next";
+
 export function UserDetails({
 	selectedUser,
 	selectedDate,
@@ -117,11 +127,17 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 	const sensor: Sensor = "dust";
-
+	const [dustField, setDustField] = useQueryState<DustField>(
+		"dustField",
+		parseAsDustField.withDefault(defaultDustField),
+	);
 	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
 
-	const query = buildSensorQuery(sensor, "day", selectedDate);
+	const query = buildSensorQuery(sensor, "day", selectedDate, {
+		field: dustField,
+	});
 	const dustThreshold = getThreshold(sensor, query.field);
+	const dustPm1TwaThreshold = getThreshold(sensor, "pm1_twa");
 	const dustPm25TwaThreshold = getThreshold(sensor, "pm25_twa");
 	const dustPm10TwaThreshold = getThreshold(sensor, "pm10_twa");
 
@@ -186,6 +202,16 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 
 	return (
 		<div className="flex max-w-4xl flex-col gap-6">
+			<Tabs value={dustField} onValueChange={(value) => setDustField(value as DustField)}>
+				<TabsList>
+					{dustFields.map((field) => (
+						<TabsTrigger key={field} value={field}>
+							{t(($) => $.sensors.dustFields[field])}
+						</TabsTrigger>
+					))}
+				</TabsList>
+			</Tabs>
+
 			<SensorChartCard
 				isLoading={dataResult.isLoading}
 				isError={dataResult.isError}
@@ -240,16 +266,16 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 			<div className="flex flex-wrap items-center gap-4">
 				{
 					<GaugeChart
-						label="PM1 TWA"
+						label={t(($) => $.sensors.dustExposureLabels.pm1_twa)}
 						value={dustTwa1Data?.[0]?.value ?? null}
-						thresholdValue={dustThreshold.danger}
+						thresholdValue={dustPm1TwaThreshold.danger}
 						sensor={sensor}
 						unit="ug"
 					/>
 				}
 				{
 					<GaugeChart
-						label="PM2.5 TWA"
+						label={t(($) => $.sensors.dustExposureLabels.pm25_twa)}
 						value={dustTwa25Data?.[0]?.value ?? null}
 						thresholdValue={dustPm25TwaThreshold.danger}
 						sensor={sensor}
@@ -258,7 +284,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 				}
 				{
 					<GaugeChart
-						label="PM10 TWA"
+						label={t(($) => $.sensors.dustExposureLabels.pm10_twa)}
 						value={dustTwa10Data?.[0]?.value ?? null}
 						thresholdValue={dustPm10TwaThreshold.danger}
 						sensor={sensor}

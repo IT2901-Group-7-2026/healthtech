@@ -10,7 +10,15 @@ import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorQueryOptions } from "@/lib/api";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import { parseAsSensorUnit, type Sensor, type SensorUnit } from "@/lib/sensors";
+import {
+	type DustField,
+	defaultDustField,
+	dustFields,
+	parseAsDustField,
+	parseAsSensorUnit,
+	type Sensor,
+	type SensorUnit,
+} from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
@@ -28,11 +36,17 @@ export default function Dust() {
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 
+	const [dustField, setDustField] = useQueryState<DustField>(
+		"dustField",
+		parseAsDustField.withDefault(defaultDustField),
+	);
 	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
 
 	const sensor: Sensor = "dust";
 
-	const query = buildSensorQuery(sensor, view, date);
+	const query = buildSensorQuery(sensor, view, date, {
+		field: dustField,
+	});
 
 	const dustThreshold = getThreshold(sensor, query.field);
 
@@ -65,6 +79,16 @@ export default function Dust() {
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">
+			<Tabs value={dustField} onValueChange={(value) => setDustField(value as DustField)}>
+				<TabsList>
+					{dustFields.map((field) => (
+						<TabsTrigger key={field} value={field}>
+							{t(($) => $.sensors.dustFields[field])}
+						</TabsTrigger>
+					))}
+				</TabsList>
+			</Tabs>
+
 			{isLoading ? (
 				<ChartLineSkeleton />
 			) : isError ? (
