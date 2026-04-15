@@ -89,7 +89,7 @@ export default function Dust() {
 							minHour={minHour}
 							maxHour={maxHour}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageExposure, dustUnit)} ${t(($) => $.sensors.units[dustUnit])}`}
+							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageExposure, dustUnit, 2, { mg: 4 })} ${t(($) => $.sensors.units[dustUnit])}`}
 							unit={dustUnit}
 							maxY={maxY}
 							minY={minY}

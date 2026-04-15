@@ -196,18 +196,18 @@ function convertUtcHourToLocalHour(utcHour: number, date: TZDate): number {
 export function formatSensorValue(
 	value: number | undefined,
 	unit: SensorUnit,
-	options?: { digitsMg?: number; digitsDefault?: number },
+	numberOfDigits = 2,
+	numberOfDigitsPerUnit?: Partial<Record<SensorUnit, number>>,
 ) {
 	if (value == null) {
 		return "N/A";
 	}
 
-	const { digitsMg = 4, digitsDefault = 2 } = options ?? {};
+	const resolvedNumberOfUnits = numberOfDigitsPerUnit?.[unit] ?? numberOfDigits;
 
-	// convert if mg
 	if (unit === "mg") {
-		return (value * UG_TO_MG).toFixed(digitsMg);
+		return (value * UG_TO_MG).toFixed(resolvedNumberOfUnits);
 	}
 
-	return value.toFixed(digitsDefault);
+	return value.toFixed(resolvedNumberOfUnits);
 }

@@ -260,7 +260,8 @@ export function ChartLineDefault({
 											fill: "var(--color-muted-foreground)",
 										}
 							}
-							tickFormatter={(value) => formatSensorValue(value, unit as SensorUnit)}
+							// only dustchart with mg unit need to show decimals on y axis
+							tickFormatter={(value) => formatSensorValue(value, unit as SensorUnit, 0, { mg: 3 })}
 						/>
 						<ChartTooltip
 							cursor={false}
