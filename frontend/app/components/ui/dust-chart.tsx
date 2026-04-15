@@ -3,130 +3,167 @@ import { Pie, PieChart } from "recharts";
 import { Card } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 
-interface Props {
-	value: number | null;
-	thresholdValue: number;
-	unit?: string;
-	label?: string;
+interface DustChartProps {
+   value: number | null;
+   thresholdValue: number;
+   unit?: string;
+   label?: string;
 }
 
-// NOTE: This is just a proof of concept. The code will be rewritten completely later on.
-export function DustChart({ value, thresholdValue, unit, label }: Props) {
-	const { t } = useTranslation();
-	const resolvedUnit = unit ?? t(($) => $.sensors.dustUnit);
-	const resolvedLabel = label ?? t(($) => $.sensors.dust);
+// Convert polar coordinates to cartesian (SVG y-axis points down)
+function polarToCartesian(cx: number, cy: number, radius: number, angleInDegrees: number) {
+   const angleInRadians = (Math.PI / 180) * angleInDegrees;
+   return {
+   	x: cx + radius * Math.cos(angleInRadians),
+   	y: cy - radius * Math.sin(angleInRadians),
+   };
+}
 
-	const min = 0;
-	const max = thresholdValue;
+interface GaugeNeedleProps {
+	cx: number;
+	cy: number;
+	angle: number;
+	innerOffset: number;
+	length: number;
+	strokeWidth?: number;
+	className?: string;
+}
 
-	const clampedValue = Math.max(min, Math.min(value ?? 0, max));
-	const percent = (clampedValue - min) / (max - min);
+function GaugeNeedle({
+   cx,
+   cy,
+   angle,
+   innerOffset,
+   length,
+   strokeWidth = 4,
+   className = "text-foreground",
+}: GaugeNeedleProps) {
+   const start = polarToCartesian(cx, cy, innerOffset, angle);
+   const end = polarToCartesian(cx, cy, length, angle);
 
-	const cx = 100;
-	const cy = 100;
-	const radius = 70;
+   return (
+   	<line
+   		x1={start.x}
+   		y1={start.y}
+   		x2={end.x}
+   		y2={end.y}
+   		stroke="currentColor"
+   		className={className}
+   		strokeWidth={strokeWidth}
+   		strokeLinecap="round"
+   	/>
+   );
+}
 
-	const angle = 180 - percent * 180;
+export function DustChart({ value, thresholdValue, unit, label }: DustChartProps) {
+   const { t } = useTranslation();
+   const resolvedUnit = unit ?? t(($) => $.sensors.dustUnit);
+   const resolvedLabel = label ?? t(($) => $.sensors.dust);
 
-	const needleInnerOffset = 52;
-	const needleLength = radius + 1;
+   // Gauge geometry constants
+   const CX = 100;
+   const CY = 100;
+   const RADIUS = 70;
+   const GAUGE_ARC_WIDTH = 18;
+   const NEEDLE_INNER_OFFSET = 52;
+   const VIEWBOX_HEIGHT = 170;
+   const VIEWBOX_WIDTH = 200;
 
-	const needleRadians = (Math.PI / 180) * angle;
+   // Derived radii
+   const innerRadius = RADIUS - GAUGE_ARC_WIDTH / 2;
+   const outerRadius = RADIUS + GAUGE_ARC_WIDTH / 2;
+   const needleLength = RADIUS + 1;
 
-	const x1 = cx + needleInnerOffset * Math.cos(needleRadians);
-	const y1 = cy - needleInnerOffset * Math.sin(needleRadians);
+   // Angle configuration
+   const START_ANGLE = 180;
+   const SWEEP_ANGLE = 180;
+   const END_ANGLE = START_ANGLE - SWEEP_ANGLE; // 0
 
-	const x2 = cx + needleLength * Math.cos(needleRadians);
-	const y2 = cy - needleLength * Math.sin(needleRadians);
+   // Value calculations
+   const clampedValue = Math.max(0, Math.min(value ?? 0, thresholdValue));
+   const percent = thresholdValue > 0 ? clampedValue / thresholdValue : 0;
+   const needleAngle = START_ANGLE - percent * SWEEP_ANGLE;
 
-	return (
-		<Card className="w-fit">
-			{value !== null ? <div className="relative h-[170px] w-[200px]">
-				<ChartContainer config={{}} className="h-full w-full">
-					<PieChart width={200} height={170}>
-						<defs>
-							<linearGradient
-								id="gaugeGradient"
-								x1="0%"
-								y1="0%"
-								x2="100%"
-								y2="0%"
-							>
-								<stop offset="0%" stopColor="var(--safe)" />
-								<stop offset="50%" stopColor="var(--warning)" />
-								<stop offset="100%" stopColor="var(--danger)" />
-							</linearGradient>
-						</defs>
+   if (value === null) {
+   	return (
+   		<Card className="w-fit">
+   			<div className="flex h-[170px] w-[200px] flex-col items-center justify-center gap-1 text-center">
+   				<span className="text-sm font-medium text-muted-foreground">
+   					{resolvedLabel}
+   				</span>
+   				<span className="text-sm">{t(($) => $.common.noData)}</span>
+   			</div>
+   		</Card>
+   	);
+   }
 
-						{/* background track
-						<Pie
-							data={[{ value: 1 }]}
-							dataKey="value"
-							cx={cx}
-							cy={cy}
-							startAngle={180}
-							endAngle={0}
-							innerRadius={61}
-							outerRadius={79}
-							fill="#3f3f46"
-							stroke="none"
-							isAnimationActive={false}
-						/> */}
-
-						{/* gradient arc */}
-						<Pie
-							data={[{ value: 1 }]}
-							cx={cx}
-							cy={cy}
-							startAngle={180}
-							endAngle={0}
-							innerRadius={61}
-							outerRadius={79}
-							fill="url(#gaugeGradient)"
-						/>
-					</PieChart>
-				</ChartContainer>
-
-				{/* needle + center text */}
-				<svg
-					viewBox="0 0 200 170"
-					className="pointer-events-none absolute inset-0 h-full w-full"
-				>
-					<line
-						x1={x1}
-						y1={y1}
-						x2={x2}
-						y2={y2}
-						stroke="currentColor"
-						className="text-foreground"
-						strokeWidth={4}
-						strokeLinecap="round"
-					/>
-
-					<text
-						x={cx}
-						y={92}
-						textAnchor="middle"
-						className="fill-current text-[16px] font-bold text-foreground"
-					>
-						{clampedValue.toFixed(2)}
-					</text>
-
-					<text
-						x={cx}
-						y={112}
-						textAnchor="middle"
-						className="fill-current text-[10px] font-medium text-muted-foreground"
-					>
-						{resolvedUnit}
-					</text>
-				</svg>
-			</div>
-			: <div className="mt-2 w-full text-center text-sm font-medium">
+   return (
+   	<Card className="w-fit">
+		<div className="mt-2 w-full text-center text-sm font-medium">
 				{resolvedLabel}
-			</div>}
+		</div>
+   		<div className="relative h-[170px] w-[200px]">
+   			<ChartContainer config={{}} className="h-full w-full">
+   				<PieChart width={VIEWBOX_WIDTH} height={VIEWBOX_HEIGHT}>
+   					<defs>
+   						<linearGradient
+   							id="gaugeGradient"
+   							x1="0%"
+   							y1="0%"
+   							x2="100%"
+   							y2="0%"
+   						>
+   							<stop offset="0%" stopColor="var(--safe)" />
+   							<stop offset="50%" stopColor="var(--warning)" />
+   							<stop offset="100%" stopColor="var(--danger)" />
+   						</linearGradient>
+   					</defs>
 
-			{value === null && <div className="flex items-center text-center h-[170px] w-[200px]"><p>{t(($) => $.common.noData)}</p></div>}
-		</Card>
-	);
+   					<Pie
+   						data={[{ value: 1 }]}
+   						dataKey="value"
+   						cx={CX}
+   						cy={CY}
+   						startAngle={START_ANGLE}
+   						endAngle={END_ANGLE}
+   						innerRadius={innerRadius}
+   						outerRadius={outerRadius}
+   						fill="url(#gaugeGradient)"
+   					/>
+   				</PieChart>
+   			</ChartContainer>
+
+   			<svg
+   				viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
+   				className="pointer-events-none absolute inset-0 h-full w-full"
+   			>
+   				<GaugeNeedle
+   					cx={CX}
+   					cy={CY}
+   					angle={needleAngle}
+   					innerOffset={NEEDLE_INNER_OFFSET}
+   					length={needleLength}
+   				/>
+
+   				<text
+   					x={CX}
+   					y={92}
+   					textAnchor="middle"
+   					className="fill-current text-[16px] font-bold text-foreground"
+   				>
+   					{clampedValue.toFixed(2)}
+   				</text>
+
+   				<text
+   					x={CX}
+   					y={112}
+   					textAnchor="middle"
+   					className="fill-current text-[10px] font-medium text-muted-foreground"
+   				>
+   					{resolvedUnit}
+   				</text>
+   			</svg>
+   		</div>
+   	</Card>
+   );
 }
