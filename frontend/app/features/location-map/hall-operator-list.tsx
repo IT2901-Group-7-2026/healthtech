@@ -53,8 +53,12 @@ export const HallOperatorList = ({
 									<TableCell>
 										<Link
 											to={`/foreman/?userId=${operator.id}`}
-											title={`View ${operator.username}`}
-											aria-label={`View user ${operator.username}`}
+											title={t(($) => $.foremanDashboard.siteMap.viewUser, {
+												username: operator.username,
+											})}
+											aria-label={t(($) => $.foremanDashboard.siteMap.viewUserAria, {
+												username: operator.username,
+											})}
 											className="relative block text-muted-foreground hover:text-white"
 										>
 											{operator.username}
@@ -95,7 +99,10 @@ const HallOperatorListItem = ({ operator, sensor }: HallOperatorListItemProps) =
 			<Link
 				to={`/foreman?userId=${operator.id}&sensor=${sensor}`}
 				title={title}
-				aria-label={`View ${sensor} data for ${operator.username}`}
+				aria-label={t(($) => $.foremanDashboard.siteMap.viewSensorData, {
+					username: operator.username,
+					sensor: t(($$) => $$.sensors[sensor]).toLowerCase(),
+				})}
 				className="block w-fit"
 			>
 				<SensorIcon

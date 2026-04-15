@@ -231,6 +231,9 @@
     "siteMap": {
       "title": "Site map",
       "noOperators": "No operators in hall",
+      "viewUser": "View {{username}}",
+      "viewUserAria": "View user {{username}}",
+      "viewSensorData": "View {{sensor}} data for {{username}}",
       "operatorSensorStatus": {
         "danger": "Above exposure limit for {{sensor}}",
         "warning": "Approaching exposure limit for {{sensor}}",

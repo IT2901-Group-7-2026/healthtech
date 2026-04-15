@@ -231,6 +231,9 @@
     "siteMap": {
       "title": "Områdekart",
       "noOperators": "Ingen operatører i bygg",
+      "viewUser": "Se {{username}}",
+      "viewUserAria": "Se bruker {{username}}",
+      "viewSensorData": "Se {{sensor}} data for {{username}}",
       "operatorSensorStatus": {
         "danger": "Over grenseverdi for {{sensor}}",
         "warning": "Nær grenseverdi for {{sensor}}",
