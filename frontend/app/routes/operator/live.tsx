@@ -8,13 +8,13 @@ import { SecurityRegulationsCard } from "@/features/security-regulations-card/se
 import { useUser } from "@/features/user/user-context";
 import { sensorQueryOptions } from "@/lib/api";
 import { now, toTZDate } from "@/lib/date";
-import type { SensorDataResponseDto } from "@/lib/dto";
+import type { SensorDto } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import { getThreshold } from "@/lib/thresholds";
 import { computeYAxisRange } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
-import { useQuery } from "@tanstack/react-query";
-import { addMinutes, isWithinInterval, minutesToMilliseconds, startOfDay, startOfMinute } from "date-fns";
+import { useQueries } from "@tanstack/react-query";
+import { addMinutes, isWithinInterval, startOfDay, startOfMinute } from "date-fns";
 import { Clock } from "lucide-react";
 import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useMemo } from "react";
@@ -43,84 +43,67 @@ export default function OperatorLiveView() {
 	const end = startOfCurrentMinute;
 	const start = addMinutes(startOfCurrentMinute, -TIME_RANGE_MINUTES[timeRange]);
 
-	// We have at most 1 data point every minute so we don't need a shorter refetch interval than that
-	const dataRefetchInterval = minutesToMilliseconds(1);
-
-	const { data: dustTwa1Data } = useQuery(
-		sensorQueryOptions({
-			sensor: "dust",
-			query: buildSensorQuery("dust", "day", end, {
-				granularity: "minute",
-				aggregationFunction: "avg",
-				field: "pm1_twa",
-				startTime: start,
-				endTime: end,
-				clampEndTimeToNow: true,
+	const [dustTwa1Result, dustTwa25Result, dustTwa10Result, noiseResult, vibrationResult] = useQueries({
+		queries: [
+			sensorQueryOptions({
+				sensor: "dust",
+				query: buildSensorQuery("dust", "day", end, {
+					granularity: "minute",
+					aggregationFunction: "avg",
+					field: "pm1_twa",
+					startTime: start,
+					endTime: end,
+				}),
+				userId: targetUserId,
 			}),
-			userId: targetUserId,
-			refetchInterval: dataRefetchInterval,
-		}),
-	);
-
-	const { data: dustTwa25Data } = useQuery(
-		sensorQueryOptions({
-			sensor: "dust",
-			query: buildSensorQuery("dust", "day", end, {
-				granularity: "minute",
-				aggregationFunction: "avg",
-				field: "pm25_twa",
-				startTime: start,
-				endTime: end,
-				clampEndTimeToNow: true,
+			sensorQueryOptions({
+				sensor: "dust",
+				query: buildSensorQuery("dust", "day", end, {
+					granularity: "minute",
+					aggregationFunction: "avg",
+					field: "pm25_twa",
+					startTime: start,
+					endTime: end,
+				}),
+				userId: targetUserId,
 			}),
-			userId: targetUserId,
-			refetchInterval: dataRefetchInterval,
-		}),
-	);
-
-	const { data: dustTwa10Data } = useQuery(
-		sensorQueryOptions({
-			sensor: "dust",
-			query: buildSensorQuery("dust", "day", end, {
-				granularity: "minute",
-				aggregationFunction: "avg",
-				field: "pm10_twa",
-				startTime: start,
-				endTime: end,
-				clampEndTimeToNow: true,
+			sensorQueryOptions({
+				sensor: "dust",
+				query: buildSensorQuery("dust", "day", end, {
+					granularity: "minute",
+					aggregationFunction: "avg",
+					field: "pm10_twa",
+					startTime: start,
+					endTime: end,
+				}),
+				userId: targetUserId,
 			}),
-			userId: targetUserId,
-			refetchInterval: dataRefetchInterval,
-		}),
-	);
-
-	const { data: noiseData } = useQuery(
-		sensorQueryOptions({
-			sensor: "noise",
-			query: buildSensorQuery("noise", "day", end, {
-				granularity: "minute",
-				startTime: start,
-				endTime: end,
-				clampEndTimeToNow: true,
+			sensorQueryOptions({
+				sensor: "noise",
+				query: buildSensorQuery("noise", "day", end, {
+					granularity: "minute",
+					startTime: start,
+					endTime: end,
+				}),
+				userId: targetUserId,
 			}),
-			userId: targetUserId,
-			refetchInterval: dataRefetchInterval,
-		}),
-	);
-
-	const { data: rawVibrationData } = useQuery(
-		sensorQueryOptions({
-			sensor: "vibration",
-			query: buildSensorQuery("vibration", "day", end, {
-				granularity: "minute",
-				startTime: toTZDate(startOfDay(start)),
-				endTime: end,
-				clampEndTimeToNow: true,
+			sensorQueryOptions({
+				sensor: "vibration",
+				query: buildSensorQuery("vibration", "day", end, {
+					granularity: "minute",
+					startTime: toTZDate(startOfDay(start)),
+					endTime: end,
+				}),
+				userId: targetUserId,
 			}),
-			userId: targetUserId,
-			refetchInterval: dataRefetchInterval,
-		}),
-	);
+		],
+	});
+
+	const dustTwa1Data = dustTwa1Result.data?.data ?? [];
+	const dustTwa25Data = dustTwa25Result.data?.data ?? [];
+	const dustTwa10Data = dustTwa10Result.data?.data ?? [];
+	const noiseData = noiseResult.data?.data ?? [];
+	const rawVibrationData = vibrationResult.data?.data ?? [];
 
 	// Since vibration is cumulative over the day we have to fetch data from the start of the day and then filter it to the selected time range
 	const vibrationData = useMemo(() => {
@@ -158,6 +141,7 @@ export default function OperatorLiveView() {
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							hideChartLegend={true}
 						/>
 						<Separator />
 						<LiveExposureCard
@@ -170,6 +154,7 @@ export default function OperatorLiveView() {
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							hideChartLegend={true}
 						/>
 						<Separator />
 						<LiveExposureCard
@@ -233,8 +218,10 @@ export default function OperatorLiveView() {
 						type="single"
 						value={timeRange}
 						variant="outline"
-						onValueChange={(value: TimeRangeOption) => {
-							setTimeRange(value);
+						onValueChange={(value: TimeRangeOption | "") => {
+							if (value) {
+								setTimeRange(value);
+							}
 						}}
 					>
 						<ToggleGroupItem
@@ -278,10 +265,11 @@ interface LiveExposureCardProps {
 	exposureField?: "pm1_twa" | "pm25_twa" | "pm10_twa";
 	exposureUnitLabel: string;
 	chartUnitLabel: string;
-	data: Array<SensorDataResponseDto>;
+	data: Array<SensorDto>;
 	minTime: TZDate;
 	maxTime: TZDate;
 	chartClassName?: string;
+	hideChartLegend?: boolean;
 }
 
 const LiveExposureCard = ({
@@ -294,6 +282,7 @@ const LiveExposureCard = ({
 	minTime,
 	maxTime,
 	chartClassName,
+	hideChartLegend,
 }: LiveExposureCardProps) => {
 	const { t } = useTranslation();
 
@@ -341,9 +330,10 @@ const LiveExposureCard = ({
 					chartContainerClassName="!aspect-auto"
 					hideHeader={true}
 					muteTickLabels={true}
+					hideLegend={hideChartLegend}
 				>
-					<ThresholdLine y={threshold.danger} dangerLevel="danger" hideLineLabel={true} />
-					<ThresholdLine y={threshold.warning} dangerLevel="warning" hideLineLabel={true} />
+					<ThresholdLine y={threshold.danger} dangerLevel="danger" />
+					<ThresholdLine y={threshold.warning} dangerLevel="warning" />
 				</ChartLineDefault>
 			</div>
 		</div>
