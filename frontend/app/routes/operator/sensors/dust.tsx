@@ -13,7 +13,6 @@ import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorQueryOptions } from "@/lib/api";
-import { hourToTZDate } from "@/lib/date";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import {
 	type DustField,
@@ -28,6 +27,7 @@ import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { setHours } from "date-fns";
 import { useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -82,8 +82,8 @@ export default function Dust() {
 
 	const { minHour, maxHour } = getHourDomain(hourDomain, data?.map((d) => d.time) ?? [], view);
 
-	const minTime = hourToTZDate(minHour, date);
-	const maxTime = hourToTZDate(maxHour, date);
+	const minTime = setHours(date, minHour);
+	const maxTime = setHours(date, maxHour);
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">
@@ -110,7 +110,11 @@ export default function Dust() {
 			) : !data || data.length === 0 ? (
 				<Card className="flex h-24 w-full items-center">
 					<CardTitle>
-						{date.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" })}
+						{date.toLocaleDateString(locale, {
+							day: "numeric",
+							month: "long",
+							year: "numeric",
+						})}
 					</CardTitle>
 					<p>{t(($) => $.common.noData)}</p>
 				</Card>

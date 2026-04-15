@@ -11,7 +11,6 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DateContext } from "@/features/date-picker/use-date";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
-import { hourToTZDate } from "@/lib/date";
 import {
 	type Aggregation,
 	Aggregations,
@@ -35,7 +34,7 @@ import { mapOverviewBucketsToChartRows } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { addDays, endOfDay, startOfDay, subDays } from "date-fns";
+import { addDays, endOfDay, setHours, startOfDay, subDays } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { type ReactNode, useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -205,8 +204,8 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 		"day", // TODO: When we add a view picker we should use that here
 	);
 
-	const minTime = hourToTZDate(minHour, selectedDate);
-	const maxTime = hourToTZDate(maxHour, selectedDate);
+	const minTime = setHours(selectedDate, minHour);
+	const maxTime = setHours(selectedDate, maxHour);
 
 	return (
 		<div className="flex max-w-4xl flex-col gap-6">
@@ -342,8 +341,8 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 		"day", // TODO: When we add a view picker we should use that here
 	);
 
-	const minTime = hourToTZDate(minHour, selectedDate);
-	const maxTime = hourToTZDate(maxHour, selectedDate);
+	const minTime = setHours(selectedDate, minHour);
+	const maxTime = setHours(selectedDate, maxHour);
 
 	return (
 		<SensorChartCard
@@ -446,8 +445,8 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 		"day", // TODO: When we add a view picker we should use that here
 	);
 
-	const minTime = hourToTZDate(minHour, selectedDate);
-	const maxTime = hourToTZDate(maxHour, selectedDate);
+	const minTime = setHours(selectedDate, minHour);
+	const maxTime = setHours(selectedDate, maxHour);
 
 	return (
 		<div className="flex max-w-4xl flex-col gap-4">

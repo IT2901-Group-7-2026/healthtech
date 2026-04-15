@@ -13,7 +13,6 @@ import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorQueryOptions } from "@/lib/api";
-import { hourToTZDate } from "@/lib/date";
 import { type Aggregation, Aggregations } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
@@ -21,6 +20,7 @@ import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { setHours } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -90,8 +90,8 @@ export default function Noise() {
 				data.length
 			: 0;
 
-	const minTime = hourToTZDate(minHour, date);
-	const maxTime = hourToTZDate(maxHour, date);
+	const minTime = setHours(date, minHour);
+	const maxTime = setHours(date, maxHour);
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">

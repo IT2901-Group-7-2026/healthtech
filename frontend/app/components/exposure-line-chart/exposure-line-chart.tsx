@@ -7,7 +7,7 @@ import type { Sensor, SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { cn, formatSensorValue } from "@/lib/utils";
 import { TZDate } from "@date-fns/tz";
-import { useId } from "react";
+import { type PropsWithChildren, useId } from "react";
 import { useTranslation } from "react-i18next";
 import {
 	type ActiveDotProps,
@@ -38,13 +38,12 @@ type XAxisTickLabels = {
 	end: string;
 };
 
-export interface ExposureLineChartProps {
+export interface ExposureLineChartProps extends PropsWithChildren {
 	chartData: Array<SensorDto>;
 	maxY: number;
 	minY: number;
 	unit: SensorUnit;
 	lineType?: CurveType;
-	children?: React.ReactNode;
 	sensor: Sensor;
 	usePeakData?: boolean;
 	dustField?: SensorTypeField;
