@@ -2,15 +2,9 @@ import { ChartContainer } from "@/components/ui/chart";
 import { Pie, PieChart } from "recharts";
 import { Card } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
+import type { Sensor } from "app/lib/sensors";
 
-interface DustChartProps {
-   value: number | null;
-   thresholdValue: number;
-   unit?: string;
-   label?: string;
-}
-
-// Convert polar coordinates to cartesian (SVG y-axis points down)
+// Convert polar coordinates to cartesian
 function polarToCartesian(cx: number, cy: number, radius: number, angleInDegrees: number) {
    const angleInRadians = (Math.PI / 180) * angleInDegrees;
    return {
@@ -55,10 +49,78 @@ function GaugeNeedle({
    );
 }
 
-export function DustChart({ value, thresholdValue, unit, label }: DustChartProps) {
+interface GaugeOverlayProps {
+	cx: number;
+	cy: number;
+	viewBoxWidth: number;
+	viewBoxHeight: number;
+	needleAngle: number;
+	needleInnerOffset: number;
+	needleLength: number;
+	needleStrokeWidth?: number;
+	value: number;
+	unit: string;
+}
+
+function GaugeOverlay({
+	cx,
+	cy,
+	viewBoxWidth,
+	viewBoxHeight,
+	needleAngle,
+	needleInnerOffset,
+	needleLength,
+	needleStrokeWidth = 4,
+	value,
+	unit,
+}: GaugeOverlayProps) {
+   return (
+   	<svg
+   		viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
+   		className="pointer-events-none absolute inset-0 h-full w-full"
+   	>
+   		<GaugeNeedle
+   			cx={cx}
+   			cy={cy}
+   			angle={needleAngle}
+   			innerOffset={needleInnerOffset}
+   			length={needleLength}
+   			strokeWidth={needleStrokeWidth}
+   		/>
+
+   		<text
+   			x={cx}
+   			y={cy - 8}
+   			textAnchor="middle"
+   			className="fill-current text-[16px] font-bold text-foreground"
+   		>
+   			{value.toFixed(2)}
+   		</text>
+
+   		<text
+   			x={cx}
+   			y={cy + 12}
+   			textAnchor="middle"
+   			className="fill-current text-[10px] font-medium text-muted-foreground"
+   		>
+   			{unit}
+   		</text>
+   	</svg>
+   );
+}
+
+interface GaugeChartProps {
+   value: number | null;
+   thresholdValue: number;
+   unit?: string;
+   label?: string;
+   sensor: Sensor;
+}
+
+export function GaugeChart({ value, thresholdValue, unit, label, sensor }: GaugeChartProps) {
    const { t } = useTranslation();
    const resolvedUnit = unit ?? t(($) => $.sensors.dustUnit);
-   const resolvedLabel = label ?? t(($) => $.sensors.dust);
+   const resolvedLabel = label ?? t(($) => $.sensors[sensor]);
 
    // Gauge geometry constants
    const CX = 100;
@@ -99,9 +161,9 @@ export function DustChart({ value, thresholdValue, unit, label }: DustChartProps
 
    return (
    	<Card className="w-fit">
-		<div className="mt-2 w-full text-center text-sm font-medium">
-				{resolvedLabel}
-		</div>
+   		<div className="mt-2 w-full text-center text-sm font-medium">
+   			{resolvedLabel}
+   		</div>
    		<div className="relative h-[170px] w-[200px]">
    			<ChartContainer config={{}} className="h-full w-full">
    				<PieChart width={VIEWBOX_WIDTH} height={VIEWBOX_HEIGHT}>
@@ -133,36 +195,17 @@ export function DustChart({ value, thresholdValue, unit, label }: DustChartProps
    				</PieChart>
    			</ChartContainer>
 
-   			<svg
-   				viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
-   				className="pointer-events-none absolute inset-0 h-full w-full"
-   			>
-   				<GaugeNeedle
-   					cx={CX}
-   					cy={CY}
-   					angle={needleAngle}
-   					innerOffset={NEEDLE_INNER_OFFSET}
-   					length={needleLength}
-   				/>
-
-   				<text
-   					x={CX}
-   					y={92}
-   					textAnchor="middle"
-   					className="fill-current text-[16px] font-bold text-foreground"
-   				>
-   					{clampedValue.toFixed(2)}
-   				</text>
-
-   				<text
-   					x={CX}
-   					y={112}
-   					textAnchor="middle"
-   					className="fill-current text-[10px] font-medium text-muted-foreground"
-   				>
-   					{resolvedUnit}
-   				</text>
-   			</svg>
+   			<GaugeOverlay
+   				cx={CX}
+   				cy={CY}
+   				viewBoxWidth={VIEWBOX_WIDTH}
+   				viewBoxHeight={VIEWBOX_HEIGHT}
+   				needleAngle={needleAngle}
+   				needleInnerOffset={NEEDLE_INNER_OFFSET}
+   				needleLength={needleLength}
+   				value={clampedValue}
+   				unit={resolvedUnit}
+   			/>
    		</div>
    	</Card>
    );
