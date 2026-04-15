@@ -141,9 +141,32 @@ export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props)
 							dataKey="name"
 							tickLine={false}
 							axisLine={false}
-							tickFormatter={(v) => `${v}`}
-							tick={{
-								fill: "var(--color-muted-foreground)",
+							width={120}
+							tick={({ x, y, payload, index }) => {
+								const user = chartData[index];
+
+								const width = 120;
+								const height = 40;
+
+								return (
+									<g transform={`translate(${x},${y})`}>
+										<foreignObject x={-width} y={-height / 2} width={width} height={height}>
+											<div className="flex h-full items-center">
+												<button
+													type="button"
+													onClick={() => {
+														if (user?.id) {
+															userOnClick?.(user.id);
+														}
+													}}
+													className="w-full cursor-pointer text-left text-muted-foreground text-sm leading-tight hover:text-white"
+												>
+													{payload.value}
+												</button>
+											</div>
+										</foreignObject>
+									</g>
+								);
 							}}
 						/>
 						<ThresholdLine x={warningThresholdLine} dangerLevel="warning" />
