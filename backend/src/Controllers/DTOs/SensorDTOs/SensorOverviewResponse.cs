@@ -2,6 +2,6 @@ namespace Backend.DTOs;
 
 public class SensorOverviewResponse
 {
-	public IEnumerable<CombinedSensorBucketDto> Data { get; set; }
-	public HourDomainDto HourDomain { get; set; }
+	public required IEnumerable<CombinedSensorBucketDto> Data { get; set; }
+	public required HourDomainDto HourDomain { get; set; }
 }

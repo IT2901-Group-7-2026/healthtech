@@ -11,12 +11,14 @@ import { PieChartCard } from "@/features/attention-card/pie-chart-card";
 import { useDate } from "@/features/date-picker/use-date.js";
 import { TeamSummary } from "@/features/sidebar/team-summary.js";
 import { useUser } from "@/features/user/user-context";
+import { useView } from "@/features/views/use-view";
+import { ViewPicker } from "@/features/views/view-picker";
 import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions } from "@/lib/api.js";
-import { today } from "@/lib/date";
+import { today, toTZDate } from "@/lib/date";
 import type { ThresholdSummary } from "@/lib/dto";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
 import { useQuery } from "@tanstack/react-query";
-import { endOfDay, startOfDay, subDays } from "date-fns";
+import { addWeeks, endOfDay, startOfDay, subDays } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
@@ -31,9 +33,12 @@ export default function ForemanOverview() {
 	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString);
 
 	const selectedDate = date;
+	const { view } = useView();
+	const isWeekly = view === "week";
 
-	const startDate = startOfDay(selectedDate);
-	const endDate = endOfDay(selectedDate);
+	const startDate = isWeekly ? toTZDate(startOfDay(addWeeks(selectedDate, -1))) : toTZDate(startOfDay(selectedDate));
+
+	const endDate = toTZDate(endOfDay(selectedDate));
 
 	// Foremen can only see dates within the last week
 	const minSelectableDate = subDays(today(), 7);
@@ -49,8 +54,8 @@ export default function ForemanOverview() {
 
 	const selectedUser = users?.find((subordinate) => subordinate.id === selectedUserId);
 	const subordinateCount = subordinates?.length ?? 0;
-	const isUserSelected = selectedUser !== undefined;
 	const isUserComboboxDisabled = !users || users.length === 0;
+	const isUserSelected = selectedUser !== undefined;
 
 	const userComboboxOptions =
 		users?.map((u) => ({
@@ -106,42 +111,54 @@ export default function ForemanOverview() {
 					<DailyNotes />
 				</aside>
 
-				<div className="flex flex-col gap-12 md:w-3/5">
-					{isUserSelected ? (
-						<UserDetails selectedUser={selectedUser} selectedDate={selectedDate} sensor={sensor} />
-					) : (
-						<>
-							<AttentionCard
-								subordinates={subordinates ?? []}
-								isSubordinatesLoading={isSubordinatesLoading}
-								thresholdSummary={thresholdSummary}
-								isThresholdSummaryLoading={isThresholdSummaryLoading}
+				<div
+					className="grid w-full gap-6"
+					style={{
+						gridTemplateColumns: "minmax(0, 3fr) calc(var(--spacing) * 73)",
+					}}
+				>
+					<div className="flex flex-col gap-12">
+						{isUserSelected ? (
+							<UserDetails selectedUser={selectedUser} selectedDate={selectedDate} sensor={sensor} />
+						) : (
+							<>
+								<AttentionCard
+									subordinates={subordinates ?? []}
+									isSubordinatesLoading={isSubordinatesLoading}
+									thresholdSummary={thresholdSummary}
+									isThresholdSummaryLoading={isThresholdSummaryLoading}
+									isWeekly={isWeekly}
+								/>
+
+								{sensor ? (
+									<UserStatusChart users={subordinates ?? []} sensor={sensor} isWeekly={isWeekly} />
+								) : (
+									<SensorSummaryGrid thresholdSummary={thresholdSummary} />
+								)}
+							</>
+						)}
+					</div>
+
+					<aside className="flex flex-col gap-4">
+						<Card muted={true}>
+							<ViewPicker allowedViews={["day", "week"]} withNavigationButtons={true} />
+						</Card>
+
+						<Card muted={true}>
+							<DatePicker
+								mode="day"
+								showWeekNumber={true}
+								date={date}
+								onDateChange={setDate}
+								disabled={{ before: minSelectableDate, after: maxSelectableDate }}
+								pagedNavigation={false}
+								hideNavigation={true}
+								disableNavigation={true}
+								captionLayout="label"
 							/>
-
-							{sensor ? (
-								<UserStatusChart users={subordinates ?? []} sensor={sensor} />
-							) : (
-								<SensorSummaryGrid thresholdSummary={thresholdSummary} />
-							)}
-						</>
-					)}
+						</Card>
+					</aside>
 				</div>
-
-				<aside className="col-start-3 row-start-2 flex flex-col gap-4">
-					<Card muted={true}>
-						<DatePicker
-							mode={"day"}
-							showWeekNumber={true}
-							date={date}
-							onDateChange={setDate}
-							disabled={{ before: minSelectableDate, after: maxSelectableDate }}
-							pagedNavigation={false}
-							hideNavigation={true}
-							disableNavigation={true}
-							captionLayout="label"
-						/>
-					</Card>
-				</aside>
 			</div>
 		</div>
 	);

@@ -14,7 +14,7 @@ import { getThreshold } from "@/lib/thresholds";
 import { computeYAxisRange } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries } from "@tanstack/react-query";
-import { addMinutes, isWithinInterval, minutesToMilliseconds, startOfDay, startOfMinute } from "date-fns";
+import { addMinutes, isWithinInterval, startOfDay, startOfMinute } from "date-fns";
 import { Clock } from "lucide-react";
 import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useMemo } from "react";
@@ -43,9 +43,6 @@ export default function OperatorLiveView() {
 	const end = startOfCurrentMinute;
 	const start = addMinutes(startOfCurrentMinute, -TIME_RANGE_MINUTES[timeRange]);
 
-	// We have at most 1 data point every minute so we don't need a shorter refetch interval than that
-	const dataRefetchInterval = minutesToMilliseconds(1);
-
 	const [dustTwa1Result, dustTwa25Result, dustTwa10Result, noiseResult, vibrationResult] = useQueries({
 		queries: [
 			sensorQueryOptions({
@@ -56,10 +53,8 @@ export default function OperatorLiveView() {
 					field: "pm1_twa",
 					startTime: start,
 					endTime: end,
-					clampEndTimeToNow: true,
 				}),
 				userId: targetUserId,
-				refetchInterval: dataRefetchInterval,
 			}),
 			sensorQueryOptions({
 				sensor: "dust",
@@ -69,10 +64,8 @@ export default function OperatorLiveView() {
 					field: "pm25_twa",
 					startTime: start,
 					endTime: end,
-					clampEndTimeToNow: true,
 				}),
 				userId: targetUserId,
-				refetchInterval: dataRefetchInterval,
 			}),
 			sensorQueryOptions({
 				sensor: "dust",
@@ -82,10 +75,8 @@ export default function OperatorLiveView() {
 					field: "pm10_twa",
 					startTime: start,
 					endTime: end,
-					clampEndTimeToNow: true,
 				}),
 				userId: targetUserId,
-				refetchInterval: dataRefetchInterval,
 			}),
 			sensorQueryOptions({
 				sensor: "noise",
@@ -93,10 +84,8 @@ export default function OperatorLiveView() {
 					granularity: "minute",
 					startTime: start,
 					endTime: end,
-					clampEndTimeToNow: true,
 				}),
 				userId: targetUserId,
-				refetchInterval: dataRefetchInterval,
 			}),
 			sensorQueryOptions({
 				sensor: "vibration",
@@ -104,10 +93,8 @@ export default function OperatorLiveView() {
 					granularity: "minute",
 					startTime: toTZDate(startOfDay(start)),
 					endTime: end,
-					clampEndTimeToNow: true,
 				}),
 				userId: targetUserId,
-				refetchInterval: dataRefetchInterval,
 			}),
 		],
 	});
@@ -154,6 +141,7 @@ export default function OperatorLiveView() {
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							hideChartLegend={true}
 						/>
 						<Separator />
 						<LiveExposureCard
@@ -166,6 +154,7 @@ export default function OperatorLiveView() {
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							hideChartLegend={true}
 						/>
 						<Separator />
 						<LiveExposureCard
@@ -229,8 +218,10 @@ export default function OperatorLiveView() {
 						type="single"
 						value={timeRange}
 						variant="outline"
-						onValueChange={(value: TimeRangeOption) => {
-							setTimeRange(value);
+						onValueChange={(value: TimeRangeOption | "") => {
+							if (value) {
+								setTimeRange(value);
+							}
 						}}
 					>
 						<ToggleGroupItem
@@ -278,6 +269,7 @@ interface LiveExposureCardProps {
 	minTime: TZDate;
 	maxTime: TZDate;
 	chartClassName?: string;
+	hideChartLegend?: boolean;
 }
 
 const LiveExposureCard = ({
@@ -290,6 +282,7 @@ const LiveExposureCard = ({
 	minTime,
 	maxTime,
 	chartClassName,
+	hideChartLegend,
 }: LiveExposureCardProps) => {
 	const { t } = useTranslation();
 
@@ -337,9 +330,10 @@ const LiveExposureCard = ({
 					chartContainerClassName="!aspect-auto"
 					hideHeader={true}
 					muteTickLabels={true}
+					hideLegend={hideChartLegend}
 				>
-					<ThresholdLine y={threshold.danger} dangerLevel="danger" hideLineLabel={true} />
-					<ThresholdLine y={threshold.warning} dangerLevel="warning" hideLineLabel={true} />
+					<ThresholdLine y={threshold.danger} dangerLevel="danger" />
+					<ThresholdLine y={threshold.warning} dangerLevel="warning" />
 				</ChartLineDefault>
 			</div>
 		</div>
