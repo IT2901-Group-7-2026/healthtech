@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 import type { Sensor } from "app/lib/sensors";
 
-// Convert polar coordinates to cartesian
+// Convert polar coordinates to cartesian, needed because SVG uses xy but gauges are circular
 function polarToCartesian(cx: number, cy: number, radius: number, angleInDegrees: number) {
    const angleInRadians = (Math.PI / 180) * angleInDegrees;
    return {
@@ -127,7 +127,7 @@ export function GaugeChart({ value, thresholdValue, unit, label, sensor }: Gauge
    const CY = 100;
    const RADIUS = 70;
    const GAUGE_ARC_WIDTH = 18;
-   const NEEDLE_INNER_OFFSET = 52;
+   const NEEDLE_INNER_OFFSET = 40;
    const VIEWBOX_HEIGHT = 170;
    const VIEWBOX_WIDTH = 200;
 
@@ -139,7 +139,7 @@ export function GaugeChart({ value, thresholdValue, unit, label, sensor }: Gauge
    // Angle configuration
    const START_ANGLE = 180;
    const SWEEP_ANGLE = 180;
-   const END_ANGLE = START_ANGLE - SWEEP_ANGLE; // 0
+   const END_ANGLE = START_ANGLE - SWEEP_ANGLE;
 
    // Value calculations
    const clampedValue = Math.max(0, Math.min(value ?? 0, thresholdValue));
