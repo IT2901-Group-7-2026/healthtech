@@ -16,8 +16,8 @@ import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { useQueryState } from "nuqs";
-import { useId, useState } from "react";
+import { parseAsStringLiteral, useQueryState } from "nuqs";
+import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
 const dustFields = ["pm1_twa", "pm25_twa", "pm10_twa"] as const satisfies ReadonlyArray<SensorTypeField>;
@@ -31,10 +31,14 @@ export default function Dust() {
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 
+	const parseAsDustField = parseAsStringLiteral(dustFields);
+	const [dustField, setDustField] = useQueryState<(typeof dustFields)[number]>(
+		"dustField",
+		parseAsDustField.withDefault("pm1_twa"),
+	);
 	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
 
 	const sensor: Sensor = "dust";
-	const [dustField, setDustField] = useState<(typeof dustFields)[number]>("pm1_twa");
 
 	const query = buildSensorQuery(sensor, view, date, {
 		field: dustField,
