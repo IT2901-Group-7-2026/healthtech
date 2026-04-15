@@ -167,6 +167,7 @@ export default function OperatorLiveView() {
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							showLegend={true}
 						/>
 					</CardContent>
 				</Card>
@@ -185,6 +186,7 @@ export default function OperatorLiveView() {
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							showLegend={true}
 						/>
 					</CardContent>
 				</Card>
@@ -203,6 +205,7 @@ export default function OperatorLiveView() {
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							showLegend={true}
 						/>
 					</CardContent>
 				</Card>
@@ -269,6 +272,7 @@ interface LiveExposureCardProps {
 	minTime: TZDate;
 	maxTime: TZDate;
 	chartClassName?: string;
+	showLegend?: boolean;
 }
 
 const LiveExposureCard = ({
@@ -281,6 +285,7 @@ const LiveExposureCard = ({
 	data,
 	maxTime,
 	chartClassName,
+	showLegend = false,
 }: LiveExposureCardProps) => {
 	const { t } = useTranslation();
 
@@ -324,7 +329,7 @@ const LiveExposureCard = ({
 					contentClassName="p-0"
 					chartContainerClassName="!aspect-auto"
 					hideHeader={true}
-					showLegend={false}
+					showLegend={showLegend}
 					xTickLabels={{
 						start: "", // TODO: We should show something like "8 hours ago"
 						end: t(($) => $.live.chart.now),
