@@ -141,6 +141,7 @@ export default function OperatorLiveView() {
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							hideChartLegend={true}
 						/>
 						<Separator />
 						<LiveExposureCard
@@ -153,6 +154,7 @@ export default function OperatorLiveView() {
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							hideChartLegend={true}
 						/>
 						<Separator />
 						<LiveExposureCard
@@ -216,8 +218,10 @@ export default function OperatorLiveView() {
 						type="single"
 						value={timeRange}
 						variant="outline"
-						onValueChange={(value: TimeRangeOption) => {
-							setTimeRange(value);
+						onValueChange={(value: TimeRangeOption | "") => {
+							if (value) {
+								setTimeRange(value);
+							}
 						}}
 					>
 						<ToggleGroupItem
@@ -265,6 +269,7 @@ interface LiveExposureCardProps {
 	minTime: TZDate;
 	maxTime: TZDate;
 	chartClassName?: string;
+	hideChartLegend?: boolean;
 }
 
 const LiveExposureCard = ({
@@ -277,6 +282,7 @@ const LiveExposureCard = ({
 	minTime,
 	maxTime,
 	chartClassName,
+	hideChartLegend,
 }: LiveExposureCardProps) => {
 	const { t } = useTranslation();
 
@@ -324,9 +330,10 @@ const LiveExposureCard = ({
 					chartContainerClassName="!aspect-auto"
 					hideHeader={true}
 					muteTickLabels={true}
+					hideLegend={hideChartLegend}
 				>
-					<ThresholdLine y={threshold.danger} dangerLevel="danger" hideLineLabel={true} />
-					<ThresholdLine y={threshold.warning} dangerLevel="warning" hideLineLabel={true} />
+					<ThresholdLine y={threshold.danger} dangerLevel="danger" />
+					<ThresholdLine y={threshold.warning} dangerLevel="warning" />
 				</ChartLineDefault>
 			</div>
 		</div>

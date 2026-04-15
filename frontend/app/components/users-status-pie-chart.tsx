@@ -1,5 +1,9 @@
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { Pie, PieChart, type PieSectorShapeProps, Sector } from "recharts";
+import { DangerLevelSchema } from "@/lib/danger-levels.js";
+import { Pie, PieChart, type PieLabelRenderProps, type PieSectorShapeProps, Sector } from "recharts";
+import { DangerLevelDots } from "./danger-level-dots.js";
+
+const RADIAN = Math.PI / 180;
 
 const pieShape = (props: PieSectorShapeProps) => {
 	const colorMap: Record<string, string> = {
@@ -29,6 +33,7 @@ export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
 					shape={pieShape}
 					innerRadius="60%"
 					outerRadius="100%"
+					label={CustomLabel}
 				/>
 				<ChartTooltip
 					content={({ active, payload }) => {
@@ -53,3 +58,27 @@ export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
 		</ChartContainer>
 	);
 }
+
+const CustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }: PieLabelRenderProps) => {
+	// Don't render a label if the pie takes up 0% of the chart
+	if (percent === 0) {
+		return null;
+	}
+
+	const sizePx = 10;
+
+	const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+	const x = Number(cx) + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
+	const y = Number(cy) + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
+
+	const dangerLevelParseResult = DangerLevelSchema.safeParse(name?.toLowerCase());
+	const dangerLevel = dangerLevelParseResult.success ? dangerLevelParseResult.data : null;
+
+	return (
+		<g transform={`translate(${x},${y})`} className="relative">
+			<foreignObject x={-sizePx / 2} y={-sizePx / 2} width={sizePx} height={sizePx}>
+				<DangerLevelDots dangerLevel={dangerLevel} />
+			</foreignObject>
+		</g>
+	);
+};

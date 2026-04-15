@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/correctness/noNestedComponentDefinitions: CustomDay is intentionally defined inside CalendarView for prop access. */
 
+import { DangerLevelDots } from "@/components/danger-level-dots.js";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
@@ -166,16 +167,15 @@ function CustomDay({ data, day, className, handleDayClick, ...buttonProps }: Cus
 	}
 
 	return (
-		<button
-			type="button"
-			disabled={disabled}
-			className={cn(
-				"h-full w-full rounded-lg",
-				!disabled && "cursor-pointer hover:brightness-85",
-				bgClassname,
-				className,
-			)}
-			{...buttonProps}
-		/>
+		<button type="button" disabled={disabled} className={cn("relative h-full w-full rounded-lg")} {...buttonProps}>
+			<div
+				className={cn(
+					"h-full w-full rounded-lg",
+					!disabled && "cursor-pointer hover:brightness-85",
+					bgClassname,
+				)}
+			/>
+			<DangerLevelDots dangerLevel={dangerLevel ?? null} className="absolute right-1 bottom-1" />
+		</button>
 	);
 }

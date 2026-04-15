@@ -10,9 +10,11 @@ import { getThreshold } from "@/lib/thresholds";
 import { cn, formatSensorValue } from "@/lib/utils";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
-import { type ActiveDotProps, CartesianGrid, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
+import { type ActiveDotProps, CartesianGrid, Legend, Line, LineChart, ReferenceLine, XAxis, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
 import { Skeleton } from "./ui/skeleton";
+
+const Y_AXIS_WIDTH = 60;
 
 const chartConfig = {
 	desktop: {
@@ -46,6 +48,7 @@ interface LineChartProps {
 	chartContainerClassName?: string;
 	hideHeader?: boolean;
 	muteTickLabels?: boolean;
+	hideLegend?: boolean;
 }
 
 type CustomXAxisTickProps = {
@@ -107,6 +110,7 @@ export function ChartLineDefault({
 	chartContainerClassName,
 	hideHeader,
 	muteTickLabels,
+	hideLegend,
 }: LineChartProps) {
 	const { date: selectedDay } = useDate();
 	const { t } = useTranslation();
@@ -236,7 +240,7 @@ export function ChartLineDefault({
 						/>
 						<YAxis
 							dataKey="value"
-							width={hideLabels ? 48 : undefined}
+							width={hideLabels ? Y_AXIS_WIDTH : undefined}
 							tickLine={false}
 							axisLine={false}
 							tick={{
@@ -314,6 +318,28 @@ export function ChartLineDefault({
 							)}
 						/>
 						{children}
+						{!hideLegend && (
+							<Legend
+								verticalAlign="bottom"
+								align="left"
+								content={() => (
+									<div style={{ marginLeft: Y_AXIS_WIDTH }}>
+										<ThresholdLegend
+											items={[
+												{
+													dangerLevel: "danger",
+													color: `var(--${DangerLevels.danger.color})`,
+												},
+												{
+													dangerLevel: "warning",
+													color: `var(--${DangerLevels.warning.color})`,
+												},
+											]}
+										/>
+									</div>
+								)}
+							></Legend>
+						)}
 					</LineChart>
 				</ChartContainer>
 			</CardContent>
@@ -335,37 +361,60 @@ const Dot = ({ cx, cy, value, warning, danger, isPeak }: DotProps & { isPeak?: b
 	return <circle cx={cx} cy={cy} r={6} fill={fillColor} />;
 };
 
-export function ThresholdLine({
-	y,
-	dangerLevel,
-	label,
-	hideLineLabel,
-}: {
-	y: number;
+const getThresholdStrokeDasharray = (dangerLevel: DangerLevel) => (dangerLevel === "danger" ? "8 4" : "4 4");
+
+interface ThresholdLineProps {
 	dangerLevel: DangerLevel;
 	label?: string;
 	hideLineLabel?: boolean;
-}) {
-	const { t } = useTranslation();
+}
+
+export function ThresholdLine({
+	dangerLevel,
+	label,
+	hideLineLabel,
+	...props
+}: ThresholdLineProps & ({ y: number } | { x: number })) {
+	const y = "y" in props ? props.y : undefined;
+	const x = "x" in props ? props.x : undefined;
+
+	const strokeDasharray = getThresholdStrokeDasharray(dangerLevel);
 	const color = `var(--${DangerLevels[dangerLevel].color})`;
-	const lineLabel = hideLineLabel ? undefined : (label ?? t(($) => $.lineChart[dangerLevel]));
+
+	return <ReferenceLine x={x} y={y} stroke={color} strokeDasharray={strokeDasharray} />;
+}
+
+type ThresholdLegendItem = {
+	dangerLevel: DangerLevel;
+	color: string;
+};
+
+function ThresholdLegend({ items }: { items: Array<ThresholdLegendItem> }) {
+	const { t } = useTranslation();
 
 	return (
-		<ReferenceLine
-			y={y}
-			stroke={color}
-			strokeDasharray="4 4"
-			label={{
-				value: lineLabel,
-				position: "left",
-				fill: color,
-				offset: 64,
-				dy: -20,
-				fontSize: "75%",
-				textAnchor: "start",
-				className: "text-base",
-			}}
-		/>
+		<div className="flex items-center gap-6 text-sm">
+			{items.map((item) => {
+				const strokeDasharray = getThresholdStrokeDasharray(item.dangerLevel);
+
+				return (
+					<div key={item.dangerLevel} className="flex items-center gap-2">
+						<svg width="24" height="8" className="shrink-0" aria-label={item.dangerLevel}>
+							<line
+								x1="0"
+								y1="4"
+								x2="24"
+								y2="4"
+								stroke={item.color}
+								strokeWidth="2"
+								strokeDasharray={strokeDasharray}
+							/>
+						</svg>
+						<span>{t(($) => $.lineChart[item.dangerLevel])}</span>
+					</div>
+				);
+			})}
+		</div>
 	);
 }
 
