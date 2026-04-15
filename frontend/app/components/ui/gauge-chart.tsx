@@ -129,7 +129,7 @@ export function GaugeChart({ value, thresholdValue, unit, label, sensor }: Gauge
    const GAUGE_ARC_WIDTH = 18;
    const NEEDLE_INNER_OFFSET = 40;
    const VIEWBOX_HEIGHT = 170;
-   const VIEWBOX_WIDTH = 200;
+   const VIEWBOX_WIDTH = 190;
 
    // Derived radii
    const innerRadius = RADIUS - GAUGE_ARC_WIDTH / 2;
@@ -169,6 +169,8 @@ export function GaugeChart({ value, thresholdValue, unit, label, sensor }: Gauge
    					</defs>
 
    					<Pie
+					// data={[{ value: 1 }]} is a there so Recharts renders a single full arc,
+					// since the gauge's actual value is shown by the needle, not the pie data
    						data={[{ value: 1 }]}
    						dataKey="value"
    						cx={CX}
@@ -195,7 +197,7 @@ export function GaugeChart({ value, thresholdValue, unit, label, sensor }: Gauge
    			/>
    		</div>
 		: <div className="flex h-[170px] w-[200px] flex-col items-center justify-center gap-1 text-center">
-    				<span className="text-sm">{t(($) => $.common.noData)}</span>
+    				{t(($) => $.common.noData)}
    			</div>
 		}
    	</Card>
