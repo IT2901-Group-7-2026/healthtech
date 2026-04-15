@@ -141,23 +141,29 @@ export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props)
 							dataKey="name"
 							tickLine={false}
 							axisLine={false}
-							tick={({ payload }) => {
-								const user = chartData.find((d) => d.name === payload.value);
+							width={120}
+							tick={({ x, y, payload, index }) => {
+								const user = chartData[index];
+
+								const WIDTH = 120;
+								const HEIGHT = 40;
 
 								return (
-									<g>
-										<foreignObject>
-											<button
-												type="button"
-												onClick={() => {
-													if (user?.id) {
-														userOnClick?.(user.id);
-													}
-												}}
-												className="w-full cursor-pointer whitespace-normal break-words text-left text-muted-foreground text-sm leading-tight"
-											>
-												{payload.value}
-											</button>
+									<g transform={`translate(${x},${y})`}>
+										<foreignObject x={-WIDTH} y={-HEIGHT / 2} width={WIDTH} height={HEIGHT}>
+											<div className="flex h-full items-center">
+												<button
+													type="button"
+													onClick={() => {
+														if (user?.id) {
+															userOnClick?.(user.id);
+														}
+													}}
+													className="w-full cursor-pointer text-left text-muted-foreground text-sm leading-tight hover:text-white"
+												>
+													{payload.value}
+												</button>
+											</div>
 										</foreignObject>
 									</g>
 								);
