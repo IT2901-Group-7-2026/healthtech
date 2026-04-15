@@ -95,8 +95,8 @@ export default function Vibration() {
 								minHour={minHour}
 								maxHour={maxHour}
 								chartData={downsampleSensorData(sensor, data ?? [])}
-								chartTitle={`${t(($) => $.common.total)}: ${Math.trunc(totalExposure)} ${t(($) => $.common.points)}`}
-								unit={t(($) => $.common.points)}
+								chartTitle={`${t(($) => $.common.total)}: ${Math.trunc(totalExposure)} ${t(($) => $.sensors.units.points)}`}
+								unit={"points"}
 								maxY={maxY}
 								minY={minY}
 								lineType="monotone"

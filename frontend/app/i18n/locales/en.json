@@ -11,7 +11,6 @@
     "time": "Time",
     "today": "Today",
     "total": "Total exposure",
-    "points": "Points",
     "notifications": "Notifications",
     "exportAsPdf": "Export as PDF"
   },
@@ -22,7 +21,13 @@
     "all": "All sensors",
     "overview": "Overview",
     "selectPlaceholder": "Sensor",
-    "dustUnit": "µg/m³"
+    "units": {
+      "ug": "µg/m³",
+      "mg": "mg/m³",
+      "points": "Points",
+      "db": "dB",
+      "dbTwa": "dB (TWA)"
+    }
   },
   "dangerLevels": {
     "safe": "Safe",

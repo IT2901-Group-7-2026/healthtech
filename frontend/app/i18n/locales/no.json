@@ -22,7 +22,13 @@
     "all": "Alle sensorer",
     "overview": "Oversikt",
     "selectPlaceholder": "Sensor",
-    "dustUnit": "µg/m³"
+    "units": {
+      "ug": "µg/m³",
+      "mg": "mg/m³",
+      "points": "Poeng",
+      "db": "dB",
+      "dbTwa": "dB (TWA)"
+    }
   },
   "dangerLevels": {
     "safe": "Trygg",
