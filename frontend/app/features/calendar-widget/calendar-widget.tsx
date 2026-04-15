@@ -65,8 +65,8 @@ export function CalendarWidget({ selectedDay, data, selectedAggregation }: Calen
 
 	return (
 		<>
-			<div className="relative mr-auto w-full max-w-4xl">
-				<div className="absolute top-1 right-2 z-10">
+			<div className="mr-auto w-full max-w-4xl">
+				<div className="flex justify-end pb-4">
 					<Button
 						variant="outline"
 						onClick={() => {
@@ -104,8 +104,7 @@ export function CalendarWidget({ selectedDay, data, selectedAggregation }: Calen
 					className="w-full bg-transparent px-2 py-0 text-foreground"
 					classNames={{
 						week: "mt-3 gap-3 flex w-full",
-						month_caption: "pb-4",
-						caption_label: "text-2xl",
+						month_caption: "hidden",
 						weekdays: "flex gap-3",
 						day: "max-h-20 relative w-full h-full p-0 text-center [&:first-child[data-selected=true]_button]:rounded-l-md [&:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none",
 					}}
