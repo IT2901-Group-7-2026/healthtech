@@ -103,3 +103,13 @@ export function getHighestDangerLevel(operators: Array<UserWithStatusDto>, senso
 
 	return highestLevel;
 }
+
+export function getDangerLevel(value: number, warningThreshold: number, dangerThreshold: number): DangerLevel {
+	if (value >= dangerThreshold) {
+		return "danger";
+	}
+	if (value >= warningThreshold) {
+		return "warning";
+	}
+	return "safe";
+}

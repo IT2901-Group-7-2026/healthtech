@@ -1,4 +1,8 @@
-import { ChartLineDefault, ChartLineSkeleton, ThresholdLine } from "@/components/line-chart";
+import {
+	ExposureLineChartCard,
+	ExposureLineChartCardSkeleton,
+} from "@/components/exposure-line-chart/exposure-line-chart-card";
+import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,6 +20,7 @@ import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { setHours } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -85,6 +90,9 @@ export default function Noise() {
 				data.length
 			: 0;
 
+	const minTime = setHours(date, minHour);
+	const maxTime = setHours(date, maxHour);
+
 	return (
 		<div className="flex flex-1 flex-col gap-4">
 			<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
@@ -95,7 +103,7 @@ export default function Noise() {
 			</Tabs>
 
 			{isLoading ? (
-				<ChartLineSkeleton />
+				<ExposureLineChartCardSkeleton />
 			) : isError ? (
 				<Card className="flex h-full w-full items-center">
 					<p>{t(($) => $.common.error)}</p>
@@ -118,10 +126,9 @@ export default function Noise() {
 			) : (
 				<div className="w-full">
 					<div id={chartContainerId}>
-						<ChartLineDefault
-							minHour={minHour}
-							maxHour={maxHour}
-							usePeakData={usePeakAggregation}
+						<ExposureLineChartCard
+							minTime={minTime}
+							maxTime={maxTime}
 							chartData={downsampleSensorData(sensor, data ?? [])}
 							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageExposure)} ${t(($) => $.sensors.units.db)}`}
 							unit="dbTwa"
@@ -159,7 +166,7 @@ export default function Noise() {
 								dangerLevel="danger"
 							/>
 							{!usePeakAggregation && <ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />}
-						</ChartLineDefault>
+						</ExposureLineChartCard>
 					</div>
 				</div>
 			)}

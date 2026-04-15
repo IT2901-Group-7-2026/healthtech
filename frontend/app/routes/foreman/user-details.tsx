@@ -1,5 +1,9 @@
 import { DailyBarChart } from "@/components/daily-bar-chart";
-import { ChartLineDefault, ChartLineSkeleton, ThresholdLine } from "@/components/line-chart";
+import {
+	ExposureLineChartCard,
+	ExposureLineChartCardSkeleton,
+} from "@/components/exposure-line-chart/exposure-line-chart-card";
+import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { GaugeChart } from "@/components/ui/gauge-chart";
@@ -30,7 +34,7 @@ import { mapOverviewBucketsToChartRows } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { addDays, endOfDay, startOfDay, subDays } from "date-fns";
+import { addDays, endOfDay, setHours, startOfDay, subDays } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { type ReactNode, useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -200,6 +204,9 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 		"day", // TODO: When we add a view picker we should use that here
 	);
 
+	const minTime = setHours(selectedDate, minHour);
+	const maxTime = setHours(selectedDate, maxHour);
+
 	return (
 		<div className="flex max-w-4xl flex-col gap-6">
 			<Tabs value={dustField} onValueChange={(value) => setDustField(value as DustField)}>
@@ -221,9 +228,9 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 			>
 				<DateScopedChart selectedDate={selectedDate}>
 					<div id={chartContainerId}>
-						<ChartLineDefault
-							minHour={minHour}
-							maxHour={maxHour}
+						<ExposureLineChartCard
+							minTime={minTime}
+							maxTime={maxTime}
 							chartData={downsampleSensorData(sensor, data ?? [])}
 							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageDustExposure, dustUnit, 2, { mg: 4 })} ${t(($) => $.sensors.units[dustUnit])}`}
 							unit={dustUnit}
@@ -258,7 +265,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 						>
 							<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
 							<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
-						</ChartLineDefault>
+						</ExposureLineChartCard>
 					</div>
 				</DateScopedChart>
 			</SensorChartCard>
@@ -334,6 +341,9 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 		"day", // TODO: When we add a view picker we should use that here
 	);
 
+	const minTime = setHours(selectedDate, minHour);
+	const maxTime = setHours(selectedDate, maxHour);
+
 	return (
 		<SensorChartCard
 			isLoading={isLoading}
@@ -344,9 +354,9 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 		>
 			<DateScopedChart selectedDate={selectedDate}>
 				<div id={chartContainerId}>
-					<ChartLineDefault
-						minHour={minHour}
-						maxHour={maxHour}
+					<ExposureLineChartCard
+						minTime={minTime}
+						maxTime={maxTime}
 						chartData={downsampleSensorData(sensor, data ?? [])}
 						chartTitle={`${t(($) => $.common.total)}: ${Math.trunc(totalVibrationExposure)} ${t(($) => $.sensors.units.points)}`}
 						unit={"points"}
@@ -372,7 +382,7 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 					>
 						<ThresholdLine y={vibrationThreshold.danger} dangerLevel="danger" />
 						<ThresholdLine y={vibrationThreshold.warning} dangerLevel="warning" />
-					</ChartLineDefault>
+					</ExposureLineChartCard>
 				</div>
 			</DateScopedChart>
 		</SensorChartCard>
@@ -435,6 +445,9 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 		"day", // TODO: When we add a view picker we should use that here
 	);
 
+	const minTime = setHours(selectedDate, minHour);
+	const maxTime = setHours(selectedDate, maxHour);
+
 	return (
 		<div className="flex max-w-4xl flex-col gap-4">
 			<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
@@ -453,9 +466,9 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 			>
 				<DateScopedChart selectedDate={selectedDate}>
 					<div id={chartContainerId}>
-						<ChartLineDefault
-							minHour={minHour}
-							maxHour={maxHour}
+						<ExposureLineChartCard
+							minTime={minTime}
+							maxTime={maxTime}
 							usePeakData={usePeakAggregation}
 							chartData={downsampleSensorData(sensor, data ?? [])}
 							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageNoiseExposure)} ${t(($) => $.sensors.units.db)}`}
@@ -489,7 +502,7 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 								dangerLevel="danger"
 							/>
 							{!usePeakAggregation && <ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />}
-						</ChartLineDefault>
+						</ExposureLineChartCard>
 					</div>
 				</DateScopedChart>
 			</SensorChartCard>
@@ -515,7 +528,7 @@ function SensorChartCard({
 	const { t, i18n } = useTranslation();
 
 	if (isLoading && isSensor) {
-		return <ChartLineSkeleton />;
+		return <ExposureLineChartCardSkeleton />;
 	}
 
 	if (isLoading) {

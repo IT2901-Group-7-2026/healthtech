@@ -1,4 +1,8 @@
-import { ChartLineDefault, ChartLineSkeleton, ThresholdLine } from "@/components/line-chart";
+import {
+	ExposureLineChartCard,
+	ExposureLineChartCardSkeleton,
+} from "@/components/exposure-line-chart/exposure-line-chart-card";
+import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -23,6 +27,7 @@ import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { setHours } from "date-fns";
 import { useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -77,6 +82,9 @@ export default function Dust() {
 
 	const { minHour, maxHour } = getHourDomain(hourDomain, data?.map((d) => d.time) ?? [], view);
 
+	const minTime = setHours(date, minHour);
+	const maxTime = setHours(date, maxHour);
+
 	return (
 		<div className="flex flex-1 flex-col gap-4">
 			<Tabs value={dustField} onValueChange={(value) => setDustField(value as DustField)}>
@@ -90,7 +98,7 @@ export default function Dust() {
 			</Tabs>
 
 			{isLoading ? (
-				<ChartLineSkeleton />
+				<ExposureLineChartCardSkeleton />
 			) : isError ? (
 				<Card className="flex h-full w-full items-center">
 					<p>{t(($) => $.common.error)}</p>
@@ -102,16 +110,20 @@ export default function Dust() {
 			) : !data || data.length === 0 ? (
 				<Card className="flex h-24 w-full items-center">
 					<CardTitle>
-						{date.toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" })}
+						{date.toLocaleDateString(locale, {
+							day: "numeric",
+							month: "long",
+							year: "numeric",
+						})}
 					</CardTitle>
 					<p>{t(($) => $.common.noData)}</p>
 				</Card>
 			) : (
 				<div className="w-full">
 					<div id={chartContainerId}>
-						<ChartLineDefault
-							minHour={minHour}
-							maxHour={maxHour}
+						<ExposureLineChartCard
+							minTime={minTime}
+							maxTime={maxTime}
 							chartData={downsampleSensorData(sensor, data ?? [])}
 							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageExposure, dustUnit, 2, { mg: 4 })} ${t(($) => $.sensors.units[dustUnit])}`}
 							unit={dustUnit}
@@ -150,7 +162,7 @@ export default function Dust() {
 						>
 							<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
 							<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
-						</ChartLineDefault>
+						</ExposureLineChartCard>
 					</div>
 				</div>
 			)}

@@ -1,6 +1,7 @@
 import { DailyNotes } from "@/components/daily-notes";
+import { ExposureLineChartCard } from "@/components/exposure-line-chart/exposure-line-chart-card";
+import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { ExposureSlider } from "@/components/exposure-slider";
-import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.js";
@@ -142,7 +143,6 @@ export default function OperatorLiveView() {
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
-							hideChartLegend={true}
 						/>
 						<Separator />
 						<LiveExposureCard
@@ -155,7 +155,6 @@ export default function OperatorLiveView() {
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
-							hideChartLegend={true}
 						/>
 						<Separator />
 						<LiveExposureCard
@@ -168,6 +167,7 @@ export default function OperatorLiveView() {
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							showLegend={true}
 						/>
 					</CardContent>
 				</Card>
@@ -186,6 +186,7 @@ export default function OperatorLiveView() {
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							showLegend={true}
 						/>
 					</CardContent>
 				</Card>
@@ -204,6 +205,7 @@ export default function OperatorLiveView() {
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							showLegend={true}
 						/>
 					</CardContent>
 				</Card>
@@ -270,7 +272,7 @@ interface LiveExposureCardProps {
 	minTime: TZDate;
 	maxTime: TZDate;
 	chartClassName?: string;
-	hideChartLegend?: boolean;
+	showLegend?: boolean;
 }
 
 const LiveExposureCard = ({
@@ -279,11 +281,11 @@ const LiveExposureCard = ({
 	exposureField,
 	exposureUnitLabel,
 	chartUnit,
-	data,
 	minTime,
+	data,
 	maxTime,
 	chartClassName,
-	hideChartLegend,
+	showLegend = false,
 }: LiveExposureCardProps) => {
 	const { t } = useTranslation();
 
@@ -312,7 +314,7 @@ const LiveExposureCard = ({
 				className="w-48"
 			/>
 			<div className="w-128 flex-1 self-stretch">
-				<ChartLineDefault
+				<ExposureLineChartCard
 					minTime={minTime}
 					maxTime={maxTime}
 					chartData={data}
@@ -322,20 +324,20 @@ const LiveExposureCard = ({
 					minY={minY}
 					lineType="monotone"
 					sensor={sensor}
-					hideLabels={true}
-					disableAnimation={true}
-					startTickLabel=""
-					endTickLabel={t(($) => $.live.chart.now)}
+					variant="compact"
 					className={chartClassName}
 					contentClassName="p-0"
 					chartContainerClassName="!aspect-auto"
 					hideHeader={true}
-					muteTickLabels={true}
-					hideLegend={hideChartLegend}
+					showLegend={showLegend}
+					xTickLabels={{
+						start: "", // TODO: We should show something like "8 hours ago"
+						end: t(($) => $.live.chart.now),
+					}}
 				>
 					<ThresholdLine y={threshold.danger} dangerLevel="danger" />
 					<ThresholdLine y={threshold.warning} dangerLevel="warning" />
-				</ChartLineDefault>
+				</ExposureLineChartCard>
 			</div>
 		</div>
 	);
