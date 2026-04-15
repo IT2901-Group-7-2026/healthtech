@@ -40,7 +40,7 @@ type XAxisTickLabels = {
 	end: string;
 };
 
-interface LineChartProps {
+export interface ExposureLineChartProps {
 	chartData: Array<SensorDto>;
 	maxY: number;
 	minY: number;
@@ -60,7 +60,7 @@ interface LineChartProps {
 	maxTime: Date;
 }
 
-export function ChartLine({
+export function ExposureLineChart({
 	chartData,
 	maxY,
 	minY,
@@ -77,7 +77,7 @@ export function ChartLine({
 	variant = "default",
 	showLegend = true,
 	xTickLabels,
-}: LineChartProps) {
+}: ExposureLineChartProps) {
 	const { t } = useTranslation();
 	const id = useId();
 	const formatDate = useFormatDate();

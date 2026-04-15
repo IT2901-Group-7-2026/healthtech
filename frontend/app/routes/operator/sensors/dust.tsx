@@ -1,4 +1,8 @@
-import { ChartLineDefault, ChartLineSkeleton, ThresholdLine } from "@/components/line-chart";
+import {
+	ExposureLineChartCard,
+	ExposureLineChartCardSkeleton,
+} from "@/components/exposure-line-chart/exposure-line-chart-card";
+import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
@@ -8,6 +12,7 @@ import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorQueryOptions } from "@/lib/api";
+import { hourToTZDate } from "@/lib/date";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
@@ -61,10 +66,13 @@ export default function Dust() {
 
 	const { minHour, maxHour } = getHourDomain(hourDomain, data?.map((d) => d.time) ?? [], view);
 
+	const minTime = hourToTZDate(minHour, date);
+	const maxTime = hourToTZDate(maxHour, date);
+
 	return (
 		<div className="flex flex-1 flex-col gap-4">
 			{isLoading ? (
-				<ChartLineSkeleton />
+				<ExposureLineChartCardSkeleton />
 			) : isError ? (
 				<Card className="flex h-full w-full items-center">
 					<p>{t(($) => $.common.error)}</p>
@@ -87,9 +95,9 @@ export default function Dust() {
 			) : (
 				<div className="w-full">
 					<div id={chartContainerId}>
-						<ChartLineDefault
-							minHour={minHour}
-							maxHour={maxHour}
+						<ExposureLineChartCard
+							minTime={minTime}
+							maxTime={maxTime}
 							chartData={downsampleSensorData(sensor, data ?? [])}
 							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageExposure)} ${t(($) => $.sensors.dustUnit)}`}
 							unit={t(($) => $.sensors.dustUnit)}
@@ -121,7 +129,7 @@ export default function Dust() {
 							<div className="mb-2 flex justify-end"></div>
 							<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
 							<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
-						</ChartLineDefault>
+						</ExposureLineChartCard>
 					</div>
 				</div>
 			)}

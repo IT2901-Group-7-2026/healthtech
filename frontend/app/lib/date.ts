@@ -52,3 +52,5 @@ export const parseAsTZDate = createParser<TZDate>({
 });
 
 export const tzDateSchema = z.coerce.date().transform((value) => toTZDate(value));
+
+export const hourToTZDate = (hour: number, date: TZDate): TZDate => new TZDate(date.setHours(hour, 0, 0, 0));

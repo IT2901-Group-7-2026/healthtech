@@ -16,7 +16,6 @@ export function ThresholdLegend({ items }: { items: Array<ThresholdLegendItem> }
 			{items.map((item) => {
 				const strokeDasharray = getThresholdStrokeDasharray(item.dangerLevel);
 
-				// TODO: This one correct?
 				const dangerLevelLabel = t(($) => $.lineChart[item.dangerLevel]);
 
 				return (
