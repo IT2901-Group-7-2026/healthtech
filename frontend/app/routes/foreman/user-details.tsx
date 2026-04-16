@@ -236,7 +236,6 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 							unit={dustUnit}
 							maxY={maxY}
 							minY={minY}
-							lineType="monotone"
 							sensor={sensor}
 							dustField={query.field}
 							headerRight={
@@ -472,10 +471,9 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 							usePeakData={usePeakAggregation}
 							chartData={downsampleSensorData(sensor, data ?? [])}
 							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageNoiseExposure)} ${t(($) => $.sensors.units.db)}`}
-							unit={"dbTwa"}
+							unit="dbTwa"
 							maxY={maxY}
 							minY={minY}
-							lineType="monotone"
 							sensor={sensor}
 							headerRight={
 								<Button
