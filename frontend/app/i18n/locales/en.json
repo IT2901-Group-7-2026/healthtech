@@ -187,7 +187,7 @@
       "failedToLoadMembers": "Failed to load team members",
       "noMembersFound": "No team members found",
       "table": {
-        "username": "Username",
+        "name": "Name",
         "email": "Email",
         "status": "Status",
         "jobDescription": "Job description",
@@ -246,9 +246,9 @@
     "siteMap": {
       "title": "Site map",
       "noOperators": "No operators in hall",
-      "viewUser": "View {{username}}",
-      "viewUserAria": "View user {{username}}",
-      "viewSensorData": "View {{sensor}} data for {{username}}",
+      "viewUser": "View {{name}}",
+      "viewUserAria": "View user {{name}}",
+      "viewSensorData": "View {{sensor}} data for {{name}}",
       "operatorSensorStatus": {
         "danger": "Above exposure limit for {{sensor}}",
         "warning": "Approaching exposure limit for {{sensor}}",

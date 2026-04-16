@@ -60,7 +60,7 @@ export default function ForemanOverview() {
 	const userComboboxOptions =
 		users?.map((u) => ({
 			value: u.id,
-			label: u.username,
+			label: u.name,
 		})) ?? [];
 
 	return (
@@ -90,7 +90,7 @@ export default function ForemanOverview() {
 							showClear={true}
 							disabled={isUserComboboxDisabled}
 							className="bg-background dark:bg-input/30"
-							value={selectedUser?.username ?? ""}
+							value={selectedUser?.name ?? ""}
 						/>
 						<ComboboxContent>
 							<ComboboxList>
@@ -155,7 +155,10 @@ export default function ForemanOverview() {
 								showWeekNumber={true}
 								date={date}
 								onDateChange={setDate}
-								disabled={{ before: minSelectableDate, after: maxSelectableDate }}
+								disabled={{
+									before: minSelectableDate,
+									after: maxSelectableDate,
+								}}
 								pagedNavigation={false}
 								hideNavigation={true}
 								disableNavigation={true}

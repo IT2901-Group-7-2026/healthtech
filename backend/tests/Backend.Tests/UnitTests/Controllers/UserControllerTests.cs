@@ -70,7 +70,7 @@ public class UserControllerTests
 	{
 		// Arrange
 		var createUserDto = new CreateUserDto(
-			Username: "testuser",
+			Name: "testuser",
 			Email: "test@example.com",
 			Password: "password123",
 			LocationId: MockLocation.Id,
@@ -82,7 +82,7 @@ public class UserControllerTests
 		var expectedUser = new User
 		{
 			Id = Guid.NewGuid(),
-			Username = createUserDto.Username,
+			Name = createUserDto.Name,
 			Email = createUserDto.Email,
 			PasswordHash = "hashed",
 			CreatedAt = DateTime.UtcNow,
@@ -103,7 +103,7 @@ public class UserControllerTests
 
 		// Assert
 		var userResponse = Assert.IsType<UserDto>(result.Value);
-		Assert.Equal(expectedUser.Username, userResponse.Username);
+		Assert.Equal(expectedUser.Name, userResponse.Name);
 		Assert.Equal(expectedUser.Email, userResponse.Email);
 	}
 
@@ -112,10 +112,7 @@ public class UserControllerTests
 	{
 		// Arrange
 		var userId = Guid.NewGuid();
-		var updateUserDto = new UpdateUserDto(
-			Username: "updateduser",
-			Email: "updated@example.com"
-		);
+		var updateUserDto = new UpdateUserDto(Name: "updateduser", Email: "updated@example.com");
 
 		_mockUserService
 			.Setup(service => service.UpdateUserAsync(userId, updateUserDto))

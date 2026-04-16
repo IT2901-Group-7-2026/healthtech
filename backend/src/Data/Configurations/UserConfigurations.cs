@@ -11,12 +11,12 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 	{
 		builder.HasKey(u => u.Id);
 
-		builder.Property(u => u.Username).IsRequired().HasMaxLength(50);
+		builder.Property(u => u.Name).IsRequired().HasMaxLength(50);
 
 		builder.Property(u => u.Email).IsRequired().HasMaxLength(100);
 
 		builder.HasIndex(u => u.Email).IsUnique();
 
-		builder.HasIndex(u => u.Username).IsUnique();
+		builder.HasIndex(u => u.Name).IsUnique();
 	}
 }

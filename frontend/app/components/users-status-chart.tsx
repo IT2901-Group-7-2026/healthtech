@@ -49,7 +49,7 @@ export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props)
 
 		return [
 			{
-				name: user.username,
+				name: user.name,
 				id: user.id,
 				status: sensorStatus.dangerLevel,
 				percent,

@@ -120,8 +120,8 @@ export default function Vibration() {
 													day: "numeric",
 													month: "long",
 													year: "numeric",
-												})}-${user.username}-Vibration-Exposure-Overview`,
-												`Vibration Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+												})}-${user.name}-Vibration-Exposure-Overview`,
+												`Vibration Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
 											)
 										}
 									>

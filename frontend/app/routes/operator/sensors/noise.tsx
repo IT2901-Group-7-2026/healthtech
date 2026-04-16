@@ -147,8 +147,8 @@ export default function Noise() {
 												day: "numeric",
 												month: "long",
 												year: "numeric",
-											})}-${user.username}-Noise-Exposure-Overview`,
-											`Noise Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+											})}-${user.name}-Noise-Exposure-Overview`,
+											`Noise Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
 										)
 									}
 								>

@@ -150,8 +150,8 @@ export default function Dust() {
 													day: "numeric",
 													month: "long",
 													year: "numeric",
-												})}-${user.username}-Dust-Exposure-Overview`,
-												`Dust Exposure - ${user.username} - ${date.toLocaleDateString(locale)}`,
+												})}-${user.name}-Dust-Exposure-Overview`,
+												`Dust Exposure - ${user.name} - ${date.toLocaleDateString(locale)}`,
 											)
 										}
 									>
