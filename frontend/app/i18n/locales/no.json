@@ -94,7 +94,7 @@
     },
     "overviewCard": {
       "danger": "Over grenseverdi",
-      "warning": "Nær grenseverdig",
+      "warning": "Over tiltaksverdi",
       "safe": "Innenfor grenseverdi"
     }
   },
@@ -104,24 +104,24 @@
       "week": "Eksponering for uke {{week}}",
       "month": "Eksponering for {{month}}"
     },
-    "greenText": "med trygg mengde eksponering",
-    "greenHourText": "Timer med trygg mengde eksponering",
-    "greenDayText": "Dager med trygg mengde eksponering",
-    "orangeText": "nær eksponeringsgrensen",
-    "orangeHourText": "Timer nær eksponeringsgrensen",
-    "orangeDayText": "Dager nær eksponeringsgrensen",
-    "redText": "over eksponeringsgrensen",
-    "redHourText": "Timer over eksponeringsgrensen",
-    "redDayText": "Dager over eksponeringsgrensen",
-    "dangerSmiley": "Farlige nivåer",
-    "safeSmiley": "OK",
-    "warningSmiley": "Nær farlige nivåer",
+    "greenText": "innenfor trygge grenseverdier",
+    "greenHourText": "Timer innenfor trygge grenseverdier",
+    "greenDayText": "Dager innenfor trygge grenseverdier",
+    "orangeText": "over tiltaksverdi",
+    "orangeHourText": "Timer over tiltaksverdi",
+    "orangeDayText": "Dager over tiltaksverdi",
+    "redText": "over grenseverdi",
+    "redHourText": "Timer over grenseverdi",
+    "redDayText": "Dager over grenseverdi",
+    "dangerSmiley": "Over grenseverdi, høy eksponering",
+    "safeSmiley": "Innenfor trygge grenseverdier",
+    "warningSmiley": "Over tiltaksverdi, vær forsiktig",
     "noData": "Ingen data"
   },
   "lineChart": {
-    "danger": "Grenseverdi",
-    "warning": "Tiltaksverdi",
-    "safe": "Trygt innenfor eksponeringsgrensen"
+    "danger": "Over grenseverdi",
+    "warning": "Over tiltaksverdi",
+    "safe": "Innenfor trygge grenseverdier"
   },
   "dailyNotes": {
     "viewTitle": "Dine notater",
@@ -174,9 +174,9 @@
     "noWorkers": "Ingen risikosårbare arbeidere"
   },
   "exposureLevel": {
-    "inDanger": "Arbeidere over grenseverdier",
-    "warning": "Arbeidere nær grenseverdier",
-    "safe": "Arbeidere innenfor grenseverdier",
+    "inDanger": "Arbeidere over grenseverdi",
+    "warning": "Arbeidere over tiltaksverdi",
+    "safe": "Arbeidere innenfor trygge grenseverdier",
     "noInDanger": "Ingen arbeidere i denne kategorien"
   },
   "interactiveCard": {
@@ -214,11 +214,11 @@
           "noOperators": "Ingen over grenseverdien"
         },
         "warning": {
-          "label": "Nær grenseverdi",
-          "noOperators": "Ingen nærmer grenseverdien"
+          "label": "Over tiltaksverdi",
+          "noOperators": "Ingen over tiltaksverdi"
         },
         "safe": {
-          "label": "Innenfor grenseverdi",
+          "label": "Innenfor trygge grenseverdier",
           "noOperators": "Ingen innenfor trygge grenseverdier"
         }
       },
@@ -252,8 +252,8 @@
       "viewSensorData": "Se {{sensor}} data for {{username}}",
       "operatorSensorStatus": {
         "danger": "Over grenseverdi for {{sensor}}",
-        "warning": "Nær grenseverdi for {{sensor}}",
-        "safe": "Innenfor grenseverdi for {{sensor}}"
+        "warning": "Over tiltaksverdi for {{sensor}}",
+        "safe": "Innenfor trygge grenseverdier for {{sensor}}"
       }
     }
   },

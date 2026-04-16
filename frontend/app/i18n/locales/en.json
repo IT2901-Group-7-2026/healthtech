@@ -92,9 +92,9 @@
       "now": "Now"
     },
     "overviewCard": {
-      "danger": "Exceeding exposure limit",
-      "warning": "Approaching exposure limit",
-      "safe": "Safely within exposure limit"
+      "danger": "Above limit value",
+      "warning": "Above action value",
+      "safe": "Within safe limits"
     }
   },
   "exposureSummary": {
@@ -103,24 +103,24 @@
       "week": "Exposure for week {{week}}",
       "month": "Exposure for {{month}}"
     },
-    "greenText": "with safe amount of exposure",
-    "greenHourText": "Hours with safe amount of exposure",
-    "greenDayText": "Days with safe amount of exposure",
-    "orangeHourText": "Hours close to exposure limit",
-    "orangeText": "close to exposure limit",
-    "orangeDayText": "Days close to exposure limit",
-    "redHourText": "Hours above exposure limit",
-    "redText": "above exposure limit",
-    "redDayText": "Days above exposure limit",
-    "dangerSmiley": "Dangerous levels",
-    "safeSmiley": "OK",
-    "warningSmiley": "Near dangerous levels",
+    "greenText": "Within safe limits",
+    "greenHourText": "Hours within safe limits",
+    "greenDayText": "Days within safe limits",
+    "orangeHourText": "Hours above action value",
+    "orangeText": "Above action value",
+    "orangeDayText": "Days above action value",
+    "redHourText": "Hours above limit value",
+    "redText": "Above limit value",
+    "redDayText": "Days above limit value",
+    "dangerSmiley": "Limit exceeded, high exposure",
+    "safeSmiley": "Within safe limits",
+    "warningSmiley": "Elevated exposure, caution needed",
     "noData": "No data"
   },
   "lineChart": {
-    "danger": "Exposure Limit",
-    "warning": "Action Limit",
-    "safe": "Safely within exposure limit"
+    "danger": "Above limit value",
+    "warning": "Above action value",
+    "safe": "Within safe limits"
   },
   "dailyNotes": {
     "viewTitle": "Your notes",
@@ -173,9 +173,9 @@
     "noWorkers": "No workers at risk"
   },
   "exposureLevel": {
-    "inDanger": "Workers In Danger",
-    "warning": "Workers at Risk",
-    "safe": "Workers Within Limits",
+    "inDanger": "Workers above limit value",
+    "warning": "Workers above action value",
+    "safe": "Workers Within Safe Limits",
     "noInDanger": "No workers in this category"
   },
   "interactiveCard": {
@@ -209,16 +209,16 @@
       },
       "statCards": {
         "danger": {
-          "label": "In danger",
-          "noOperators": "No operators in danger"
+          "label": "Above limit value",
+          "noOperators": "No operators above limit value"
         },
         "warning": {
-          "label": "At risk",
-          "noOperators": "No operators at risk"
+          "label": "Above action value",
+          "noOperators": "No operators above action value"
         },
         "safe": {
-          "label": "Within limits",
-          "noOperators": "No operators within limits"
+          "label": "Within safe limits",
+          "noOperators": "No operators within safe limits"
         }
       },
       "selectUserPlaceholder": "Select team member"
@@ -250,9 +250,9 @@
       "viewUserAria": "View user {{username}}",
       "viewSensorData": "View {{sensor}} data for {{username}}",
       "operatorSensorStatus": {
-        "danger": "Above exposure limit for {{sensor}}",
-        "warning": "Approaching exposure limit for {{sensor}}",
-        "safe": "Within safe exposure limit for {{sensor}}"
+        "danger": "Above limit value for {{sensor}}",
+        "warning": "Above action value for {{sensor}}",
+        "safe": "Within safe limit for {{sensor}}"
       }
     }
   },
