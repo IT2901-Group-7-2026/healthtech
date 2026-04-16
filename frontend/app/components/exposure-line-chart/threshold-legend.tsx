@@ -6,18 +6,13 @@ export type ThresholdLegendItem = {
 	color: string;
 };
 
-const getThresholdStrokeDasharray = (dangerLevel: DangerLevel) =>
-	dangerLevel === "danger" ? "8 4" : "4 4";
+const getThresholdStrokeDasharray = (dangerLevel: DangerLevel) => (dangerLevel === "danger" ? "8 4" : "4 4");
 
-export function ThresholdLegend({
-	items,
-}: {
-	items: Array<ThresholdLegendItem>;
-}) {
+export function ThresholdLegend({ items }: { items: Array<ThresholdLegendItem> }) {
 	const { t } = useTranslation();
 
 	return (
-		<div className="flex items-center gap-6 text-xs text-muted-foreground">
+		<div className="flex items-center gap-6 text-muted-foreground text-xs">
 			{items.map((item) => {
 				const strokeDasharray = getThresholdStrokeDasharray(item.dangerLevel);
 
@@ -25,12 +20,7 @@ export function ThresholdLegend({
 
 				return (
 					<div key={item.dangerLevel} className="flex items-center gap-2">
-						<svg
-							width="24"
-							height="8"
-							className="shrink-0"
-							aria-label={dangerLevelLabel}
-						>
+						<svg width="24" height="8" className="shrink-0" aria-label={dangerLevelLabel}>
 							<title>{dangerLevelLabel}</title>
 							<line
 								x1="0"
