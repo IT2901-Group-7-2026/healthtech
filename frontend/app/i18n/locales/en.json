@@ -6,7 +6,8 @@
   "common": {
     "loading": "Loading data...",
     "error": "Something went wrong while fetching sensor data.",
-    "noData": "No exposure data found for this day",
+    "noData": "No data",
+    "noDataForDay": "No exposure data found for this day",
     "noOptions": "No options available",
     "time": "Time",
     "today": "Today",
@@ -98,24 +99,17 @@
     }
   },
   "exposureSummary": {
-    "title": {
-      "day": "Exposure",
-      "week": "Exposure for week {{week}}",
-      "month": "Exposure for {{month}}"
+    "title": "Exposure",
+    "aggregated": {
+      "safe": "OK",
+      "warning": "near dangerous levels",
+      "danger": "at dangerous levels"
     },
-    "greenText": "with safe amount of exposure",
-    "greenHourText": "Hours with safe amount of exposure",
-    "greenDayText": "Days with safe amount of exposure",
-    "orangeHourText": "Hours close to exposure limit",
-    "orangeText": "close to exposure limit",
-    "orangeDayText": "Days close to exposure limit",
-    "redHourText": "Hours above exposure limit",
-    "redText": "above exposure limit",
-    "redDayText": "Days above exposure limit",
-    "dangerSmiley": "Dangerous levels",
-    "safeSmiley": "OK",
-    "warningSmiley": "Near dangerous levels",
-    "noData": "No data"
+    "status": {
+      "danger": "Dangerous levels",
+      "safe": "OK",
+      "warning": "Near dangerous levels"
+    }
   },
   "lineChart": {
     "danger": "Exposure Limit",
