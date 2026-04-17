@@ -12,7 +12,7 @@ export function ThresholdLegend({ items }: { items: Array<ThresholdLegendItem> }
 	const { t } = useTranslation();
 
 	return (
-		<div className="flex items-center gap-6 text-sm">
+		<div className="flex items-center gap-6 text-muted-foreground text-xs">
 			{items.map((item) => {
 				const strokeDasharray = getThresholdStrokeDasharray(item.dangerLevel);
 
