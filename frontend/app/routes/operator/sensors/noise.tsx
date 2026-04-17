@@ -134,7 +134,6 @@ export default function Noise() {
 							unit="dbTwa"
 							maxY={maxY}
 							minY={minY}
-							lineType="monotone"
 							sensor={sensor}
 							headerRight={
 								<Button

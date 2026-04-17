@@ -62,7 +62,7 @@ export function ExposureLineChart({
 	maxY,
 	minY,
 	unit,
-	lineType = "natural",
+	lineType = "linear",
 	children,
 	sensor,
 	usePeakData = false,
@@ -70,7 +70,6 @@ export function ExposureLineChart({
 	minTime,
 	maxTime,
 	chartContainerClassName,
-
 	variant = "default",
 	showLegend = true,
 	xTickLabels,

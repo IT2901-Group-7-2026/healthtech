@@ -21,6 +21,7 @@ import { Clock } from "lucide-react";
 import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import type { CurveType } from "recharts/types/shape/Curve";
 
 type TimeRangeOption = "30" | "60" | "180" | "480";
 const parseTimeRange = parseAsStringLiteral(["30", "60", "180", "480"]);
@@ -206,6 +207,7 @@ export default function OperatorLiveView() {
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
 							showLegend={true}
+							lineType="monotone"
 						/>
 					</CardContent>
 				</Card>
@@ -273,6 +275,7 @@ interface LiveExposureCardProps {
 	maxTime: TZDate;
 	chartClassName?: string;
 	showLegend?: boolean;
+	lineType?: CurveType;
 }
 
 const LiveExposureCard = ({
@@ -286,6 +289,7 @@ const LiveExposureCard = ({
 	maxTime,
 	chartClassName,
 	showLegend = false,
+	lineType,
 }: LiveExposureCardProps) => {
 	const { t } = useTranslation();
 
@@ -322,7 +326,7 @@ const LiveExposureCard = ({
 					unit={chartUnit}
 					maxY={maxY}
 					minY={minY}
-					lineType="monotone"
+					lineType={lineType}
 					sensor={sensor}
 					variant="compact"
 					className={chartClassName}

@@ -129,7 +129,6 @@ export default function Dust() {
 							unit={dustUnit}
 							maxY={maxY}
 							minY={minY}
-							lineType="monotone"
 							sensor={sensor}
 							dustField={query.field}
 							headerRight={
