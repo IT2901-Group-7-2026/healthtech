@@ -85,7 +85,7 @@ export function ProfilePopup({ user, open, onClose, avatarSrc, children }: Profi
 								src={avatarSrc}
 								height={100}
 								width={100}
-								alt={user.username}
+								alt={user.name}
 								className="h-full w-full rounded-full object-cover"
 							/>
 						) : (
@@ -95,7 +95,7 @@ export function ProfilePopup({ user, open, onClose, avatarSrc, children }: Profi
 					<div className="flex w-full flex-col">
 						<div className="flex flex-row gap-3">
 							<p className="label text-muted-foreground">{t(($) => $.profile.name)}</p>
-							<h2>{user.username}</h2>
+							<h2>{user.name}</h2>
 						</div>
 						<div className="flex flex-row gap-3">
 							<p className="label text-muted-foreground">{t(($) => $.profile.location)}</p>

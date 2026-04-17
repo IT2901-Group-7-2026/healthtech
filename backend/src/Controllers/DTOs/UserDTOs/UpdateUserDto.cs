@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Backend.DTOs;
 
 public record UpdateUserDto(
-	string? Username = null,
+	string? Name = null,
 	string? Email = null,
 	string? Password = null,
 	string? JobDescription = null,

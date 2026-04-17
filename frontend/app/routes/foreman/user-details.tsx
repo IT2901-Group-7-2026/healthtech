@@ -52,7 +52,7 @@ export function UserDetails({
 		<section className="flex flex-col gap-6">
 			<div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
 				<div className="space-y-1">
-					<h2 className="font-semibold text-2xl">{selectedUser.username}</h2>
+					<h2 className="font-semibold text-2xl">{selectedUser.name}</h2>
 					<p className="text-muted-foreground">{selectedUser.email}</p>
 				</div>
 			</div>
@@ -252,8 +252,8 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 										onClick={() =>
 											exportToPDF(
 												chartContainerId,
-												`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.username}-Dust-Exposure-Overview`,
-												`Dust Exposure - ${selectedUser.username} - ${selectedDate.toLocaleDateString(i18n.language)}`,
+												`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.name}-Dust-Exposure-Overview`,
+												`Dust Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
 											)
 										}
 									>
@@ -370,8 +370,8 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 								onClick={() =>
 									exportToPDF(
 										chartContainerId,
-										`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.username}-Vibration-Exposure-Overview`,
-										`Vibration Exposure - ${selectedUser.username} - ${selectedDate.toLocaleDateString(i18n.language)}`,
+										`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.name}-Vibration-Exposure-Overview`,
+										`Vibration Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
 									)
 								}
 							>
@@ -482,8 +482,8 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 									onClick={() =>
 										exportToPDF(
 											chartContainerId,
-											`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.username}-Noise-Exposure-Overview`,
-											`Noise Exposure - ${selectedUser.username} - ${selectedDate.toLocaleDateString(i18n.language)}`,
+											`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.name}-Noise-Exposure-Overview`,
+											`Noise Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
 										)
 									}
 								>

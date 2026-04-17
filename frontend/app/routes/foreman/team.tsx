@@ -47,9 +47,9 @@ export default function TeamPage() {
 			enableHiding: false,
 		},
 		{
-			id: "username",
-			accessorKey: "username",
-			header: t(($) => $.foremanDashboard.team.table.username),
+			id: "name",
+			accessorKey: "name",
+			header: t(($) => $.foremanDashboard.team.table.name),
 		},
 		{
 			id: "email",

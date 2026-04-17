@@ -188,7 +188,7 @@
       "failedToLoadMembers": "Kunne ikke laste teammedlemmer",
       "noMembersFound": "Ingen teammedlemmer funnet",
       "table": {
-        "username": "Brukernavn",
+        "name": "Navn",
         "email": "E-post",
         "status": "Status",
         "jobDescription": "Stillingsbeskrivelse",
@@ -247,9 +247,9 @@
     "siteMap": {
       "title": "Områdekart",
       "noOperators": "Ingen operatører i bygg",
-      "viewUser": "Se {{username}}",
-      "viewUserAria": "Se bruker {{username}}",
-      "viewSensorData": "Se {{sensor}} data for {{username}}",
+      "viewUser": "Se {{name}}",
+      "viewUserAria": "Se bruker {{name}}",
+      "viewSensorData": "Se {{sensor}} data for {{name}}",
       "operatorSensorStatus": {
         "danger": "Over grenseverdi for {{sensor}}",
         "warning": "Nær grenseverdi for {{sensor}}",

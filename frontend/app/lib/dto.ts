@@ -126,7 +126,7 @@ export type Location = z.infer<typeof LocationSchema>;
 
 export const UserSchema = z.object({
 	id: z.guid(),
-	username: z.string(),
+	name: z.string(),
 	email: z.email(),
 	jobDescription: z.string().nullable(),
 	createdAt: tzDateSchema,

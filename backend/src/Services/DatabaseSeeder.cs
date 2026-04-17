@@ -53,7 +53,7 @@ public class DatabaseSeeder
 			new User
 			{
 				Id = SeedIds.OlaId,
-				Username = "Ola Nordmann",
+				Name = "Ola Nordmann",
 				Email = "ola.nordmann@aker.com",
 				PasswordHash = DefaultPasswordHash,
 				CreatedAt = now,
@@ -64,7 +64,7 @@ public class DatabaseSeeder
 			new User
 			{
 				Id = SeedIds.KariId,
-				Username = "Kari Nordmann",
+				Name = "Kari Nordmann",
 				Email = "kari.nordmann@aker.com",
 				PasswordHash = DefaultPasswordHash,
 				CreatedAt = now,
@@ -75,7 +75,7 @@ public class DatabaseSeeder
 			new User
 			{
 				Id = SeedIds.PerId,
-				Username = "Per Hansen",
+				Name = "Per Hansen",
 				Email = "per.hansen@aker.com",
 				PasswordHash = DefaultPasswordHash,
 				CreatedAt = now,
@@ -86,7 +86,7 @@ public class DatabaseSeeder
 			new User
 			{
 				Id = TrondId,
-				Username = "Trond Pedersen",
+				Name = "Trond Pedersen",
 				Email = "trond.pedersen@aker.com",
 				PasswordHash = DefaultPasswordHash,
 				CreatedAt = now,
@@ -97,7 +97,7 @@ public class DatabaseSeeder
 			new User
 			{
 				Id = GjertrudId,
-				Username = "Gjertrud Olsen",
+				Name = "Gjertrud Olsen",
 				Email = "gjertrud.olsen@aker.com",
 				PasswordHash = DefaultPasswordHash,
 				CreatedAt = now,
@@ -108,7 +108,7 @@ public class DatabaseSeeder
 			new User
 			{
 				Id = KlaraId,
-				Username = "Klara Johansen",
+				Name = "Klara Johansen",
 				Email = "klara.johansen@aker.com",
 				PasswordHash = DefaultPasswordHash,
 				CreatedAt = now,
@@ -119,7 +119,7 @@ public class DatabaseSeeder
 			new User
 			{
 				Id = BirgirId,
-				Username = "Birgir Sigurdsson",
+				Name = "Birgir Sigurdsson",
 				Email = "birgir.sigurdsson@aker.com",
 				PasswordHash = DefaultPasswordHash,
 				CreatedAt = now,
@@ -130,7 +130,7 @@ public class DatabaseSeeder
 			new User
 			{
 				Id = TorleifId,
-				Username = "Torleif Eriksen",
+				Name = "Torleif Eriksen",
 				Email = "torleif.eriksen@aker.com",
 				PasswordHash = DefaultPasswordHash,
 				CreatedAt = now,
@@ -141,7 +141,7 @@ public class DatabaseSeeder
 			new User
 			{
 				Id = BjornulfId,
-				Username = "Bjørnulf Knutsen",
+				Name = "Bjørnulf Knutsen",
 				Email = "bjornul.knutsen@aker.com",
 				PasswordHash = DefaultPasswordHash,
 				CreatedAt = now,
