@@ -117,7 +117,7 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 				<Textarea
 					placeholder={t(($) => $.dailyNotes.writeHere)}
 					value={todayNote?.note ?? ""}
-					className="min-h-15"
+					className="min-h-15 text-foreground"
 					onChange={(e) =>
 						setTodayNote({
 							time: date,
