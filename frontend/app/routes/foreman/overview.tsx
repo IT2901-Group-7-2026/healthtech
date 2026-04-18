@@ -214,7 +214,7 @@ function SensorTabsTrigger({ value, children }: { value: Sensor | "all"; childre
 	return (
 		<TabsTrigger
 			value={value}
-			className="z-20 flex select-none items-center rounded-full border-transparent px-5 py-2 text-center text-sm font-medium text-muted-foreground hover:text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm dark:data-[state=active]:border-transparent dark:data-[state=active]:bg-background dark:data-[state=active]:text-foreground"
+			className="z-20 flex select-none items-center rounded-full border-transparent px-5 py-2 text-center font-medium text-muted-foreground text-sm hover:text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm dark:data-[state=active]:border-transparent dark:data-[state=active]:bg-background dark:data-[state=active]:text-foreground"
 		>
 			{children}
 		</TabsTrigger>
