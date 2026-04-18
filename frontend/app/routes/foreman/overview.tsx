@@ -70,7 +70,7 @@ export default function ForemanOverview() {
 					value={sensor ?? "all"}
 					onValueChange={(value) => setSensor(value === "all" ? null : (value as Sensor))}
 				>
-					<TabsList className="bg-transparent">
+					<TabsList className="h-11 rounded-full bg-accent px-2 dark:bg-card">
 						<SensorTabsTrigger value="all">{t(($) => $.sensors.overview)}</SensorTabsTrigger>
 						<SensorTabsTrigger value="dust">{t(($) => $.sensors.dust)}</SensorTabsTrigger>
 						<SensorTabsTrigger value="noise">{t(($) => $.sensors.noise)}</SensorTabsTrigger>
@@ -212,7 +212,10 @@ function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSu
 
 function SensorTabsTrigger({ value, children }: { value: Sensor | "all"; children: ReactNode }) {
 	return (
-		<TabsTrigger value={value} className="p-4 data-[state=active]:bg-neutral-900 data-[state=active]:text-white">
+		<TabsTrigger
+			value={value}
+			className="z-20 flex select-none items-center rounded-full border-transparent px-5 py-2 text-center text-sm font-medium text-muted-foreground hover:text-foreground data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm dark:data-[state=active]:border-transparent dark:data-[state=active]:bg-background dark:data-[state=active]:text-foreground"
+		>
 			{children}
 		</TabsTrigger>
 	);
