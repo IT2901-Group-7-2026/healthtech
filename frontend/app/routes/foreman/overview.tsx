@@ -17,10 +17,10 @@ import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions } from
 import { today, toTZDate } from "@/lib/date";
 import type { ThresholdSummary } from "@/lib/dto";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
+import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { addWeeks, endOfDay, startOfDay, subDays } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
-import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { UserDetails } from "./user-details";
 
