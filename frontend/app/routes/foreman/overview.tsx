@@ -1,8 +1,8 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
 import { DailyNotes } from "@/components/daily-notes.js";
-import { ExposureBadge } from "@/components/exposure-badge";
 import { DatePicker } from "@/components/date-picker";
+import { ExposureBadge } from "@/components/exposure-badge";
 import { Card } from "@/components/ui/card";
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
 import { DataTable } from "@/components/ui/data-table";
@@ -53,9 +53,7 @@ export default function ForemanOverview() {
 		data: subordinates,
 		isLoading: isSubordinatesLoading,
 		error: subordinatesError,
-	} = useQuery(
-		fetchSubordinatesQueryOptions(user.id, startDate, endDate),
-	);
+	} = useQuery(fetchSubordinatesQueryOptions(user.id, startDate, endDate));
 	const { data: thresholdSummary, isLoading: isThresholdSummaryLoading } = useQuery(
 		fetchThresholdSummaryQueryOptions(user.id, startDate, endDate),
 	);
@@ -64,7 +62,6 @@ export default function ForemanOverview() {
 	const subordinateCount = subordinates?.length ?? 0;
 	const isUserComboboxDisabled = !users || users.length === 0;
 	const isUserSelected = selectedUser !== undefined;
-	
 
 	const userComboboxOptions =
 		users?.map((u) => ({
@@ -127,8 +124,6 @@ export default function ForemanOverview() {
 			},
 		},
 	];
-	
-	
 
 	return (
 		<div className="flex flex-col gap-8">
@@ -209,7 +204,9 @@ export default function ForemanOverview() {
 										<SensorSummaryGrid thresholdSummary={thresholdSummary} />
 
 										<Card muted={true} className="flex flex-col gap-4 p-4">
-											<h2 className="font-semibold text-lg">{t(($) => $.foremanDashboard.team.title)}</h2>
+											<h2 className="font-semibold text-lg">
+												{t(($) => $.foremanDashboard.team.title)}
+											</h2>
 											{isSubordinatesLoading ? (
 												<div className="p-4">{t(($) => $.common.loading)}</div>
 											) : subordinatesError ? (
@@ -217,7 +214,9 @@ export default function ForemanOverview() {
 													{t(($) => $.foremanDashboard.team.failedToLoadMembers)}
 												</div>
 											) : !subordinates || subordinates.length === 0 ? (
-												<div className="p-4">{t(($) => $.foremanDashboard.team.noMembersFound)}</div>
+												<div className="p-4">
+													{t(($) => $.foremanDashboard.team.noMembersFound)}
+												</div>
 											) : (
 												<DataTable
 													columns={columns}
