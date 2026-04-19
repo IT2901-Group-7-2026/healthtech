@@ -6,7 +6,7 @@ import { ExposureBadge } from "@/components/exposure-badge";
 import { Card } from "@/components/ui/card";
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
 import { DataTable } from "@/components/ui/data-table";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { AttentionCard } from "@/features/attention-card/attention-card.js";
 import { PieChartCard } from "@/features/attention-card/pie-chart-card";
@@ -20,11 +20,11 @@ import { mapDangerLevelToLabel } from "@/lib/danger-levels";
 import { today, toTZDate } from "@/lib/date";
 import type { ThresholdSummary, UserWithStatusDto } from "@/lib/dto";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
+import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { addWeeks, endOfDay, startOfDay, subDays } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
-import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { UserDetails } from "./user-details";
 
@@ -158,17 +158,30 @@ export default function ForemanOverview() {
 	return (
 		<div className="flex flex-col gap-8">
 			<Card muted={true} className="flex flex-row justify-between p-2">
-				<Tabs
+				<ToggleGroup
+					type="single"
 					value={sensor ?? "all"}
-					onValueChange={(value) => setSensor(value === "all" ? null : (value as Sensor))}
+					variant="outline"
+					className={cn("inline-grid auto-cols-fr grid-flow-col")}
+					onValueChange={(value: Sensor | "all" | "") => {
+						if (value) {
+							setSensor(value === "all" ? null : value);
+						}
+					}}
 				>
-					<TabsList className="bg-transparent">
-						<SensorTabsTrigger value="all">{t(($) => $.sensors.overview)}</SensorTabsTrigger>
-						<SensorTabsTrigger value="dust">{t(($) => $.sensors.dust)}</SensorTabsTrigger>
-						<SensorTabsTrigger value="noise">{t(($) => $.sensors.noise)}</SensorTabsTrigger>
-						<SensorTabsTrigger value="vibration">{t(($) => $.sensors.vibration)}</SensorTabsTrigger>
-					</TabsList>
-				</Tabs>
+					<ToggleGroupItem value="all" aria-label={t(($) => $.sensors.overview)}>
+						<p className="text-sm">{t(($) => $.sensors.overview)}</p>
+					</ToggleGroupItem>
+					<ToggleGroupItem value="dust" aria-label={t(($) => $.sensors.dust)}>
+						<p className="text-sm">{t(($) => $.sensors.dust)}</p>
+					</ToggleGroupItem>
+					<ToggleGroupItem value="noise" aria-label={t(($) => $.sensors.noise)}>
+						<p className="text-sm">{t(($) => $.sensors.noise)}</p>
+					</ToggleGroupItem>
+					<ToggleGroupItem value="vibration" aria-label={t(($) => $.sensors.vibration)}>
+						<p className="text-sm">{t(($) => $.sensors.vibration)}</p>
+					</ToggleGroupItem>
+				</ToggleGroup>
 
 				<div className="flex flex-end flex-row gap-4">
 					<Combobox
@@ -324,13 +337,5 @@ function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSu
 				/>
 			))}
 		</div>
-	);
-}
-
-function SensorTabsTrigger({ value, children }: { value: Sensor | "all"; children: ReactNode }) {
-	return (
-		<TabsTrigger value={value} className="p-4 data-[state=active]:bg-neutral-900 data-[state=active]:text-white">
-			{children}
-		</TabsTrigger>
 	);
 }
