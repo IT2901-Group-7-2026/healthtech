@@ -1,7 +1,6 @@
-import { SensorIcon } from "@/components/sensor-icon";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { dangerlevelStyles, getHighestDangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import L, { type LatLngBoundsExpression, type PathOptions } from "leaflet";
@@ -148,37 +147,25 @@ export function LocationMap({ operators, isLoading, imageUrl = "/factory_arial_v
 						)}
 					</div>
 					<div className="w-full">
-						<Tabs
+						<ToggleGroup
+							type="single"
 							value={sensor}
-							onValueChange={(value) => setSensor(value as Sensor | "all")}
-							className="mb-4"
+							variant="outline"
+							className="mb-4 inline-grid auto-cols-fr grid-flow-col"
+							onValueChange={(value: Sensor | "all" | "") => {
+								if (value) {
+									setSensor(value);
+								}
+							}}
 						>
-							<TabsList className="w-fit rounded-md border border-input bg-transparent p-0 shadow-xs">
-								<TabsTrigger
-									value="all"
-									className="rounded-none border-0 border-input border-l bg-transparent px-3 text-xs first:rounded-l-md first:border-l-0 last:rounded-r-md hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-accent-foreground dark:data-[state=active]:border-transparent dark:data-[state=active]:bg-accent"
-								>
-									{t(($) => $.sensors.overview)}
-								</TabsTrigger>
-								{sensors.map((s) => (
-									<TabsTrigger
-										key={s}
-										value={s}
-										className="rounded-none border-0 border-input border-l bg-transparent px-3 text-xs first:rounded-l-md first:border-l-0 last:rounded-r-md hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-accent-foreground dark:data-[state=active]:border-transparent dark:data-[state=active]:bg-accent"
-									>
-										<span className="inline-flex items-center gap-1.5">
-											<SensorIcon
-												type={s}
-												size="xs"
-												iconClassName="p-0.75 size-4"
-												inline={true}
-											/>
-											{t(($) => $.sensors[s])}
-										</span>
-									</TabsTrigger>
-								))}
-							</TabsList>
-						</Tabs>
+							<ToggleGroupItem value="all"> {t(($) => $.sensors.overview)}</ToggleGroupItem>
+							{sensors.map((s) => (
+								<ToggleGroupItem key={s} value={s}>
+									{" "}
+									{t(($) => $.sensors[s])}
+								</ToggleGroupItem>
+							))}
+						</ToggleGroup>
 						<div
 							style={{
 								aspectRatio: `${imageSize.width} / ${imageSize.height}`,
