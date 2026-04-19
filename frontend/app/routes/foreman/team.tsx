@@ -60,59 +60,7 @@ export default function TeamPage() {
 			id: "jobDescription",
 			accessorKey: "jobDescription",
 			header: t(($) => $.foremanDashboard.team.table.jobDescription),
-		},
-
-		{
-			id: "dust",
-			header: t(($) => $.sensors.dust),
-			cell: ({ row }) => {
-				const status = row.original.status.dust?.dangerLevel ?? "safe";
-
-				const label = mapDangerLevelToLabel(status);
-
-				return (
-					<div className="w-fit">
-						<ExposureBadge sensor="dust" dangerLevel={status}>
-							{label}
-						</ExposureBadge>
-					</div>
-				);
-			},
-		},
-
-		{
-			id: "noise",
-			header: t(($) => $.sensors.noise),
-			cell: ({ row }) => {
-				const status = row.original.status.noise?.dangerLevel ?? "safe";
-				const label = mapDangerLevelToLabel(status);
-
-				return (
-					<div className="w-fit">
-						<ExposureBadge sensor="noise" dangerLevel={status}>
-							{label}
-						</ExposureBadge>
-					</div>
-				);
-			},
-		},
-		{
-			id: "vibration",
-			header: t(($) => $.sensors.vibration),
-			cell: ({ row }) => {
-				const status = row.original.status.vibration?.dangerLevel ?? "safe";
-
-				const label = mapDangerLevelToLabel(status);
-
-				return (
-					<div className="w-fit">
-						<ExposureBadge sensor="vibration" dangerLevel={status}>
-							{label}
-						</ExposureBadge>
-					</div>
-				);
-			},
-		},
+		},	
 	];
 
 	const {

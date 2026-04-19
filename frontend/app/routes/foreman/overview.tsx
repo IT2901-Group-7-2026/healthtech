@@ -1,9 +1,11 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
 import { DailyNotes } from "@/components/daily-notes.js";
+import { ExposureBadge } from "@/components/exposure-badge";
 import { DatePicker } from "@/components/date-picker";
 import { Card } from "@/components/ui/card";
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
+import { DataTable } from "@/components/ui/data-table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { AttentionCard } from "@/features/attention-card/attention-card.js";
@@ -14,10 +16,12 @@ import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { ViewPicker } from "@/features/views/view-picker";
 import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions } from "@/lib/api.js";
+import { mapDangerLevelToLabel } from "@/lib/danger-levels";
 import { today, toTZDate } from "@/lib/date";
-import type { ThresholdSummary } from "@/lib/dto";
+import type { ThresholdSummary, UserWithStatusDto } from "@/lib/dto";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
 import { useQuery } from "@tanstack/react-query";
+import type { ColumnDef } from "@tanstack/react-table";
 import { addWeeks, endOfDay, startOfDay, subDays } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
 import type { ReactNode } from "react";
@@ -45,7 +49,11 @@ export default function ForemanOverview() {
 	const maxSelectableDate = today();
 
 	const { data: users } = useQuery(fetchSubordinatesQueryOptions(user.id));
-	const { data: subordinates, isLoading: isSubordinatesLoading } = useQuery(
+	const {
+		data: subordinates,
+		isLoading: isSubordinatesLoading,
+		error: subordinatesError,
+	} = useQuery(
 		fetchSubordinatesQueryOptions(user.id, startDate, endDate),
 	);
 	const { data: thresholdSummary, isLoading: isThresholdSummaryLoading } = useQuery(
@@ -56,12 +64,71 @@ export default function ForemanOverview() {
 	const subordinateCount = subordinates?.length ?? 0;
 	const isUserComboboxDisabled = !users || users.length === 0;
 	const isUserSelected = selectedUser !== undefined;
+	
 
 	const userComboboxOptions =
 		users?.map((u) => ({
 			value: u.id,
 			label: u.name,
 		})) ?? [];
+
+	const columns: Array<ColumnDef<UserWithStatusDto>> = [
+		{
+			id: "name",
+			accessorKey: "name",
+			header: t(($) => $.foremanDashboard.team.table.name),
+		},
+		{
+			id: "dust",
+			header: t(($) => $.sensors.dust),
+			cell: ({ row }) => {
+				const status = row.original.status.dust?.dangerLevel ?? "safe";
+				const label = mapDangerLevelToLabel(status);
+
+				return (
+					<div className="w-fit">
+						<ExposureBadge sensor="dust" dangerLevel={status}>
+							{label}
+						</ExposureBadge>
+					</div>
+				);
+			},
+		},
+		{
+			id: "noise",
+			header: t(($) => $.sensors.noise),
+			cell: ({ row }) => {
+				const status = row.original.status.noise?.dangerLevel ?? "safe";
+				const label = mapDangerLevelToLabel(status);
+
+				return (
+					<div className="w-fit">
+						<ExposureBadge sensor="noise" dangerLevel={status}>
+							{label}
+						</ExposureBadge>
+					</div>
+				);
+			},
+		},
+		{
+			id: "vibration",
+			header: t(($) => $.sensors.vibration),
+			cell: ({ row }) => {
+				const status = row.original.status.vibration?.dangerLevel ?? "safe";
+				const label = mapDangerLevelToLabel(status);
+
+				return (
+					<div className="w-fit">
+						<ExposureBadge sensor="vibration" dangerLevel={status}>
+							{label}
+						</ExposureBadge>
+					</div>
+				);
+			},
+		},
+	];
+	
+	
 
 	return (
 		<div className="flex flex-col gap-8">
@@ -138,7 +205,28 @@ export default function ForemanOverview() {
 										userOnClick={(id) => setSelectedUserId(id)}
 									/>
 								) : (
-									<SensorSummaryGrid thresholdSummary={thresholdSummary} />
+									<>
+										<SensorSummaryGrid thresholdSummary={thresholdSummary} />
+
+										<Card muted={true} className="flex flex-col gap-4 p-4">
+											<h2 className="font-semibold text-lg">{t(($) => $.foremanDashboard.team.title)}</h2>
+											{isSubordinatesLoading ? (
+												<div className="p-4">{t(($) => $.common.loading)}</div>
+											) : subordinatesError ? (
+												<div className="p-4 text-destructive">
+													{t(($) => $.foremanDashboard.team.failedToLoadMembers)}
+												</div>
+											) : !subordinates || subordinates.length === 0 ? (
+												<div className="p-4">{t(($) => $.foremanDashboard.team.noMembersFound)}</div>
+											) : (
+												<DataTable
+													columns={columns}
+													data={subordinates}
+													getRowId={(teamMember) => teamMember.id}
+												/>
+											)}
+										</Card>
+									</>
 								)}
 							</>
 						)}
