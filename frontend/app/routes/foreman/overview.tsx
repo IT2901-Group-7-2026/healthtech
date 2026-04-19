@@ -2,8 +2,10 @@
 
 import { DailyNotes } from "@/components/daily-notes.js";
 import { DatePicker } from "@/components/date-picker";
+import { ExposureBadge } from "@/components/exposure-badge";
 import { Card } from "@/components/ui/card";
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
+import { DataTable } from "@/components/ui/data-table";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { AttentionCard } from "@/features/attention-card/attention-card.js";
@@ -14,11 +16,13 @@ import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { ViewPicker } from "@/features/views/view-picker";
 import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions } from "@/lib/api.js";
+import { mapDangerLevelToLabel } from "@/lib/danger-levels";
 import { today, toTZDate } from "@/lib/date";
-import type { ThresholdSummary } from "@/lib/dto";
+import type { ThresholdSummary, UserWithStatusDto } from "@/lib/dto";
 import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import type { ColumnDef } from "@tanstack/react-table";
 import { addWeeks, endOfDay, startOfDay, subDays } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
@@ -28,9 +32,9 @@ export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const { user } = useUser();
 
-	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor);
+	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor.withOptions({ history: "push" }));
 	const { date, setDate } = useDate();
-	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString);
+	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString.withOptions({ history: "push" }));
 
 	const selectedDate = date;
 	const { view } = useView();
@@ -45,9 +49,11 @@ export default function ForemanOverview() {
 	const maxSelectableDate = today();
 
 	const { data: users } = useQuery(fetchSubordinatesQueryOptions(user.id));
-	const { data: subordinates, isLoading: isSubordinatesLoading } = useQuery(
-		fetchSubordinatesQueryOptions(user.id, startDate, endDate),
-	);
+	const {
+		data: subordinates,
+		isLoading: isSubordinatesLoading,
+		error: subordinatesError,
+	} = useQuery(fetchSubordinatesQueryOptions(user.id, startDate, endDate));
 	const { data: thresholdSummary, isLoading: isThresholdSummaryLoading } = useQuery(
 		fetchThresholdSummaryQueryOptions(user.id, startDate, endDate),
 	);
@@ -62,6 +68,92 @@ export default function ForemanOverview() {
 			value: u.id,
 			label: u.name,
 		})) ?? [];
+
+	const columns: Array<ColumnDef<UserWithStatusDto>> = [
+		{
+			id: "name",
+			accessorKey: "name",
+			header: t(($) => $.foremanDashboard.team.table.name),
+			cell: ({ row }) => (
+				<button
+					type="button"
+					className="cursor-pointer font-medium hover:underline"
+					onClick={() => setSelectedUserId(row.original.id)}
+				>
+					{row.original.name}
+				</button>
+			),
+		},
+		{
+			id: "dust",
+			header: t(($) => $.sensors.dust),
+			cell: ({ row }) => {
+				const status = row.original.status.dust?.dangerLevel ?? "safe";
+				const label = mapDangerLevelToLabel(status);
+
+				return (
+					<button
+						type="button"
+						className="w-fit cursor-pointer"
+						onClick={() => {
+							setSelectedUserId(row.original.id);
+							setSensor("dust");
+						}}
+					>
+						<ExposureBadge sensor="dust" dangerLevel={status}>
+							{label}
+						</ExposureBadge>
+					</button>
+				);
+			},
+		},
+		{
+			id: "noise",
+			header: t(($) => $.sensors.noise),
+			cell: ({ row }) => {
+				const status = row.original.status.noise?.dangerLevel ?? "safe";
+				const label = mapDangerLevelToLabel(status);
+
+				return (
+					<button
+						type="button"
+						className="w-fit cursor-pointer"
+						onClick={() => {
+							setSelectedUserId(row.original.id);
+							setSensor("noise");
+						}}
+					>
+						<ExposureBadge sensor="noise" dangerLevel={status}>
+							{label}
+						</ExposureBadge>
+					</button>
+				);
+			},
+		},
+		{
+			id: "vibration",
+			header: t(($) => $.sensors.vibration),
+			cell: ({ row }) => {
+				const status = row.original.status.vibration?.dangerLevel ?? "safe";
+				const label = mapDangerLevelToLabel(status);
+
+				return (
+					<button
+						type="button"
+						className="w-fit cursor-pointer"
+						onClick={() => {
+							setSelectedUserId(row.original.id);
+							setSensor("vibration");
+						}}
+					>
+						<ExposureBadge sensor="vibration" dangerLevel={status}>
+							{label}
+						</ExposureBadge>
+					</button>
+				);
+			},
+		},
+	];
 
 	return (
 		<div className="flex flex-col gap-8">
@@ -151,7 +243,32 @@ export default function ForemanOverview() {
 										userOnClick={(id) => setSelectedUserId(id)}
 									/>
 								) : (
-									<SensorSummaryGrid thresholdSummary={thresholdSummary} />
+									<>
+										<SensorSummaryGrid thresholdSummary={thresholdSummary} />
+
+										<Card muted={true} className="flex flex-col gap-4 p-4">
+											<h2 className="font-semibold text-lg">
+												{t(($) => $.foremanDashboard.team.title)}
+											</h2>
+											{isSubordinatesLoading ? (
+												<div className="p-4">{t(($) => $.common.loading)}</div>
+											) : subordinatesError ? (
+												<div className="p-4 text-destructive">
+													{t(($) => $.foremanDashboard.team.failedToLoadMembers)}
+												</div>
+											) : !subordinates || subordinates.length === 0 ? (
+												<div className="p-4">
+													{t(($) => $.foremanDashboard.team.noMembersFound)}
+												</div>
+											) : (
+												<DataTable
+													columns={columns}
+													data={subordinates}
+													getRowId={(teamMember) => teamMember.id}
+												/>
+											)}
+										</Card>
+									</>
 								)}
 							</>
 						)}

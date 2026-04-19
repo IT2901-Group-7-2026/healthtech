@@ -13,7 +13,8 @@
     "total": "Total eksponering",
     "points": "Poeng",
     "notifications": "Notifikasjoner",
-    "exportAsPdf": "Eksporter som PDF"
+    "exportAsPdf": "Eksporter som PDF",
+    "back": "Tilbake"
   },
   "sensors": {
     "dust": "Støv",
