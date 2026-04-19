@@ -32,9 +32,9 @@ export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const { user } = useUser();
 
-	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor);
+	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor.withOptions({ history: "push" }));
 	const { date, setDate } = useDate();
-	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString);
+	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString.withOptions({ history: "push" }));
 
 	const selectedDate = date;
 	const { view } = useView();
@@ -74,6 +74,15 @@ export default function ForemanOverview() {
 			id: "name",
 			accessorKey: "name",
 			header: t(($) => $.foremanDashboard.team.table.name),
+			cell: ({ row }) => (
+				<button
+					type="button"
+					className="cursor-pointer font-medium hover:underline"
+					onClick={() => setSelectedUserId(row.original.id)}
+				>
+					{row.original.name}
+				</button>
+			),
 		},
 		{
 			id: "dust",
@@ -83,11 +92,18 @@ export default function ForemanOverview() {
 				const label = mapDangerLevelToLabel(status);
 
 				return (
-					<div className="w-fit">
+					<button
+						type="button"
+						className="w-fit cursor-pointer"
+						onClick={() => {
+							setSelectedUserId(row.original.id);
+							setSensor("dust");
+						}}
+					>
 						<ExposureBadge sensor="dust" dangerLevel={status}>
 							{label}
 						</ExposureBadge>
-					</div>
+					</button>
 				);
 			},
 		},
@@ -99,11 +115,18 @@ export default function ForemanOverview() {
 				const label = mapDangerLevelToLabel(status);
 
 				return (
-					<div className="w-fit">
+					<button
+						type="button"
+						className="w-fit cursor-pointer"
+						onClick={() => {
+							setSelectedUserId(row.original.id);
+							setSensor("noise");
+						}}
+					>
 						<ExposureBadge sensor="noise" dangerLevel={status}>
 							{label}
 						</ExposureBadge>
-					</div>
+					</button>
 				);
 			},
 		},
@@ -115,11 +138,18 @@ export default function ForemanOverview() {
 				const label = mapDangerLevelToLabel(status);
 
 				return (
-					<div className="w-fit">
+					<button
+						type="button"
+						className="w-fit cursor-pointer"
+						onClick={() => {
+							setSelectedUserId(row.original.id);
+							setSensor("vibration");
+						}}
+					>
 						<ExposureBadge sensor="vibration" dangerLevel={status}>
 							{label}
 						</ExposureBadge>
-					</div>
+					</button>
 				);
 			},
 		},
