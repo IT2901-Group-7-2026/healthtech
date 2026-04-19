@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { dangerlevelStyles, getHighestDangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import L, { type LatLngBoundsExpression, type PathOptions } from "leaflet";
@@ -147,20 +147,25 @@ export function LocationMap({ operators, isLoading, imageUrl = "/factory_arial_v
 						)}
 					</div>
 					<div className="w-full">
-						<Tabs
+						<ToggleGroup
+							type="single"
 							value={sensor}
-							onValueChange={(value) => setSensor(value as Sensor | "all")}
-							className="mb-4"
+							variant="outline"
+							className="mb-4 inline-grid auto-cols-fr grid-flow-col"
+							onValueChange={(value: Sensor | "all" | "") => {
+								if (value) {
+									setSensor(value);
+								}
+							}}
 						>
-							<TabsList variant="line">
-								<TabsTrigger value="all">{t(($) => $.sensors.overview)}</TabsTrigger>
-								{sensors.map((s) => (
-									<TabsTrigger key={s} value={s}>
-										{t(($) => $.sensors[s])}
-									</TabsTrigger>
-								))}
-							</TabsList>
-						</Tabs>
+							<ToggleGroupItem value="all"> {t(($) => $.sensors.overview)}</ToggleGroupItem>
+							{sensors.map((s) => (
+								<ToggleGroupItem key={s} value={s}>
+									{" "}
+									{t(($) => $.sensors[s])}
+								</ToggleGroupItem>
+							))}
+						</ToggleGroup>
 						<div
 							style={{
 								aspectRatio: `${imageSize.width} / ${imageSize.height}`,
