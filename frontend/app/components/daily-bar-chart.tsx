@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useDate } from "@/features/date-picker/use-date";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useFormatDate } from "@/hooks/use-format-date";
-import { dangerlevelStyles, type DangerLevel } from "@/lib/danger-levels";
+import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels";
 import type { OverviewChartRow } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils.js";
 import { setHours, startOfDay } from "date-fns";

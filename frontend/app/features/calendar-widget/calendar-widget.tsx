@@ -6,7 +6,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { DialogDescription } from "@/components/ui/dialog";
 import { CalendarPopup, type CalendarPopupData } from "@/features/popups/calendar-popup";
 import { getLocale, TIMEZONE } from "@/i18n/locale";
-import { dangerlevelStyles, type DangerLevel } from "@/lib/danger-levels";
+import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
 import type { Aggregation } from "@/lib/dto";
 import type { TimeBucketStatus } from "@/lib/time-bucket-types";

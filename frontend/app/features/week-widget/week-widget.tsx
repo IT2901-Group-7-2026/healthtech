@@ -3,8 +3,8 @@ import { useDate } from "@/features/date-picker/use-date";
 import { WeeklyPopup } from "@/features/popups/weekly-popup";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import { TIMEZONE } from "@/i18n/locale";
-import { toTZDate } from "@/lib/date";
 import { dangerlevelStyles } from "@/lib/danger-levels";
+import { toTZDate } from "@/lib/date";
 import type { Aggregation } from "@/lib/dto";
 import type { TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
@@ -265,7 +265,11 @@ function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: Cel
 				const bottomPercent = minuteOffset === 0 ? 0 : ((60 - minuteOffset) / 60) * 100;
 
 				const colorClassname = timeBucket.dangerLevel
-					? cn("border-2", dangerlevelStyles[timeBucket.dangerLevel].bgSubtle, dangerlevelStyles[timeBucket.dangerLevel].border)
+					? cn(
+							"border-2",
+							dangerlevelStyles[timeBucket.dangerLevel].bgSubtle,
+							dangerlevelStyles[timeBucket.dangerLevel].border,
+						)
 					: "";
 
 				return (
