@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
 import { DailyBarChart } from "@/components/daily-bar-chart";
-import { Button } from "@/components/ui/button";
+import { ExportButton } from "@/components/export-button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
@@ -94,7 +94,8 @@ export default function OperatorHome() {
 						startHour={minHour}
 						endHour={maxHour}
 						headerRight={
-							<Button
+							<ExportButton
+								title={t(($) => $.layout.export)}
 								onClick={() =>
 									exportMultipleToPDF(
 										[
@@ -114,10 +115,7 @@ export default function OperatorHome() {
 										],
 									)
 								}
-								variant="outline"
-							>
-								{t(($) => $.layout.export)}
-							</Button>
+							/>
 						}
 					/>
 				)}

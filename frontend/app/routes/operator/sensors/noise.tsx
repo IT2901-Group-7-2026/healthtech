@@ -3,7 +3,7 @@ import {
 	ExposureLineChartCardSkeleton,
 } from "@/components/exposure-line-chart/exposure-line-chart-card";
 import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
-import { Button } from "@/components/ui/button";
+import { ExportButton } from "@/components/export-button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
@@ -84,12 +84,6 @@ export default function Noise() {
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, usePeakAggregation);
 
-	const averageExposure =
-		data && data.length > 0
-			? data.reduce((sum, d) => sum + (usePeakAggregation && d.peakValue ? d.peakValue : d.value), 0) /
-				data.length
-			: 0;
-
 	const minTime = setHours(date, minHour);
 	const maxTime = setHours(date, maxHour);
 
@@ -130,15 +124,13 @@ export default function Noise() {
 							minTime={minTime}
 							maxTime={maxTime}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageExposure)} ${t(($) => $.sensors.units.db)}`}
 							unit="dbTwa"
 							maxY={maxY}
 							minY={minY}
 							sensor={sensor}
 							headerRight={
-								<Button
-									size="sm"
-									variant="outline"
+								<ExportButton
+									title={t(($) => $.common.exportAsPdf)}
 									onClick={() =>
 										exportToPDF(
 											chartContainerId,
@@ -150,9 +142,7 @@ export default function Noise() {
 											`Noise Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
 										)
 									}
-								>
-									{t(($) => $.common.exportAsPdf)}
-								</Button>
+								/>
 							}
 						>
 							<ThresholdLine
