@@ -103,7 +103,7 @@ export const AttentionCard = ({
 
 	return (
 		<>
-			<Card muted={true} className="gap-3">
+			<div className="flex flex-col gap-3 text-muted-foreground">
 				{actionCardHeader}
 
 				<CardContent className="gap-2">
@@ -162,7 +162,7 @@ export const AttentionCard = ({
 						)}
 					</div>
 				</CardContent>
-			</Card>
+			</div>
 
 			{(popupStatus === "warning" || popupStatus === "danger" || popupStatus === "safe") && (
 				<AtRiskPopup

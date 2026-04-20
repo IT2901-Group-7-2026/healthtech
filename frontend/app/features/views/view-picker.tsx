@@ -36,7 +36,7 @@ export function ViewPicker({ className, withNavigationButtons = false, allowedVi
 					type="single"
 					value={view}
 					variant="outline"
-					className={cn("inline-grid w-fit auto-cols-fr grid-flow-col", className)}
+					className={cn("inline-grid w-full auto-cols-fr grid-flow-col", className)}
 					onValueChange={(value: View) => {
 						// Value is an empty string when clicking the already selected item, so we need this check to avoid
 						// deselecting.

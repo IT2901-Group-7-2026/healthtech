@@ -41,7 +41,7 @@ const WorkerRow = ({ worker, status }: { worker: UserWithStatusDto; status: Dang
 		<TableRow key={worker.id}>
 			<TableCell>
 				<Link to={`/foreman/?userId=${worker.id}`} className="flex w-full items-center justify-between">
-					<p>{worker.username}</p>
+					<p>{worker.name}</p>
 					<div className="flex gap-2">{exposureBadges}</div>
 				</Link>
 			</TableCell>

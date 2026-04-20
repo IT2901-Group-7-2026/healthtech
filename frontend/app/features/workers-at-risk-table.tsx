@@ -43,7 +43,7 @@ export function AtRiskTable({ users }: Props) {
 												<div
 													className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(sub.status.status)}`}
 												/>
-												<span>{sub.username}</span>
+												<span>{sub.name}</span>
 											</div>
 										</TableCell>
 									</TableRow>

@@ -121,7 +121,7 @@ export default function Layout() {
 		const bPriority = priorityUserIds.indexOf(b.id);
 
 		if (aPriority === bPriority) {
-			return a.username.localeCompare(b.username);
+			return a.name.localeCompare(b.name);
 		}
 
 		if (aPriority === -1) {
@@ -236,7 +236,7 @@ function UserDropdown({
 							<UserIcon className="size-5 text-primary-foreground" />
 						</div>
 						<div className="min-w-0 grow text-left leading-tight">
-							<p className="truncate font-medium">{shorthandName(user.username)}</p>
+							<p className="truncate font-medium">{shorthandName(user.name)}</p>
 							<p className="truncate text-foreground/60 text-xs">{user.location.site}</p>
 						</div>
 					</Button>

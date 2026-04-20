@@ -1,6 +1,7 @@
 import { DailyNotes } from "@/components/daily-notes";
+import { ExposureLineChartCard } from "@/components/exposure-line-chart/exposure-line-chart-card";
+import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { ExposureSlider } from "@/components/exposure-slider";
-import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.js";
@@ -10,6 +11,7 @@ import { sensorQueryOptions } from "@/lib/api";
 import { now, toTZDate } from "@/lib/date";
 import type { SensorDto } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
+import type { SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { computeYAxisRange } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
@@ -19,6 +21,7 @@ import { Clock } from "lucide-react";
 import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import type { CurveType } from "recharts/types/shape/Curve";
 
 type TimeRangeOption = "30" | "60" | "180" | "480";
 const parseTimeRange = parseAsStringLiteral(["30", "60", "180", "480"]);
@@ -136,7 +139,7 @@ export default function OperatorLiveView() {
 							sensor="dust"
 							exposureLabel={"PM1 TWA"}
 							exposureUnitLabel="µg/m³"
-							chartUnitLabel={t(($) => $.sensors.dustUnit)}
+							chartUnit={"ug"}
 							data={dustTwa1Data ?? []}
 							minTime={start}
 							maxTime={end}
@@ -148,7 +151,7 @@ export default function OperatorLiveView() {
 							exposureLabel={"PM2.5 TWA"}
 							exposureField="pm25_twa"
 							exposureUnitLabel="µg/m³"
-							chartUnitLabel={t(($) => $.sensors.dustUnit)}
+							chartUnit={"ug"}
 							data={dustTwa25Data ?? []}
 							minTime={start}
 							maxTime={end}
@@ -160,11 +163,12 @@ export default function OperatorLiveView() {
 							exposureLabel={"PM10 TWA"}
 							exposureField="pm10_twa"
 							exposureUnitLabel="µg/m³"
-							chartUnitLabel={t(($) => $.sensors.dustUnit)}
+							chartUnit={"ug"}
 							data={dustTwa10Data ?? []}
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							showLegend={true}
 						/>
 					</CardContent>
 				</Card>
@@ -178,11 +182,12 @@ export default function OperatorLiveView() {
 							sensor="noise"
 							exposureLabel={t(($) => $.sensors.noise)}
 							exposureUnitLabel="dB"
-							chartUnitLabel="db (TWA)"
+							chartUnit="dbTwa"
 							data={noiseData ?? []}
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							showLegend={true}
 						/>
 					</CardContent>
 				</Card>
@@ -195,12 +200,14 @@ export default function OperatorLiveView() {
 						<LiveExposureCard
 							sensor="vibration"
 							exposureLabel={t(($) => $.sensors.vibration)}
-							exposureUnitLabel={t(($) => $.common.points)}
-							chartUnitLabel={t(($) => $.common.points)}
+							exposureUnitLabel={t(($) => $.sensors.units.points)}
+							chartUnit={"points"}
 							data={vibrationData ?? []}
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
+							showLegend={true}
+							lineType="monotone"
 						/>
 					</CardContent>
 				</Card>
@@ -216,8 +223,10 @@ export default function OperatorLiveView() {
 						type="single"
 						value={timeRange}
 						variant="outline"
-						onValueChange={(value: TimeRangeOption) => {
-							setTimeRange(value);
+						onValueChange={(value: TimeRangeOption | "") => {
+							if (value) {
+								setTimeRange(value);
+							}
 						}}
 					>
 						<ToggleGroupItem
@@ -260,11 +269,13 @@ interface LiveExposureCardProps {
 	exposureLabel: string;
 	exposureField?: "pm1_twa" | "pm25_twa" | "pm10_twa";
 	exposureUnitLabel: string;
-	chartUnitLabel: string;
+	chartUnit: SensorUnit;
 	data: Array<SensorDto>;
 	minTime: TZDate;
 	maxTime: TZDate;
 	chartClassName?: string;
+	showLegend?: boolean;
+	lineType?: CurveType;
 }
 
 const LiveExposureCard = ({
@@ -272,11 +283,13 @@ const LiveExposureCard = ({
 	exposureLabel,
 	exposureField,
 	exposureUnitLabel,
-	chartUnitLabel,
-	data,
+	chartUnit,
 	minTime,
+	data,
 	maxTime,
 	chartClassName,
+	showLegend = false,
+	lineType,
 }: LiveExposureCardProps) => {
 	const { t } = useTranslation();
 
@@ -305,29 +318,30 @@ const LiveExposureCard = ({
 				className="w-48"
 			/>
 			<div className="w-128 flex-1 self-stretch">
-				<ChartLineDefault
+				<ExposureLineChartCard
 					minTime={minTime}
 					maxTime={maxTime}
 					chartData={data}
 					chartTitle=""
-					unit={chartUnitLabel}
+					unit={chartUnit}
 					maxY={maxY}
 					minY={minY}
-					lineType="monotone"
+					lineType={lineType}
 					sensor={sensor}
-					hideLabels={true}
-					disableAnimation={true}
-					startTickLabel=""
-					endTickLabel={t(($) => $.live.chart.now)}
+					variant="compact"
 					className={chartClassName}
 					contentClassName="p-0"
 					chartContainerClassName="!aspect-auto"
 					hideHeader={true}
-					muteTickLabels={true}
+					showLegend={showLegend}
+					xTickLabels={{
+						start: "", // TODO: We should show something like "8 hours ago"
+						end: t(($) => $.live.chart.now),
+					}}
 				>
-					<ThresholdLine y={threshold.danger} dangerLevel="danger" hideLineLabel={true} />
-					<ThresholdLine y={threshold.warning} dangerLevel="warning" hideLineLabel={true} />
-				</ChartLineDefault>
+					<ThresholdLine y={threshold.danger} dangerLevel="danger" />
+					<ThresholdLine y={threshold.warning} dangerLevel="warning" />
+				</ExposureLineChartCard>
 			</div>
 		</div>
 	);

@@ -8,7 +8,7 @@ import { getThreshold } from "@/lib/thresholds";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { Bar, BarChart, type BarProps, CartesianGrid, XAxis, YAxis } from "recharts";
-import { ThresholdLine } from "./line-chart.js";
+import { ThresholdLine } from "./exposure-line-chart/threshold-line";
 
 interface Props {
 	users: Array<UserWithStatusDto>;
@@ -49,7 +49,7 @@ export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props)
 
 		return [
 			{
-				name: user.username,
+				name: user.name,
 				id: user.id,
 				status: sensorStatus.dangerLevel,
 				percent,

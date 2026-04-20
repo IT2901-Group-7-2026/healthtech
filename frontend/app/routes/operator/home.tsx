@@ -106,11 +106,11 @@ export default function OperatorHome() {
 											day: "numeric",
 											month: "long",
 											year: "numeric",
-										})}-${user.username}-Exposure-Overview`,
+										})}-${user.name}-Exposure-Overview`,
 										[
-											`Dust Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
-											`Vibration Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
-											`Noise Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+											`Dust Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
+											`Vibration Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
+											`Noise Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
 										],
 									)
 								}

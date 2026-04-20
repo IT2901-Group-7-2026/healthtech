@@ -1,7 +1,7 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import type { SensorTypeField } from "@/lib/dto";
 
-type Threshold = {
+export type Threshold = {
 	warning: number;
 	danger: number;
 	peakDanger: number | null;

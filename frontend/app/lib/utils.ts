@@ -9,10 +9,11 @@ import { twMerge } from "tailwind-merge";
 import type { DangerLevel } from "./danger-levels";
 import { now } from "./date";
 import { DEFAULT_MAX_HOUR_DOMAIN, DEFAULT_MIN_HOUR_DOMAIN, type HourDomainDto, type SensorDto, type User } from "./dto";
-import type { Sensor } from "./sensors";
+import type { Sensor, SensorUnit } from "./sensors";
 
 const MAX_CHART_HOUR = 23;
 const MIN_CHART_HOUR = 0;
+const UG_TO_MG = 0.001;
 
 export function cn(...inputs: Array<ClassValue>) {
 	return twMerge(clsx(inputs));
@@ -190,4 +191,23 @@ function convertUtcHourToLocalHour(utcHour: number, date: TZDate): number {
 	const localDate = new TZDate(date, TIMEZONE_NAME);
 	localDate.setUTCHours(utcHour);
 	return localDate.getHours();
+}
+
+export function formatSensorValue(
+	value: number | undefined,
+	unit: SensorUnit,
+	numberOfDigits = 2,
+	numberOfDigitsPerUnit?: Partial<Record<SensorUnit, number>>,
+) {
+	if (value == null) {
+		return "N/A";
+	}
+
+	const resolvedNumberOfUnits = numberOfDigitsPerUnit?.[unit] ?? numberOfDigits;
+
+	if (unit === "mg") {
+		return (value * UG_TO_MG).toFixed(resolvedNumberOfUnits);
+	}
+
+	return value.toFixed(resolvedNumberOfUnits);
 }

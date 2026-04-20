@@ -8,7 +8,7 @@ export const KARI_NORDMANN_ID = "87654321-8765-4321-8765-432187654321" as const;
 
 export const DEFAULT_USER: User = {
 	id: KARI_NORDMANN_ID,
-	username: "Kari Nordmann",
+	name: "Kari Nordmann",
 	email: "kari.nordmann@aker.com",
 	role: "operator",
 	jobDescription: "Sveiser",
