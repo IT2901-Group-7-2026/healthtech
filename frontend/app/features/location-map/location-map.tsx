@@ -161,7 +161,6 @@ export function LocationMap({ operators, isLoading, imageUrl = "/factory_arial_v
 							<ToggleGroupItem value="all"> {t(($) => $.sensors.overview)}</ToggleGroupItem>
 							{sensors.map((s) => (
 								<ToggleGroupItem key={s} value={s}>
-									{" "}
 									{t(($) => $.sensors[s])}
 								</ToggleGroupItem>
 							))}
