@@ -10,6 +10,7 @@ import { GaugeChart } from "@/components/ui/gauge-chart";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DateContext } from "@/features/date-picker/use-date";
 import { useView } from "@/features/views/use-view";
+import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
 import {
@@ -35,8 +36,6 @@ import { mapOverviewBucketsToChartRows, mapOverviewDataToTimeBucketStatuses } fr
 import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { CalendarWidget } from "app/features/calendar-widget/calendar-widget";
-import { WeekWidget } from "app/features/week-widget/week-widget";
 import { addDays, endOfDay, setHours, startOfDay, subDays } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { type ReactNode, useId } from "react";
@@ -82,7 +81,6 @@ function AllSensorsUserOverview({
 	selectedUser: UserWithStatusDto;
 	selectedDate: TZDate;
 }) {
-	const [selectedUserId] = useQueryState("userId");
 	const { view } = useView();
 
 	const {
@@ -209,7 +207,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	const { minHour, maxHour } = getHourDomain(
 		hourDomain,
 		data?.map((d) => d.time),
-		view, // TODO: When we add a view picker we should use that here
+		view,
 	);
 
 	const minTime = setHours(selectedDate, minHour);
@@ -361,7 +359,7 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 	const { minHour, maxHour } = getHourDomain(
 		hourDomain,
 		data?.map((d) => d.time),
-		view, // TODO: When we add a view picker we should use that here
+		view,
 	);
 
 	const minTime = setHours(selectedDate, minHour);
@@ -481,7 +479,7 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 	const { minHour, maxHour } = getHourDomain(
 		hourDomain,
 		data?.map((d) => d.time),
-		view, // TODO: When we add a view picker we should use that here
+		view,
 	);
 
 	const minTime = setHours(selectedDate, minHour);
