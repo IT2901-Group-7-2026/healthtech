@@ -322,7 +322,6 @@ const LiveExposureCard = ({
 					minTime={minTime}
 					maxTime={maxTime}
 					chartData={data}
-					chartTitle=""
 					unit={chartUnit}
 					maxY={maxY}
 					minY={minY}
@@ -332,7 +331,6 @@ const LiveExposureCard = ({
 					className={chartClassName}
 					contentClassName="p-0"
 					chartContainerClassName="!aspect-auto"
-					hideHeader={true}
 					showLegend={showLegend}
 					xTickLabels={{
 						start: "", // TODO: We should show something like "8 hours ago"

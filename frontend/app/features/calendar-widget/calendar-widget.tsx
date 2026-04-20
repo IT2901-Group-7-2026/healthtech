@@ -157,12 +157,19 @@ type CustomDayProps = {
 function CustomDay({ data, day, className, handleDayClick, ...buttonProps }: CustomDayProps) {
 	const dangerLevel = getDayDangerLevel(toTZDate(day.date), data);
 	const disabled = dangerLevel === null;
+	const isToday = buttonProps.modifiers?.today;
+
 	const bgClassname = dangerLevel
 		? cn("border-2", dangerlevelStyles[dangerLevel].bgSubtle, dangerlevelStyles[dangerLevel].border)
 		: "";
 
 	return (
-		<button type="button" disabled={disabled} className={cn("relative h-full w-full rounded-lg")} {...buttonProps}>
+		<button
+			type="button"
+			disabled={disabled}
+			className={cn("relative h-full w-full rounded-lg", className)}
+			{...buttonProps}
+		>
 			<div
 				className={cn(
 					"h-full w-full rounded-lg",
@@ -176,7 +183,14 @@ function CustomDay({ data, day, className, handleDayClick, ...buttonProps }: Cus
 					disabled && "text-muted-foreground",
 				)}
 			>
-				{day.date.getDate()}
+				<span
+					className={cn(
+						"flex size-7 items-center justify-center rounded-full",
+						isToday && "bg-foreground text-background",
+					)}
+				>
+					{day.date.getDate()}
+				</span>
 			</span>
 			<DangerLevelDots dangerLevel={dangerLevel ?? null} className="absolute right-2 bottom-2" />
 		</button>

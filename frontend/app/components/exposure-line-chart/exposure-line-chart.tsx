@@ -152,17 +152,6 @@ export function ExposureLineChart({
 							xTickLabels={xTickLabels}
 						/>
 					)}
-					label={
-						compact
-							? undefined
-							: {
-									value: t(($) => $.common.time),
-									position: "insideBottom",
-									offset: 0,
-									className: "text-base",
-									fill: "var(--color-muted-foreground)",
-								}
-					}
 				/>
 				<YAxis
 					dataKey="value"

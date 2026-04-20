@@ -172,37 +172,39 @@ export default function Layout() {
 	return (
 		<SidebarProvider defaultOpen={false}>
 			<SidebarInset>
-				<header className="sticky top-0 z-40 mx-5 flex items-center justify-between bg-background/95 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-					{desktopHeader}
+				<div className="mx-auto w-full max-w-7xl">
+					<header className="sticky top-0 z-40 mx-5 flex items-center justify-between bg-background/95 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+						{desktopHeader}
 
-					<div className="flex flex-row items-center gap-4">
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={openNotificationPopup}
-							className="cursor-pointer rounded-full"
-						>
-							<div className="relative">
-								<Bell className="size-5" />
-								<span className="absolute -top-2 -right-2 flex size-4.75 items-center justify-center rounded-full border-2 border-background bg-red-500 text-[0.625rem] text-white">
-									{"4"}
-								</span>
-							</div>
-						</Button>
+						<div className="flex flex-row items-center gap-4">
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={openNotificationPopup}
+								className="cursor-pointer rounded-full"
+							>
+								<div className="relative">
+									<Bell className="size-5" />
+									<span className="absolute -top-2 -right-2 flex size-4.75 items-center justify-center rounded-full border-2 border-background bg-red-500 text-[0.625rem] text-white">
+										{"4"}
+									</span>
+								</div>
+							</Button>
 
-						<UserDropdown user={user} users={sortedUsers} setUser={setUser} i18n={i18n} />
-					</div>
-				</header>
+							<UserDropdown user={user} users={sortedUsers} setUser={setUser} i18n={i18n} />
+						</div>
+					</header>
 
-				<BellPopup
-					open={notificationPopupVisible}
-					onClose={closeNotificationPopup}
-					title={t(($) => $.common.notifications)}
-				/>
+					<BellPopup
+						open={notificationPopupVisible}
+						onClose={closeNotificationPopup}
+						title={t(($) => $.common.notifications)}
+					/>
 
-				<main className="m-5 items-center justify-center">
-					<Outlet />
-				</main>
+					<main className="m-5 items-center justify-center">
+						<Outlet />
+					</main>
+				</div>
 			</SidebarInset>
 		</SidebarProvider>
 	);
@@ -231,7 +233,7 @@ function UserDropdown({
 		<>
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild={true}>
-					<Button variant="ghost" className="h-10 max-w-[14rem] cursor-pointer gap-2 rounded-full pr-3 pl-0">
+					<Button variant="ghost" className="h-11 max-w-[14rem] cursor-pointer gap-2 rounded-full pr-3 pl-1">
 						<div className="flex size-9 items-center justify-center rounded-full bg-primary">
 							<UserIcon className="size-5 text-primary-foreground" />
 						</div>

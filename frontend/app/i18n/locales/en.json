@@ -8,7 +8,6 @@
     "error": "Something went wrong while fetching sensor data.",
     "noData": "No exposure data found for this day",
     "noOptions": "No options available",
-    "time": "Time",
     "today": "Today",
     "total": "Total exposure",
     "notifications": "Notifications",
