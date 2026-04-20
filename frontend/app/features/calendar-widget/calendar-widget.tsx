@@ -191,7 +191,7 @@ function CustomDay({ data, day, className, handleDayClick, ...buttonProps }: Cus
 				<span
 					className={cn(
 						"flex size-7 items-center justify-center rounded-full",
-						isToday && "bg-neutral-800 text-white dark:bg-neutral-200 dark:text-black",
+						isToday && "bg-neutral-800 text-foreground dark:bg-neutral-200",
 					)}
 				>
 					{day.date.getDate()}
