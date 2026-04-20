@@ -3,7 +3,6 @@ import { useDate } from "@/features/date-picker/use-date";
 import { WeeklyPopup } from "@/features/popups/weekly-popup";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import { TIMEZONE } from "@/i18n/locale";
-import { DangerLevels } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
 import type { Aggregation } from "@/lib/dto";
 import type { TimeBucketStatus } from "@/lib/time-bucket-types";
@@ -254,8 +253,8 @@ function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: Cel
 			className={cn(
 				"relative bg-card-highlight transition-colors",
 				rounding,
-				isFirstRow && "rounded-t-2xl",
-				isLastRow && "rounded-b-2xl",
+				isFirstRow && "rounded-t-xl",
+				isLastRow && "rounded-b-xl",
 			)}
 			style={style}
 		>
@@ -263,7 +262,14 @@ function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: Cel
 				const minuteOffset = getMinutes(timeBucket.time);
 				const topPercent = (minuteOffset / 60) * 100;
 				const bottomPercent = minuteOffset === 0 ? 0 : ((60 - minuteOffset) / 60) * 100;
-				const dangerColor = DangerLevels[timeBucket.dangerLevel].color;
+				let bgClassname = "";
+				if (timeBucket.dangerLevel === "safe") {
+					bgClassname = "bg-safe-subtle border-2 border-safe";
+				} else if (timeBucket.dangerLevel === "warning") {
+					bgClassname = "bg-warning-subtle border-2 border-warning";
+				} else if (timeBucket.dangerLevel === "danger") {
+					bgClassname = "bg-danger-subtle border-2 border-danger";
+				}
 
 				return (
 					<button
@@ -273,7 +279,7 @@ function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: Cel
 							"absolute inset-x-0 block cursor-pointer overflow-hidden",
 							"transition-[filter,box-shadow] hover:brightness-90",
 							rounding,
-							`bg-${dangerColor}`,
+							bgClassname,
 						)}
 						style={{
 							top: `calc(${topPercent}% + 1px)`,
@@ -281,7 +287,6 @@ function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: Cel
 						}}
 						onClick={() => onSegmentClick(timeBucket)}
 					>
-						<div className={cn(rounding)} style={{ backgroundColor: dangerColor }} />
 						<DangerLevelDots
 							dangerLevel={timeBucket.dangerLevel ?? null}
 							className="absolute right-1 bottom-1"
