@@ -242,7 +242,6 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 								minTime={minTime}
 								maxTime={maxTime}
 								chartData={downsampleSensorData(sensor, data ?? [])}
-								chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageDustExposure, dustUnit, 2, { mg: 4 })} ${t(($) => $.sensors.units[dustUnit])}`}
 								unit={dustUnit}
 								maxY={maxY}
 								minY={minY}
@@ -257,7 +256,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 											</TabsList>
 										</Tabs>
 										<ExportButton
-										title={t(($) => $.common.exportAsPdf)}
+											title={t(($) => $.common.exportAsPdf)}
 											onClick={() =>
 												exportToPDF(
 													chartContainerId,
@@ -266,7 +265,6 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 												)
 											}
 										/>
-										
 									</div>
 								}
 							>
@@ -379,7 +377,6 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 							minTime={minTime}
 							maxTime={maxTime}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.common.total)}: ${Math.trunc(totalVibrationExposure)} ${t(($) => $.sensors.units.points)}`}
 							unit={"points"}
 							maxY={maxY}
 							minY={minY}
@@ -387,7 +384,7 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 							sensor={sensor}
 							headerRight={
 								<ExportButton
-								title={t(($) => $.common.exportAsPdf)}
+									title={t(($) => $.common.exportAsPdf)}
 									onClick={() =>
 										exportToPDF(
 											chartContainerId,
@@ -395,7 +392,6 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 											`Vibration Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
 										)
 									}
-
 								/>
 							}
 						>
@@ -498,14 +494,13 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 								maxTime={maxTime}
 								usePeakData={usePeakAggregation}
 								chartData={downsampleSensorData(sensor, data ?? [])}
-								chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageNoiseExposure)} ${t(($) => $.sensors.units.db)}`}
 								unit="dbTwa"
 								maxY={maxY}
 								minY={minY}
 								sensor={sensor}
 								headerRight={
 									<ExportButton
-									title={t(($) => $.common.exportAsPdf)}
+										title={t(($) => $.common.exportAsPdf)}
 										onClick={() =>
 											exportToPDF(
 												chartContainerId,
@@ -514,7 +509,6 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 											)
 										}
 									/>
-									
 								}
 							>
 								<ThresholdLine
