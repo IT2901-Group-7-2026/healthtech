@@ -164,7 +164,7 @@ export default function ForemanOverview() {
 
 						<Card muted={true}>
 							<DatePicker
-								mode="day"
+								mode={view}
 								showWeekNumber={true}
 								date={date}
 								onDateChange={setDate}
