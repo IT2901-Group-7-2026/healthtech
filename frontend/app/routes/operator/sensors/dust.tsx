@@ -3,7 +3,7 @@ import {
 	ExposureLineChartCardSkeleton,
 } from "@/components/exposure-line-chart/exposure-line-chart-card";
 import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
-import { Button } from "@/components/ui/button";
+import { ExportButton } from "@/components/export-button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
@@ -25,7 +25,7 @@ import {
 } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
+import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { setHours } from "date-fns";
 import { useQueryState } from "nuqs";
@@ -77,9 +77,6 @@ export default function Dust() {
 	const maxY = maxValue > baseMaxY ? computeYAxisRange(data ?? []).maxY : baseMaxY;
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor);
-	const averageExposure =
-		data && data.length > 0 ? data.reduce((sum, current) => sum + current.value, 0) / data.length : 0;
-
 	const { minHour, maxHour } = getHourDomain(hourDomain, data?.map((d) => d.time) ?? [], view);
 
 	const minTime = setHours(date, minHour);
@@ -125,7 +122,6 @@ export default function Dust() {
 							minTime={minTime}
 							maxTime={maxTime}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${formatSensorValue(averageExposure, dustUnit, 2, { mg: 4 })} ${t(($) => $.sensors.units[dustUnit])}`}
 							unit={dustUnit}
 							maxY={maxY}
 							minY={minY}
@@ -139,9 +135,8 @@ export default function Dust() {
 											<TabsTrigger value="mg">{t(($) => $.sensors.units.mg)}</TabsTrigger>
 										</TabsList>
 									</Tabs>
-									<Button
-										size="sm"
-										variant="outline"
+									<ExportButton
+										title={t(($) => $.common.exportAsPdf)}
 										onClick={() =>
 											exportToPDF(
 												chartContainerId,
@@ -153,9 +148,7 @@ export default function Dust() {
 												`Dust Exposure - ${user.name} - ${date.toLocaleDateString(locale)}`,
 											)
 										}
-									>
-										{t(($) => $.common.exportAsPdf)}
-									</Button>
+									/>
 								</div>
 							}
 						>

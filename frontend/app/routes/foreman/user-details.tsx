@@ -1,10 +1,10 @@
 import { DailyBarChart } from "@/components/daily-bar-chart";
+import { ExportButton } from "@/components/export-button";
 import {
 	ExposureLineChartCard,
 	ExposureLineChartCardSkeleton,
 } from "@/components/exposure-line-chart/exposure-line-chart-card";
 import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
-import { Button } from "@/components/ui/button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { GaugeChart } from "@/components/ui/gauge-chart";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -33,7 +33,7 @@ import {
 } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapOverviewBucketsToChartRows, mapOverviewDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, formatSensorValue, getHourDomain } from "@/lib/utils";
+import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { addDays, endOfDay, setHours, startOfDay, subDays } from "date-fns";
@@ -201,9 +201,6 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	if (maxValue > maxY) {
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
-	const averageDustExposure =
-		data && data.length > 0 ? data.reduce((sum, current) => sum + current.value, 0) / data.length : 0;
-
 	const { minHour, maxHour } = getHourDomain(
 		hourDomain,
 		data?.map((d) => d.time),
@@ -259,9 +256,8 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 												<TabsTrigger value="mg">{t(($) => $.sensors.units.mg)}</TabsTrigger>
 											</TabsList>
 										</Tabs>
-										<Button
-											size="sm"
-											variant="outline"
+										<ExportButton
+										title={t(($) => $.common.exportAsPdf)}
 											onClick={() =>
 												exportToPDF(
 													chartContainerId,
@@ -269,9 +265,8 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 													`Dust Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
 												)
 											}
-										>
-											{t(($) => $.common.exportAsPdf)}
-										</Button>
+										/>
+										
 									</div>
 								}
 							>
@@ -354,8 +349,6 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 	if (maxValue > maxY) {
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
-	const totalVibrationExposure = data && data.length > 0 ? data[data.length - 1].value : 0;
-
 	const { minHour, maxHour } = getHourDomain(
 		hourDomain,
 		data?.map((d) => d.time),
@@ -393,9 +386,8 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 							lineType="monotone"
 							sensor={sensor}
 							headerRight={
-								<Button
-									size="sm"
-									variant="outline"
+								<ExportButton
+								title={t(($) => $.common.exportAsPdf)}
 									onClick={() =>
 										exportToPDF(
 											chartContainerId,
@@ -403,9 +395,8 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 											`Vibration Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
 										)
 									}
-								>
-									{t(($) => $.common.exportAsPdf)}
-								</Button>
+
+								/>
 							}
 						>
 							<ThresholdLine y={vibrationThreshold.danger} dangerLevel="danger" />
@@ -468,14 +459,6 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 			step: usePeakAggregation ? 130 : undefined,
 		}).maxY;
 	}
-	const averageNoiseExposure =
-		data && data.length > 0
-			? data.reduce(
-					(sum, point) => sum + (usePeakAggregation && point.peakValue ? point.peakValue : point.value),
-					0,
-				) / data.length
-			: 0;
-
 	const { minHour, maxHour } = getHourDomain(
 		hourDomain,
 		data?.map((d) => d.time),
@@ -521,9 +504,8 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 								minY={minY}
 								sensor={sensor}
 								headerRight={
-									<Button
-										size="sm"
-										variant="outline"
+									<ExportButton
+									title={t(($) => $.common.exportAsPdf)}
 										onClick={() =>
 											exportToPDF(
 												chartContainerId,
@@ -531,9 +513,8 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 												`Noise Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
 											)
 										}
-									>
-										{t(($) => $.common.exportAsPdf)}
-									</Button>
+									/>
+									
 								}
 							>
 								<ThresholdLine
