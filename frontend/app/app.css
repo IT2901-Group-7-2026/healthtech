@@ -103,7 +103,6 @@ body {
 }
 
 :root {
-	--app-max-width: 1600px;
 	--radius: 0.375rem;
 	--background: oklch(1 0 0);
 	--foreground: oklch(0.3211 0 0);
