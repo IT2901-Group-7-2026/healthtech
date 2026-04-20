@@ -117,6 +117,18 @@ function AllSensorsUserOverview({
 						data={mapOverviewBucketsToChartRows(data ?? [], 0, 23)}
 						startHour={minHour}
 						endHour={maxHour}
+						buildLink={(sensor, dateQueryParam) => {
+							const params = new URLSearchParams();
+							params.set("sensor", sensor);
+
+							if (selectedUser?.id) {
+								params.set("userId", selectedUser.id);
+							}
+
+							params.set("date", dateQueryParam);
+
+							return `?${params.toString()}`;
+						}}
 					/>
 				)}
 			</DateScopedChart>
