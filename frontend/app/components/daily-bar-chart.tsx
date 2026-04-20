@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useDate } from "@/features/date-picker/use-date";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useFormatDate } from "@/hooks/use-format-date";
+import { dangerlevelStyles, type DangerLevel } from "@/lib/danger-levels";
 import type { OverviewChartRow } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils.js";
 import { setHours, startOfDay } from "date-fns";
@@ -16,36 +17,27 @@ const CELL_SIZE_CN = "size-10";
 
 const STICKY = "sticky left-0 z-10 bg-card pl-4";
 
-const getCellAppearance = (dangerLevel: string | null) => {
+const getCellAppearance = (dangerLevel: DangerLevel | null) => {
 	const baseClasses = cn(CELL_SIZE_CN, "block rounded-lg border transition-all");
 
 	const clickableClasses = "hover:brightness-90 active:scale-[0.98] active:brightness-90";
 
-	switch (dangerLevel) {
-		case "danger":
-			return {
-				className: cn(baseClasses, clickableClasses, "border-danger bg-danger-subtle"),
-				isClickable: true,
-			};
-		case "warning":
-			return {
-				className: cn(baseClasses, clickableClasses, "border-warning bg-warning-subtle"),
-				isClickable: true,
-			};
-		case "safe":
-			return {
-				className: cn(baseClasses, clickableClasses, "border-safe bg-safe-subtle"),
-				isClickable: true,
-			};
-		default:
-			return {
-				className: cn(
-					baseClasses,
-					"cursor-default border-muted-foreground/20 bg-card text-muted-foreground/50",
-				),
-				isClickable: false,
-			};
+	if (dangerLevel) {
+		return {
+			className: cn(
+				baseClasses,
+				clickableClasses,
+				dangerlevelStyles[dangerLevel].border,
+				dangerlevelStyles[dangerLevel].bgSubtle,
+			),
+			isClickable: true,
+		};
 	}
+
+	return {
+		className: cn(baseClasses, "cursor-default border-muted-foreground/20 bg-card text-muted-foreground/50"),
+		isClickable: false,
+	};
 };
 
 interface DailyBarChartProps {

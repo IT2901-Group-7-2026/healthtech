@@ -4,6 +4,7 @@ import { WeeklyPopup } from "@/features/popups/weekly-popup";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import { TIMEZONE } from "@/i18n/locale";
 import { toTZDate } from "@/lib/date";
+import { dangerlevelStyles } from "@/lib/danger-levels";
 import type { Aggregation } from "@/lib/dto";
 import type { TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
@@ -262,14 +263,10 @@ function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: Cel
 				const minuteOffset = getMinutes(timeBucket.time);
 				const topPercent = (minuteOffset / 60) * 100;
 				const bottomPercent = minuteOffset === 0 ? 0 : ((60 - minuteOffset) / 60) * 100;
-				let colorClassname = "";
-				if (timeBucket.dangerLevel === "safe") {
-					colorClassname = "bg-safe-subtle border-2 border-safe";
-				} else if (timeBucket.dangerLevel === "warning") {
-					colorClassname = "bg-warning-subtle border-2 border-warning";
-				} else if (timeBucket.dangerLevel === "danger") {
-					colorClassname = "bg-danger-subtle border-2 border-danger";
-				}
+
+				const colorClassname = timeBucket.dangerLevel
+					? cn("border-2", dangerlevelStyles[timeBucket.dangerLevel].bgSubtle, dangerlevelStyles[timeBucket.dangerLevel].border)
+					: "";
 
 				return (
 					<button
