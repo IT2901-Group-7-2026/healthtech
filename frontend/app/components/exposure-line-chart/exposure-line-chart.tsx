@@ -190,9 +190,19 @@ export function ExposureLineChart({
 				/>
 				<ChartTooltip
 					cursor={false}
-					content={<ChartTooltipContent hideLabel={true} />}
+					content={
+						<ChartTooltipContent
+							labelFormatter={(_label, payload) => {
+								const time = payload?.[0]?.payload?.time;
+
+								if (!time) return "";
+
+								return formatDate(toTZDate(time), "HH:mm");
+							}}
+						/>
+					}
 					formatter={(value?: number) => [
-						`${formatSensorValue(value, unit as SensorUnit)} ${t(($) => $.sensors.units[unit])}`,
+						`${formatSensorValue(value, unit)} ${t(($) => $.sensors.units[unit])}`,
 					]}
 				/>
 
