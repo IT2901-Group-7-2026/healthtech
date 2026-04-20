@@ -262,13 +262,13 @@ function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: Cel
 				const minuteOffset = getMinutes(timeBucket.time);
 				const topPercent = (minuteOffset / 60) * 100;
 				const bottomPercent = minuteOffset === 0 ? 0 : ((60 - minuteOffset) / 60) * 100;
-				let bgClassname = "";
+				let colorClassname = "";
 				if (timeBucket.dangerLevel === "safe") {
-					bgClassname = "bg-safe-subtle border-2 border-safe";
+					colorClassname = "bg-safe-subtle border-2 border-safe";
 				} else if (timeBucket.dangerLevel === "warning") {
-					bgClassname = "bg-warning-subtle border-2 border-warning";
+					colorClassname = "bg-warning-subtle border-2 border-warning";
 				} else if (timeBucket.dangerLevel === "danger") {
-					bgClassname = "bg-danger-subtle border-2 border-danger";
+					colorClassname = "bg-danger-subtle border-2 border-danger";
 				}
 
 				return (
@@ -279,7 +279,9 @@ function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: Cel
 							"absolute inset-x-0 block cursor-pointer overflow-hidden",
 							"transition-[filter,box-shadow] hover:brightness-90",
 							rounding,
-							bgClassname,
+							isFirstRow && "rounded-t-xl",
+							isLastRow && "rounded-b-xl",
+							colorClassname,
 						)}
 						style={{
 							top: `calc(${topPercent}% + 1px)`,
