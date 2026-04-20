@@ -1,4 +1,5 @@
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { ExposureTooltip } from "@/components/exposure-line-chart/exposure-tooltip";
+import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, DangerLevels, dangerlevelStyles, getDangerLevel } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
@@ -188,13 +189,7 @@ export function ExposureLineChart({
 					// only dustchart with mg unit need to show decimals on y axis
 					tickFormatter={(value) => formatSensorValue(value, unit as SensorUnit, 0, { mg: 3 })}
 				/>
-				<ChartTooltip
-					cursor={false}
-					content={<ChartTooltipContent hideLabel={true} />}
-					formatter={(value?: number) => [
-						`${formatSensorValue(value, unit as SensorUnit)} ${t(($) => $.sensors.units[unit])}`,
-					]}
-				/>
+				<ExposureTooltip unit={unit} />
 
 				<defs>
 					<linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
