@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useDate } from "@/features/date-picker/use-date";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useFormatDate } from "@/hooks/use-format-date";
@@ -98,10 +98,8 @@ export function DailyBarChart({ data, startHour = 0, endHour = 23, headerRight, 
 	);
 
 	return (
-		<Card className="px-0">
-			<CardHeader className="flex flex-row items-center justify-between px-4">
-				<div className="ml-auto">{headerRight}</div>
-			</CardHeader>
+		<Card className="relative px-0">
+			{headerRight && <div className="absolute top-2 right-2 z-10 flex items-center gap-2">{headerRight}</div>}
 
 			<CardContent>
 				<div className="min-w-0 overflow-x-auto">

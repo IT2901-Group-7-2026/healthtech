@@ -231,7 +231,7 @@ function UserDropdown({
 		<>
 			<DropdownMenu>
 				<DropdownMenuTrigger asChild={true}>
-					<Button variant="ghost" className="h-10 max-w-[14rem] cursor-pointer gap-2 rounded-full pr-3 pl-0">
+					<Button variant="ghost" className="h-11 max-w-[14rem] cursor-pointer gap-2 rounded-full pr-3 pl-1">
 						<div className="flex size-9 items-center justify-center rounded-full bg-primary">
 							<UserIcon className="size-5 text-primary-foreground" />
 						</div>
