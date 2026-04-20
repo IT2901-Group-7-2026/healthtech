@@ -19,22 +19,22 @@ const STICKY = "sticky left-0 z-10 bg-card pl-4";
 const getCellAppearance = (dangerLevel: string | null) => {
 	const baseClasses = cn(CELL_SIZE_CN, "block rounded-lg border transition-all");
 
-	const clickableClasses = "border-transparent hover:brightness-90 active:scale-[0.98] active:brightness-90";
+	const clickableClasses = "hover:brightness-90 active:scale-[0.98] active:brightness-90";
 
 	switch (dangerLevel) {
 		case "danger":
 			return {
-				className: cn(baseClasses, clickableClasses, "bg-danger text-danger-text"),
+				className: cn(baseClasses, clickableClasses, "border-danger bg-danger-subtle"),
 				isClickable: true,
 			};
 		case "warning":
 			return {
-				className: cn(baseClasses, clickableClasses, "bg-warning text-warning-text"),
+				className: cn(baseClasses, clickableClasses, "border-warning bg-warning-subtle"),
 				isClickable: true,
 			};
 		case "safe":
 			return {
-				className: cn(baseClasses, clickableClasses, "bg-safe text-safe-text"),
+				className: cn(baseClasses, clickableClasses, "border-safe bg-safe-subtle"),
 				isClickable: true,
 			};
 		default:
