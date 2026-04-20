@@ -12,8 +12,7 @@
     "today": "Today",
     "total": "Total exposure",
     "notifications": "Notifications",
-    "exportAsPdf": "Export as PDF",
-    "back": "Back"
+    "exportAsPdf": "Export as PDF"
   },
   "sensors": {
     "dust": "Dust",
