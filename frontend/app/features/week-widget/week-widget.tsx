@@ -97,7 +97,7 @@ export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data, aggregatio
 						<div className="flex min-w-[500px] flex-none flex-col">
 							{/* Column headers */}
 							<div
-								className="my-1.5 grid gap-x-3 gap-y-1 pl-1 text-sm leading-6"
+								className="my-1.5 grid gap-x-3 gap-y-1 text-sm leading-6"
 								style={{
 									gridTemplateColumns: GRID_COLUMNS,
 								}}
@@ -110,7 +110,10 @@ export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data, aggregatio
 									const date = formatDate(segment.date, "dd");
 
 									return (
-										<div key={getUnixTime(segment.date)} className="flex items-center">
+										<div
+											key={getUnixTime(segment.date)}
+											className="flex items-center justify-center"
+										>
 											<p
 												className={cn(
 													"flex items-center",
@@ -247,7 +250,7 @@ function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: Cel
 	return (
 		<div
 			className={cn(
-				"relative bg-card transition-colors",
+				"relative bg-secondary transition-colors",
 				rounding,
 				isFirstRow && "rounded-t-xl",
 				isLastRow && "rounded-b-xl",
