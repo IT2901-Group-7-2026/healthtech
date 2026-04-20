@@ -89,7 +89,7 @@ function AllSensorsUserOverview({
 		isError,
 	} = useQuery(
 		sensorOverviewQueryOptions({
-			query: buildSensorOverviewQuery([...sensors], "day", selectedDate),
+			query: buildSensorOverviewQuery([...sensors], view, selectedDate),
 			userId: selectedUser.id,
 		}),
 	);
