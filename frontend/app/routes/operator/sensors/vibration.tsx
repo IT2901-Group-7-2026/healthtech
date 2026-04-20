@@ -3,7 +3,7 @@ import {
 	ExposureLineChartCardSkeleton,
 } from "@/components/exposure-line-chart/exposure-line-chart-card";
 import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
-import { Button } from "@/components/ui/button";
+import { ExportButton } from "@/components/export-button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
@@ -67,8 +67,6 @@ export default function Vibration() {
 	}
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], "vibration");
-	const totalExposure = data && data.length > 0 ? data[data.length - 1].value : 0;
-
 	const minTime = setHours(date, minHour);
 	const maxTime = setHours(date, maxHour);
 
@@ -103,16 +101,14 @@ export default function Vibration() {
 								minTime={minTime}
 								maxTime={maxTime}
 								chartData={downsampleSensorData(sensor, data ?? [])}
-								chartTitle={`${t(($) => $.common.total)}: ${Math.trunc(totalExposure)} ${t(($) => $.sensors.units.points)}`}
 								unit={"points"}
 								maxY={maxY}
 								minY={minY}
 								lineType="monotone"
 								sensor={sensor}
 								headerRight={
-									<Button
-										size="sm"
-										variant="outline"
+									<ExportButton
+										title={t(($) => $.common.exportAsPdf)}
 										onClick={() =>
 											exportToPDF(
 												chartContainerId,
@@ -124,9 +120,7 @@ export default function Vibration() {
 												`Vibration Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
 											)
 										}
-									>
-										{t(($) => $.common.exportAsPdf)}
-									</Button>
+									/>
 								}
 							>
 								<ThresholdLine y={vibrationThreshold.danger} dangerLevel="danger" />
