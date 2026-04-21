@@ -146,12 +146,15 @@ export function TrendLineChart({
 				<Legend
 					content={() => (
 						<div className="mt-2 flex flex-col gap-3" style={{ marginLeft: Y_AXIS_WIDTH }}>
-							<SensorLegend
-								items={seriesDefinitions.map((serie) => ({
-									label: getSeriesLabel(serie.sensor, serie.sensorField, t),
-									color: serie.color,
-								}))}
-							/>
+							{/* Only show sensor legend if there are multiple sensors or fields */}
+							{!isSingleSeries && (
+								<SensorLegend
+									items={seriesDefinitions.map((serie) => ({
+										label: getSeriesLabel(serie.sensor, serie.sensorField, t),
+										color: serie.color,
+									}))}
+								/>
+							)}
 							<ThresholdLegend
 								items={[
 									{
