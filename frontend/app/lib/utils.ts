@@ -176,6 +176,9 @@ export function getHourDomain(
 	const minHours = dates.map((d) => convertUtcHourToLocalHour(minHourUtc, d));
 	const maxHours = dates.map((d) => convertUtcHourToLocalHour(maxHourUtc, d));
 
+	// maxHour in day views are non-inclusive, meaning if the last data point is 14:30,
+	// maxHour needs to be at least 15 to include that data point in the chart. While week and month views are inclusive.
+	// We add an additional hour of padding to ensure that the data doesn't look cut off
 	const minHourPadding = 1;
 	const maxHourPadding = viewForPadding === "day" ? 2 : 1;
 
