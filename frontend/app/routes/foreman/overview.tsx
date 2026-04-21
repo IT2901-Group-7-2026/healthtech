@@ -2,7 +2,7 @@
 
 import { DailyNotes } from "@/components/daily-notes.js";
 import { DatePicker } from "@/components/date-picker";
-import { SensorTableCell } from "@/components/sensor-table-cell";
+import { OperatorExposureStatusTable } from "@/components/operator-exposure-status-table";
 import { Card } from "@/components/ui/card";
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -172,7 +172,7 @@ export default function ForemanOverview() {
 													{t(($) => $.foremanDashboard.team.noMembersFound)}
 												</div>
 											) : (
-												<SensorTableCell
+												<OperatorExposureStatusTable
 													data={subordinates}
 													setSelectedUserId={(id) => setSelectedUserId(id)}
 													setSensor={(s) => setSensor(s as Sensor)}
