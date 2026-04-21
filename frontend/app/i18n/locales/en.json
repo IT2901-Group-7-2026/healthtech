@@ -306,7 +306,8 @@
   "share": {
     "hygienist": {
       "button": "Share data with hygienist",
-      "confirmation": "Monthly data shared ✓"
+      "confirmation": "Monthly data shared ✓",
+      "shareData": "Share data"
     }
   },
   "viewPicker": {

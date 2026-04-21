@@ -307,7 +307,8 @@
   "share": {
     "hygienist": {
       "button": "Del data med hygieniker",
-      "confirmation": "Månedlige data delt ✓"
+      "confirmation": "Månedlige data delt ✓",
+      "shareData": "Del data"
     }
   },
   "viewPicker": {

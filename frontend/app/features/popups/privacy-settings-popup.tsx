@@ -70,6 +70,7 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 	const [fromCalendarOpen, setFromCalendarOpen] = useState(false);
 	const [toCalendarOpen, setToCalendarOpen] = useState(false);
 	const [deleteText, setDeleteText] = useState(false);
+	const [showShareDataConfirmationMessage, setShowShareDataConfirmationMessage] = useState(false);
 
 	return (
 		<BasePopup title={title} open={open} relevantDate={null} onClose={onClose}>
@@ -77,6 +78,32 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 
 			<div className="flex flex-col gap-3 text-sm md:px-0 md:pb-1">
 				<div className="flex flex-col gap-2">
+					<p className="label text-muted-foreground">{t(($) => $.share.hygienist.button)}</p>
+					<Card className="p-3">
+						<div>
+							<Button
+								className=""
+								variant="outline"
+								onClick={() => {
+									setShowShareDataConfirmationMessage(true);
+
+									setTimeout(() => {
+										setShowShareDataConfirmationMessage(false);
+									}, 5000);
+								}}
+							>
+								{t(($) => $.share.hygienist.button)}
+							</Button>
+							<div className="relative mt-4 h-5">
+								<p
+									className={`absolute inset-0 text-xs text-green-700${showShareDataConfirmationMessage ? "visible opacity-100" : "invisible opacity-0"}
+										`}
+								>
+									{t(($) => $.share.hygienist.confirmation)}
+								</p>
+							</div>
+						</div>
+					</Card>
 					<p className="label text-muted-foreground">{t(($) => $.profile.deletePersonalInformation)}</p>
 					<Card className="p-3">
 						<Form {...form}>
