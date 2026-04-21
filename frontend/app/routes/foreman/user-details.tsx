@@ -8,6 +8,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { GaugeChart } from "@/components/ui/gauge-chart";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DateContext } from "@/features/date-picker/use-date";
+import { DayWidget } from "@/features/day-widget/day-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
 import {
@@ -33,7 +34,6 @@ import { mapOverviewBucketsToChartRows } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { DayWidget } from "@/features/day-widget/day-widget";
 import { addDays, endOfDay, setHours, startOfDay, subDays } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { type ReactNode, useId } from "react";
