@@ -193,6 +193,10 @@ function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSu
 	}
 
 	return (
+		<div className="flex flex-col gap-4">
+			<div className="text-2xl text-white font-extralight">
+				{t(($) => $.foremanDashboard.overview.sensor)}
+			</div>
 		<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
 			{sensors.map((sensorType: Sensor) => (
 				<PieChartCard
@@ -219,6 +223,7 @@ function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSu
 					sensorType={sensorType}
 				/>
 			))}
+		</div>
 		</div>
 	);
 }

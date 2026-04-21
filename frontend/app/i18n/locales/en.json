@@ -206,6 +206,7 @@
       "pieChart": {
         "noData": "No data found for this date"
       },
+      "sensor": "Sensors",
       "statCards": {
         "danger": {
           "label": "Above limit value",
