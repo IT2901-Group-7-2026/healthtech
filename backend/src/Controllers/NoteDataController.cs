@@ -76,13 +76,13 @@ public class NoteDataController(INoteDataService noteDataService) : ControllerBa
 
 	[HttpDelete("{userId}")]
 	public async Task<ActionResult<NoteDataDto>> DeleteNoteAsync(
-		[FromBody] NoteDataDto request,
+		[FromBody] DateTimeOffset time,
 		[FromRoute] Guid userId
 	)
 	{
 		try
 		{
-			NoteData? note = await _noteDataService.DeleteNoteAsync(request, userId);
+			NoteData? note = await _noteDataService.DeleteNoteAsync(time, userId);
 
 			if (note == null)
 			{

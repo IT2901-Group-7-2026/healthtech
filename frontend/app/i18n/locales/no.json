@@ -116,15 +116,15 @@
     "warning": "Over tiltaksverdi",
     "safe": "Innenfor trygge grenseverdier"
   },
-  "dailyNotes": {
-    "viewTitle": "Dine notater",
-    "writeHere": "Logg observasjoner, tiltak eller avvik…",
-    "edit": "Rediger",
-    "save": "Lagre",
-    "day": "dagen",
-    "week": "uken",
-    "month": "måneden",
-    "emptyState": "Ingen notater for denne {{view}}. Velg en dag for å legge til notater."
+  "notes": {
+    "interactive": {
+      "title": "Notat",
+      "placeholder": "Logg observasjoner, tiltak eller avvik…"
+    },
+    "list": {
+      "title": "Dine notater",
+      "noNotes": "Ingen notater for denne {{view}}. Se en dag for å legge til notater."
+    }
   },
   "table": {
     "numberOfRowsSelected": "{{selected}} av {{total}} rader valgt",

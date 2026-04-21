@@ -171,6 +171,21 @@ export const createNote = async ({ note, userId }: { note: Note; userId: string 
 	return NoteSchema.parseAsync(json);
 };
 
+export const deleteNote = async ({ time, userId }: { time: TZDate; userId: string }) => {
+	const res = await fetchWithUserId(`notes/${userId}`, {
+		method: "DELETE",
+		body: JSON.stringify(time),
+	});
+
+	if (!res.ok) {
+		const errorText = await res.text();
+		throw new Error(`Failed to delete note: ${errorText}`);
+	}
+
+	const json = await res.json();
+	return NoteSchema.parseAsync(json);
+};
+
 export const fetchSubordinatesQueryOptions = (userId: string, startTime?: TZDate, endTime?: TZDate) => {
 	const params = new URLSearchParams();
 	if (startTime) {

@@ -1,7 +1,7 @@
-import { DailyNotes } from "@/components/daily-notes";
 import { ExposureLineChartCard } from "@/components/exposure-line-chart/exposure-line-chart-card";
 import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { ExposureSlider } from "@/components/exposure-slider";
+import { NotesCard } from "@/components/notes-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.js";
@@ -126,7 +126,7 @@ export default function OperatorLiveView() {
 		>
 			<aside className="flex flex-col gap-4 md:col-start-1">
 				<SecurityRegulationsCard />
-				<DailyNotes />
+				<NotesCard />
 			</aside>
 
 			<div className="flex min-w-0 flex-col gap-4 md:col-start-2">

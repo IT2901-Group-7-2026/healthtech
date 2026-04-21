@@ -1,5 +1,5 @@
-import { DailyNotes } from "@/components/daily-notes";
 import { DatePicker } from "@/components/date-picker";
+import { NotesCard } from "@/components/notes-card";
 import { SensorIcon } from "@/components/sensor-icon";
 import { Badge } from "@/components/ui/badge";
 import { useDate } from "@/features/date-picker/use-date";
@@ -74,7 +74,7 @@ export default function SensorLayout() {
 			</div>
 
 			<aside className="col-start-1 row-start-2 flex flex-col gap-4">
-				<DailyNotes />
+				<NotesCard />
 			</aside>
 
 			<article className="col-start-2 row-start-2 flex flex-col gap-4">

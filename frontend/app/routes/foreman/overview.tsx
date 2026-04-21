@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { DailyNotes } from "@/components/daily-notes.js";
 import { DatePicker } from "@/components/date-picker";
+import { NotesCard } from "@/components/notes-card";
 import { OperatorExposureStatusTable } from "@/components/operator-exposure-status-table";
 import { Card } from "@/components/ui/card";
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
@@ -124,7 +124,7 @@ export default function ForemanOverview() {
 			<div className="flex w-full flex-row gap-6">
 				<aside className="flex flex-col gap-6 md:w-1/5">
 					<TeamSummary subordinateCount={subordinateCount} />
-					<DailyNotes />
+					<NotesCard />
 				</aside>
 
 				<div

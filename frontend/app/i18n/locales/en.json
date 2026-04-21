@@ -115,15 +115,15 @@
     "warning": "Above action value",
     "safe": "Within safe limits"
   },
-  "dailyNotes": {
-    "viewTitle": "Your notes",
-    "writeHere": "Log observations, actions taken, or anomalies…",
-    "edit": "Edit",
-    "save": "Save",
-    "day": "day",
-    "week": "week",
-    "month": "month",
-    "emptyState": "No notes for this {{view}}. Select a day to add a note."
+  "notes": {
+    "interactive": {
+      "title": "Note",
+      "placeholder": "Log observations, actions taken, or anomalies…"
+    },
+    "list": {
+      "title": "Your notes",
+      "noNotes": "No notes for this {{view}}. View a day to add notes."
+    }
   },
   "table": {
     "numberOfRowsSelected": "{{selected}} of {{total}} rows selected",
