@@ -1,15 +1,14 @@
 import { TrendLineChart } from "@/components/exposure-trend-line-chart/trend-line-chart";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { sensorQueryOptions } from "@/lib/api";
 import type { SensorTypeField } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { SensorUnit } from "@/lib/sensors";
 import { computeYAxisRange } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
 import { useDate } from "../date-picker/use-date";
 import { useUser } from "../user/user-context";
 import { useView } from "../views/use-view";
+import { BaseTrendLineChartCard } from "./base-trend-line-chart-card";
 import { toWeeklyMax } from "./trend-line-chart-utils";
 
 interface Props {
@@ -20,7 +19,6 @@ export function DustTrendLineChartCard({ unit }: Props) {
 	const { date } = useDate();
 	const { view } = useView();
 	const { user } = useUser();
-	const { t } = useTranslation();
 
 	const sensor = "dust";
 
@@ -66,45 +64,36 @@ export function DustTrendLineChartCard({ unit }: Props) {
 	const maxY = maxValue > baseMaxY ? computeYAxisRange(allData).maxY : baseMaxY;
 
 	return (
-		<Card>
-			<CardHeader>
-				<CardTitle>
-					{t(($) => $.exposureTrendLineChartCard.title, {
-						view: t(($) => $.views[view]).toLowerCase(),
-					})}
-				</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<TrendLineChart
-					selectedDate={date}
-					granularity={granularity}
-					unit={unit}
-					minY={minY}
-					maxY={maxY}
-					series={[
-						{
-							data: pm1Data,
-							sensor,
-							sensorField: "pm1_twa",
-						},
-						{
-							data: pm4Data,
-							sensor,
-							sensorField: "pm4_twa",
-						},
-						{
-							data: pm25Data,
-							sensor,
-							sensorField: "pm25_twa",
-						},
-						{
-							data: pm10Data,
-							sensor,
-							sensorField: "pm10_twa",
-						},
-					]}
-				/>
-			</CardContent>
-		</Card>
+		<BaseTrendLineChartCard>
+			<TrendLineChart
+				selectedDate={date}
+				granularity={granularity}
+				unit={unit}
+				minY={minY}
+				maxY={maxY}
+				series={[
+					{
+						data: pm1Data,
+						sensor,
+						sensorField: "pm1_twa",
+					},
+					{
+						data: pm4Data,
+						sensor,
+						sensorField: "pm4_twa",
+					},
+					{
+						data: pm25Data,
+						sensor,
+						sensorField: "pm25_twa",
+					},
+					{
+						data: pm10Data,
+						sensor,
+						sensorField: "pm10_twa",
+					},
+				]}
+			/>
+		</BaseTrendLineChartCard>
 	);
 }
