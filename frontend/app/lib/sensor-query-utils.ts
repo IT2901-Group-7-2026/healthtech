@@ -110,6 +110,7 @@ export function buildSensorOverviewQuery(
 	selectedDate: TZDate,
 	options?: {
 		usePeakAggregation?: boolean;
+		granularity?: GranularityKey;
 	},
 ): SensorOverviewRequestDto {
 	return Object.fromEntries(
@@ -118,6 +119,7 @@ export function buildSensorOverviewQuery(
 			buildSensorQuery(sensor, view, selectedDate, {
 				isOverview: true,
 				usePeakAggregation: options?.usePeakAggregation,
+				granularity: options?.granularity,
 			}),
 		]),
 	);
