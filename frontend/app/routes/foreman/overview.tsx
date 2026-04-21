@@ -194,36 +194,34 @@ function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSu
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="text-2xl text-white font-extralight">
-				{t(($) => $.foremanDashboard.overview.sensor)}
+			<div className="font-extralight text-2xl text-white">{t(($) => $.foremanDashboard.overview.sensor)}</div>
+			<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
+				{sensors.map((sensorType: Sensor) => (
+					<PieChartCard
+						data={{
+							safe: {
+								name: "Safe",
+								value: thresholdSummary[sensorType].safe,
+								label: t(($) => $.foremanDashboard.overview.statCards.safe.label),
+							},
+							warning: {
+								name: "Warning",
+								value: thresholdSummary[sensorType].warning,
+								label: t(($) => $.foremanDashboard.overview.statCards.warning.label),
+							},
+							danger: {
+								name: "Danger",
+								value: thresholdSummary[sensorType].danger,
+								label: t(($) => $.foremanDashboard.overview.statCards.danger.label),
+							},
+						}}
+						label={t(($) => $.sensors[sensorType])}
+						to={`?sensor=${sensorType}`}
+						key={sensorType}
+						sensorType={sensorType}
+					/>
+				))}
 			</div>
-		<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
-			{sensors.map((sensorType: Sensor) => (
-				<PieChartCard
-					data={{
-						safe: {
-							name: "Safe",
-							value: thresholdSummary[sensorType].safe,
-							label: t(($) => $.foremanDashboard.overview.statCards.safe.label),
-						},
-						warning: {
-							name: "Warning",
-							value: thresholdSummary[sensorType].warning,
-							label: t(($) => $.foremanDashboard.overview.statCards.warning.label),
-						},
-						danger: {
-							name: "Danger",
-							value: thresholdSummary[sensorType].danger,
-							label: t(($) => $.foremanDashboard.overview.statCards.danger.label),
-						},
-					}}
-					label={t(($) => $.sensors[sensorType])}
-					to={`?sensor=${sensorType}`}
-					key={sensorType}
-					sensorType={sensorType}
-				/>
-			))}
-		</div>
 		</div>
 	);
 }
