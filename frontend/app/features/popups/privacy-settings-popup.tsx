@@ -94,9 +94,9 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 							>
 								{t(($) => $.share.hygienist.button)}
 							</Button>
-							<div className="relative mt-4 h-5">
+							<div className="relative mt-2 h-2">
 								<p
-									className={`absolute inset-0 text-xs text-green-700${showShareDataConfirmationMessage ? "visible opacity-100" : "invisible opacity-0"}
+									className={`absolute inset-0 text-green-700 text-xs ${showShareDataConfirmationMessage ? "visible opacity-100" : "invisible opacity-0"}
 										`}
 								>
 									{t(($) => $.share.hygienist.confirmation)}
