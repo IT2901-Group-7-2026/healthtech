@@ -6,7 +6,8 @@
   "common": {
     "loading": "Laster inn data...",
     "error": "Noe gikk galt under henting av sensordata.",
-    "noData": "Ingen eksponeringsdata funnet for denne dagen",
+    "noData": "Ingen data",
+    "noDataForDay": "Ingen eksponeringsdata funnet for denne dagen",
     "noOptions": "Ingen alternativer tilgjengelig",
     "today": "I dag",
     "total": "Total eksponering",
@@ -98,24 +99,17 @@
     }
   },
   "exposureSummary": {
-    "title": {
-      "day": "Eksponering",
-      "week": "Eksponering for uke {{week}}",
-      "month": "Eksponering for {{month}}"
+    "title": "Eksponering",
+    "aggregated": {
+      "safe": "innenfor trygge grenseverdier",
+      "warning": "over tiltaksverdi",
+      "danger": "over grenseverdi"
     },
-    "greenText": "innenfor trygge grenseverdier",
-    "greenHourText": "Timer innenfor trygge grenseverdier",
-    "greenDayText": "Dager innenfor trygge grenseverdier",
-    "orangeText": "over tiltaksverdi",
-    "orangeHourText": "Timer over tiltaksverdi",
-    "orangeDayText": "Dager over tiltaksverdi",
-    "redText": "over grenseverdi",
-    "redHourText": "Timer over grenseverdi",
-    "redDayText": "Dager over grenseverdi",
-    "dangerSmiley": "Over grenseverdi, høy eksponering",
-    "safeSmiley": "Innenfor trygge grenseverdier",
-    "warningSmiley": "Over tiltaksverdi, vær forsiktig",
-    "noData": "Ingen data"
+    "status": {
+      "danger": "Over grenseverdi",
+      "safe": "Over tiltaksverdi",
+      "warning": "Under grenseverdi"
+    }
   },
   "lineChart": {
     "danger": "Over grenseverdi",

@@ -1,12 +1,18 @@
+import { hoursToMinutes } from "date-fns";
 import type { DangerLevel } from "./danger-levels";
-import type { SensorDto, SensorOverviewBucketDto } from "./dto";
+import type { GranularityKey, SensorDto, SensorOverviewBucketDto } from "./dto";
 import { type Sensor, sensors } from "./sensors";
 import type { OverviewChartRow, SummaryCounts, SummaryLevelCounts, TimeBucketStatus } from "./time-bucket-types";
 
+interface CalculateSummaryCountsOptions {
+	peakAggregation: boolean;
+	granularity: GranularityKey;
+	sensor: Sensor | null;
+}
+
 export function calculateSummaryCounts(
 	data: Array<SensorDto> | Array<SensorOverviewBucketDto>,
-	sensor?: Sensor,
-	usePeakDangerLevel?: boolean,
+	{ sensor, peakAggregation, granularity }: CalculateSummaryCountsOptions,
 ): SummaryCounts {
 	const summary: SummaryCounts = {
 		...createEmptyLevelCounts(),
@@ -19,16 +25,20 @@ export function calculateSummaryCounts(
 
 	for (const point of data) {
 		const dangerLevel =
-			"peakDangerLevel" in point ? getDangerLevelFromData(point, usePeakDangerLevel) : point.dangerLevel;
+			"peakDangerLevel" in point ? getDangerLevelFromData(point, peakAggregation) : point.dangerLevel;
 
-		incrementLevelCount(summary, dangerLevel);
+		incrementLevelCount(summary, dangerLevel, granularity);
 
 		if ("sensorDangerLevels" in point) {
 			for (const currentSensor of sensors) {
-				incrementLevelCount(summary.bySensor[currentSensor], point.sensorDangerLevels[currentSensor]);
+				incrementLevelCount(
+					summary.bySensor[currentSensor],
+					point.sensorDangerLevels[currentSensor],
+					granularity,
+				);
 			}
 		} else if (sensor) {
-			incrementLevelCount(summary.bySensor[sensor], dangerLevel);
+			incrementLevelCount(summary.bySensor[sensor], dangerLevel, granularity);
 		}
 	}
 
@@ -37,30 +47,44 @@ export function calculateSummaryCounts(
 
 function createEmptyLevelCounts(): SummaryLevelCounts {
 	return {
-		safeCount: 0,
-		warningCount: 0,
-		dangerCount: 0,
+		safeMinutes: 0,
+		warningMinutes: 0,
+		dangerMinutes: 0,
 	};
 }
 
-function incrementLevelCount(counts: SummaryLevelCounts, level: DangerLevel | null | undefined) {
+const HOURS_IN_DAY = 24;
+
+function incrementLevelCount(
+	counts: SummaryLevelCounts,
+	level: DangerLevel | null | undefined,
+	granularity: GranularityKey,
+) {
+	let value = 1;
+
+	if (granularity === "hour") {
+		value = hoursToMinutes(1);
+	} else if (granularity === "day") {
+		value = hoursToMinutes(1) * HOURS_IN_DAY;
+	}
+
 	switch (level) {
 		case "safe":
-			counts.safeCount += 1;
+			counts.safeMinutes += value;
 			break;
 		case "warning":
-			counts.warningCount += 1;
+			counts.warningMinutes += value;
 			break;
 		case "danger":
-			counts.dangerCount += 1;
+			counts.dangerMinutes += value;
 			break;
 		default:
 			break;
 	}
 }
 
-export function getDangerLevelFromData(data: SensorDto, usePeakDangerLevel?: boolean): DangerLevel {
-	if (usePeakDangerLevel) {
+export function getDangerLevelFromData(data: SensorDto, peakAggregation: boolean): DangerLevel {
+	if (peakAggregation) {
 		return data.peakDangerLevel ?? data.dangerLevel;
 	}
 	return data.dangerLevel;
@@ -69,10 +93,10 @@ export function getDangerLevelFromData(data: SensorDto, usePeakDangerLevel?: boo
 export function mapSensorDataToTimeBucketStatuses(
 	data: Array<SensorDto>,
 	sensor: Sensor,
-	usePeakDangerLevel?: boolean,
+	peakAggregation: boolean,
 ): Array<TimeBucketStatus> {
 	return data.map((point) => {
-		const dangerLevel = getDangerLevelFromData(point, usePeakDangerLevel);
+		const dangerLevel = getDangerLevelFromData(point, peakAggregation);
 
 		return {
 			time: point.time,

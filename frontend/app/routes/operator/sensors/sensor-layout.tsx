@@ -1,90 +1,33 @@
 import { DatePicker } from "@/components/date-picker";
 import { NotesCard } from "@/components/notes-card";
 import { SensorIcon } from "@/components/sensor-icon";
-import { Summary } from "@/components/summary";
 import { Badge } from "@/components/ui/badge";
 import { useDate } from "@/features/date-picker/use-date";
-import { sensors } from "@/features/sensor-picker/sensors";
-import { useUser } from "@/features/user/user-context";
+import { ExposureSummary } from "@/features/summary-card";
 import { useView } from "@/features/views/use-view";
 import { ViewPicker } from "@/features/views/view-picker";
 import { getViewIcon } from "@/features/views/views";
 import { useFormatDate } from "@/hooks/use-format-date";
 import type { TranslateFn } from "@/i18n/config";
-import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
-import { type Aggregation, Aggregations } from "@/lib/dto";
-import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
-import { type Sensor, toSensor } from "@/lib/sensors";
-import { calculateSummaryCounts } from "@/lib/time-bucket-utils";
+import { toSensor } from "@/lib/sensors";
 import type { View } from "@/lib/views";
 import { Card } from "@/ui/card";
 import type { TZDate } from "@date-fns/tz";
-import { useQueries } from "@tanstack/react-query";
 import { getISOWeek } from "date-fns";
-import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
 import { Outlet, useLocation } from "react-router";
-
-function getGranularity(view: View, sensor: Sensor | null) {
-	if (!sensor) {
-		return view === "month" ? "day" : "hour";
-	}
-
-	// Because vibration data is cumulative and has few data points, we never fetch it with minute granularity
-	// TODO: When we take vibration disconnectedOn into account we could fetch it with minute granularity for the day view as well
-	if (sensor === "vibration") {
-		return view === "month" ? "day" : "hour";
-	}
-
-	return view === "month" ? "day" : view === "week" ? "hour" : "minute";
-}
 
 export default function SensorLayout() {
 	const { date, selection, setDate } = useDate();
 	const { pathname } = useLocation();
 	const { view } = useView();
-	const { user } = useUser();
 	const { t, i18n } = useTranslation();
 	const formatDate = useFormatDate();
-
-	const parseAsAggregation = parseAsStringLiteral(Aggregations);
-	const [aggregation] = useQueryState<Aggregation>("aggregation", parseAsAggregation.withDefault("average"));
-
-	const usePeakAggregation = aggregation === "peak";
 
 	// pathname is "/operator" or "/operator/<sensor>"
 	const sensor = toSensor(pathname.split("/").at(-1) ?? "");
 
-	const sensorQuery = sensor === null ? null : buildSensorQuery(sensor, view, date, { usePeakAggregation });
-	const sensorQueryEnabled = sensor !== null && sensorQuery !== null;
-
-	const granularity = getGranularity(view, sensor);
-
-	const [sensorResponse, allSensorsResponse] = useQueries({
-		queries: [
-			sensorQueryOptions({
-				sensor: sensor as NonNullable<typeof sensor>,
-				query: buildSensorQuery(sensor as NonNullable<typeof sensor>, view, date, {
-					granularity,
-				}),
-				enabled: sensorQueryEnabled,
-				userId: user.id,
-			}),
-			sensorOverviewQueryOptions({
-				query: buildSensorOverviewQuery([...sensors], view, date, {
-					usePeakAggregation,
-				}),
-				userId: user.id,
-				enabled: !sensorQueryEnabled,
-			}),
-		],
-	});
-
-	const response = sensor === null ? allSensorsResponse : sensorResponse;
-
 	const ViewIcon = getViewIcon(view);
-
-	const summary = calculateSummaryCounts(response.data?.data ?? [], sensor ?? undefined, usePeakAggregation);
 
 	return (
 		<div
@@ -131,16 +74,11 @@ export default function SensorLayout() {
 			</div>
 
 			<aside className="col-start-1 row-start-2 flex flex-col gap-4">
-				<Summary
-					exposureType={sensor ?? "all"}
-					view={view}
-					data={summary}
-					mode={sensor === null ? "sensor" : "count"}
-				/>
 				<NotesCard />
 			</aside>
 
 			<article className="col-start-2 row-start-2 flex flex-col gap-4">
+				<ExposureSummary exposureType={sensor ?? "all"} />
 				<Outlet />
 			</article>
 
