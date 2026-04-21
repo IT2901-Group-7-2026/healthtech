@@ -115,9 +115,11 @@ function getLinks(t: TranslateFn, role: User["role"] | null): Array<{ to: To; la
 
 export default function Layout() {
 	const { t, i18n } = useTranslation();
-	const { visible, openPopup, closePopup } = usePopup();
-
-	const openNotificationPopup = () => openPopup("notifications");
+	const {
+		visible: notificationPopupVisible,
+		openPopup: openNotificationPopup,
+		closePopup: closeNotificationPopup,
+	} = usePopup();
 
 	const { user, setUser, isLoading: isUserLoading } = useUser();
 	const { data: users } = useQuery(usersQueryOptions());
@@ -205,8 +207,8 @@ export default function Layout() {
 					</header>
 
 					<BellPopup
-						open={visible === "notifications"}
-						onClose={closePopup}
+						open={notificationPopupVisible}
+						onClose={closeNotificationPopup}
 						title={t(($) => $.common.notifications)}
 					/>
 
@@ -232,10 +234,14 @@ function UserDropdown({
 }) {
 	const { t } = useTranslation();
 	const { theme, setTheme } = useTheme();
-	const { visible, openPopup, closePopup } = usePopup();
 
-	const openProfile = () => openPopup("profile");
-	const openPrivacySettings = () => openPopup("privacySettings");
+	const { visible: profilePopupVisible, openPopup: openProfilePopup, closePopup: closeProfilePopup } = usePopup();
+
+	const {
+		visible: privacySettingsPopupVisible,
+		openPopup: openPrivacySettingsPopup,
+		closePopup: closePrivacySettingsPopup,
+	} = usePopup();
 
 	if (!user) return null;
 
@@ -258,7 +264,7 @@ function UserDropdown({
 
 				<DropdownMenuContent align="end" className="" sideOffset={10}>
 					{/* My account */}
-					<DropdownMenuItem onSelect={openProfile}>
+					<DropdownMenuItem onSelect={openProfilePopup}>
 						<UserIcon className="size-4" />
 						<span>{t(($) => $.profile.title)}</span>
 					</DropdownMenuItem>
@@ -266,7 +272,7 @@ function UserDropdown({
 					<DropdownMenuSeparator />
 
 					{/* Privacy settings */}
-					<DropdownMenuItem onSelect={openPrivacySettings}>
+					<DropdownMenuItem onSelect={openPrivacySettingsPopup}>
 						<HatGlassesIcon className="size-4" />
 						<span>{t(($) => $.profile.privacySettings)}</span>
 					</DropdownMenuItem>
@@ -397,8 +403,8 @@ function UserDropdown({
 			<ProfilePopup
 				user={user}
 				avatarSrc="/userimage.png"
-				open={visible === "profile"}
-				onClose={closePopup}
+				open={profilePopupVisible}
+				onClose={closeProfilePopup}
 				users={users}
 				setUser={setUser}
 			/>
@@ -406,8 +412,8 @@ function UserDropdown({
 			<PrivacySettingsPopup
 				user={user}
 				avatarSrc="/userimage.png"
-				open={visible === "privacySettings"}
-				onClose={closePopup}
+				open={privacySettingsPopupVisible}
+				onClose={closePrivacySettingsPopup}
 				users={users}
 				setUser={setUser}
 			/>

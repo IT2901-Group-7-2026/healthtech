@@ -1,11 +1,9 @@
 import { useCallback, useState } from "react";
 
-type PopupToShow = "notifications" | "profile" | "privacySettings" | null;
-
 export function usePopup() {
-	const [visible, setVisible] = useState<PopupToShow>(null);
-	const closePopup = useCallback(() => setVisible(null), []);
-	const openPopup = useCallback((popup: PopupToShow) => setVisible(popup), []);
+	const [visible, setVisible] = useState(false);
+	const closePopup = useCallback(() => setVisible(false), []);
+	const openPopup = useCallback(() => setVisible(true), []);
 	//const togglePopup = useCallback(() => setVisible((prevState) => !prevState),[]);
 
 	return { visible, closePopup, openPopup };
