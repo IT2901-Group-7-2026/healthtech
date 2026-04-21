@@ -64,6 +64,11 @@ namespace backend.Migrations
                     b.Property<Guid>("LocationId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
@@ -72,11 +77,6 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -84,7 +84,7 @@ namespace backend.Migrations
 
                     b.HasIndex("LocationId");
 
-                    b.HasIndex("Username")
+                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("User");

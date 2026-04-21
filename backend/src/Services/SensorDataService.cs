@@ -18,6 +18,10 @@ public interface ISensorDataService
 		Dictionary<SensorType, SensorDataRequestDto> requests,
 		Guid? userId
 	);
+	Task<HourDomainDto> GetHourDomainForWeekAsync(
+		Dictionary<SensorType, SensorDataRequestDto> requests,
+		Guid? userId
+	);
 }
 
 public class SensorDataService(AppDbContext context, SignedInUserContext signedInUserContext)
@@ -50,11 +54,7 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 			startTime.UtcDateTime,
 			_signedInUserContext?.User?.Role
 		);
-
-		if (request.ClampEndTimeToNow)
-		{
-			endTime = TimeWindowUtils.ClampRequestEndDateToCurrentDateTime(endTime.UtcDateTime);
-		}
+		endTime = TimeWindowUtils.ClampRequestEndDateToCurrentDateTime(endTime.UtcDateTime);
 
 		string avgColumnName = SensorUtils.GetAggregateColumnName(
 			AggregationFunction.Avg,
@@ -139,6 +139,14 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 
 		foreach (var (sensorType, request) in requests)
 		{
+			DateTime startTime = AuthorizationUtils.ClampRequestStartDateForRole(
+				request.StartTime.UtcDateTime,
+				_signedInUserContext?.User?.Role
+			);
+			DateTime endTime = TimeWindowUtils.ClampRequestEndDateToCurrentDateTime(
+				request.EndTime.UtcDateTime
+			);
+
 			IEnumerable<SensorDataDto> sensorDataList = await GetAggregatedDataAsync(
 				request,
 				userId,
@@ -168,5 +176,73 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 		}
 
 		return combinedData.Values.OrderBy(bucket => bucket.Time).ToList();
+	}
+
+	public async Task<HourDomainDto> GetHourDomainForWeekAsync(
+		Dictionary<SensorType, SensorDataRequestDto> requests,
+		Guid? userId
+	)
+	{
+		HashSet<DateTime> timestamps = [];
+
+		foreach (var (sensorType, request) in requests)
+		{
+			// We always calculate domain based on the hourly data for the whole week.
+			DateTimeOffset weekStart = GetWeekStart(request.StartTime.UtcDateTime);
+			DateTimeOffset weekEnd = GetWeekEnd(request.StartTime.UtcDateTime);
+
+			DateTime startTime = AuthorizationUtils.ClampRequestStartDateForRole(
+				request.StartTime.UtcDateTime,
+				_signedInUserContext?.User?.Role
+			);
+			DateTime endTime = TimeWindowUtils.ClampRequestEndDateToCurrentDateTime(
+				request.EndTime.UtcDateTime
+			);
+
+			var weekRequest = request with
+			{
+				StartTime = startTime,
+				EndTime = endTime,
+				Granularity = TimeGranularity.Hour,
+			};
+
+			var weekData = await GetAggregatedDataAsync(weekRequest, userId, sensorType);
+
+			foreach (var dataPoint in weekData)
+			{
+				timestamps.Add(dataPoint.Time);
+			}
+		}
+
+		return GetHourDomain(timestamps);
+	}
+
+	private HourDomainDto GetHourDomain(IEnumerable<DateTime> timestamps)
+	{
+		int minAllowedHour = 0;
+		int maxAllowedHour = 23;
+
+		if (!timestamps.Any())
+		{
+			return new HourDomainDto { MinHourUtc = minAllowedHour, MaxHourUtc = maxAllowedHour };
+		}
+
+		int minHour = timestamps.Min().Hour;
+		int maxHour = timestamps.Max().Hour;
+
+		return new HourDomainDto { MinHourUtc = minHour, MaxHourUtc = maxHour };
+	}
+
+	private static DateTimeOffset GetWeekStart(DateTime date)
+	{
+		var dayOfWeek = (int)date.DayOfWeek;
+		var diff = date.Date.AddDays(-dayOfWeek);
+		return new DateTimeOffset(diff, TimeSpan.Zero);
+	}
+
+	private static DateTimeOffset GetWeekEnd(DateTime date)
+	{
+		var weekStart = GetWeekStart(date);
+		return weekStart.AddDays(7).AddTicks(-1);
 	}
 }

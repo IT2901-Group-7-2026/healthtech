@@ -1,13 +1,15 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useDate } from "@/features/date-picker/use-date";
 import { sensors } from "@/features/sensor-picker/sensors";
 import { useFormatDate } from "@/hooks/use-format-date";
+import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels";
 import type { OverviewChartRow } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils.js";
 import { setHours, startOfDay } from "date-fns";
 import { Fragment, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, type To } from "react-router";
+import { DangerLevelDots } from "./danger-level-dots.js";
 import { SensorIcon } from "./sensor-icon.js";
 
 const CELL_SIZE = 10;
@@ -15,36 +17,27 @@ const CELL_SIZE_CN = "size-10";
 
 const STICKY = "sticky left-0 z-10 bg-card pl-4";
 
-const getCellAppearance = (dangerLevel: string | null) => {
+const getCellAppearance = (dangerLevel: DangerLevel | null) => {
 	const baseClasses = cn(CELL_SIZE_CN, "block rounded-lg border transition-all");
 
-	const clickableClasses = "border-transparent hover:brightness-90 active:scale-[0.98] active:brightness-90";
+	const clickableClasses = "hover:brightness-90 active:scale-[0.98] active:brightness-90";
 
-	switch (dangerLevel) {
-		case "danger":
-			return {
-				className: cn(baseClasses, clickableClasses, "bg-danger text-danger-text"),
-				isClickable: true,
-			};
-		case "warning":
-			return {
-				className: cn(baseClasses, clickableClasses, "bg-warning text-warning-text"),
-				isClickable: true,
-			};
-		case "safe":
-			return {
-				className: cn(baseClasses, clickableClasses, "bg-safe text-safe-text"),
-				isClickable: true,
-			};
-		default:
-			return {
-				className: cn(
-					baseClasses,
-					"cursor-default border-muted-foreground/20 bg-card text-muted-foreground/50",
-				),
-				isClickable: false,
-			};
+	if (dangerLevel) {
+		return {
+			className: cn(
+				baseClasses,
+				clickableClasses,
+				dangerlevelStyles[dangerLevel].border,
+				dangerlevelStyles[dangerLevel].bgSubtle,
+			),
+			isClickable: true,
+		};
 	}
+
+	return {
+		className: cn(baseClasses, "cursor-default border-muted-foreground/20 bg-card text-muted-foreground/50"),
+		isClickable: false,
+	};
 };
 
 interface DailyBarChartProps {
@@ -97,10 +90,8 @@ export function DailyBarChart({ data, startHour = 0, endHour = 23, headerRight, 
 	);
 
 	return (
-		<Card className="px-0">
-			<CardHeader className="flex flex-row items-center justify-between px-4">
-				<div className="ml-auto">{headerRight}</div>
-			</CardHeader>
+		<Card className="relative px-0">
+			{headerRight && <div className="absolute top-2 right-2 z-10 flex items-center gap-2">{headerRight}</div>}
 
 			<CardContent>
 				<div className="min-w-0 overflow-x-auto">
@@ -160,9 +151,15 @@ export function DailyBarChart({ data, startHour = 0, endHour = 23, headerRight, 
 												key={`${sensor}-${localHour}`}
 												to={linkTarget}
 												title={`${timeLabel} - ${dangerLevel}`}
-												className={className}
+												className="relative"
 												aria-label={`View ${sensor} data for ${timeLabel}`}
-											/>
+											>
+												<div className={className} />
+												<DangerLevelDots
+													dangerLevel={dangerLevel ?? null}
+													className="absolute right-1 bottom-1"
+												/>
+											</Link>
 										);
 									})}
 								</Fragment>

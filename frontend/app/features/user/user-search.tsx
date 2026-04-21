@@ -31,13 +31,13 @@ export const UserSearch = <Multiple extends boolean = false>({
 			items={users}
 			// God knows why I have to explicitly type this one but not the other
 			itemToStringValue={(user: User) => user.id}
-			itemToStringLabel={(user) => user.username}
+			itemToStringLabel={(user) => user.name}
 		>
 			{props.multiple && props.value && Array.isArray(props.value) ? (
 				<ComboboxChips>
 					<ComboboxValue>
 						{props.value.map((item) => (
-							<ComboboxChip key={item.id}>{item.username}</ComboboxChip>
+							<ComboboxChip key={item.id}>{item.name}</ComboboxChip>
 						))}
 					</ComboboxValue>
 					<ComboboxChipsInput placeholder={placeholder} />
@@ -48,9 +48,9 @@ export const UserSearch = <Multiple extends boolean = false>({
 			<ComboboxContent>
 				<ComboboxEmpty>{emptyLabel}</ComboboxEmpty>
 				<ComboboxList>
-					{(user) => (
+					{(user: User) => (
 						<ComboboxItem key={user.id} value={user}>
-							{user.username}
+							{user.name}
 						</ComboboxItem>
 					)}
 				</ComboboxList>

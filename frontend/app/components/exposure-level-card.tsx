@@ -48,7 +48,7 @@ export function ExposureRiskCard({ users, sensor, dangerLevel, onUserClick }: Pr
 													sub.status[sensor]?.dangerLevel ?? "safe",
 												)}`}
 											/>
-											<span>{sub.username}</span>
+											<span>{sub.name}</span>
 										</div>
 									</TableCell>
 								</TableRow>

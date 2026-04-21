@@ -42,7 +42,7 @@ export function BasePopup({
 		<Dialog open={open} onOpenChange={onClose}>
 			<DialogContent className="w-full max-w-6xl">
 				<DialogHeader>
-					<DialogTitle className="font-bold text-xl">{title}</DialogTitle>
+					<DialogTitle>{title}</DialogTitle>
 				</DialogHeader>
 
 				{children}

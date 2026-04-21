@@ -1,12 +1,12 @@
 /** biome-ignore-all lint/correctness/noNestedComponentDefinitions: CustomDay is intentionally defined inside CalendarView for prop access. */
 
+import { DangerLevelDots } from "@/components/danger-level-dots";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Card } from "@/components/ui/card";
 import { DialogDescription } from "@/components/ui/dialog";
 import { CalendarPopup, type CalendarPopupData } from "@/features/popups/calendar-popup";
 import { getLocale, TIMEZONE } from "@/i18n/locale";
-import type { DangerLevel } from "@/lib/danger-levels";
+import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
 import type { Aggregation } from "@/lib/dto";
 import type { TimeBucketStatus } from "@/lib/time-bucket-types";
@@ -65,10 +65,9 @@ export function CalendarWidget({ selectedDay, data, selectedAggregation }: Calen
 
 	return (
 		<>
-			<Card className="relative mr-auto w-full max-w-2xl">
-				<div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-1">
+			<div className="mr-auto w-full max-w-4xl">
+				<div className="flex justify-end pb-4">
 					<Button
-						size="xs"
 						variant="outline"
 						onClick={() => {
 							setShowShareDataConfirmationMessage(true);
@@ -102,15 +101,18 @@ export function CalendarWidget({ selectedDay, data, selectedAggregation }: Calen
 						warning: warningDays,
 						danger: dangerDays,
 					}}
-					className="w-full bg-transparent font-bold text-foreground [--cell-size:2.25rem] sm:[--cell-size:2.75rem] md:[--cell-size:3rem]"
+					className="w-full bg-transparent px-2 py-0 text-foreground"
 					classNames={{
 						week: "mt-3 gap-3 flex w-full",
+						month_caption: "hidden",
+						weekdays: "flex gap-3",
+						day: "max-h-20 relative w-full h-full p-0 text-center [&:first-child[data-selected=true]_button]:rounded-l-md [&:last-child[data-selected=true]_button]:rounded-r-md group/day aspect-square select-none",
 					}}
 					captionLayout="label"
 					buttonVariant="default"
 					mode="single"
 				/>
-			</Card>
+			</div>
 
 			{popupData.day && (
 				<CalendarPopup
@@ -155,27 +157,42 @@ type CustomDayProps = {
 function CustomDay({ data, day, className, handleDayClick, ...buttonProps }: CustomDayProps) {
 	const dangerLevel = getDayDangerLevel(toTZDate(day.date), data);
 	const disabled = dangerLevel === null;
+	const isToday = buttonProps.modifiers?.today;
 
-	let bgClassname = "";
-	if (dangerLevel === "safe") {
-		bgClassname = "bg-safe";
-	} else if (dangerLevel === "warning") {
-		bgClassname = "bg-warning";
-	} else if (dangerLevel === "danger") {
-		bgClassname = "bg-danger";
-	}
+	const bgClassname = dangerLevel
+		? cn("border-2", dangerlevelStyles[dangerLevel].bgSubtle, dangerlevelStyles[dangerLevel].border)
+		: "";
 
 	return (
 		<button
 			type="button"
 			disabled={disabled}
-			className={cn(
-				"h-full w-full rounded-lg",
-				!disabled && "cursor-pointer hover:brightness-85",
-				bgClassname,
-				className,
-			)}
+			className={cn("relative h-full w-full rounded-lg", className)}
 			{...buttonProps}
-		/>
+		>
+			<div
+				className={cn(
+					"h-full w-full rounded-lg",
+					!disabled && "cursor-pointer hover:brightness-85",
+					bgClassname,
+				)}
+			/>
+			<span
+				className={cn(
+					"pointer-events-none absolute inset-0 flex items-center justify-center text-sm",
+					disabled && "text-muted-foreground",
+				)}
+			>
+				<span
+					className={cn(
+						"flex size-7 items-center justify-center rounded-full",
+						isToday && "bg-foreground text-background",
+					)}
+				>
+					{day.date.getDate()}
+				</span>
+			</span>
+			<DangerLevelDots dangerLevel={dangerLevel ?? null} className="absolute right-2 bottom-2" />
+		</button>
 	);
 }

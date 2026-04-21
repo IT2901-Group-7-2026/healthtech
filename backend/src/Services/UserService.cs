@@ -9,7 +9,7 @@ public interface IUserService
 {
 	Task<User?> GetUserByIdAsync(Guid id);
 	Task<List<User>> GetSubordinatesAsync(Guid managerId);
-	Task<User?> GetUserByUsernameAsync(string username);
+	Task<User?> GetUserByNameAsync(string name);
 	Task<User?> GetUserByEmailAsync(string email);
 	Task<List<User>> GetAllUsersAsync();
 	Task<User> CreateUserAsync(CreateUserDto createUserDto);
@@ -37,15 +37,15 @@ public class UserService : IUserService
 		return await _context
 			.User.Where(u => u.Managers.Any(m => m.Id == managerId))
 			.Include(u => u.Location)
-			.OrderBy(u => u.Username)
+			.OrderBy(u => u.Name)
 			.ToListAsync();
 	}
 
-	public async Task<User?> GetUserByUsernameAsync(string username)
+	public async Task<User?> GetUserByNameAsync(string name)
 	{
 		return await _context
 			.User.Include(u => u.Location)
-			.FirstOrDefaultAsync(u => u.Username == username);
+			.FirstOrDefaultAsync(u => u.Name == name);
 	}
 
 	public async Task<User?> GetUserByEmailAsync(string email)
@@ -65,7 +65,7 @@ public class UserService : IUserService
 		User user = new User
 		{
 			Id = Guid.NewGuid(),
-			Username = createUserDto.Username,
+			Name = createUserDto.Name,
 			Email = createUserDto.Email,
 			PasswordHash = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password),
 			JobDescription = createUserDto.JobDescription,
@@ -87,7 +87,7 @@ public class UserService : IUserService
 		if (user == null)
 			return null;
 
-		user.Username = updateUserDto.Username ?? user.Username;
+		user.Name = updateUserDto.Name ?? user.Name;
 		user.Email = updateUserDto.Email ?? user.Email;
 		user.JobDescription = updateUserDto.JobDescription ?? user.JobDescription;
 

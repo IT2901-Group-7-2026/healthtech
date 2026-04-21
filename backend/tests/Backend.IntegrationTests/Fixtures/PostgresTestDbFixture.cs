@@ -59,7 +59,7 @@ public sealed class PostgresTestDbFixture : IAsyncLifetime
 			User = new User
 			{
 				Id = SeedIds.KariId,
-				Username = "Kari Nordmann",
+				Name = "Kari Nordmann",
 				Email = "kari.nordmann@aker.com",
 				PasswordHash = "testpassword",
 				CreatedAt = DateTime.UtcNow,

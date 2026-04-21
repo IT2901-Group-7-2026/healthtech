@@ -7,15 +7,17 @@ import type { UserWithStatusDto } from "@/lib/dto";
 import { getThreshold } from "@/lib/thresholds";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import { Bar, BarChart, type BarProps, CartesianGrid, ReferenceLine, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, type BarProps, CartesianGrid, XAxis, YAxis } from "recharts";
+import { ThresholdLine } from "./exposure-line-chart/threshold-line";
 
 interface Props {
 	users: Array<UserWithStatusDto>;
 	sensor: Sensor;
 	userOnClick?: (userId: string) => void;
+	isWeekly?: boolean;
 }
 
-export function UserStatusChart({ users, sensor, userOnClick }: Props) {
+export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props) {
 	const [t] = useTranslation();
 	const threshold = getThreshold(sensor);
 	const getPercent = (value: number) => Math.round((value / threshold.danger) * 100);
@@ -33,7 +35,12 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 			return [];
 		}
 
-		const percent = getPercent(sensorStatus.value);
+		const days = isWeekly ? 7 : 1;
+
+		// Vibration should show average value in graph
+		const normalizedValue = sensor === "vibration" ? sensorStatus.value / days : sensorStatus.value;
+
+		const percent = getPercent(normalizedValue);
 		// Only show peak if it's above the current value
 		const peakPercent =
 			sensorStatus.peakValue && sensorStatus.peakValue > sensorStatus.value
@@ -42,7 +49,7 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 
 		return [
 			{
-				name: user.username,
+				name: user.name,
 				id: user.id,
 				status: sensorStatus.dangerLevel,
 				percent,
@@ -134,37 +141,36 @@ export function UserStatusChart({ users, sensor, userOnClick }: Props) {
 							dataKey="name"
 							tickLine={false}
 							axisLine={false}
-							tickFormatter={(v) => `${v}`}
-							tick={{
-								fill: "var(--color-muted-foreground)",
+							width={120}
+							tick={({ x, y, payload, index }) => {
+								const user = chartData[index];
+
+								const width = 120;
+								const height = 40;
+
+								return (
+									<g transform={`translate(${x},${y})`}>
+										<foreignObject x={-width} y={-height / 2} width={width} height={height}>
+											<div className="flex h-full items-center">
+												<button
+													type="button"
+													onClick={() => {
+														if (user?.id) {
+															userOnClick?.(user.id);
+														}
+													}}
+													className="w-full cursor-pointer text-left text-muted-foreground text-sm leading-tight hover:text-white"
+												>
+													{payload.value}
+												</button>
+											</div>
+										</foreignObject>
+									</g>
+								);
 							}}
 						/>
-						<ReferenceLine
-							x={warningThresholdLine}
-							stroke="var(--warning)"
-							strokeDasharray="6 4"
-							strokeWidth={2}
-							label={{
-								value: t(($) => $.dangerLevels.warning),
-								position: "insideTopRight",
-								dy: -16,
-								fill: "var(--warning)",
-								className: "text-base",
-							}}
-						/>
-						<ReferenceLine
-							x={dangerThresholdLine}
-							stroke="var(--danger)"
-							strokeDasharray="6 4"
-							strokeWidth={2}
-							label={{
-								value: t(($) => $.dangerLevels.danger),
-								position: "insideTopLeft",
-								dy: -16,
-								fill: "var(--danger)",
-								className: "text-base",
-							}}
-						/>
+						<ThresholdLine x={warningThresholdLine} dangerLevel="warning" />
+						<ThresholdLine x={dangerThresholdLine} dangerLevel="danger" />
 						<ChartTooltip
 							cursor={false}
 							content={({ active, payload, label }) => {

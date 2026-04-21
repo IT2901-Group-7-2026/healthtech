@@ -1,10 +1,10 @@
 import type { DangerLevel } from "./danger-levels";
-import type { OverviewBucketDto, SensorDataResponseDto } from "./dto";
+import type { SensorDto, SensorOverviewBucketDto } from "./dto";
 import { type Sensor, sensors } from "./sensors";
 import type { OverviewChartRow, SummaryCounts, SummaryLevelCounts, TimeBucketStatus } from "./time-bucket-types";
 
 export function calculateSummaryCounts(
-	data: Array<SensorDataResponseDto> | Array<OverviewBucketDto>,
+	data: Array<SensorDto> | Array<SensorOverviewBucketDto>,
 	sensor?: Sensor,
 	usePeakDangerLevel?: boolean,
 ): SummaryCounts {
@@ -59,7 +59,7 @@ function incrementLevelCount(counts: SummaryLevelCounts, level: DangerLevel | nu
 	}
 }
 
-export function getDangerLevelFromData(data: SensorDataResponseDto, usePeakDangerLevel?: boolean): DangerLevel {
+export function getDangerLevelFromData(data: SensorDto, usePeakDangerLevel?: boolean): DangerLevel {
 	if (usePeakDangerLevel) {
 		return data.peakDangerLevel ?? data.dangerLevel;
 	}
@@ -67,7 +67,7 @@ export function getDangerLevelFromData(data: SensorDataResponseDto, usePeakDange
 }
 
 export function mapSensorDataToTimeBucketStatuses(
-	data: Array<SensorDataResponseDto>,
+	data: Array<SensorDto>,
 	sensor: Sensor,
 	usePeakDangerLevel?: boolean,
 ): Array<TimeBucketStatus> {
@@ -82,7 +82,7 @@ export function mapSensorDataToTimeBucketStatuses(
 	});
 }
 
-export function mapOverviewDataToTimeBucketStatuses(data: Array<OverviewBucketDto>): Array<TimeBucketStatus> {
+export function mapOverviewDataToTimeBucketStatuses(data: Array<SensorOverviewBucketDto>): Array<TimeBucketStatus> {
 	return data.map((point) => ({
 		time: point.time,
 		dangerLevel: point.dangerLevel,
@@ -91,7 +91,7 @@ export function mapOverviewDataToTimeBucketStatuses(data: Array<OverviewBucketDt
 }
 
 export function mapOverviewBucketsToChartRows(
-	data: Array<OverviewBucketDto>,
+	data: Array<SensorOverviewBucketDto>,
 	startHour: number,
 	endHour: number,
 ): Array<OverviewChartRow> {

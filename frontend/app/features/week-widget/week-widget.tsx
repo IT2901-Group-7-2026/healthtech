@@ -1,8 +1,9 @@
+import { DangerLevelDots } from "@/components/danger-level-dots.js";
 import { useDate } from "@/features/date-picker/use-date";
 import { WeeklyPopup } from "@/features/popups/weekly-popup";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import { TIMEZONE } from "@/i18n/locale";
-import { DangerLevels } from "@/lib/danger-levels";
+import { dangerlevelStyles } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
 import type { Aggregation } from "@/lib/dto";
 import type { TimeBucketStatus } from "@/lib/time-bucket-types";
@@ -95,49 +96,47 @@ export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data, aggregatio
 					<div className="isolate flex flex-1 flex-col overflow-auto">
 						<div className="flex min-w-[500px] flex-none flex-col">
 							{/* Column headers */}
-							<div className="sticky top-0 z-30 flex-none">
-								<div
-									className="my-1.5 grid gap-x-3 gap-y-1 text-sm leading-6"
-									style={{
-										gridTemplateColumns: GRID_COLUMNS,
-									}}
-								>
-									<div />
+							<div
+								className="my-1.5 grid gap-x-3 gap-y-1 text-sm leading-6"
+								style={{
+									gridTemplateColumns: GRID_COLUMNS,
+								}}
+							>
+								<div />
 
-									{timeSlotSegments.map((segment) => {
-										const today = isToday(segment.date);
-										const weekday = formatDate(segment.date, "EEE");
-										const date = formatDate(segment.date, "dd");
+								{timeSlotSegments.map((segment) => {
+									const today = isToday(segment.date);
+									const weekday = formatDate(segment.date, "EEE");
+									const date = formatDate(segment.date, "dd");
 
-										return (
-											<div
-												key={getUnixTime(segment.date)}
-												className="flex items-center justify-center"
+									return (
+										<div
+											key={getUnixTime(segment.date)}
+											className="flex items-center justify-center"
+										>
+											<p
+												className={cn(
+													"flex items-center",
+													!today && "text-muted-foreground",
+													today && "font-semibold",
+												)}
 											>
-												<p
+												{weekday}{" "}
+												<span
 													className={cn(
-														"flex items-center",
-														!today && "text-muted-foreground",
-														today && "font-semibold",
+														"ml-1.5",
+														today && [
+															"flex size-6 items-center justify-center rounded-full",
+															"bg-foreground text-secondary",
+														],
 													)}
 												>
-													{weekday}{" "}
-													<span
-														className={cn(
-															"ml-1.5",
-															today && [
-																"flex size-6 items-center justify-center rounded-full",
-																"bg-foreground font-bold text-secondary",
-															],
-														)}
-													>
-														{date}
-													</span>
-												</p>
-											</div>
-										);
-									})}
-								</div>
+													{date}
+												</span>
+											</p>
+										</div>
+									);
+								})}
 							</div>
 
 							<div
@@ -158,7 +157,7 @@ export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data, aggregatio
 									return (
 										<div
 											key={`time-${getUnixTime(timeSlot)}`}
-											className="-mt-1.5 flex items-start justify-end"
+											className="flex items-start justify-end"
 											style={{
 												gridRowStart: cellIndex + 1,
 												gridRowEnd: cellIndex + 2,
@@ -251,10 +250,10 @@ function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: Cel
 	return (
 		<div
 			className={cn(
-				"relative bg-card-highlight transition-colors",
+				"relative bg-secondary transition-colors",
 				rounding,
-				isFirstRow && "rounded-t-2xl",
-				isLastRow && "rounded-b-2xl",
+				isFirstRow && "rounded-t-xl",
+				isLastRow && "rounded-b-xl",
 			)}
 			style={style}
 		>
@@ -262,7 +261,14 @@ function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: Cel
 				const minuteOffset = getMinutes(timeBucket.time);
 				const topPercent = (minuteOffset / 60) * 100;
 				const bottomPercent = minuteOffset === 0 ? 0 : ((60 - minuteOffset) / 60) * 100;
-				const dangerColor = DangerLevels[timeBucket.dangerLevel].color;
+
+				const colorClassname = timeBucket.dangerLevel
+					? cn(
+							"border",
+							dangerlevelStyles[timeBucket.dangerLevel].bgSubtle,
+							dangerlevelStyles[timeBucket.dangerLevel].border,
+						)
+					: "";
 
 				return (
 					<button
@@ -272,14 +278,21 @@ function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: Cel
 							"absolute inset-x-0 block cursor-pointer overflow-hidden",
 							"transition-[filter,box-shadow] hover:brightness-90",
 							rounding,
-							`bg-${dangerColor}`,
+							isFirstRow && "rounded-t-xl",
+							isLastRow && "rounded-b-xl",
+							colorClassname,
 						)}
 						style={{
 							top: `calc(${topPercent}% + 1px)`,
 							bottom: `calc(${bottomPercent}% + 1px)`,
 						}}
 						onClick={() => onSegmentClick(timeBucket)}
-					/>
+					>
+						<DangerLevelDots
+							dangerLevel={timeBucket.dangerLevel ?? null}
+							className="absolute right-1 bottom-1"
+						/>
+					</button>
 				);
 			})}
 		</div>

@@ -1,5 +1,9 @@
-import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
-import { Button } from "@/components/ui/button";
+import { ExportButton } from "@/components/export-button";
+import {
+	ExposureLineChartCard,
+	ExposureLineChartCardSkeleton,
+} from "@/components/exposure-line-chart/exposure-line-chart-card";
+import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
@@ -12,8 +16,9 @@ import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
-import { useQueries } from "@tanstack/react-query";
+import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { setHours } from "date-fns";
 import { useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,29 +37,26 @@ export default function Vibration() {
 
 	const query = buildSensorQuery(sensor, view, date);
 
-	// Retrieve week data to find the min and max hour the user has data
-	const weekHourRangeQuery = buildSensorQuery(sensor, "week", date, {
-		granularity: "hour",
-	});
+	const {
+		data: response,
+		isLoading,
+		isError,
+	} = useQuery(
+		sensorQueryOptions({
+			sensor,
+			query,
+			userId: user.id,
+		}),
+	);
 
-	const [dataResult, weekHourRangeResult] = useQueries({
-		queries: [
-			sensorQueryOptions({
-				sensor,
-				query,
-				userId: user.id,
-			}),
-			sensorQueryOptions({
-				sensor,
-				query: weekHourRangeQuery,
-				userId: user.id,
-			}),
-		],
-	});
+	const data = response?.data;
+	const hourDomain = response?.hourDomain;
 
-	const { data, isLoading, isError } = dataResult;
-
-	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
+	const { minHour, maxHour } = getHourDomain(
+		hourDomain,
+		data?.map((d) => d.time),
+		view,
+	);
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
@@ -65,17 +67,16 @@ export default function Vibration() {
 	}
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], "vibration");
-	const totalExposure = data && data.length > 0 ? data[data.length - 1].value : 0;
+	const minTime = setHours(date, minHour);
+	const maxTime = setHours(date, maxHour);
 
 	return (
-		<div className="flex w-full flex-col-reverse gap-4 md:flex-row">
+		<div className="flex h-full w-full flex-col-reverse gap-4 md:flex-row">
 			<div className="flex flex-1 flex-col gap-4">
 				{isLoading ? (
-					<Card className="flex h-24 w-full items-center">
-						<p>{t(($) => $.common.loading)}</p>
-					</Card>
+					<ExposureLineChartCardSkeleton />
 				) : isError ? (
-					<Card className="flex h-24 w-full items-center">
+					<Card className="flex h-full w-full items-center">
 						<p>{t(($) => $.common.error)}</p>
 					</Card>
 				) : view === "month" ? (
@@ -83,7 +84,7 @@ export default function Vibration() {
 				) : view === "week" ? (
 					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
 				) : !data || data.length === 0 ? (
-					<Card className="flex h-24 w-full items-center">
+					<Card className="flex h-full w-full items-center">
 						<CardTitle>
 							{date.toLocaleDateString(i18n.language, {
 								day: "numeric",
@@ -96,20 +97,18 @@ export default function Vibration() {
 				) : (
 					<div className="w-full">
 						<div id={chartContainerId}>
-							<ChartLineDefault
-								minHour={minHour}
-								maxHour={maxHour}
+							<ExposureLineChartCard
+								minTime={minTime}
+								maxTime={maxTime}
 								chartData={downsampleSensorData(sensor, data ?? [])}
-								chartTitle={`${t(($) => $.common.total)}: ${Math.trunc(totalExposure)} ${t(($) => $.common.points)}`}
-								unit={t(($) => $.common.points)}
+								unit={"points"}
 								maxY={maxY}
 								minY={minY}
 								lineType="monotone"
 								sensor={sensor}
 								headerRight={
-									<Button
-										size="sm"
-										variant="outline"
+									<ExportButton
+										title={t(($) => $.common.exportAsPdf)}
 										onClick={() =>
 											exportToPDF(
 												chartContainerId,
@@ -117,18 +116,16 @@ export default function Vibration() {
 													day: "numeric",
 													month: "long",
 													year: "numeric",
-												})}-${user.username}-Vibration-Exposure-Overview`,
-												`Vibration Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+												})}-${user.name}-Vibration-Exposure-Overview`,
+												`Vibration Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
 											)
 										}
-									>
-										{t(($) => $.common.exportAsPdf)}
-									</Button>
+									/>
 								}
 							>
 								<ThresholdLine y={vibrationThreshold.danger} dangerLevel="danger" />
 								<ThresholdLine y={vibrationThreshold.warning} dangerLevel="warning" />
-							</ChartLineDefault>
+							</ExposureLineChartCard>
 						</div>
 					</div>
 				)}

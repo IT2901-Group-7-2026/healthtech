@@ -1,5 +1,9 @@
-import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
-import { Button } from "@/components/ui/button";
+import { ExportButton } from "@/components/export-button";
+import {
+	ExposureLineChartCard,
+	ExposureLineChartCardSkeleton,
+} from "@/components/exposure-line-chart/exposure-line-chart-card";
+import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
@@ -14,8 +18,9 @@ import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
-import { useQueries } from "@tanstack/react-query";
+import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { setHours } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -44,30 +49,26 @@ export default function Noise() {
 		usePeakAggregation,
 	});
 
-	// Retrieve week data to find the min and max hour the user has data
-	const weekHourRangeQuery = buildSensorQuery(sensor, "week", date, {
-		usePeakAggregation,
-		granularity: "hour",
-	});
+	const {
+		data: response,
+		isLoading,
+		isError,
+	} = useQuery(
+		sensorQueryOptions({
+			sensor,
+			query,
+			userId: user.id,
+		}),
+	);
 
-	const [dataResult, weekHourRangeResult] = useQueries({
-		queries: [
-			sensorQueryOptions({
-				sensor,
-				query,
-				userId: user.id,
-			}),
-			sensorQueryOptions({
-				sensor,
-				query: weekHourRangeQuery,
-				userId: user.id,
-			}),
-		],
-	});
+	const data = response?.data;
+	const hourDomain = response?.hourDomain;
 
-	const { data, isLoading, isError } = dataResult;
-
-	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
+	const { minHour, maxHour } = getHourDomain(
+		hourDomain,
+		data?.map((d) => d.time),
+		view,
+	);
 
 	const maxValue = data
 		? Math.max(...data.map((d) => (usePeakAggregation && d.peakValue ? d.peakValue : d.value)))
@@ -83,11 +84,8 @@ export default function Noise() {
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, usePeakAggregation);
 
-	const averageExposure =
-		data && data.length > 0
-			? data.reduce((sum, d) => sum + (usePeakAggregation && d.peakValue ? d.peakValue : d.value), 0) /
-				data.length
-			: 0;
+	const minTime = setHours(date, minHour);
+	const maxTime = setHours(date, maxHour);
 
 	return (
 		<div className="flex flex-1 flex-col gap-4">
@@ -99,11 +97,9 @@ export default function Noise() {
 			</Tabs>
 
 			{isLoading ? (
-				<Card className="flex h-24 w-full items-center">
-					<p>{t(($) => $.common.loading)}</p>
-				</Card>
+				<ExposureLineChartCardSkeleton />
 			) : isError ? (
-				<Card className="flex h-24 w-full items-center">
+				<Card className="flex h-full w-full items-center">
 					<p>{t(($) => $.common.error)}</p>
 				</Card>
 			) : view === "month" ? (
@@ -124,21 +120,17 @@ export default function Noise() {
 			) : (
 				<div className="w-full">
 					<div id={chartContainerId}>
-						<ChartLineDefault
-							minHour={minHour}
-							maxHour={maxHour}
-							usePeakData={usePeakAggregation}
+						<ExposureLineChartCard
+							minTime={minTime}
+							maxTime={maxTime}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageExposure)} db`}
-							unit="db (TWA)"
+							unit="dbTwa"
 							maxY={maxY}
 							minY={minY}
-							lineType="monotone"
 							sensor={sensor}
 							headerRight={
-								<Button
-									size="sm"
-									variant="outline"
+								<ExportButton
+									title={t(($) => $.common.exportAsPdf)}
 									onClick={() =>
 										exportToPDF(
 											chartContainerId,
@@ -146,13 +138,11 @@ export default function Noise() {
 												day: "numeric",
 												month: "long",
 												year: "numeric",
-											})}-${user.username}-Noise-Exposure-Overview`,
-											`Noise Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+											})}-${user.name}-Noise-Exposure-Overview`,
+											`Noise Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
 										)
 									}
-								>
-									{t(($) => $.common.exportAsPdf)}
-								</Button>
+								/>
 							}
 						>
 							<ThresholdLine
@@ -165,7 +155,7 @@ export default function Noise() {
 								dangerLevel="danger"
 							/>
 							{!usePeakAggregation && <ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />}
-						</ChartLineDefault>
+						</ExposureLineChartCard>
 					</div>
 				</div>
 			)}

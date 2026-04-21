@@ -1,24 +1,44 @@
 import { DailyBarChart } from "@/components/daily-bar-chart";
-import { ChartLineDefault, ThresholdLine } from "@/components/line-chart";
-import { Button } from "@/components/ui/button";
+import { ExportButton } from "@/components/export-button";
+import {
+	ExposureLineChartCard,
+	ExposureLineChartCardSkeleton,
+} from "@/components/exposure-line-chart/exposure-line-chart-card";
+import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { Card, CardTitle } from "@/components/ui/card";
-import { DustChart } from "@/components/ui/dust-chart";
+import { GaugeChart } from "@/components/ui/gauge-chart";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DateContext } from "@/features/date-picker/use-date";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
-import { type Aggregation, Aggregations, type UserWithStatusDto } from "@/lib/dto";
+import {
+	type Aggregation,
+	Aggregations,
+	type SensorDto,
+	type SensorOverviewBucketDto,
+	type UserWithStatusDto,
+} from "@/lib/dto";
 import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
-import { type Sensor, sensors } from "@/lib/sensors";
+import {
+	type DustField,
+	defaultDustField,
+	dustFields,
+	parseAsDustField,
+	parseAsSensorUnit,
+	type Sensor,
+	type SensorUnit,
+	sensors,
+} from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapOverviewBucketsToChartRows } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomainFromBuckets } from "@/lib/utils";
+import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { addDays, endOfDay, startOfDay, subDays } from "date-fns";
+import { addDays, endOfDay, setHours, startOfDay, subDays } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { type ReactNode, useId } from "react";
 import { useTranslation } from "react-i18next";
+
 export function UserDetails({
 	selectedUser,
 	selectedDate,
@@ -32,7 +52,7 @@ export function UserDetails({
 		<section className="flex flex-col gap-6">
 			<div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
 				<div className="space-y-1">
-					<h2 className="font-semibold text-2xl">{selectedUser.username}</h2>
+					<h2 className="font-semibold text-2xl">{selectedUser.name}</h2>
 					<p className="text-muted-foreground">{selectedUser.email}</p>
 				</div>
 			</div>
@@ -61,14 +81,25 @@ function AllSensorsUserOverview({
 }) {
 	const [selectedUserId] = useQueryState("userId");
 
-	const { data, isLoading, isError } = useQuery(
+	const {
+		data: response,
+		isLoading,
+		isError,
+	} = useQuery(
 		sensorOverviewQueryOptions({
 			query: buildSensorOverviewQuery([...sensors], "day", selectedDate),
 			userId: selectedUser.id,
 		}),
 	);
 
-	const { minHour, maxHour } = getHourDomainFromBuckets(data ?? []);
+	const data = response?.data;
+	const hourDomain = response?.hourDomain;
+
+	const { minHour, maxHour } = getHourDomain(
+		hourDomain,
+		data?.map((d) => d.time),
+		"week", // The overview never shows linecharts so should always calculate hour domain with week padding
+	);
 
 	return (
 		<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={selectedDate}>
@@ -100,25 +131,25 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 	const sensor: Sensor = "dust";
+	const [dustField, setDustField] = useQueryState<DustField>(
+		"dustField",
+		parseAsDustField.withDefault(defaultDustField),
+	);
+	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
 
-	const query = buildSensorQuery(sensor, "day", selectedDate);
-	const weekHourRangeQuery = buildSensorQuery(sensor, "week", selectedDate, {
-		granularity: "hour",
+	const query = buildSensorQuery(sensor, "day", selectedDate, {
+		field: dustField,
 	});
 	const dustThreshold = getThreshold(sensor, query.field);
+	const dustPm1TwaThreshold = getThreshold(sensor, "pm1_twa");
 	const dustPm25TwaThreshold = getThreshold(sensor, "pm25_twa");
 	const dustPm10TwaThreshold = getThreshold(sensor, "pm10_twa");
 
-	const [dataResult, weekHourRangeResult, dustTwa1Result, dustTwa25Result, dustTwa10Result] = useQueries({
+	const [dataResult, dustTwa1Result, dustTwa25Result, dustTwa10Result] = useQueries({
 		queries: [
 			sensorQueryOptions({
 				sensor,
 				query,
-				userId: selectedUser.id,
-			}),
-			sensorQueryOptions({
-				sensor,
-				query: weekHourRangeQuery,
 				userId: selectedUser.id,
 			}),
 			sensorQueryOptions({
@@ -151,11 +182,12 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 		],
 	});
 
-	const { data, isLoading, isError } = dataResult;
-	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
-	const dustTwa1Data = dustTwa1Result.data;
-	const dustTwa25Data = dustTwa25Result.data;
-	const dustTwa10Data = dustTwa10Result.data;
+	const data = dataResult?.data?.data;
+	const hourDomain = dataResult?.data?.hourDomain;
+
+	const dustTwa1Data = dustTwa1Result.data?.data;
+	const dustTwa25Data = dustTwa25Result.data?.data;
+	const dustTwa10Data = dustTwa10Result.data?.data;
 
 	const maxValue = data ? Math.max(...data.map((point) => point.value)) : 0;
 	const minY = 0;
@@ -163,68 +195,99 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	if (maxValue > maxY) {
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
-	const averageDustExposure =
-		data && data.length > 0 ? data.reduce((sum, current) => sum + current.value, 0) / data.length : 0;
+	const { minHour, maxHour } = getHourDomain(
+		hourDomain,
+		data?.map((d) => d.time),
+		"day", // TODO: When we add a view picker we should use that here
+	);
+
+	const minTime = setHours(selectedDate, minHour);
+	const maxTime = setHours(selectedDate, maxHour);
 
 	return (
 		<div className="flex max-w-4xl flex-col gap-6">
-			<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={selectedDate}>
+			<Tabs value={dustField} onValueChange={(value) => setDustField(value as DustField)}>
+				<TabsList>
+					{dustFields.map((field) => (
+						<TabsTrigger key={field} value={field}>
+							{t(($) => $.sensors.dustFields[field])}
+						</TabsTrigger>
+					))}
+				</TabsList>
+			</Tabs>
+
+			<SensorChartCard
+				isLoading={dataResult.isLoading}
+				isError={dataResult.isError}
+				data={data}
+				selectedDate={selectedDate}
+				isSensor={true}
+			>
 				<DateScopedChart selectedDate={selectedDate}>
 					<div id={chartContainerId}>
-						<ChartLineDefault
-							minHour={minHour}
-							maxHour={maxHour}
+						<ExposureLineChartCard
+							minTime={minTime}
+							maxTime={maxTime}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageDustExposure)} ${t(($) => $.sensors.dustUnit)}`}
-							unit={t(($) => $.sensors.dustUnit)}
+							unit={dustUnit}
 							maxY={maxY}
 							minY={minY}
-							lineType="monotone"
 							sensor={sensor}
 							dustField={query.field}
 							headerRight={
-								<Button
-									size="sm"
-									variant="outline"
-									onClick={() =>
-										exportToPDF(
-											chartContainerId,
-											`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.username}-Dust-Exposure-Overview`,
-											`Dust Exposure - ${selectedUser.username} - ${selectedDate.toLocaleDateString(i18n.language)}`,
-										)
-									}
-								>
-									{t(($) => $.common.exportAsPdf)}
-								</Button>
+								<div className="flex items-center gap-2">
+									<Tabs value={dustUnit} onValueChange={(v) => setDustUnit(v as SensorUnit)}>
+										<TabsList>
+											<TabsTrigger value="ug">{t(($) => $.sensors.units.ug)}</TabsTrigger>
+											<TabsTrigger value="mg">{t(($) => $.sensors.units.mg)}</TabsTrigger>
+										</TabsList>
+									</Tabs>
+									<ExportButton
+										title={t(($) => $.common.exportAsPdf)}
+										onClick={() =>
+											exportToPDF(
+												chartContainerId,
+												`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.name}-Dust-Exposure-Overview`,
+												`Dust Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
+											)
+										}
+									/>
+								</div>
 							}
 						>
 							<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
 							<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
-						</ChartLineDefault>
+						</ExposureLineChartCard>
 					</div>
 				</DateScopedChart>
 			</SensorChartCard>
 
 			<div className="flex flex-wrap items-center gap-4">
 				{
-					<DustChart
-						label="PM1 TWA"
+					<GaugeChart
+						label={t(($) => $.sensors.dustExposureLabels.pm1_twa)}
 						value={dustTwa1Data?.[0]?.value ?? null}
-						thresholdValue={dustThreshold.danger}
+						thresholdValue={dustPm1TwaThreshold.danger}
+						sensor={sensor}
+						unit="ug"
 					/>
 				}
 				{
-					<DustChart
-						label="PM2.5 TWA"
+					<GaugeChart
+						label={t(($) => $.sensors.dustExposureLabels.pm25_twa)}
 						value={dustTwa25Data?.[0]?.value ?? null}
 						thresholdValue={dustPm25TwaThreshold.danger}
+						sensor={sensor}
+						unit="ug"
 					/>
 				}
 				{
-					<DustChart
-						label="PM10 TWA"
+					<GaugeChart
+						label={t(($) => $.sensors.dustExposureLabels.pm10_twa)}
 						value={dustTwa10Data?.[0]?.value ?? null}
 						thresholdValue={dustPm10TwaThreshold.danger}
+						sensor={sensor}
+						unit="ug"
 					/>
 				}
 			</div>
@@ -240,27 +303,21 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 	const vibrationThreshold = getThreshold(sensor);
 
 	const query = buildSensorQuery(sensor, "day", selectedDate);
-	const weekHourRangeQuery = buildSensorQuery(sensor, "week", selectedDate, {
-		granularity: "hour",
-	});
 
-	const [dataResult, weekHourRangeResult] = useQueries({
-		queries: [
-			sensorQueryOptions({
-				sensor,
-				query,
-				userId: selectedUser.id,
-			}),
-			sensorQueryOptions({
-				sensor,
-				query: weekHourRangeQuery,
-				userId: selectedUser.id,
-			}),
-		],
-	});
+	const {
+		data: response,
+		isLoading,
+		isError,
+	} = useQuery(
+		sensorQueryOptions({
+			sensor,
+			query,
+			userId: selectedUser.id,
+		}),
+	);
 
-	const { data, isLoading, isError } = dataResult;
-	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
+	const data = response?.data;
+	const hourDomain = response?.hourDomain;
 
 	const maxValue = data ? Math.max(...data.map((point) => point.value)) : 0;
 	const minY = 0;
@@ -268,41 +325,50 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 	if (maxValue > maxY) {
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
-	const totalVibrationExposure = data && data.length > 0 ? data[data.length - 1].value : 0;
+	const { minHour, maxHour } = getHourDomain(
+		hourDomain,
+		data?.map((d) => d.time),
+		"day", // TODO: When we add a view picker we should use that here
+	);
+
+	const minTime = setHours(selectedDate, minHour);
+	const maxTime = setHours(selectedDate, maxHour);
 
 	return (
-		<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={selectedDate}>
+		<SensorChartCard
+			isLoading={isLoading}
+			isError={isError}
+			data={data}
+			selectedDate={selectedDate}
+			isSensor={true}
+		>
 			<DateScopedChart selectedDate={selectedDate}>
 				<div id={chartContainerId}>
-					<ChartLineDefault
-						minHour={minHour}
-						maxHour={maxHour}
+					<ExposureLineChartCard
+						minTime={minTime}
+						maxTime={maxTime}
 						chartData={downsampleSensorData(sensor, data ?? [])}
-						chartTitle={`${t(($) => $.common.total)}: ${Math.trunc(totalVibrationExposure)} ${t(($) => $.common.points)}`}
-						unit={t(($) => $.common.points)}
+						unit={"points"}
 						maxY={maxY}
 						minY={minY}
 						lineType="monotone"
 						sensor={sensor}
 						headerRight={
-							<Button
-								size="sm"
-								variant="outline"
+							<ExportButton
+								title={t(($) => $.common.exportAsPdf)}
 								onClick={() =>
 									exportToPDF(
 										chartContainerId,
-										`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.username}-Vibration-Exposure-Overview`,
-										`Vibration Exposure - ${selectedUser.username} - ${selectedDate.toLocaleDateString(i18n.language)}`,
+										`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.name}-Vibration-Exposure-Overview`,
+										`Vibration Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
 									)
 								}
-							>
-								{t(($) => $.common.exportAsPdf)}
-							</Button>
+							/>
 						}
 					>
 						<ThresholdLine y={vibrationThreshold.danger} dangerLevel="danger" />
 						<ThresholdLine y={vibrationThreshold.warning} dangerLevel="warning" />
-					</ChartLineDefault>
+					</ExposureLineChartCard>
 				</div>
 			</DateScopedChart>
 		</SensorChartCard>
@@ -325,28 +391,21 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 	const query = buildSensorQuery(sensor, "day", selectedDate, {
 		usePeakAggregation,
 	});
-	const weekHourRangeQuery = buildSensorQuery(sensor, "week", selectedDate, {
-		usePeakAggregation,
-		granularity: "hour",
-	});
 
-	const [dataResult, weekHourRangeResult] = useQueries({
-		queries: [
-			sensorQueryOptions({
-				sensor,
-				query,
-				userId: selectedUser.id,
-			}),
-			sensorQueryOptions({
-				sensor,
-				query: weekHourRangeQuery,
-				userId: selectedUser.id,
-			}),
-		],
-	});
+	const {
+		data: response,
+		isLoading,
+		isError,
+	} = useQuery(
+		sensorQueryOptions({
+			sensor,
+			query,
+			userId: selectedUser.id,
+		}),
+	);
 
-	const { data, isLoading, isError } = dataResult;
-	const { minHour, maxHour } = getHourDomainFromBuckets(weekHourRangeResult.data ?? []);
+	const data = response?.data;
+	const hourDomain = response?.hourDomain;
 
 	const maxValue = data
 		? Math.max(...data.map((point) => (usePeakAggregation && point.peakValue ? point.peakValue : point.value)))
@@ -358,13 +417,14 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 			step: usePeakAggregation ? 130 : undefined,
 		}).maxY;
 	}
-	const averageNoiseExposure =
-		data && data.length > 0
-			? data.reduce(
-					(sum, point) => sum + (usePeakAggregation && point.peakValue ? point.peakValue : point.value),
-					0,
-				) / data.length
-			: 0;
+	const { minHour, maxHour } = getHourDomain(
+		hourDomain,
+		data?.map((d) => d.time),
+		"day", // TODO: When we add a view picker we should use that here
+	);
+
+	const minTime = setHours(selectedDate, minHour);
+	const maxTime = setHours(selectedDate, maxHour);
 
 	return (
 		<div className="flex max-w-4xl flex-col gap-4">
@@ -375,34 +435,35 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 				</TabsList>
 			</Tabs>
 
-			<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={selectedDate}>
+			<SensorChartCard
+				isLoading={isLoading}
+				isError={isError}
+				data={data}
+				selectedDate={selectedDate}
+				isSensor={true}
+			>
 				<DateScopedChart selectedDate={selectedDate}>
 					<div id={chartContainerId}>
-						<ChartLineDefault
-							minHour={minHour}
-							maxHour={maxHour}
+						<ExposureLineChartCard
+							minTime={minTime}
+							maxTime={maxTime}
 							usePeakData={usePeakAggregation}
 							chartData={downsampleSensorData(sensor, data ?? [])}
-							chartTitle={`${t(($) => $.measurement.averageExposure)}: ${Math.trunc(averageNoiseExposure)} db`}
-							unit="db (TWA)"
+							unit="dbTwa"
 							maxY={maxY}
 							minY={minY}
-							lineType="monotone"
 							sensor={sensor}
 							headerRight={
-								<Button
-									size="sm"
-									variant="outline"
+								<ExportButton
+									title={t(($) => $.common.exportAsPdf)}
 									onClick={() =>
 										exportToPDF(
 											chartContainerId,
-											`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.username}-Noise-Exposure-Overview`,
-											`Noise Exposure - ${selectedUser.username} - ${selectedDate.toLocaleDateString(i18n.language)}`,
+											`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.name}-Noise-Exposure-Overview`,
+											`Noise Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
 										)
 									}
-								>
-									{t(($) => $.common.exportAsPdf)}
-								</Button>
+								/>
 							}
 						>
 							<ThresholdLine
@@ -414,7 +475,7 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 								dangerLevel="danger"
 							/>
 							{!usePeakAggregation && <ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />}
-						</ChartLineDefault>
+						</ExposureLineChartCard>
 					</div>
 				</DateScopedChart>
 			</SensorChartCard>
@@ -426,20 +487,26 @@ function SensorChartCard({
 	isLoading,
 	isError,
 	data,
+	isSensor,
 	selectedDate,
 	children,
 }: {
 	isLoading: boolean;
 	isError: boolean;
-	data: Array<unknown> | undefined;
+	data: Array<SensorDto> | Array<SensorOverviewBucketDto> | undefined;
+	isSensor?: boolean;
 	selectedDate: TZDate;
 	children: ReactNode;
 }) {
 	const { t, i18n } = useTranslation();
 
+	if (isLoading && isSensor) {
+		return <ExposureLineChartCardSkeleton />;
+	}
+
 	if (isLoading) {
 		return (
-			<Card className="flex h-24 w-full items-center">
+			<Card className="flex w-full items-center">
 				<p>{t(($) => $.common.loading)}</p>
 			</Card>
 		);
@@ -447,7 +514,7 @@ function SensorChartCard({
 
 	if (isError) {
 		return (
-			<Card className="flex h-24 w-full items-center">
+			<Card className="flex w-full items-center">
 				<p>{t(($) => $.common.error)}</p>
 			</Card>
 		);
@@ -455,7 +522,7 @@ function SensorChartCard({
 
 	if (!data || data.length === 0) {
 		return (
-			<Card className="flex h-24 w-full items-center">
+			<Card className="flex w-full items-center">
 				<CardTitle>{formatChartDate(selectedDate, i18n.language)}</CardTitle>
 				<p>{t(($) => $.common.noData)}</p>
 			</Card>

@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
 import { DailyBarChart } from "@/components/daily-bar-chart";
-import { Button } from "@/components/ui/button";
+import { ExportButton } from "@/components/export-button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
@@ -13,7 +13,7 @@ import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorOverviewQueryOptions } from "@/lib/api";
 import { buildSensorOverviewQuery } from "@/lib/sensor-query-utils";
 import { mapOverviewBucketsToChartRows, mapOverviewDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { getHourDomainFromBuckets } from "@/lib/utils";
+import { getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
@@ -34,11 +34,9 @@ export default function OperatorHome() {
 
 	const { user } = useUser();
 
-	const queryType = view === "day" ? "week" : view === "week" ? "month" : "day";
-
 	// NOTE: If we later add a peak noise switch here it wouldn't work because we don't return peakDangerLevel in the overview query.
 	const {
-		data: overviewBuckets,
+		data: response,
 		isLoading,
 		isError,
 	} = useQuery(
@@ -48,20 +46,14 @@ export default function OperatorHome() {
 		}),
 	);
 
-	// Retrieve week or month data to find the min and max hour the user has data for that time period
-	const queryToFindMinMaxData = useQuery(
-		sensorOverviewQueryOptions({
-			query: buildSensorOverviewQuery([...sensors], queryType, date),
-			userId: user.id,
-		}),
-	);
+	const overviewBuckets = response?.data;
+	const hourDomain = response?.hourDomain;
 
-	let minHour: number, maxHour: number;
-	if (view === "day") {
-		({ minHour, maxHour } = getHourDomainFromBuckets(queryToFindMinMaxData.data ?? []));
-	} else {
-		({ minHour, maxHour } = getHourDomainFromBuckets(overviewBuckets ?? []));
-	}
+	const { minHour, maxHour } = getHourDomain(
+		hourDomain,
+		overviewBuckets?.map((d) => d.time),
+		"week", // The overview never shows linecharts so should always calculate hour domain with week padding
+	);
 
 	return (
 		<>
@@ -102,7 +94,8 @@ export default function OperatorHome() {
 						startHour={minHour}
 						endHour={maxHour}
 						headerRight={
-							<Button
+							<ExportButton
+								title={t(($) => $.layout.export)}
 								onClick={() =>
 									exportMultipleToPDF(
 										[
@@ -114,18 +107,15 @@ export default function OperatorHome() {
 											day: "numeric",
 											month: "long",
 											year: "numeric",
-										})}-${user.username}-Exposure-Overview`,
+										})}-${user.name}-Exposure-Overview`,
 										[
-											`Dust Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
-											`Vibration Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
-											`Noise Exposure - ${user.username} - ${date.toLocaleDateString(i18n.language)}`,
+											`Dust Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
+											`Vibration Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
+											`Noise Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
 										],
 									)
 								}
-								variant="outline"
-							>
-								{t(($) => $.layout.export)}
-							</Button>
+							/>
 						}
 					/>
 				)}

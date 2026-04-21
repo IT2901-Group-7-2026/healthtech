@@ -5,7 +5,7 @@ namespace Backend.DTOs;
 public class UserDto
 {
 	public Guid Id { get; set; }
-	public required string Username { get; set; }
+	public required string Name { get; set; }
 	public required string Email { get; set; }
 	public string? JobDescription { get; set; }
 	public required DateTime CreatedAt { get; set; }
@@ -16,7 +16,7 @@ public class UserDto
 		new UserDto
 		{
 			Id = user.Id,
-			Username = user.Username,
+			Name = user.Name,
 			Email = user.Email,
 			JobDescription = user.JobDescription,
 			CreatedAt = user.CreatedAt,
@@ -27,13 +27,13 @@ public class UserDto
 
 public class UserWithStatusDto : UserDto
 {
-	public UserStatusDto Status { get; set; }
+	public required UserStatusDto Status { get; set; }
 
 	public static UserWithStatusDto FromEntity(User user, UserStatusDto status) =>
 		new UserWithStatusDto
 		{
 			Id = user.Id,
-			Username = user.Username,
+			Name = user.Name,
 			Email = user.Email,
 			JobDescription = user.JobDescription,
 			CreatedAt = user.CreatedAt,

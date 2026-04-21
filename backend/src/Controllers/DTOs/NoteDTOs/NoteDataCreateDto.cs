@@ -8,5 +8,5 @@ public class NoteDataCreateDto
 	public DateTimeOffset? Time { get; set; }
 
 	[Required]
-	public string Note { get; set; }
+	public required string Note { get; set; }
 }

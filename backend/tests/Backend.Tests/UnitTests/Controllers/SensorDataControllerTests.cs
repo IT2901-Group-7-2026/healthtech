@@ -60,9 +60,9 @@ public class SensorDataControllerTests
 			);
 			var okNoiseResult = noiseResult.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okNoiseResult);
-			var noiseData = okNoiseResult.Value as IEnumerable<SensorDataDto>;
+			var noiseData = okNoiseResult.Value as SensorResponseDto;
 			Assert.NotNull(noiseData);
-			Assert.Empty(noiseData);
+			Assert.Empty(noiseData.Data);
 		}
 
 		/// <summary>
@@ -86,9 +86,9 @@ public class SensorDataControllerTests
 			);
 			var okDustResult = dustResult.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okDustResult);
-			var dustData = okDustResult.Value as IEnumerable<SensorDataDto>;
+			var dustData = okDustResult.Value as SensorResponseDto;
 			Assert.NotNull(dustData);
-			Assert.Empty(dustData);
+			Assert.Empty(dustData.Data);
 		}
 
 		/// <summary>
@@ -111,9 +111,9 @@ public class SensorDataControllerTests
 			);
 			var okVibrationResult = vibrationResult.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okVibrationResult);
-			var vibrationData = okVibrationResult.Value as IEnumerable<SensorDataDto>;
+			var vibrationData = okVibrationResult.Value as SensorResponseDto;
 			Assert.NotNull(vibrationData);
-			Assert.Empty(vibrationData);
+			Assert.Empty(vibrationData.Data);
 		}
 	}
 
@@ -179,9 +179,9 @@ public class SensorDataControllerTests
 			var okResult = result.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okResult);
 
-			var data = okResult.Value as IEnumerable<SensorDataDto>;
+			var data = okResult.Value as SensorResponseDto;
 			Assert.NotNull(data);
-			Assert.Equal(2, data.Count());
+			Assert.Equal(2, data.Data.Count());
 		}
 
 		/// <summary>
@@ -228,9 +228,9 @@ public class SensorDataControllerTests
 			var okResult = result.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okResult);
 
-			var data = okResult.Value as IEnumerable<SensorDataDto>;
+			var data = okResult.Value as SensorResponseDto;
 			Assert.NotNull(data);
-			Assert.Equal(2, data.Count());
+			Assert.Equal(2, data.Data.Count());
 		}
 
 		/// <summary>
@@ -277,9 +277,9 @@ public class SensorDataControllerTests
 			var okResult = result.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okResult);
 
-			var data = okResult.Value as IEnumerable<SensorDataDto>;
+			var data = okResult.Value as SensorResponseDto;
 			Assert.NotNull(data);
-			Assert.Equal(2, data.Count());
+			Assert.Equal(2, data.Data.Count());
 		}
 	}
 

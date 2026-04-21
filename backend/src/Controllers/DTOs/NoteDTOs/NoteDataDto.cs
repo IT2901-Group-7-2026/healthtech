@@ -9,7 +9,7 @@ public class NoteDataDto
 	public DateTimeOffset? Time { get; set; }
 
 	[Required]
-	public string Note { get; set; }
+	public required string Note { get; set; }
 
 	public static NoteDataDto FromEntity(NoteData noteData) =>
 		new NoteDataDto { Time = noteData.Time, Note = noteData.Note };
