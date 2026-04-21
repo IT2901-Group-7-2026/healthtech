@@ -6,10 +6,12 @@ import type { Sensor, SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { cn, formatSensorValue } from "@/lib/utils";
 import { addDays, addWeeks, endOfMonth, endOfWeek, getISOWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns";
-import { useState } from "react";
+import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
+import { ExposureDot } from "../exposure-line-chart/exposure-dot";
+import { ExposureLineChartGradientStops } from "../exposure-line-chart/exposure-line-chart-gradient-stops";
 import { SensorLegend } from "../exposure-line-chart/sensor-legend";
 import { ThresholdLegend } from "../exposure-line-chart/threshold-legend";
 import { ThresholdLine } from "../exposure-line-chart/threshold-line";
@@ -42,7 +44,6 @@ export type SeriesDefinition = {
 	sensorField?: SensorTypeField;
 	dataKey: string;
 	label: string;
-	color: string;
 	valuesByBucket: Map<string, number>;
 };
 
@@ -59,6 +60,7 @@ export function TrendLineChart({
 }: TrendLineChartProps) {
 	const { t } = useTranslation();
 	const formatDate = useFormatDate();
+	const gradientId = useId();
 
 	const bucketDates = getBucketDates(selectedDate, granularity);
 	const seriesDefinitions = buildSeriesDefinitions(series, granularity, t);
@@ -74,6 +76,25 @@ export function TrendLineChart({
 	const activeSeries = seriesDefinitions.find((serie) => serie.dataKey === activeSeriesKey) ?? null;
 
 	const thresholdLines = activeSeries ? getThresholdLines(activeSeries, usePeakDangerThreshold) : [];
+
+	const singleSeries = isSingleSeries ? (seriesDefinitions[0] ?? null) : null;
+
+	let singleSeriesThreshold: ReturnType<typeof getThreshold> | null = null;
+	let singleSeriesDangerThreshold: number | null = null;
+	let singleSeriesWarningThreshold = 0;
+	let singleSeriesValues: Array<number> = [];
+
+	if (singleSeries) {
+		singleSeriesThreshold = getThreshold(singleSeries.sensor, singleSeries.sensorField);
+
+		singleSeriesDangerThreshold = usePeakDangerThreshold
+			? singleSeriesThreshold.peakDanger
+			: singleSeriesThreshold.danger;
+
+		singleSeriesWarningThreshold = singleSeriesThreshold.warning;
+
+		singleSeriesValues = Array.from(singleSeries.valuesByBucket.values());
+	}
 
 	return (
 		<ChartContainer config={{}} className={cn("h-full w-full", chartContainerClassName)}>
@@ -113,32 +134,51 @@ export function TrendLineChart({
 
 				<ExposureTrendTooltip unit={unit} seriesDefinitions={seriesDefinitions} />
 
+				{isSingleSeries && singleSeriesThreshold && singleSeriesDangerThreshold && (
+					<defs>
+						<linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+							<ExposureLineChartGradientStops
+								values={singleSeriesValues}
+								warningThreshold={singleSeriesWarningThreshold}
+								dangerThreshold={singleSeriesDangerThreshold}
+								usePeakData={usePeakDangerThreshold}
+							/>
+						</linearGradient>
+					</defs>
+				)}
+
 				{seriesDefinitions.map((serie) => (
 					<Line
 						key={serie.dataKey}
 						name={serie.label}
 						dataKey={serie.dataKey}
 						type={lineType}
-						stroke={serie.color}
-						strokeWidth="3"
+						stroke={isSingleSeries ? `url(#${gradientId})` : getDustFieldColor(serie.sensorField)}
+						strokeWidth={3}
 						isAnimationActive={false}
 						connectNulls={true}
 						onMouseEnter={() => setHoveredSeriesKey(serie.dataKey)}
 						onMouseLeave={() => setHoveredSeriesKey(null)}
 						opacity={hoveredSeriesKey !== null && hoveredSeriesKey !== serie.dataKey ? 0.5 : 1}
-						dot={{
-							r: 3,
-							fill: serie.color,
-							stroke: serie.color,
-						}}
-						activeDot={{
-							r: 5,
-							fill: serie.color,
-							stroke: "none",
-						}}
+						dot={false}
+						activeDot={
+							isSingleSeries && singleSeriesDangerThreshold !== null
+								? (props) => (
+										<ExposureDot
+											{...props}
+											warning={singleSeriesWarningThreshold}
+											danger={singleSeriesDangerThreshold}
+											isPeak={usePeakDangerThreshold}
+										/>
+									)
+								: {
+										r: 5,
+										fill: getDustFieldColor(serie.sensorField),
+										stroke: "none",
+									}
+						}
 					/>
 				))}
-
 				{thresholdLines.map((line) => (
 					<ThresholdLine key={line.key} y={line.y} dangerLevel={line.dangerLevel} />
 				))}
@@ -151,7 +191,7 @@ export function TrendLineChart({
 								<SensorLegend
 									items={seriesDefinitions.map((serie) => ({
 										label: getSeriesLabel(serie.sensor, serie.sensorField, t),
-										color: serie.color,
+										color: getDustFieldColor(serie.sensorField),
 									}))}
 								/>
 							)}
@@ -224,7 +264,6 @@ function buildSeriesDefinitions(
 		sensorField: serie.sensorField,
 		dataKey: getSeriesDataKey(serie.sensor, serie.sensorField),
 		label: getSeriesLabel(serie.sensor, serie.sensorField, t),
-		color: getSeriesColor(serie.sensor, serie.sensorField),
 		valuesByBucket: new Map(serie.data.map((item) => [normalizeBucketKey(item.time, granularity), item.value])),
 	}));
 }
@@ -283,23 +322,19 @@ function getSeriesLabel(
 	return t(($) => $.sensors.dustExposureLabels[field]);
 }
 
-function getSeriesColor(sensor: Sensor, field?: SensorTypeField): string {
-	if (sensor === "dust") {
-		switch (field) {
-			case "pm1_twa":
-				return "var(--color-green-700)";
-			case "pm25_twa":
-				return "var(--color-blue-600)";
-			case "pm4_twa":
-				return "var(--color-orange-400)";
-			case "pm10_twa":
-				return "var(--color-red-600)";
-			default:
-				return "var(--color-blue-600)";
-		}
+function getDustFieldColor(field?: SensorTypeField): string {
+	switch (field) {
+		case "pm1_twa":
+			return "var(--color-green-700)";
+		case "pm25_twa":
+			return "var(--color-blue-600)";
+		case "pm4_twa":
+			return "var(--color-orange-400)";
+		case "pm10_twa":
+			return "var(--color-red-600)";
+		default:
+			return "var(--color-blue-600)";
 	}
-
-	return "var(--color-green-700)";
 }
 
 /**

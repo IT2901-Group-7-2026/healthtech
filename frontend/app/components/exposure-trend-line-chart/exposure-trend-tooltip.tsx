@@ -37,10 +37,12 @@ export function ExposureTrendTooltip({
 										className="flex items-center justify-between gap-4"
 									>
 										<div className="flex items-center gap-2">
-											<div
-												className="h-2 w-2 rounded-full"
-												style={{ backgroundColor: entry.color }}
-											/>
+											{seriesDefinitions.length > 1 && (
+												<div
+													className="h-2 w-2 rounded-full"
+													style={{ backgroundColor: entry.color }}
+												/>
+											)}
 											<span>{series?.label ?? entry.name}</span>
 										</div>
 

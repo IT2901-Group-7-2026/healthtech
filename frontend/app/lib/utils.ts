@@ -214,3 +214,14 @@ export function formatSensorValue(
 
 	return value.toFixed(resolvedNumberOfUnits);
 }
+
+/**
+ * Peak data doesn't have a warning danger level, so we treat warning levels as safe
+ */
+export function normalizeDangerLevelForPeakForLineChart(dangerLevel: DangerLevel, isPeak?: boolean): DangerLevel {
+	if (isPeak && dangerLevel === "warning") {
+		return "safe";
+	}
+
+	return dangerLevel;
+}
