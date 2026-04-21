@@ -13,9 +13,10 @@ import { toWeeklyMax } from "./trend-line-chart-utils";
 
 interface Props {
 	unit: SensorUnit;
+	userId?: string;
 }
 
-export function DustTrendLineChartCard({ unit }: Props) {
+export function DustTrendLineChartCard({ unit, userId }: Props) {
 	const { date } = useDate();
 	const { view } = useView();
 	const { user } = useUser();
@@ -35,7 +36,7 @@ export function DustTrendLineChartCard({ unit }: Props) {
 				aggregationFunction: "max",
 				granularity: "day",
 			}),
-			userId: user.id,
+			userId: userId ?? user.id,
 			enabled: queriesEnabled,
 		}),
 	);

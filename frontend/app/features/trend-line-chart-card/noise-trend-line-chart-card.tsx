@@ -11,9 +11,10 @@ import { toWeeklyMax } from "./trend-line-chart-utils";
 
 interface Props {
 	usePeakAggregation?: boolean;
+	userId?: string;
 }
 
-export function NoiseTrendLineChartCard({ usePeakAggregation }: Props) {
+export function NoiseTrendLineChartCard({ usePeakAggregation, userId }: Props) {
 	const { date } = useDate();
 	const { view } = useView();
 	const { user } = useUser();
@@ -28,7 +29,7 @@ export function NoiseTrendLineChartCard({ usePeakAggregation }: Props) {
 		sensorQueryOptions({
 			sensor: sensor,
 			query,
-			userId: user.id,
+			userId: userId ?? user.id,
 		}),
 	);
 

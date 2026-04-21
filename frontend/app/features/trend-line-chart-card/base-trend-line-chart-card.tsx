@@ -8,7 +8,7 @@ export function BaseTrendLineChartCard({ children }: PropsWithChildren) {
 	const { t } = useTranslation();
 
 	return (
-		<Card className="max-w-xl">
+		<Card className="max-w-lg">
 			<CardHeader>
 				<CardTitle>
 					{t(($) => $.exposureTrendLineChartCard.title, {

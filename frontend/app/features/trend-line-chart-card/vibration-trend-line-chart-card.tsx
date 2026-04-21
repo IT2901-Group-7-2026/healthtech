@@ -9,7 +9,11 @@ import { useView } from "../views/use-view";
 import { BaseTrendLineChartCard } from "./base-trend-line-chart-card";
 import { toWeeklyMax } from "./trend-line-chart-utils";
 
-export function VibrationTrendLineChartCard() {
+interface Props {
+	userId?: string;
+}
+
+export function VibrationTrendLineChartCard({ userId }: Props) {
 	const { date } = useDate();
 	const { view } = useView();
 	const { user } = useUser();
@@ -22,7 +26,7 @@ export function VibrationTrendLineChartCard() {
 		sensorQueryOptions({
 			sensor,
 			query,
-			userId: user.id,
+			userId: userId ?? user.id,
 		}),
 	);
 

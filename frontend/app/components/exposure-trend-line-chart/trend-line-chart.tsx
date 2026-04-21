@@ -96,6 +96,12 @@ export function TrendLineChart({
 		singleSeriesValues = Array.from(singleSeries.valuesByBucket.values());
 	}
 
+	const dataBucketCount = chartData.filter((row) =>
+		seriesDefinitions.some((serie) => row[serie.dataKey] != null),
+	).length;
+
+	const showDot = dataBucketCount === 1;
+
 	return (
 		<ChartContainer config={{}} className={cn("h-full w-full", chartContainerClassName)}>
 			<LineChart accessibilityLayer={true} data={chartData} margin={{ left: 12, right: 12 }}>
@@ -160,7 +166,7 @@ export function TrendLineChart({
 						onMouseEnter={() => setHoveredSeriesKey(serie.dataKey)}
 						onMouseLeave={() => setHoveredSeriesKey(null)}
 						opacity={hoveredSeriesKey !== null && hoveredSeriesKey !== serie.dataKey ? 0.5 : 1}
-						dot={false}
+						dot={showDot}
 						activeDot={
 							isSingleSeries && singleSeriesDangerThreshold !== null
 								? (props) => (
