@@ -1,9 +1,10 @@
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import { useFormatDate } from "@/hooks/use-format-date";
+import { DangerLevels } from "@/lib/danger-levels";
 import type { SensorDto, SensorTypeField } from "@/lib/dto";
 import type { Sensor, SensorUnit } from "@/lib/sensors";
-import { cn, formatSensorValue } from "@/lib/utils";
-import { DangerLevels } from "@/lib/danger-levels";
 import { getThreshold } from "@/lib/thresholds";
+import { cn, formatSensorValue } from "@/lib/utils";
 import { addDays, addWeeks, endOfMonth, endOfWeek, getISOWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import { type JSX, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -56,10 +57,11 @@ export function TrendLineChart({
 	usePeakDangerThreshold = false,
 }: TrendLineChartProps) {
 	const { t } = useTranslation();
+	const formatDate = useFormatDate();
 
 	const bucketDates = getBucketDates(selectedDate, granularity);
 	const seriesDefinitions = buildSeriesDefinitions(series, granularity, t);
-	const chartData = buildChartData(bucketDates, seriesDefinitions, granularity);
+	const chartData = buildChartData(bucketDates, seriesDefinitions, granularity, formatDate, t);
 
 	const [hoveredSeriesKey, setHoveredSeriesKey] = useState<string | null>(null);
 
@@ -221,13 +223,15 @@ function buildChartData(
 	bucketDates: Array<Date>,
 	seriesDefinitions: Array<SeriesDefinition>,
 	granularity: TrendGranularity,
+	formatDate: ReturnType<typeof useFormatDate>,
+	t: ReturnType<typeof useTranslation>["t"],
 ): Array<Record<string, string | number | null>> {
 	return bucketDates.map((date) => {
 		const bucketKey = normalizeBucketKey(date, granularity);
 
 		const row: Record<string, string | number | null> = {
 			bucketKey,
-			label: granularity === "week" ? `W${getISOWeek(date)}` : formatDayLabel(date),
+			label: getBucketLabel(date, granularity, t, formatDate),
 		};
 
 		for (const serie of seriesDefinitions) {
@@ -236,6 +240,21 @@ function buildChartData(
 
 		return row;
 	});
+}
+
+function getBucketLabel(
+	date: Date,
+	granularity: TrendGranularity,
+	t: ReturnType<typeof useTranslation>["t"],
+	formatDate: ReturnType<typeof useFormatDate>,
+): string {
+	if (granularity === "week") {
+		return t(($) => $.common.weekNumber, {
+			week: getISOWeek(date),
+		});
+	}
+
+	return formatDate(date, "dd.MM");
 }
 
 function getSeriesDataKey(sensor: Sensor, field?: SensorTypeField): string {
@@ -305,14 +324,6 @@ function normalizeBucketKey(date: Date, granularity: TrendGranularity): string {
 	}
 
 	return startOfWeek(date, { weekStartsOn: 1 }).toISOString();
-}
-
-// TODO: use date fns
-function formatDayLabel(date: Date): string {
-	const day = String(date.getDate()).padStart(2, "0");
-	const month = String(date.getMonth() + 1).padStart(2, "0");
-
-	return `${day}.${month}`;
 }
 
 function Tooltip({ unit, seriesDefinitions }: { unit: SensorUnit; seriesDefinitions: Array<SeriesDefinition> }) {

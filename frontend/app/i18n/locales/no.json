@@ -12,7 +12,8 @@
     "total": "Total eksponering",
     "points": "Poeng",
     "notifications": "Notifikasjoner",
-    "exportAsPdf": "Eksporter som PDF"
+    "exportAsPdf": "Eksporter som PDF",
+    "weekNumber": "Uke {{week}}"
   },
   "sensors": {
     "dust": "Støv",

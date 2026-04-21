@@ -11,7 +11,8 @@
     "today": "Today",
     "total": "Total exposure",
     "notifications": "Notifications",
-    "exportAsPdf": "Export as PDF"
+    "exportAsPdf": "Export as PDF",
+    "weekNumber": "Week {{week}}"
   },
   "sensors": {
     "dust": "Dust",
