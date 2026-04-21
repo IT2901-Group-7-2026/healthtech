@@ -53,7 +53,7 @@ export function CalendarPopup({
 				</Card>
 			)}
 			<h2 className="pt-4 font-bold">{t(($) => $.popup.notesTitle)}</h2>
-			<NotesCard popUpOverride={true} />
+			<NotesCard forceInteractiveMode={true} />
 		</BasePopup>
 	);
 }

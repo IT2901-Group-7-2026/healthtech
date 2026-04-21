@@ -1,4 +1,3 @@
-import { DailyBarChart } from "@/components/daily-bar-chart";
 import { ExportButton } from "@/components/export-button";
 import {
 	ExposureLineChartCard,
@@ -9,6 +8,9 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { GaugeChart } from "@/components/ui/gauge-chart";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DateContext } from "@/features/date-picker/use-date";
+import { DayWidget } from "@/features/day-widget/day-widget";
+import { useView } from "@/features/views/use-view";
+import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
 import {
@@ -30,7 +32,7 @@ import {
 	sensors,
 } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import { mapOverviewBucketsToChartRows } from "@/lib/time-bucket-utils";
+import { mapOverviewBucketsToChartRows, mapOverviewDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
@@ -79,7 +81,7 @@ function AllSensorsUserOverview({
 	selectedUser: UserWithStatusDto;
 	selectedDate: TZDate;
 }) {
-	const [selectedUserId] = useQueryState("userId");
+	const { view } = useView();
 
 	const {
 		data: response,
@@ -87,7 +89,7 @@ function AllSensorsUserOverview({
 		isError,
 	} = useQuery(
 		sensorOverviewQueryOptions({
-			query: buildSensorOverviewQuery([...sensors], "day", selectedDate),
+			query: buildSensorOverviewQuery([...sensors], view, selectedDate),
 			userId: selectedUser.id,
 		}),
 	);
@@ -104,29 +106,38 @@ function AllSensorsUserOverview({
 	return (
 		<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={selectedDate}>
 			<DateScopedChart selectedDate={selectedDate}>
-				<DailyBarChart
-					data={mapOverviewBucketsToChartRows(data ?? [], 0, 23)}
-					startHour={minHour}
-					endHour={maxHour}
-					buildLink={(sensor, dateQueryParam) => {
-						const params = new URLSearchParams();
-						params.set("sensor", sensor);
+				{view === "week" ? (
+					<WeekWidget
+						dayStartHour={minHour}
+						dayEndHour={maxHour}
+						data={mapOverviewDataToTimeBucketStatuses(data ?? [])}
+					/>
+				) : (
+					<DayWidget
+						data={mapOverviewBucketsToChartRows(data ?? [], 0, 23)}
+						startHour={minHour}
+						endHour={maxHour}
+						buildLink={(sensor, dateQueryParam) => {
+							const params = new URLSearchParams();
+							params.set("sensor", sensor);
 
-						if (selectedUserId) {
-							params.set("userId", selectedUserId);
-						}
+							if (selectedUser?.id) {
+								params.set("userId", selectedUser.id);
+							}
 
-						params.set("date", dateQueryParam);
+							params.set("date", dateQueryParam);
 
-						return `?${params.toString()}`;
-					}}
-				/>
+							return `?${params.toString()}`;
+						}}
+					/>
+				)}
 			</DateScopedChart>
 		</SensorChartCard>
 	);
 }
 
 function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithStatusDto; selectedDate: TZDate }) {
+	const { view } = useView();
 	const { t, i18n } = useTranslation();
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
@@ -140,6 +151,13 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	const query = buildSensorQuery(sensor, "day", selectedDate, {
 		field: dustField,
 	});
+
+	const { data: overviewResponse } = useQuery(
+		sensorOverviewQueryOptions({
+			query: buildSensorOverviewQuery([sensor], view, selectedDate),
+			userId: selectedUser.id,
+		}),
+	);
 	const dustThreshold = getThreshold(sensor, query.field);
 	const dustPm1TwaThreshold = getThreshold(sensor, "pm1_twa");
 	const dustPm25TwaThreshold = getThreshold(sensor, "pm25_twa");
@@ -198,7 +216,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 	const { minHour, maxHour } = getHourDomain(
 		hourDomain,
 		data?.map((d) => d.time),
-		"day", // TODO: When we add a view picker we should use that here
+		view,
 	);
 
 	const minTime = setHours(selectedDate, minHour);
@@ -224,41 +242,49 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 				isSensor={true}
 			>
 				<DateScopedChart selectedDate={selectedDate}>
-					<div id={chartContainerId}>
-						<ExposureLineChartCard
-							minTime={minTime}
-							maxTime={maxTime}
-							chartData={downsampleSensorData(sensor, data ?? [])}
-							unit={dustUnit}
-							maxY={maxY}
-							minY={minY}
-							sensor={sensor}
-							dustField={query.field}
-							headerRight={
-								<div className="flex items-center gap-2">
-									<Tabs value={dustUnit} onValueChange={(v) => setDustUnit(v as SensorUnit)}>
-										<TabsList>
-											<TabsTrigger value="ug">{t(($) => $.sensors.units.ug)}</TabsTrigger>
-											<TabsTrigger value="mg">{t(($) => $.sensors.units.mg)}</TabsTrigger>
-										</TabsList>
-									</Tabs>
-									<ExportButton
-										title={t(($) => $.common.exportAsPdf)}
-										onClick={() =>
-											exportToPDF(
-												chartContainerId,
-												`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.name}-Dust-Exposure-Overview`,
-												`Dust Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
-											)
-										}
-									/>
-								</div>
-							}
-						>
-							<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
-							<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
-						</ExposureLineChartCard>
-					</div>
+					{view === "week" ? (
+						<WeekWidget
+							dayStartHour={minHour}
+							dayEndHour={maxHour}
+							data={mapOverviewDataToTimeBucketStatuses(overviewResponse?.data ?? [])}
+						/>
+					) : (
+						<div id={chartContainerId}>
+							<ExposureLineChartCard
+								minTime={minTime}
+								maxTime={maxTime}
+								chartData={downsampleSensorData(sensor, data ?? [])}
+								unit={dustUnit}
+								maxY={maxY}
+								minY={minY}
+								sensor={sensor}
+								dustField={query.field}
+								headerRight={
+									<div className="flex items-center gap-2">
+										<Tabs value={dustUnit} onValueChange={(v) => setDustUnit(v as SensorUnit)}>
+											<TabsList>
+												<TabsTrigger value="ug">{t(($) => $.sensors.units.ug)}</TabsTrigger>
+												<TabsTrigger value="mg">{t(($) => $.sensors.units.mg)}</TabsTrigger>
+											</TabsList>
+										</Tabs>
+										<ExportButton
+											title={t(($) => $.common.exportAsPdf)}
+											onClick={() =>
+												exportToPDF(
+													chartContainerId,
+													`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.name}-Dust-Exposure-Overview`,
+													`Dust Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
+												)
+											}
+										/>
+									</div>
+								}
+							>
+								<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
+								<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
+							</ExposureLineChartCard>
+						</div>
+					)}
 				</DateScopedChart>
 			</SensorChartCard>
 
@@ -296,6 +322,7 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 }
 
 function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithStatusDto; selectedDate: TZDate }) {
+	const { view } = useView();
 	const { t, i18n } = useTranslation();
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
@@ -303,6 +330,13 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 	const vibrationThreshold = getThreshold(sensor);
 
 	const query = buildSensorQuery(sensor, "day", selectedDate);
+
+	const { data: overviewResponse } = useQuery(
+		sensorOverviewQueryOptions({
+			query: buildSensorOverviewQuery([sensor], view, selectedDate),
+			userId: selectedUser.id,
+		}),
+	);
 
 	const {
 		data: response,
@@ -328,7 +362,7 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 	const { minHour, maxHour } = getHourDomain(
 		hourDomain,
 		data?.map((d) => d.time),
-		"day", // TODO: When we add a view picker we should use that here
+		view,
 	);
 
 	const minTime = setHours(selectedDate, minHour);
@@ -343,39 +377,48 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 			isSensor={true}
 		>
 			<DateScopedChart selectedDate={selectedDate}>
-				<div id={chartContainerId}>
-					<ExposureLineChartCard
-						minTime={minTime}
-						maxTime={maxTime}
-						chartData={downsampleSensorData(sensor, data ?? [])}
-						unit={"points"}
-						maxY={maxY}
-						minY={minY}
-						lineType="monotone"
-						sensor={sensor}
-						headerRight={
-							<ExportButton
-								title={t(($) => $.common.exportAsPdf)}
-								onClick={() =>
-									exportToPDF(
-										chartContainerId,
-										`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.name}-Vibration-Exposure-Overview`,
-										`Vibration Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
-									)
-								}
-							/>
-						}
-					>
-						<ThresholdLine y={vibrationThreshold.danger} dangerLevel="danger" />
-						<ThresholdLine y={vibrationThreshold.warning} dangerLevel="warning" />
-					</ExposureLineChartCard>
-				</div>
+				{view === "week" ? (
+					<WeekWidget
+						dayStartHour={minHour}
+						dayEndHour={maxHour}
+						data={mapOverviewDataToTimeBucketStatuses(overviewResponse?.data ?? [])}
+					/>
+				) : (
+					<div id={chartContainerId}>
+						<ExposureLineChartCard
+							minTime={minTime}
+							maxTime={maxTime}
+							chartData={downsampleSensorData(sensor, data ?? [])}
+							unit={"points"}
+							maxY={maxY}
+							minY={minY}
+							lineType="monotone"
+							sensor={sensor}
+							headerRight={
+								<ExportButton
+									title={t(($) => $.common.exportAsPdf)}
+									onClick={() =>
+										exportToPDF(
+											chartContainerId,
+											`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.name}-Vibration-Exposure-Overview`,
+											`Vibration Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
+										)
+									}
+								/>
+							}
+						>
+							<ThresholdLine y={vibrationThreshold.danger} dangerLevel="danger" />
+							<ThresholdLine y={vibrationThreshold.warning} dangerLevel="warning" />
+						</ExposureLineChartCard>
+					</div>
+				)}
 			</DateScopedChart>
 		</SensorChartCard>
 	);
 }
 
 function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithStatusDto; selectedDate: TZDate }) {
+	const { view } = useView();
 	const { t, i18n } = useTranslation();
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
@@ -391,6 +434,13 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 	const query = buildSensorQuery(sensor, "day", selectedDate, {
 		usePeakAggregation,
 	});
+
+	const { data: overviewResponse } = useQuery(
+		sensorOverviewQueryOptions({
+			query: buildSensorOverviewQuery([sensor], view, selectedDate),
+			userId: selectedUser.id,
+		}),
+	);
 
 	const {
 		data: response,
@@ -420,7 +470,7 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 	const { minHour, maxHour } = getHourDomain(
 		hourDomain,
 		data?.map((d) => d.time),
-		"day", // TODO: When we add a view picker we should use that here
+		view,
 	);
 
 	const minTime = setHours(selectedDate, minHour);
@@ -443,40 +493,50 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 				isSensor={true}
 			>
 				<DateScopedChart selectedDate={selectedDate}>
-					<div id={chartContainerId}>
-						<ExposureLineChartCard
-							minTime={minTime}
-							maxTime={maxTime}
-							usePeakData={usePeakAggregation}
-							chartData={downsampleSensorData(sensor, data ?? [])}
-							unit="dbTwa"
-							maxY={maxY}
-							minY={minY}
-							sensor={sensor}
-							headerRight={
-								<ExportButton
-									title={t(($) => $.common.exportAsPdf)}
-									onClick={() =>
-										exportToPDF(
-											chartContainerId,
-											`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.name}-Noise-Exposure-Overview`,
-											`Noise Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
-										)
-									}
-								/>
-							}
-						>
-							<ThresholdLine
-								y={
-									usePeakAggregation
-										? (noiseThreshold.peakDanger ?? noiseThreshold.danger)
-										: noiseThreshold.danger
+					{view === "week" ? (
+						<WeekWidget
+							dayStartHour={minHour}
+							dayEndHour={maxHour}
+							data={mapOverviewDataToTimeBucketStatuses(overviewResponse?.data ?? [])}
+						/>
+					) : (
+						<div id={chartContainerId}>
+							<ExposureLineChartCard
+								minTime={minTime}
+								maxTime={maxTime}
+								usePeakData={usePeakAggregation}
+								chartData={downsampleSensorData(sensor, data ?? [])}
+								unit="dbTwa"
+								maxY={maxY}
+								minY={minY}
+								sensor={sensor}
+								headerRight={
+									<ExportButton
+										title={t(($) => $.common.exportAsPdf)}
+										onClick={() =>
+											exportToPDF(
+												chartContainerId,
+												`${formatChartDate(selectedDate, i18n.language)}-${selectedUser.name}-Noise-Exposure-Overview`,
+												`Noise Exposure - ${selectedUser.name} - ${selectedDate.toLocaleDateString(i18n.language)}`,
+											)
+										}
+									/>
 								}
-								dangerLevel="danger"
-							/>
-							{!usePeakAggregation && <ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />}
-						</ExposureLineChartCard>
-					</div>
+							>
+								<ThresholdLine
+									y={
+										usePeakAggregation
+											? (noiseThreshold.peakDanger ?? noiseThreshold.danger)
+											: noiseThreshold.danger
+									}
+									dangerLevel="danger"
+								/>
+								{!usePeakAggregation && (
+									<ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />
+								)}
+							</ExposureLineChartCard>
+						</div>
+					)}
 				</DateScopedChart>
 			</SensorChartCard>
 		</div>

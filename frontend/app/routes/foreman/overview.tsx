@@ -2,6 +2,7 @@
 
 import { DatePicker } from "@/components/date-picker";
 import { NotesCard } from "@/components/notes-card";
+import { OperatorExposureStatusTable } from "@/components/operator-exposure-status-table";
 import { Card } from "@/components/ui/card";
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -28,9 +29,9 @@ export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const { user } = useUser();
 
-	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor);
+	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor.withOptions({ history: "push" }));
 	const { date, setDate } = useDate();
-	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString);
+	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString.withOptions({ history: "push" }));
 
 	const selectedDate = date;
 	const { view } = useView();
@@ -45,9 +46,11 @@ export default function ForemanOverview() {
 	const maxSelectableDate = today();
 
 	const { data: users } = useQuery(fetchSubordinatesQueryOptions(user.id));
-	const { data: subordinates, isLoading: isSubordinatesLoading } = useQuery(
-		fetchSubordinatesQueryOptions(user.id, startDate, endDate),
-	);
+	const {
+		data: subordinates,
+		isLoading: isSubordinatesLoading,
+		error: subordinatesError,
+	} = useQuery(fetchSubordinatesQueryOptions(user.id, startDate, endDate));
 	const { data: thresholdSummary, isLoading: isThresholdSummaryLoading } = useQuery(
 		fetchThresholdSummaryQueryOptions(user.id, startDate, endDate),
 	);
@@ -151,7 +154,32 @@ export default function ForemanOverview() {
 										userOnClick={(id) => setSelectedUserId(id)}
 									/>
 								) : (
-									<SensorSummaryGrid thresholdSummary={thresholdSummary} />
+									<>
+										<SensorSummaryGrid thresholdSummary={thresholdSummary} />
+
+										<Card muted={true} className="flex flex-col gap-4 p-4">
+											<h2 className="font-semibold text-lg">
+												{t(($) => $.foremanDashboard.team.title)}
+											</h2>
+											{isSubordinatesLoading ? (
+												<div className="p-4">{t(($) => $.common.loading)}</div>
+											) : subordinatesError ? (
+												<div className="p-4 text-destructive">
+													{t(($) => $.foremanDashboard.team.failedToLoadMembers)}
+												</div>
+											) : !subordinates || subordinates.length === 0 ? (
+												<div className="p-4">
+													{t(($) => $.foremanDashboard.team.noMembersFound)}
+												</div>
+											) : (
+												<OperatorExposureStatusTable
+													data={subordinates}
+													setSelectedUserId={(id) => setSelectedUserId(id)}
+													setSensor={(s) => setSensor(s as Sensor)}
+												/>
+											)}
+										</Card>
+									</>
 								)}
 							</>
 						)}
@@ -164,7 +192,7 @@ export default function ForemanOverview() {
 
 						<Card muted={true}>
 							<DatePicker
-								mode="day"
+								mode={view}
 								showWeekNumber={true}
 								date={date}
 								onDateChange={setDate}

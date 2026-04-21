@@ -123,9 +123,14 @@
     "safe": "Innenfor trygge grenseverdier"
   },
   "notes": {
-    "title": "Dine notater",
-    "placeholder": "Logg observasjoner, tiltak eller avvik…",
-    "noNotes": "Ingen notater for denne {{view}}. Se en dag for å legge til notater."
+    "interactive": {
+      "title": "Notat",
+      "placeholder": "Logg observasjoner, tiltak eller avvik…"
+    },
+    "list": {
+      "title": "Dine notater",
+      "noNotes": "Ingen notater for denne {{view}}. Se en dag for å legge til notater."
+    }
   },
   "table": {
     "numberOfRowsSelected": "{{selected}} av {{total}} rader valgt",

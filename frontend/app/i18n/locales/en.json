@@ -122,9 +122,14 @@
     "safe": "Within safe limits"
   },
   "notes": {
-    "title": "Your notes",
-    "placeholder": "Log observations, actions taken, or anomalies…",
-    "noNotes": "No notes for this {{view}}. View a day to add notes."
+    "interactive": {
+      "title": "Note",
+      "placeholder": "Log observations, actions taken, or anomalies…"
+    },
+    "list": {
+      "title": "Your notes",
+      "noNotes": "No notes for this {{view}}. View a day to add notes."
+    }
   },
   "table": {
     "numberOfRowsSelected": "{{selected}} of {{total}} rows selected",
