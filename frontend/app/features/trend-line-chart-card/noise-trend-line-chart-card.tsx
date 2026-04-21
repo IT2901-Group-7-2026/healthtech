@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useDate } from "../date-picker/use-date";
 import { useUser } from "../user/user-context";
 import { useView } from "../views/use-view";
+import { toWeeklyMax } from "./trend-line-chart-utils";
 
 interface Props {
 	usePeakAggregation?: boolean;
@@ -33,7 +34,9 @@ export function NoiseTrendLineChartCard({ usePeakAggregation }: Props) {
 		}),
 	);
 
-	const data = response?.data;
+	const granularity = view === "week" ? "day" : "week";
+
+	const data = granularity === "week" ? toWeeklyMax(response?.data ?? []) : response?.data;
 
 	const maxValue = data
 		? Math.max(...data.map((d) => (usePeakAggregation && d.peakValue ? d.peakValue : d.value)))
@@ -46,8 +49,6 @@ export function NoiseTrendLineChartCard({ usePeakAggregation }: Props) {
 			step: usePeakAggregation ? 130 : undefined,
 		}).maxY;
 	}
-
-	const granularity = view === "week" ? "day" : "week";
 
 	return (
 		<Card>

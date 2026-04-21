@@ -1,14 +1,16 @@
 import { TrendLineChart } from "@/components/exposure-trend-line-chart/trend-line-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { sensorQueryOptions } from "@/lib/api";
+import type { SensorTypeField } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { SensorUnit } from "@/lib/sensors";
 import { computeYAxisRange } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useDate } from "../date-picker/use-date";
 import { useUser } from "../user/user-context";
 import { useView } from "../views/use-view";
+import { toWeeklyMax } from "./trend-line-chart-utils";
 
 interface Props {
 	unit: SensorUnit;
@@ -22,64 +24,39 @@ export function DustTrendLineChartCard({ unit }: Props) {
 
 	const sensor = "dust";
 
-	const { data: maxPm1Result } = useQuery(
+	//TODO: Switch 2500 instead of 25, same for the other ones
+	const dustFieldsToQuery: Array<SensorTypeField> = ["pm1_twa", "pm4_twa", "pm25_twa", "pm10_twa"];
+
+	const queriesEnabled = view !== "day";
+
+	const queryOptions = dustFieldsToQuery.map((field) =>
 		sensorQueryOptions({
 			sensor,
 			query: buildSensorQuery(sensor, view, date, {
-				field: "pm1_twa",
+				field,
 				aggregationFunction: "max",
 				granularity: "day",
 			}),
 			userId: user.id,
-			enabled: view !== "day",
+			enabled: queriesEnabled,
 		}),
 	);
 
-	const { data: maxPm4Result } = useQuery(
-		sensorQueryOptions({
-			sensor,
-			query: buildSensorQuery(sensor, view, date, {
-				field: "pm4_twa",
-				aggregationFunction: "max",
-				granularity: "day",
-			}),
-			userId: user.id,
-			enabled: view !== "day",
-		}),
-	);
+	const queryResults = useQueries({ queries: queryOptions });
 
-	const { data: maxPm25Result } = useQuery(
-		//TODO: Switch 2500 instead of 25, same for the other ones
-		sensorQueryOptions({
-			sensor,
-			query: buildSensorQuery(sensor, view, date, {
-				field: "pm25_twa",
-				aggregationFunction: "max",
-				granularity: "day",
-			}),
-			userId: user.id,
-			enabled: view !== "day",
-		}),
-	);
+	const maxPm1Data = queryResults[0]?.data?.data ?? [];
+	const maxPm4Data = queryResults[1]?.data?.data ?? [];
+	const maxPm25Data = queryResults[2]?.data?.data ?? [];
+	const maxPm10Data = queryResults[3]?.data?.data ?? [];
 
-	const { data: maxPm10Result } = useQuery(
-		sensorQueryOptions({
-			sensor,
-			query: buildSensorQuery(sensor, view, date, {
-				field: "pm10_twa",
-				aggregationFunction: "max",
-				granularity: "day",
-			}),
-			userId: user.id,
-			enabled: view !== "day",
-		}),
-	);
+	const granularity = view === "week" ? "day" : "week";
 
-	const maxPm1Data = maxPm1Result?.data ?? [];
-	const maxPm25Data = maxPm25Result?.data ?? [];
-	const maxPm10Data = maxPm10Result?.data ?? [];
+	const pm1Data = granularity === "week" ? toWeeklyMax(maxPm1Data) : maxPm1Data;
+	const pm4Data = granularity === "week" ? toWeeklyMax(maxPm4Data) : maxPm4Data;
+	const pm25Data = granularity === "week" ? toWeeklyMax(maxPm25Data) : maxPm25Data;
+	const pm10Data = granularity === "week" ? toWeeklyMax(maxPm10Data) : maxPm10Data;
 
-	const allData = [...maxPm1Data, ...maxPm25Data, ...maxPm10Data];
+	const allData = [...pm1Data, ...pm4Data, ...pm25Data, ...pm10Data];
 
 	const maxValue = Math.max(...allData.map((d) => d.value));
 
@@ -88,13 +65,13 @@ export function DustTrendLineChartCard({ unit }: Props) {
 	const baseMaxY = 45;
 	const maxY = maxValue > baseMaxY ? computeYAxisRange(allData).maxY : baseMaxY;
 
-	const granularity = view === "week" ? "day" : "week";
-
 	return (
 		<Card>
 			<CardHeader>
 				<CardTitle>
-					{t(($) => $.exposureTrendLineChartCard.title, { view: t(($) => $.views[view]).toLowerCase() })}
+					{t(($) => $.exposureTrendLineChartCard.title, {
+						view: t(($) => $.views[view]).toLowerCase(),
+					})}
 				</CardTitle>
 			</CardHeader>
 			<CardContent>
@@ -106,22 +83,22 @@ export function DustTrendLineChartCard({ unit }: Props) {
 					maxY={maxY}
 					series={[
 						{
-							data: maxPm1Result?.data ?? [],
+							data: pm1Data,
 							sensor,
 							sensorField: "pm1_twa",
 						},
 						{
-							data: maxPm4Result?.data ?? [],
+							data: pm4Data,
 							sensor,
 							sensorField: "pm4_twa",
 						},
 						{
-							data: maxPm25Result?.data ?? [],
+							data: pm25Data,
 							sensor,
 							sensorField: "pm25_twa",
 						},
 						{
-							data: maxPm10Result?.data ?? [],
+							data: pm10Data,
 							sensor,
 							sensorField: "pm10_twa",
 						},

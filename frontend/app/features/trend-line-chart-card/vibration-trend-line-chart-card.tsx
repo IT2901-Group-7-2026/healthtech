@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { useDate } from "../date-picker/use-date";
 import { useUser } from "../user/user-context";
 import { useView } from "../views/use-view";
+import { toWeeklyMax } from "./trend-line-chart-utils";
 
 export function VibrationTrendLineChartCard() {
 	const { date } = useDate();
@@ -27,7 +28,9 @@ export function VibrationTrendLineChartCard() {
 		}),
 	);
 
-	const data = response?.data;
+	const granularity = view === "week" ? "day" : "week";
+
+	const data = granularity === "week" ? toWeeklyMax(response?.data ?? []) : response?.data;
 
 	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
@@ -36,8 +39,6 @@ export function VibrationTrendLineChartCard() {
 	if (maxValue > maxY) {
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
-
-	const granularity = view === "week" ? "day" : "week";
 
 	return (
 		<Card>
