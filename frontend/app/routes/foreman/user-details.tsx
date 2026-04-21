@@ -1,4 +1,3 @@
-import { DailyBarChart } from "@/components/daily-bar-chart";
 import { ExportButton } from "@/components/export-button";
 import {
 	ExposureLineChartCard,
@@ -34,6 +33,7 @@ import { mapOverviewBucketsToChartRows } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
+import { DayWidget } from "@/features/day-widget/day-widget";
 import { addDays, endOfDay, setHours, startOfDay, subDays } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { type ReactNode, useId } from "react";
@@ -104,7 +104,7 @@ function AllSensorsUserOverview({
 	return (
 		<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={selectedDate}>
 			<DateScopedChart selectedDate={selectedDate}>
-				<DailyBarChart
+				<DayWidget
 					data={mapOverviewBucketsToChartRows(data ?? [], 0, 23)}
 					startHour={minHour}
 					endHour={maxHour}

@@ -9,8 +9,8 @@ import { setHours, startOfDay } from "date-fns";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, type To } from "react-router";
-import { DangerLevelDots } from "./danger-level-dots.js";
-import { SensorIcon } from "./sensor-icon.js";
+import { DangerLevelDots } from "../../components/danger-level-dots.js";
+import { SensorIcon } from "../../components/sensor-icon.js";
 
 const getDangerLevelClasses = (dangerLevel: DangerLevel | null) => {
 	if (dangerLevel) {
@@ -28,7 +28,7 @@ interface DailyBarChartProps {
 	buildLink?: (sensor: string, dateQueryParam: string) => To | null;
 }
 
-export function DailyBarChart({ data, startHour = 0, endHour = 23, headerRight, buildLink }: DailyBarChartProps) {
+export function DayWidget({ data, startHour = 0, endHour = 23, headerRight, buildLink }: DailyBarChartProps) {
 	const { t } = useTranslation();
 	const { date } = useDate();
 	const formatDate = useFormatDate();
@@ -93,14 +93,19 @@ export function DailyBarChart({ data, startHour = 0, endHour = 23, headerRight, 
 											const { timeLabel, utcHour } = hourData[localHour];
 											const dangerLevel = rowData?.dangerLevelByHour?.[utcHour];
 
+											const dangerText =
+												dangerLevel == null ? null : t(($) => $.dangerLevels?.[dangerLevel]);
+
+											const title = dangerText ? `${timeLabel} — ${dangerText}` : timeLabel;
+
 											return (
 												<div
 													key={`${sensor}-${localHour}`}
-													className="flex shrink-0 flex-col items-center"
+													className="flex shrink-0 flex-col items-start"
 												>
 													{/* hour slot */}
 													<div
-														title={`${timeLabel} — ${dangerLevel ?? "no data"}`}
+														title={title}
 														className={cn(
 															"relative block size-12 rounded-lg border transition-all",
 															getDangerLevelClasses(dangerLevel ?? null),
@@ -115,7 +120,7 @@ export function DailyBarChart({ data, startHour = 0, endHour = 23, headerRight, 
 													</div>
 
 													{/* time label */}
-													<div className="mt-2 text-center text-muted-foreground text-xs">
+													<div className="mt-2 text-muted-foreground text-xs">
 														{timeLabel}
 													</div>
 												</div>

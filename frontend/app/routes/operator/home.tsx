@@ -1,6 +1,5 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { DailyBarChart } from "@/components/daily-bar-chart";
 import { ExportButton } from "@/components/export-button";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
@@ -15,6 +14,7 @@ import { buildSensorOverviewQuery } from "@/lib/sensor-query-utils";
 import { mapOverviewBucketsToChartRows, mapOverviewDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { DayWidget } from "@/features/day-widget/day-widget";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import Dust from "./sensors/dust";
@@ -89,7 +89,7 @@ export default function OperatorHome() {
 						<p>{t(($) => $.common.noData)}</p>
 					</Card>
 				) : (
-					<DailyBarChart
+					<DayWidget
 						data={mapOverviewBucketsToChartRows(overviewBuckets ?? [], 0, 23)}
 						startHour={minHour}
 						endHour={maxHour}
