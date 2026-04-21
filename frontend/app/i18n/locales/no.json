@@ -324,5 +324,8 @@
     "today": "I dag",
     "previous": "Forrige",
     "next": "Neste"
+  },
+  "exposureTrendLineChartCard": {
+    "title": "Eksponeringstrend for {{view}}"
   }
 }

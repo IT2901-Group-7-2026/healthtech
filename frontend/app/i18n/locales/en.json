@@ -323,5 +323,8 @@
     "today": "Today",
     "previous": "Previous",
     "next": "Next"
+  },
+  "exposureTrendLineChartCard": {
+    "title": "Exposure trend for {{view}}"
   }
 }

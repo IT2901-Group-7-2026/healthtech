@@ -1,9 +1,10 @@
-import { TrendLineChart } from "@/components/exposure-line-chart/trend-line-chart";
+import { TrendLineChart } from "@/components/exposure-trend-line-chart/trend-line-chart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { sensorQueryOptions } from "@/lib/api";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import { computeYAxisRange } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useDate } from "../date-picker/use-date";
 import { useUser } from "../user/user-context";
 import { useView } from "../views/use-view";
@@ -16,6 +17,7 @@ export function NoiseTrendLineChartCard({ usePeakAggregation }: Props) {
 	const { date } = useDate();
 	const { view } = useView();
 	const { user } = useUser();
+	const { t } = useTranslation();
 
 	const sensor = "noise";
 
@@ -50,7 +52,11 @@ export function NoiseTrendLineChartCard({ usePeakAggregation }: Props) {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>Trend</CardTitle>
+				<CardTitle>
+					{t(($) => $.exposureTrendLineChartCard.title, {
+						view: t(($) => $.views[view]).toLowerCase(),
+					})}
+				</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<TrendLineChart

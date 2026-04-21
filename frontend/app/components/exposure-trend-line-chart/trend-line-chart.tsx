@@ -1,4 +1,4 @@
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
+import { ChartContainer } from "@/components/ui/chart";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { DangerLevels } from "@/lib/danger-levels";
 import type { SensorDto, SensorTypeField } from "@/lib/dto";
@@ -6,13 +6,14 @@ import type { Sensor, SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { cn, formatSensorValue } from "@/lib/utils";
 import { addDays, addWeeks, endOfMonth, endOfWeek, getISOWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns";
-import { type JSX, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
-import { SensorLegend } from "./sensor-legend";
-import { ThresholdLegend } from "./threshold-legend";
-import { ThresholdLine } from "./threshold-line";
+import { SensorLegend } from "../exposure-line-chart/sensor-legend";
+import { ThresholdLegend } from "../exposure-line-chart/threshold-legend";
+import { ThresholdLine } from "../exposure-line-chart/threshold-line";
+import { ExposureTrendTooltip } from "./exposure-trend-tooltip";
 
 type TrendGranularity = "day" | "week";
 
@@ -36,7 +37,7 @@ export interface TrendLineChartProps {
 	usePeakDangerThreshold?: boolean;
 }
 
-type SeriesDefinition = {
+export type SeriesDefinition = {
 	sensor: Sensor;
 	sensorField?: SensorTypeField;
 	dataKey: string;
@@ -67,7 +68,12 @@ export function TrendLineChart({
 
 	const isSingleSeries = seriesDefinitions.length === 1;
 
+	// If we only have 1 series, we always show the thresholds for that series, otherwise we only show the thresholds for the hovered series
 	const activeSeriesKey = isSingleSeries ? (seriesDefinitions[0]?.dataKey ?? null) : hoveredSeriesKey;
+
+	const activeSeries = seriesDefinitions.find((serie) => serie.dataKey === activeSeriesKey) ?? null;
+
+	const thresholdLines = activeSeries ? getThresholdLines(activeSeries, usePeakDangerThreshold) : [];
 
 	return (
 		<ChartContainer config={{}} className={cn("h-full w-full", chartContainerClassName)}>
@@ -105,7 +111,7 @@ export function TrendLineChart({
 					}}
 				/>
 
-				<Tooltip unit={unit} seriesDefinitions={seriesDefinitions} />
+				<ExposureTrendTooltip unit={unit} seriesDefinitions={seriesDefinitions} />
 
 				{seriesDefinitions.map((serie) => (
 					<Line
@@ -133,47 +139,9 @@ export function TrendLineChart({
 					/>
 				))}
 
-				{seriesDefinitions.map((serie) => {
-					if (activeSeriesKey !== serie.dataKey) {
-						return null;
-					}
-
-					const threshold = getThreshold(serie.sensor, serie.sensorField);
-
-					const thresholdLines: Array<JSX.Element> = [];
-
-					if (threshold.peakDanger && usePeakDangerThreshold) {
-						thresholdLines.push(
-							<ThresholdLine
-								key={`${serie.dataKey}-danger`}
-								y={threshold.peakDanger}
-								dangerLevel="danger"
-							/>,
-						);
-					} else {
-						if (threshold.warning) {
-							thresholdLines.push(
-								<ThresholdLine
-									key={`${serie.dataKey}-warning`}
-									y={threshold.warning}
-									dangerLevel="warning"
-								/>,
-							);
-						}
-
-						if (threshold.danger) {
-							thresholdLines.push(
-								<ThresholdLine
-									key={`${serie.dataKey}-danger`}
-									y={threshold.danger}
-									dangerLevel="danger"
-								/>,
-							);
-						}
-					}
-
-					return thresholdLines;
-				})}
+				{thresholdLines.map((line) => (
+					<ThresholdLine key={line.key} y={line.y} dangerLevel={line.dangerLevel} />
+				))}
 
 				<Legend
 					content={() => (
@@ -202,6 +170,45 @@ export function TrendLineChart({
 			</LineChart>
 		</ChartContainer>
 	);
+}
+
+function getThresholdLines(
+	serie: SeriesDefinition,
+	usePeakDangerThreshold: boolean,
+): Array<{ key: string; y: number; dangerLevel: "warning" | "danger" }> {
+	const threshold = getThreshold(serie.sensor, serie.sensorField);
+	const lines: Array<{
+		key: string;
+		y: number;
+		dangerLevel: "warning" | "danger";
+	}> = [];
+
+	if (threshold.peakDanger && usePeakDangerThreshold) {
+		lines.push({
+			key: `${serie.dataKey}-danger`,
+			y: threshold.peakDanger,
+			dangerLevel: "danger",
+		});
+		return lines;
+	}
+
+	if (threshold.warning) {
+		lines.push({
+			key: `${serie.dataKey}-warning`,
+			y: threshold.warning,
+			dangerLevel: "warning",
+		});
+	}
+
+	if (threshold.danger) {
+		lines.push({
+			key: `${serie.dataKey}-danger`,
+			y: threshold.danger,
+			dangerLevel: "danger",
+		});
+	}
+
+	return lines;
 }
 
 function buildSeriesDefinitions(
@@ -292,6 +299,11 @@ function getSeriesColor(sensor: Sensor, field?: SensorTypeField): string {
 	return "var(--color-green-700)";
 }
 
+/**
+ * Creates one bucket for every day of the week for granularity week,
+ * or every week of the month for granularity month,
+ * for the given data.
+ */
 function getBucketDates(selectedDate: Date, granularity: TrendGranularity): Array<Date> {
 	const dates: Array<Date> = [];
 
@@ -324,52 +336,4 @@ function normalizeBucketKey(date: Date, granularity: TrendGranularity): string {
 	}
 
 	return startOfWeek(date, { weekStartsOn: 1 }).toISOString();
-}
-
-function Tooltip({ unit, seriesDefinitions }: { unit: SensorUnit; seriesDefinitions: Array<SeriesDefinition> }) {
-	const { t } = useTranslation();
-
-	return (
-		<ChartTooltip
-			cursor={false}
-			content={({ active, payload, label }) => {
-				if (!(active && payload?.length)) {
-					return null;
-				}
-
-				return (
-					<div className="rounded-md border bg-background p-3 shadow">
-						<div className="mb-2 font-medium">{label}</div>
-
-						<div className="space-y-1">
-							{payload.map((entry) => {
-								const series = seriesDefinitions.find(
-									(seriesDefinition) => seriesDefinition.dataKey === entry.dataKey,
-								);
-
-								return (
-									<div
-										key={String(entry.dataKey)}
-										className="flex items-center justify-between gap-4"
-									>
-										<div className="flex items-center gap-2">
-											<div
-												className="h-2 w-2 rounded-full"
-												style={{ backgroundColor: entry.color }}
-											/>
-											<span>{series?.label ?? entry.name}</span>
-										</div>
-
-										<span>
-											{formatSensorValue(entry.value, unit)} {t(($) => $.sensors.units[unit])}
-										</span>
-									</div>
-								);
-							})}
-						</div>
-					</div>
-				);
-			}}
-		/>
-	);
 }
