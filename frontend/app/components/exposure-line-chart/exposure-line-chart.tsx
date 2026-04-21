@@ -223,7 +223,7 @@ export function ExposureLineChart({
 								/>
 							</div>
 						)}
-					></Legend>
+					/>
 				)}
 			</LineChart>
 		</ChartContainer>
