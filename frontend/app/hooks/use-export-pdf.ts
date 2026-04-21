@@ -62,7 +62,8 @@ const elementToCanvas = async (elementId: string) => {
 	const container = document.getElementById(elementId);
 	if (!container) return null;
 
-	const svg = container.querySelector("svg");
+	const svg = container.querySelector<SVGSVGElement>("svg.recharts-surface");
+
 	if (!svg) return null;
 
 	return svgToCanvas(svg);
