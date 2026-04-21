@@ -2,8 +2,8 @@ import { ExposureBadge } from "@/components/exposure-badge";
 import { DataTable } from "@/components/ui/data-table";
 import { type DangerLevel, mapDangerLevelToLabel } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
+import type { Sensor } from "@/lib/sensors";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Sensor } from "app/lib/sensors";
 import { t } from "i18next";
 
 export interface SensorTableCellProps {
