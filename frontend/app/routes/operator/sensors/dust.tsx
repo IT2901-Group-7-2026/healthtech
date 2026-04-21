@@ -76,7 +76,7 @@ export default function Dust() {
 	const baseMaxY = 45;
 	const maxY = maxValue > baseMaxY ? computeYAxisRange(data ?? []).maxY : baseMaxY;
 
-	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor);
+	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, false);
 	const { minHour, maxHour } = getHourDomain(hourDomain, data?.map((d) => d.time) ?? [], view);
 
 	const minTime = setHours(date, minHour);

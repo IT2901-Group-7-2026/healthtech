@@ -66,7 +66,7 @@ export default function Vibration() {
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
 
-	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], "vibration");
+	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], "vibration", false);
 	const minTime = setHours(date, minHour);
 	const maxTime = setHours(date, maxHour);
 
