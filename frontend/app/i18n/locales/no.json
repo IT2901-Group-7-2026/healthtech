@@ -161,6 +161,7 @@
   },
   "profile": {
     "title": "Min side",
+    "privacySettings": "Personverninnstillinger",
     "location": "Lokasjon",
     "name": "Navn",
     "currentSecurityRegulations": "Gjeldende sikkerhetsreguleringer",

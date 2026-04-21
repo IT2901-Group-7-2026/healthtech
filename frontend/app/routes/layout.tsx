@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useTheme } from "@/features/dark-mode/use-theme";
 import { useDate } from "@/features/date-picker/use-date";
 import { BellPopup } from "@/features/popups/bell-popup";
+import { PrivacySettingsPopup } from "@/features/popups/privacy-settings-popup";
 import { ProfilePopup } from "@/features/popups/profile-popup";
 import { usePopup } from "@/features/popups/use-popup";
 import { useUser } from "@/features/user/user-context";
@@ -28,7 +29,17 @@ import { type User, UserRoleSchema } from "@/lib/dto.js";
 import { cn, shorthandName, userRoleToString } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import "leaflet/dist/leaflet.css";
-import { Bell, Languages, type LucideIcon, Monitor, Moon, Palette, Sun, User as UserIcon } from "lucide-react";
+import {
+	Bell,
+	HatGlassesIcon,
+	Languages,
+	type LucideIcon,
+	Monitor,
+	Moon,
+	Palette,
+	Sun,
+	User as UserIcon,
+} from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { href, Link, NavLink, Outlet, type To, useLocation, useNavigate } from "react-router";
@@ -104,11 +115,9 @@ function getLinks(t: TranslateFn, role: User["role"] | null): Array<{ to: To; la
 
 export default function Layout() {
 	const { t, i18n } = useTranslation();
-	const {
-		visible: notificationPopupVisible,
-		openPopup: openNotificationPopup,
-		closePopup: closeNotificationPopup,
-	} = usePopup();
+	const { visible, openPopup, closePopup } = usePopup();
+
+	const openNotificationPopup = () => openPopup("notifications");
 
 	const { user, setUser, isLoading: isUserLoading } = useUser();
 	const { data: users } = useQuery(usersQueryOptions());
@@ -196,8 +205,8 @@ export default function Layout() {
 					</header>
 
 					<BellPopup
-						open={notificationPopupVisible}
-						onClose={closeNotificationPopup}
+						open={visible === "notifications"}
+						onClose={closePopup}
 						title={t(($) => $.common.notifications)}
 					/>
 
@@ -225,6 +234,9 @@ function UserDropdown({
 	const { theme, setTheme } = useTheme();
 	const { visible, openPopup, closePopup } = usePopup();
 
+	const openProfile = () => openPopup("profile");
+	const openPrivacySettings = () => openPopup("privacySettings");
+
 	if (!user) return null;
 
 	const currentLanguage = i18n.language || "en";
@@ -245,9 +257,18 @@ function UserDropdown({
 				</DropdownMenuTrigger>
 
 				<DropdownMenuContent align="end" className="" sideOffset={10}>
-					<DropdownMenuItem onSelect={() => openPopup()}>
+					{/* My account */}
+					<DropdownMenuItem onSelect={() => openProfile}>
 						<UserIcon className="size-4" />
 						<span>{t(($) => $.profile.title)}</span>
+					</DropdownMenuItem>
+
+					<DropdownMenuSeparator />
+
+					{/* Privacy settings */}
+					<DropdownMenuItem onSelect={() => openPrivacySettings}>
+						<HatGlassesIcon className="size-4" />
+						<span>{t(($) => $.profile.privacySettings)}</span>
 					</DropdownMenuItem>
 
 					<DropdownMenuSeparator />
@@ -376,7 +397,16 @@ function UserDropdown({
 			<ProfilePopup
 				user={user}
 				avatarSrc="/userimage.png"
-				open={visible}
+				open={visible === "profile"}
+				onClose={closePopup}
+				users={users}
+				setUser={setUser}
+			/>
+
+			<PrivacySettingsPopup
+				user={user}
+				avatarSrc="/userimage.png"
+				open={visible === "privacySettings"}
 				onClose={closePopup}
 				users={users}
 				setUser={setUser}

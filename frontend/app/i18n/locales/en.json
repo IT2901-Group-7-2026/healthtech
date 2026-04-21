@@ -160,6 +160,7 @@
   },
   "profile": {
     "title": "My account",
+    "privacySettings": "Privacy settings",
     "location": "Location",
     "name": "Name",
     "currentSecurityRegulations": "Current security regulations",
