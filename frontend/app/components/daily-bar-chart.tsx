@@ -6,38 +6,18 @@ import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels";
 import type { OverviewChartRow } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils.js";
 import { setHours, startOfDay } from "date-fns";
-import { Fragment, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, type To } from "react-router";
 import { DangerLevelDots } from "./danger-level-dots.js";
 import { SensorIcon } from "./sensor-icon.js";
 
-const CELL_SIZE = 10;
-const CELL_SIZE_CN = "size-10";
-
-const STICKY = "sticky left-0 z-10 bg-card pl-4";
-
-const getCellAppearance = (dangerLevel: DangerLevel | null) => {
-	const baseClasses = cn(CELL_SIZE_CN, "block rounded-lg border transition-all");
-
-	const clickableClasses = "hover:brightness-90 active:scale-[0.98] active:brightness-90";
-
+const getDangerLevelClasses = (dangerLevel: DangerLevel | null) => {
 	if (dangerLevel) {
-		return {
-			className: cn(
-				baseClasses,
-				clickableClasses,
-				dangerlevelStyles[dangerLevel].border,
-				dangerlevelStyles[dangerLevel].bgSubtle,
-			),
-			isClickable: true,
-		};
+		return cn(dangerlevelStyles[dangerLevel].border, dangerlevelStyles[dangerLevel].bgSubtle);
 	}
 
-	return {
-		className: cn(baseClasses, "cursor-default border-muted-foreground/20 bg-card text-muted-foreground/50"),
-		isClickable: false,
-	};
+	return "border-muted-foreground/20";
 };
 
 interface DailyBarChartProps {
@@ -90,79 +70,81 @@ export function DailyBarChart({ data, startHour = 0, endHour = 23, headerRight, 
 	);
 
 	return (
-		<Card className="relative px-0">
-			{headerRight && <div className="absolute top-2 right-2 z-10 flex items-center gap-2">{headerRight}</div>}
+		<Card className="relative p-0">
+			{headerRight && <div className="absolute top-2 right-2 z-20 flex items-center gap-2">{headerRight}</div>}
 
 			<CardContent>
-				<div className="min-w-0 overflow-x-auto">
-					<div
-						className="grid w-max gap-x-1.5 gap-y-3 pr-4"
-						style={{
-							gridTemplateColumns: `auto repeat(${totalHours}, calc(var(--spacing) * ${CELL_SIZE}))`,
-						}}
-					>
-						{/* Empty cell in top-left */}
-						<div className={STICKY} />
-
-						{/* Header row */}
-						{hours.map((hour) => (
-							<div key={`header-${hour}`} className="text-center text-[0.675rem] text-muted-foreground">
-								{hourData[hour].timeLabel}
-							</div>
-						))}
-
-						{/* Data rows */}
+				<div className="overflow-x-auto">
+					<div className="w-max min-w-full space-y-1">
 						{sensors.map((sensor) => {
 							const rowData = dataBySensor[sensor];
+							const linkTarget = createLink(sensor, dateQueryParam);
+							const isLinkable = linkTarget !== null;
 
-							return (
-								<Fragment key={sensor}>
-									{/* Label for y-axis */}
-									<div
-										className={cn(
-											STICKY,
-											"flex items-center gap-2 pr-4 text-muted-foreground text-sm",
-										)}
-									>
-										<SensorIcon type={sensor} size="xs" />
-										<p>{t(($) => $.sensors[sensor])}</p>
+							const rowContent = (
+								<>
+									<div className="sticky left-0 flex w-fit items-center gap-2 px-4 py-3">
+										<SensorIcon type={sensor} size="sm" />
+										<span className="text-base text-foreground">{t(($) => $.sensors[sensor])}</span>
 									</div>
 
-									{/* Hourly grid cells */}
-									{hours.map((localHour) => {
-										const { timeLabel, utcHour } = hourData[localHour];
-										const dangerLevel = rowData?.dangerLevelByHour?.[utcHour];
-										const linkTarget = createLink(sensor, dateQueryParam);
+									<div className="flex items-start gap-1.5 px-4 pb-3">
+										{hours.map((localHour) => {
+											const { timeLabel, utcHour } = hourData[localHour];
+											const dangerLevel = rowData?.dangerLevelByHour?.[utcHour];
 
-										const { className, isClickable } = getCellAppearance(dangerLevel);
-
-										if (!isClickable || linkTarget === null) {
 											return (
 												<div
 													key={`${sensor}-${localHour}`}
-													className={className}
-													aria-hidden="true"
-												/>
-											);
-										}
+													className="flex shrink-0 flex-col items-center"
+												>
+													{/* hour slot */}
+													<div
+														title={`${timeLabel} — ${dangerLevel ?? "no data"}`}
+														className={cn(
+															"relative block size-12 rounded-lg border transition-all",
+															getDangerLevelClasses(dangerLevel ?? null),
+														)}
+													>
+														{dangerLevel && (
+															<DangerLevelDots
+																dangerLevel={dangerLevel}
+																className="absolute right-1 bottom-1"
+															/>
+														)}
+													</div>
 
-										return (
-											<Link
-												key={`${sensor}-${localHour}`}
-												to={linkTarget}
-												title={`${timeLabel} - ${dangerLevel}`}
-												className="relative"
-												aria-label={`View ${sensor} data for ${timeLabel}`}
-											>
-												<div className={className} />
-												<DangerLevelDots
-													dangerLevel={dangerLevel ?? null}
-													className="absolute right-1 bottom-1"
-												/>
-											</Link>
-										);
-									})}
-								</Fragment>
+													{/* time label */}
+													<div className="mt-2 text-center text-muted-foreground text-xs">
+														{timeLabel}
+													</div>
+												</div>
+											);
+										})}
+									</div>
+								</>
+							);
+
+							if (isLinkable) {
+								return (
+									<Link
+										key={sensor}
+										to={linkTarget}
+										className={cn(
+											"group block rounded-lg transition-colors",
+											isLinkable && "hover:bg-card-highlight",
+										)}
+										aria-label={`View ${t(($) => $.sensors[sensor])} data`}
+									>
+										{rowContent}
+									</Link>
+								);
+							}
+
+							return (
+								<div key={sensor} className="group block rounded-lg transition-colors">
+									{rowContent}
+								</div>
 							);
 						})}
 					</div>
