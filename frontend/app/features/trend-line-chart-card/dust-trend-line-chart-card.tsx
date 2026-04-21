@@ -33,7 +33,21 @@ export function DustTrendLineChartCard({ unit }: Props) {
 		}),
 	);
 
+	const { data: maxPm4Result } = useQuery(
+		sensorQueryOptions({
+			sensor,
+			query: buildSensorQuery(sensor, view, date, {
+				field: "pm4_twa",
+				aggregationFunction: "max",
+				granularity: "day",
+			}),
+			userId: user.id,
+			enabled: view !== "day",
+		}),
+	);
+
 	const { data: maxPm25Result } = useQuery(
+		//TODO: Switch 2500 instead of 25, same for the other ones
 		sensorQueryOptions({
 			sensor,
 			query: buildSensorQuery(sensor, view, date, {
@@ -91,6 +105,11 @@ export function DustTrendLineChartCard({ unit }: Props) {
 							data: maxPm1Result?.data ?? [],
 							sensor,
 							sensorField: "pm1_twa",
+						},
+						{
+							data: maxPm4Result?.data ?? [],
+							sensor,
+							sensorField: "pm4_twa",
 						},
 						{
 							data: maxPm25Result?.data ?? [],

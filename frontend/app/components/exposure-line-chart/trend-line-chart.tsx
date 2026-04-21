@@ -2,12 +2,20 @@ import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import type { SensorDto, SensorTypeField } from "@/lib/dto";
 import type { Sensor, SensorUnit } from "@/lib/sensors";
 import { cn, formatSensorValue } from "@/lib/utils";
+import { DangerLevels } from "@/lib/danger-levels";
+import { getThreshold } from "@/lib/thresholds";
 import { addDays, addWeeks, endOfMonth, endOfWeek, getISOWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns";
+import { type JSX, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
+import { SensorLegend } from "./sensor-legend";
+import { ThresholdLegend } from "./threshold-legend";
+import { ThresholdLine } from "./threshold-line";
 
 type TrendGranularity = "day" | "week";
+
+const Y_AXIS_WIDTH = 60;
 
 export type TrendSeries = {
 	sensor: Sensor;
@@ -24,9 +32,12 @@ export interface TrendLineChartProps {
 	granularity: TrendGranularity;
 	lineType?: CurveType;
 	chartContainerClassName?: string;
+	usePeakDangerThreshold?: boolean;
 }
 
 type SeriesDefinition = {
+	sensor: Sensor;
+	sensorField?: SensorTypeField;
 	dataKey: string;
 	label: string;
 	color: string;
@@ -42,12 +53,19 @@ export function TrendLineChart({
 	granularity,
 	lineType = "linear",
 	chartContainerClassName,
+	usePeakDangerThreshold = false,
 }: TrendLineChartProps) {
 	const { t } = useTranslation();
 
 	const bucketDates = getBucketDates(selectedDate, granularity);
-	const seriesDefinitions = buildSeriesDefinitions(series, granularity);
+	const seriesDefinitions = buildSeriesDefinitions(series, granularity, t);
 	const chartData = buildChartData(bucketDates, seriesDefinitions, granularity);
+
+	const [hoveredSeriesKey, setHoveredSeriesKey] = useState<string | null>(null);
+
+	const isSingleSeries = seriesDefinitions.length === 1;
+
+	const activeSeriesKey = isSingleSeries ? (seriesDefinitions[0]?.dataKey ?? null) : hoveredSeriesKey;
 
 	return (
 		<ChartContainer config={{}} className={cn("h-full w-full", chartContainerClassName)}>
@@ -66,6 +84,7 @@ export function TrendLineChart({
 				/>
 
 				<YAxis
+					width={Y_AXIS_WIDTH}
 					tickLine={false}
 					axisLine={false}
 					tick={{
@@ -96,6 +115,9 @@ export function TrendLineChart({
 						strokeWidth="3"
 						isAnimationActive={false}
 						connectNulls={true}
+						onMouseEnter={() => setHoveredSeriesKey(serie.dataKey)}
+						onMouseLeave={() => setHoveredSeriesKey(null)}
+						opacity={hoveredSeriesKey !== null && hoveredSeriesKey !== serie.dataKey ? 0.5 : 1}
 						dot={{
 							r: 3,
 							fill: serie.color,
@@ -108,16 +130,88 @@ export function TrendLineChart({
 						}}
 					/>
 				))}
-				<Legend wrapperStyle={{ paddingTop: 12 }} />
+
+				{seriesDefinitions.map((serie) => {
+					if (activeSeriesKey !== serie.dataKey) {
+						return null;
+					}
+
+					const threshold = getThreshold(serie.sensor, serie.sensorField);
+
+					const thresholdLines: Array<JSX.Element> = [];
+
+					if (threshold.peakDanger && usePeakDangerThreshold) {
+						thresholdLines.push(
+							<ThresholdLine
+								key={`${serie.dataKey}-danger`}
+								y={threshold.peakDanger}
+								dangerLevel="danger"
+							/>,
+						);
+					} else {
+						if (threshold.warning) {
+							thresholdLines.push(
+								<ThresholdLine
+									key={`${serie.dataKey}-warning`}
+									y={threshold.warning}
+									dangerLevel="warning"
+								/>,
+							);
+						}
+
+						if (threshold.danger) {
+							thresholdLines.push(
+								<ThresholdLine
+									key={`${serie.dataKey}-danger`}
+									y={threshold.danger}
+									dangerLevel="danger"
+								/>,
+							);
+						}
+					}
+
+					return thresholdLines;
+				})}
+
+				<Legend
+					content={() => (
+						<div className="mt-2 flex flex-col gap-3" style={{ marginLeft: Y_AXIS_WIDTH }}>
+							<SensorLegend
+								items={seriesDefinitions.map((serie) => ({
+									label: getSeriesLabel(serie.sensor, serie.sensorField, t),
+									color: serie.color,
+								}))}
+							/>
+							<ThresholdLegend
+								items={[
+									{
+										dangerLevel: "danger",
+										color: `var(--${DangerLevels.danger.color})`,
+									},
+									{
+										dangerLevel: "warning",
+										color: `var(--${DangerLevels.warning.color})`,
+									},
+								]}
+							/>
+						</div>
+					)}
+				/>
 			</LineChart>
 		</ChartContainer>
 	);
 }
 
-function buildSeriesDefinitions(series: Array<TrendSeries>, granularity: TrendGranularity): Array<SeriesDefinition> {
+function buildSeriesDefinitions(
+	series: Array<TrendSeries>,
+	granularity: TrendGranularity,
+	t: ReturnType<typeof useTranslation>["t"],
+): Array<SeriesDefinition> {
 	return series.map((serie) => ({
+		sensor: serie.sensor,
+		sensorField: serie.sensorField,
 		dataKey: getSeriesDataKey(serie.sensor, serie.sensorField),
-		label: getSeriesLabel(serie.sensor, serie.sensorField),
+		label: getSeriesLabel(serie.sensor, serie.sensorField, t),
 		color: getSeriesColor(serie.sensor, serie.sensorField),
 		valuesByBucket: new Map(serie.data.map((item) => [normalizeBucketKey(item.time, granularity), item.value])),
 	}));
@@ -148,9 +242,11 @@ function getSeriesDataKey(sensor: Sensor, field?: SensorTypeField): string {
 	return field ? `${sensor}:${field}` : sensor;
 }
 
-function getSeriesLabel(sensor: Sensor, field?: SensorTypeField): string {
-	const { t } = useTranslation();
-
+function getSeriesLabel(
+	sensor: Sensor,
+	field: SensorTypeField | undefined,
+	t: ReturnType<typeof useTranslation>["t"],
+): string {
 	if (!field) {
 		return t(($) => $.sensors[sensor]);
 	}
@@ -159,22 +255,22 @@ function getSeriesLabel(sensor: Sensor, field?: SensorTypeField): string {
 }
 
 function getSeriesColor(sensor: Sensor, field?: SensorTypeField): string {
-	const styleKey = field ? `${sensor}:${field}` : sensor;
-
-	switch (styleKey) {
-		case "dust:pm1_twa":
-			return "var(--color-green-700)";
-		case "dust:pm25_twa":
-			return "var(--color-blue-600)";
-		case "dust:pm10_twa":
-			return "var(--color-orange-400)";
-		case "noise":
-			return "var(--color-green-700)";
-		case "vibration":
-			return "var(--color-orange-500)";
-		default:
-			return "var(--color-blue-500)";
+	if (sensor === "dust") {
+		switch (field) {
+			case "pm1_twa":
+				return "var(--color-green-700)";
+			case "pm25_twa":
+				return "var(--color-blue-600)";
+			case "pm4_twa":
+				return "var(--color-orange-400)";
+			case "pm10_twa":
+				return "var(--color-red-600)";
+			default:
+				return "var(--color-blue-600)";
+		}
 	}
+
+	return "var(--color-green-700)";
 }
 
 function getBucketDates(selectedDate: Date, granularity: TrendGranularity): Array<Date> {
