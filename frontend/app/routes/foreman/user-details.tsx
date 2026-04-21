@@ -1,4 +1,3 @@
-import { DailyBarChart } from "@/components/daily-bar-chart";
 import { ExportButton } from "@/components/export-button";
 import {
 	ExposureLineChartCard,
@@ -9,6 +8,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { GaugeChart } from "@/components/ui/gauge-chart";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DateContext } from "@/features/date-picker/use-date";
+import { DayWidget } from "@/features/day-widget/day-widget";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
@@ -113,7 +113,7 @@ function AllSensorsUserOverview({
 						data={mapOverviewDataToTimeBucketStatuses(data ?? [])}
 					/>
 				) : (
-					<DailyBarChart
+					<DayWidget
 						data={mapOverviewBucketsToChartRows(data ?? [], 0, 23)}
 						startHour={minHour}
 						endHour={maxHour}
