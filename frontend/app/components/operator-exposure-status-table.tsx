@@ -3,6 +3,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { type DangerLevel, mapDangerLevelToLabel } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import type { ColumnDef } from "@tanstack/react-table";
+import type { Sensor } from "app/lib/sensors";
 import { t } from "i18next";
 
 export interface SensorTableCellProps {
@@ -36,6 +37,7 @@ export function OperatorExposureStatusTable({ data, setSelectedUserId, setSensor
 				return (
 					<OperatorExposureStatusSensorCell
 						status={status}
+						sensor="dust"
 						onClick={() => {
 							setSelectedUserId(row.original.id);
 							setSensor("dust");
@@ -53,6 +55,7 @@ export function OperatorExposureStatusTable({ data, setSelectedUserId, setSensor
 				return (
 					<OperatorExposureStatusSensorCell
 						status={status}
+						sensor="noise"
 						onClick={() => {
 							setSelectedUserId(row.original.id);
 							setSensor("noise");
@@ -70,6 +73,7 @@ export function OperatorExposureStatusTable({ data, setSelectedUserId, setSensor
 				return (
 					<OperatorExposureStatusSensorCell
 						status={status}
+						sensor="vibration"
 						onClick={() => {
 							setSelectedUserId(row.original.id);
 							setSensor("vibration");
@@ -86,14 +90,15 @@ export function OperatorExposureStatusTable({ data, setSelectedUserId, setSensor
 interface OperatorExposureStatusCellProps {
 	onClick?: () => void;
 	status: DangerLevel;
+	sensor: Sensor;
 }
 
-function OperatorExposureStatusSensorCell({ onClick, status }: OperatorExposureStatusCellProps) {
+function OperatorExposureStatusSensorCell({ onClick, status, sensor }: OperatorExposureStatusCellProps) {
 	const label = mapDangerLevelToLabel(status);
 
 	return (
 		<button type="button" className="w-fit cursor-pointer" onClick={onClick}>
-			<ExposureBadge sensor="dust" dangerLevel={status}>
+			<ExposureBadge sensor={sensor} dangerLevel={status}>
 				{label}
 			</ExposureBadge>
 		</button>
