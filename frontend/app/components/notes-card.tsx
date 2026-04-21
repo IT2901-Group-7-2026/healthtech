@@ -3,17 +3,20 @@ import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import { TIMEZONE } from "@/i18n/locale";
-import { createNote, notesQueryOptions, updateNote } from "@/lib/api";
-import type { Note } from "@/lib/dto";
+import { createNote, deleteNote, notesQueryOptions, updateNote } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isSameDay } from "date-fns";
+import { NotebookPenIcon } from "lucide-react";
 import { type JSX, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "./ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
+import { Card, CardContent, CardHeader } from "./ui/card";
 import { Textarea } from "./ui/textarea";
 
-export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean }) => {
+interface NotesCardProps {
+	popUpOverride?: boolean;
+}
+
+export const NotesCard = ({ popUpOverride = false }: NotesCardProps) => {
 	const { t, i18n } = useTranslation();
 	const locale = i18n.language;
 	const { view } = useView();
@@ -25,13 +28,7 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 		notesQueryOptions({ view: view, selectedDay: date, userId: user.id }),
 	);
 
-	const { mutate: mutateUpdateNote } = useMutation({
-		mutationFn: updateNote,
-		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: ["notes"] });
-			refetch();
-		},
-	});
+	const noteForSelectedDate = data?.find((note) => isSameDay(note.time, date, { in: TIMEZONE })) ?? null;
 
 	const { mutate: mutateCreateNote } = useMutation({
 		mutationFn: createNote,
@@ -41,34 +38,60 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 		},
 	});
 
-	const [todayNote, setTodayNote] = useState<Note | null>(
-		data ? (data.find((note) => isSameDay(note.time, date, { in: TIMEZONE })) ?? null) : null,
-	);
+	const { mutate: mutateUpdateNote } = useMutation({
+		mutationFn: updateNote,
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: ["notes"] });
+			refetch();
+		},
+	});
 
-	const [showTextArea, setShowTextArea] = useState<boolean>(
-		data ? !data.some((note) => isSameDay(note.time, date, { in: TIMEZONE })) : true,
-	);
+	const { mutate: mutateDeleteNote } = useMutation({
+		mutationFn: deleteNote,
+		onSettled: () => {
+			queryClient.invalidateQueries({ queryKey: ["notes"] });
+			refetch();
+		},
+	});
 
-	const handleEdit = () => {
-		setShowTextArea(!showTextArea);
-	};
+	const [noteValue, setNoteValue] = useState(noteForSelectedDate?.note ?? "");
 
-	const handleSubmit = () => {
-		if (todayNote !== null && todayNote.note !== "" && data) {
-			if (data.some((note) => isSameDay(note.time, date, { in: TIMEZONE }))) {
-				mutateUpdateNote({ note: todayNote, userId: user.id });
-			} else {
-				mutateCreateNote({ note: todayNote, userId: user.id });
+	const handleBlur = () => {
+		const trimmedNoteValue = noteValue.trim();
+
+		if (trimmedNoteValue === "") {
+			setNoteValue("");
+
+			if (noteForSelectedDate !== null) {
+				mutateDeleteNote({ time: noteForSelectedDate.time, userId: user.id });
 			}
+
+			return;
 		}
-		setShowTextArea(false);
+
+		if (noteForSelectedDate === null) {
+			mutateCreateNote({
+				note: {
+					time: date,
+					note: noteValue,
+				},
+				userId: user.id,
+			});
+		} else if (noteValue !== noteForSelectedDate.note) {
+			mutateUpdateNote({
+				note: {
+					time: noteForSelectedDate.time,
+					note: noteValue,
+				},
+				userId: user.id,
+			});
+		}
 	};
 
 	useEffect(() => {
 		if (data) {
 			const foundNote = data.find((note) => isSameDay(note.time, date, { in: TIMEZONE })) ?? null;
-			setTodayNote(foundNote);
-			setShowTextArea(!foundNote);
+			setNoteValue(foundNote?.note ?? "");
 		}
 	}, [data, date]);
 
@@ -105,37 +128,22 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 			break;
 	}
 
-	const title = t(($) => $.dailyNotes.viewTitle, {
+	const title = t(($) => $.notes.title, {
 		date: formattedDateLabel,
 	});
 
 	let Content: JSX.Element;
 
 	if (isForDayView) {
-		Content =
-			isForDayView && showTextArea ? (
-				<Textarea
-					placeholder={t(($) => $.dailyNotes.writeHere)}
-					value={todayNote?.note ?? ""}
-					className="min-h-15 text-foreground"
-					onChange={(e) =>
-						setTodayNote({
-							time: date,
-							note: e.target.value,
-						})
-					}
-				/>
-			) : (
-				<p>
-					{
-						data?.find((note) =>
-							isSameDay(note.time, date, {
-								in: TIMEZONE,
-							}),
-						)?.note
-					}
-				</p>
-			);
+		Content = (
+			<Textarea
+				placeholder={t(($) => $.notes.placeholder)}
+				value={noteValue}
+				className="-mx-2 -my-1 min-h-17 w-[calc(100%+var(--spacing)*4)] rounded-t-none border-none bg-transparent px-2 py-1 text-foreground dark:bg-transparent"
+				onChange={(e) => setNoteValue(e.target.value)}
+				onBlur={handleBlur}
+			/>
+		);
 	} else {
 		Content =
 			data && data.length > 0 ? (
@@ -155,37 +163,22 @@ export const DailyNotes = ({ popUpOverride = false }: { popUpOverride?: boolean 
 				</ul>
 			) : (
 				<p className="text-sm">
-					{t(($) => $.dailyNotes.emptyState, {
-						view: t(($$) => $$.dailyNotes[view]),
+					{t(($) => $.notes.noNotes, {
+						view: t(($$) => $$.views[view]),
 					})}
 				</p>
 			);
 	}
 
 	return (
-		<Card muted={true} className="max-h-96 w-full overflow-y-auto">
-			<CardHeader>
-				<h2 className="text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
+		<Card muted={true} className="max-h-96 w-full gap-0 overflow-y-auto p-0">
+			<CardHeader className="rounded-t-xl bg-secondary px-3 py-2 pb-0">
+				<div className="flex items-center gap-2">
+					<NotebookPenIcon className="size-3.5 text-muted-foreground" />
+					<h2 className="text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
+				</div>
 			</CardHeader>
-			<CardContent>{Content}</CardContent>
-			{isForDayView && (
-				<CardFooter className="justify-end gap-2">
-					{todayNote !== null && !showTextArea && (
-						<Button size="sm" variant="secondary" onClick={handleEdit}>
-							{t(($) => $.dailyNotes.edit)}
-						</Button>
-					)}
-					{showTextArea && (
-						<Button
-							size="sm"
-							disabled={todayNote === null || todayNote.note.trim() === ""}
-							onClick={handleSubmit}
-						>
-							{t(($) => $.dailyNotes.save)}
-						</Button>
-					)}
-				</CardFooter>
-			)}
+			<CardContent className="rounded-t-none p-3 py-2">{Content}</CardContent>
 		</Card>
 	);
 };

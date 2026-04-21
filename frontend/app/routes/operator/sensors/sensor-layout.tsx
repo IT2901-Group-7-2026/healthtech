@@ -1,5 +1,5 @@
-import { DailyNotes } from "@/components/daily-notes";
 import { DatePicker } from "@/components/date-picker";
+import { NotesCard } from "@/components/notes-card";
 import { SensorIcon } from "@/components/sensor-icon";
 import { Summary } from "@/components/summary";
 import { Badge } from "@/components/ui/badge";
@@ -137,7 +137,7 @@ export default function SensorLayout() {
 					data={summary}
 					mode={sensor === null ? "sensor" : "count"}
 				/>
-				<DailyNotes />
+				<NotesCard />
 			</aside>
 
 			<article className="col-start-2 row-start-2 flex flex-col gap-4">

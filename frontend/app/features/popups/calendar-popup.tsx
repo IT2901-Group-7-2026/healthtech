@@ -1,5 +1,5 @@
-import { DailyNotes } from "@/components/daily-notes";
 import { ExposureBadge } from "@/components/exposure-badge";
+import { NotesCard } from "@/components/notes-card";
 import { Card } from "@/components/ui/card";
 import { BasePopup } from "@/features/popups/base-popup";
 import type { DangerLevel } from "@/lib/danger-levels";
@@ -53,7 +53,7 @@ export function CalendarPopup({
 				</Card>
 			)}
 			<h2 className="pt-4 font-bold">{t(($) => $.popup.notesTitle)}</h2>
-			<DailyNotes popUpOverride={true} />
+			<NotesCard popUpOverride={true} />
 		</BasePopup>
 	);
 }
