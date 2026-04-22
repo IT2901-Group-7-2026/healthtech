@@ -96,7 +96,7 @@ export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data }: WeekWidg
 								type="button"
 								className={cn(
 									"flex min-w-20 flex-1 flex-col rounded-xl p-1.5 text-left",
-									"transition-colors hover:bg-secondary",
+									"transition-colors hover:bg-secondary cursor-pointer",
 									CELL_GAP,
 								)}
 								onClick={() => handleHourClick(segment.date)}
