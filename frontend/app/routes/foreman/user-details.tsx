@@ -4,8 +4,8 @@ import {
 	ExposureLineChartCardSkeleton,
 } from "@/components/exposure-line-chart/exposure-line-chart-card";
 import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
-import { Card, CardTitle } from "@/components/ui/card";
-import { GaugeChart } from "@/components/ui/gauge-chart";
+import { ExposureSlider } from "@/components/exposure-slider";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDate } from "@/features/date-picker/use-date";
 import { DayWidget } from "@/features/day-widget/day-widget";
@@ -16,6 +16,7 @@ import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
+import { getDangerLevel } from "@/lib/danger-levels";
 import {
 	type Aggregation,
 	Aggregations,
@@ -138,7 +139,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 
 	const { date } = useDate();
 
-	const query = buildSensorQuery(sensor, "day", date, {
+	const query = buildSensorQuery(sensor, view, date, {
 		field: dustField,
 	});
 
@@ -151,9 +152,10 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const dustThreshold = getThreshold(sensor, query.field);
 	const dustPm1TwaThreshold = getThreshold(sensor, "pm1_twa");
 	const dustPm25TwaThreshold = getThreshold(sensor, "pm25_twa");
+	const dustPm4TwaThreshold = getThreshold(sensor, "pm4_twa");
 	const dustPm10TwaThreshold = getThreshold(sensor, "pm10_twa");
 
-	const [dataResult, dustTwa1Result, dustTwa25Result, dustTwa10Result] = useQueries({
+	const [dataResult, dustTwa1Result, dustTwa25Result, dustTwa4Result, dustTwa10Result] = useQueries({
 		queries: [
 			sensorQueryOptions({
 				sensor,
@@ -162,7 +164,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 			}),
 			sensorQueryOptions({
 				sensor,
-				query: buildSensorQuery(sensor, "day", date, {
+				query: buildSensorQuery(sensor, view, date, {
 					granularity: "day",
 					aggregationFunction: "avg",
 					field: "pm1_twa",
@@ -171,7 +173,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 			}),
 			sensorQueryOptions({
 				sensor,
-				query: buildSensorQuery(sensor, "day", date, {
+				query: buildSensorQuery(sensor, view, date, {
 					granularity: "day",
 					aggregationFunction: "avg",
 					field: "pm25_twa",
@@ -180,7 +182,16 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 			}),
 			sensorQueryOptions({
 				sensor,
-				query: buildSensorQuery(sensor, "day", date, {
+				query: buildSensorQuery(sensor, view, date, {
+					granularity: "day",
+					aggregationFunction: "avg",
+					field: "pm4_twa",
+				}),
+				userId: selectedUser.id,
+			}),
+			sensorQueryOptions({
+				sensor,
+				query: buildSensorQuery(sensor, view, date, {
 					granularity: "day",
 					aggregationFunction: "avg",
 					field: "pm10_twa",
@@ -193,9 +204,15 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const data = dataResult?.data?.data;
 	const hourDomain = dataResult?.data?.hourDomain;
 
-	const dustTwa1Data = dustTwa1Result.data?.data;
-	const dustTwa25Data = dustTwa25Result.data?.data;
-	const dustTwa10Data = dustTwa10Result.data?.data;
+	const avgDustTwa1Data = dustTwa1Result.data?.data ?? [];
+	const avgDustTwa25Data = dustTwa25Result.data?.data ?? [];
+	const avgDustTwa4Data = dustTwa4Result.data?.data ?? [];
+	const avgDustTwa10Data = dustTwa10Result.data?.data ?? [];
+
+	const avgPm1Twa = getAvgValue(avgDustTwa1Data);
+	const avgPm4Twa = getAvgValue(avgDustTwa4Data);
+	const avgPm25Twa = getAvgValue(avgDustTwa25Data);
+	const avgPm10Twa = getAvgValue(avgDustTwa10Data);
 
 	const maxValue = data ? Math.max(...data.map((point) => point.value)) : 0;
 	const minY = 0;
@@ -278,35 +295,53 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 				)}
 			</SensorChartCard>
 
-			<div className="flex flex-wrap items-center gap-4">
-				{
-					<GaugeChart
+			<Card className="w-full">
+				<CardHeader>
+					<CardTitle>{t(($) => $.exposureSlider.title, { view })}</CardTitle>
+				</CardHeader>
+				<CardContent className="flex flex-row flex-wrap">
+					<ExposureSlider
+						className="flex-1"
 						label={t(($) => $.sensors.dustExposureLabels.pm1_twa)}
-						value={dustTwa1Data?.[0]?.value ?? null}
-						thresholdValue={dustPm1TwaThreshold.danger}
+						value={avgPm1Twa}
 						sensor={sensor}
-						unit="ug"
+						unitLabel="ug"
+						dangerLevel={getDangerLevel(avgPm1Twa, dustPm1TwaThreshold.warning, dustPm1TwaThreshold.danger)}
 					/>
-				}
-				{
-					<GaugeChart
+					<ExposureSlider
+						className="flex-1"
 						label={t(($) => $.sensors.dustExposureLabels.pm25_twa)}
-						value={dustTwa25Data?.[0]?.value ?? null}
-						thresholdValue={dustPm25TwaThreshold.danger}
+						value={avgPm25Twa}
 						sensor={sensor}
-						unit="ug"
+						unitLabel="ug"
+						dangerLevel={getDangerLevel(
+							avgPm25Twa,
+							dustPm25TwaThreshold.warning,
+							dustPm25TwaThreshold.danger,
+						)}
 					/>
-				}
-				{
-					<GaugeChart
+					<ExposureSlider
+						className="flex-1"
+						label={t(($) => $.sensors.dustExposureLabels.pm4_twa)}
+						value={avgPm4Twa}
+						sensor={sensor}
+						unitLabel="ug"
+						dangerLevel={getDangerLevel(avgPm4Twa, dustPm4TwaThreshold.warning, dustPm4TwaThreshold.danger)}
+					/>
+					<ExposureSlider
+						className="flex-1"
 						label={t(($) => $.sensors.dustExposureLabels.pm10_twa)}
-						value={dustTwa10Data?.[0]?.value ?? null}
-						thresholdValue={dustPm10TwaThreshold.danger}
+						value={avgPm10Twa}
 						sensor={sensor}
-						unit="ug"
+						unitLabel="ug"
+						dangerLevel={getDangerLevel(
+							avgPm10Twa,
+							dustPm10TwaThreshold.warning,
+							dustPm10TwaThreshold.danger,
+						)}
 					/>
-				}
-			</div>
+				</CardContent>
+			</Card>
 
 			{showTrendLineChart && <DustTrendLineChartCard unit={dustUnit} userId={selectedUser.id} />}
 		</div>
@@ -322,7 +357,7 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 	const sensor: Sensor = "vibration";
 	const vibrationThreshold = getThreshold(sensor);
 
-	const query = buildSensorQuery(sensor, "day", date);
+	const query = buildSensorQuery(sensor, view, date);
 
 	const { data: overviewResponse } = useQuery(
 		sensorOverviewQueryOptions({
@@ -422,7 +457,7 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const usePeakAggregation = aggregation === "peak";
 	const noiseThreshold = getThreshold(sensor);
 
-	const query = buildSensorQuery(sensor, "day", date, {
+	const query = buildSensorQuery(sensor, view, date, {
 		usePeakAggregation,
 	});
 
@@ -591,4 +626,13 @@ function formatChartDate(selectedDate: TZDate, locale: string) {
 		month: "long",
 		year: "numeric",
 	});
+}
+
+function getAvgValue(data: Array<SensorDto>): number {
+	if (data.length === 0) {
+		return 0;
+	}
+
+	const sum = data.reduce((acc, point) => acc + point.value, 0);
+	return sum / data.length;
 }
