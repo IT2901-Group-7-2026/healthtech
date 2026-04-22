@@ -105,7 +105,6 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 					<Card className="p-3">
 						<Form {...form}>
 							<form onSubmit={form.handleSubmit(onSubmit)} className="max-w-sm space-y-2">
-								{/* From */}
 								<div className="flex flex-col gap-2">
 									<span>{t(($) => $.popup.from)}</span>
 									<FormField
@@ -113,7 +112,6 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 										name="fromDate"
 										render={({ field }) => (
 											<FormItem>
-												{/* NOTE: we forward the field’s value & onChange */}
 												<DateInput
 													value={field.value}
 													onChange={field.onChange}
@@ -125,8 +123,6 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 										)}
 									/>
 								</div>
-
-								{/* To */}
 								<div className="flex flex-col gap-2">
 									<span>{t(($) => $.popup.to)}</span>
 									<FormField
@@ -145,8 +141,6 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 										)}
 									/>
 								</div>
-
-								{/* Button + floating message */}
 								<div className="relative mt-10">
 									<Button type="submit" disabled={!(fromDate && toDate)} className="h-8 text-sm">
 										{t(($) => $.popup.deleteData)}
