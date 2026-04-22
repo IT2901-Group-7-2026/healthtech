@@ -22,7 +22,6 @@ export function ExposureSlider({ sensor, field, value, dangerLevel, unitLabel: u
 	const sliderMax = danger * 1.5;
 	const percentage =
 		value === undefined ? 0 : Math.min(100, Math.max(0, sliderMax <= 0 ? 0 : (value / sliderMax) * 100));
-	const indicatorLeftOffset = `${percentage}%`;
 
 	const valueFormatter = new Intl.NumberFormat(i18n.language === "no" ? "nb-NO" : "en-US", {
 		minimumFractionDigits: 1,
@@ -51,7 +50,10 @@ export function ExposureSlider({ sensor, field, value, dangerLevel, unitLabel: u
 							className={cn(
 								"absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-foreground bg-transparent shadow-md",
 							)}
-							style={{ left: indicatorLeftOffset }}
+							// Make sure the indicator stays within the bounds of the slider
+							style={{
+								left: `clamp(8px, ${percentage}%, calc(100% - 8px))`,
+							}}
 							aria-hidden="true"
 						/>
 					)}

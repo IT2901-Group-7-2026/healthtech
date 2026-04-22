@@ -321,5 +321,8 @@
   },
   "exposureTrendLineChartCard": {
     "title": "Exposure trend for {{view}}"
+  },
+  "exposureSlider": {
+    "title": "Average exposure for {{view}}"
   }
 }
