@@ -323,6 +323,9 @@
   "exposureTrendLineChartCard": {
     "title": "Eksponeringstrend for {{view}}"
   },
+  "exposureSlider": {
+    "title": "Gjennomsnittlig eksponering for {{view}}"
+  },
   "pdf": {
     "dustExposure": "Støveksponering",
     "noiseExposure": "Støyeksponering",
