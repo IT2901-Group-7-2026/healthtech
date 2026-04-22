@@ -24,16 +24,16 @@ interface PrivacySettingsPopupProps {
 	children?: React.ReactNode;
 }
 
+export type DateFormValues = {
+	fromDate?: TZDate;
+	toDate?: TZDate;
+};
+
 export function PrivacySettingsPopup({ open, onClose, children }: PrivacySettingsPopupProps) {
 	const { t } = useTranslation();
 	const title = t(($) => $.profile.privacySettings);
 
-	type FormValues = {
-		fromDate?: TZDate;
-		toDate?: TZDate;
-	};
-
-	const form = useForm<FormValues>({
+	const form = useForm<DateFormValues>({
 		defaultValues: {
 			fromDate: undefined,
 			toDate: undefined,
@@ -45,7 +45,7 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 	const toDate = form.watch("toDate");
 	const format = useFormatDate();
 
-	const onSubmit = (data: FormValues) => {
+	const onSubmit = (data: DateFormValues) => {
 		if (data.fromDate && data.toDate && isBefore(data.toDate, data.fromDate)) {
 			form.setError("toDate", {
 				message: t(($) => $.popup.invalidDate),
@@ -64,6 +64,7 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 		}, 5000);
 	};
 
+	// We chose the minimum date to be the 1st of January 2024 because there is no data before this date
 	const minSelectableDate = new TZDate(2024, 0, 1, "Europe/Oslo");
 	const maxSelectableDate = now();
 
