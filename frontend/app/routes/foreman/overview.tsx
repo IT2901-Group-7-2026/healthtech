@@ -1,7 +1,8 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { DailyNotes } from "@/components/daily-notes.js";
 import { DatePicker } from "@/components/date-picker";
+import { NotesCard } from "@/components/notes-card";
+import { OperatorExposureStatusTable } from "@/components/operator-exposure-status-table";
 import { Card } from "@/components/ui/card";
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -28,9 +29,9 @@ export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const { user } = useUser();
 
-	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor);
+	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor.withOptions({ history: "push" }));
 	const { date, setDate } = useDate();
-	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString);
+	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString.withOptions({ history: "push" }));
 
 	const selectedDate = date;
 	const { view } = useView();
@@ -45,9 +46,11 @@ export default function ForemanOverview() {
 	const maxSelectableDate = today();
 
 	const { data: users } = useQuery(fetchSubordinatesQueryOptions(user.id));
-	const { data: subordinates, isLoading: isSubordinatesLoading } = useQuery(
-		fetchSubordinatesQueryOptions(user.id, startDate, endDate),
-	);
+	const {
+		data: subordinates,
+		isLoading: isSubordinatesLoading,
+		error: subordinatesError,
+	} = useQuery(fetchSubordinatesQueryOptions(user.id, startDate, endDate));
 	const { data: thresholdSummary, isLoading: isThresholdSummaryLoading } = useQuery(
 		fetchThresholdSummaryQueryOptions(user.id, startDate, endDate),
 	);
@@ -121,7 +124,7 @@ export default function ForemanOverview() {
 			<div className="flex w-full flex-row gap-6">
 				<aside className="flex flex-col gap-6 md:w-1/5">
 					<TeamSummary subordinateCount={subordinateCount} />
-					<DailyNotes />
+					<NotesCard />
 				</aside>
 
 				<div
@@ -132,7 +135,7 @@ export default function ForemanOverview() {
 				>
 					<div className="flex flex-col gap-12">
 						{isUserSelected ? (
-							<UserDetails selectedUser={selectedUser} selectedDate={selectedDate} sensor={sensor} />
+							<UserDetails selectedUser={selectedUser} sensor={sensor} />
 						) : (
 							<>
 								<AttentionCard
@@ -151,7 +154,32 @@ export default function ForemanOverview() {
 										userOnClick={(id) => setSelectedUserId(id)}
 									/>
 								) : (
-									<SensorSummaryGrid thresholdSummary={thresholdSummary} />
+									<>
+										<SensorSummaryGrid thresholdSummary={thresholdSummary} />
+
+										<Card muted={true} className="flex flex-col gap-4 p-4">
+											<h2 className="font-semibold text-lg">
+												{t(($) => $.foremanDashboard.team.title)}
+											</h2>
+											{isSubordinatesLoading ? (
+												<div className="p-4">{t(($) => $.common.loading)}</div>
+											) : subordinatesError ? (
+												<div className="p-4 text-destructive">
+													{t(($) => $.foremanDashboard.team.failedToLoadMembers)}
+												</div>
+											) : !subordinates || subordinates.length === 0 ? (
+												<div className="p-4">
+													{t(($) => $.foremanDashboard.team.noMembersFound)}
+												</div>
+											) : (
+												<OperatorExposureStatusTable
+													data={subordinates}
+													setSelectedUserId={(id) => setSelectedUserId(id)}
+													setSensor={(s) => setSensor(s as Sensor)}
+												/>
+											)}
+										</Card>
+									</>
 								)}
 							</>
 						)}
@@ -164,7 +192,7 @@ export default function ForemanOverview() {
 
 						<Card muted={true}>
 							<DatePicker
-								mode="day"
+								mode={view}
 								showWeekNumber={true}
 								date={date}
 								onDateChange={setDate}
@@ -193,32 +221,37 @@ function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSu
 	}
 
 	return (
-		<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
-			{sensors.map((sensorType: Sensor) => (
-				<PieChartCard
-					data={{
-						safe: {
-							name: "Safe",
-							value: thresholdSummary[sensorType].safe,
-							label: t(($) => $.foremanDashboard.overview.statCards.safe.label),
-						},
-						warning: {
-							name: "Warning",
-							value: thresholdSummary[sensorType].warning,
-							label: t(($) => $.foremanDashboard.overview.statCards.warning.label),
-						},
-						danger: {
-							name: "Danger",
-							value: thresholdSummary[sensorType].danger,
-							label: t(($) => $.foremanDashboard.overview.statCards.danger.label),
-						},
-					}}
-					label={t(($) => $.sensors[sensorType])}
-					to={`?sensor=${sensorType}`}
-					key={sensorType}
-					sensorType={sensorType}
-				/>
-			))}
+		<div className="flex flex-col gap-4">
+			<div className="font-extralight text-2xl text-color-muted">
+				{t(($) => $.foremanDashboard.overview.sensor)}
+			</div>
+			<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
+				{sensors.map((sensorType: Sensor) => (
+					<PieChartCard
+						data={{
+							safe: {
+								name: "Safe",
+								value: thresholdSummary[sensorType].safe,
+								label: t(($) => $.foremanDashboard.overview.statCards.safe.label),
+							},
+							warning: {
+								name: "Warning",
+								value: thresholdSummary[sensorType].warning,
+								label: t(($) => $.foremanDashboard.overview.statCards.warning.label),
+							},
+							danger: {
+								name: "Danger",
+								value: thresholdSummary[sensorType].danger,
+								label: t(($) => $.foremanDashboard.overview.statCards.danger.label),
+							},
+						}}
+						label={t(($) => $.sensors[sensorType])}
+						to={`?sensor=${sensorType}`}
+						key={sensorType}
+						sensorType={sensorType}
+					/>
+				))}
+			</div>
 		</div>
 	);
 }

@@ -30,8 +30,12 @@ export function BasePopup({
 	let search = navOverride;
 
 	if (!search && relevantDate) {
-		const date = formatDate(relevantDate, "yyyy-MM-dd");
-		search = `?view=Day&date=${date}`;
+		const params = new URLSearchParams(window.location.search);
+
+		params.set("view", "day");
+		params.set("date", formatDate(relevantDate, "yyyy-MM-dd"));
+
+		search = `?${params.toString()}`;
 
 		if (selectedAggregation) {
 			search += `&aggregation=${selectedAggregation}`;

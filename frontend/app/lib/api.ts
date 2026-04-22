@@ -1,6 +1,6 @@
 import type { Sensor } from "@/features/sensor-picker/sensors";
 import type { TZDate } from "@date-fns/tz";
-import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { minutesToMilliseconds } from "date-fns";
 import { fetchWithUserId } from "./api-client";
 import {
@@ -17,6 +17,15 @@ import {
 	UserSchema,
 	UserWithStatusSchema,
 } from "./dto";
+import {
+	buildNotesQueryKey,
+	buildSensorOverviewQueryKey,
+	buildSensorQueryKey,
+	buildSubordinatesQueryKey,
+	buildSubordinatesQueryPrefix,
+	buildThresholdSummaryQueryKey,
+	type SensorQueryKind,
+} from "./query-key-builder";
 import { getStartEnd } from "./sensor-query-utils";
 import type { View } from "./views";
 
@@ -40,6 +49,7 @@ export function usersQueryOptions() {
 		queryFn: () => fetchAllUsers(),
 		staleTime: minutesToMilliseconds(10),
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
+		placeholderData: keepPreviousData,
 	});
 }
 
@@ -82,17 +92,28 @@ export function sensorOverviewQueryOptions({
 	query,
 	userId,
 	enabled,
+	queryKind,
+	windowMinutes,
 }: {
 	query: SensorOverviewRequestDto;
 	userId?: string;
 	enabled?: boolean;
+	queryKind?: SensorQueryKind;
+	windowMinutes?: number;
 }) {
 	return queryOptions({
-		queryKey: [query, userId],
+		queryKey: buildSensorOverviewQueryKey({
+			userId,
+			query,
+			queryKind,
+			windowMinutes,
+		}),
 		queryFn: () => fetchSensorOverviewData(query, userId),
 		staleTime: minutesToMilliseconds(10),
 		enabled,
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
+		placeholderData: keepPreviousData,
+		refetchIntervalInBackground: true,
 	});
 }
 
@@ -101,18 +122,30 @@ export function sensorQueryOptions({
 	query,
 	userId,
 	enabled,
+	queryKind,
+	windowMinutes,
 }: {
 	sensor: Sensor;
 	query: SensorDataRequestDto;
 	userId?: string;
 	enabled?: boolean;
+	queryKind?: SensorQueryKind;
+	windowMinutes?: number;
 }) {
 	return queryOptions({
-		queryKey: [sensor, query, userId],
+		queryKey: buildSensorQueryKey({
+			sensor,
+			userId,
+			query,
+			queryKind,
+			windowMinutes,
+		}),
 		queryFn: () => fetchSensorData(sensor, query, userId),
 		staleTime: minutesToMilliseconds(10),
 		enabled,
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
+		placeholderData: keepPreviousData,
+		refetchIntervalInBackground: true,
 	});
 }
 
@@ -134,10 +167,11 @@ export function notesQueryOptions({ view, selectedDay, userId }: { view: View; s
 	const query = getStartEnd(view, selectedDay);
 
 	return queryOptions({
-		queryKey: ["notes", query, userId],
+		queryKey: buildNotesQueryKey(userId, query.startTime, query.endTime),
 		queryFn: () => fetchNoteData(query, userId),
 		staleTime: minutesToMilliseconds(10),
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
+		placeholderData: keepPreviousData,
 	});
 }
 
@@ -171,6 +205,21 @@ export const createNote = async ({ note, userId }: { note: Note; userId: string 
 	return NoteSchema.parseAsync(json);
 };
 
+export const deleteNote = async ({ time, userId }: { time: TZDate; userId: string }) => {
+	const res = await fetchWithUserId(`notes/${userId}`, {
+		method: "DELETE",
+		body: JSON.stringify(time),
+	});
+
+	if (!res.ok) {
+		const errorText = await res.text();
+		throw new Error(`Failed to delete note: ${errorText}`);
+	}
+
+	const json = await res.json();
+	return NoteSchema.parseAsync(json);
+};
+
 export const fetchSubordinatesQueryOptions = (userId: string, startTime?: TZDate, endTime?: TZDate) => {
 	const params = new URLSearchParams();
 	if (startTime) {
@@ -181,7 +230,7 @@ export const fetchSubordinatesQueryOptions = (userId: string, startTime?: TZDate
 	}
 
 	return queryOptions({
-		queryKey: ["user.subordinates", userId, startTime, endTime],
+		queryKey: buildSubordinatesQueryKey(userId, startTime, endTime),
 		queryFn: async () => {
 			const response = await fetchWithUserId(`users/${userId}/subordinates?${params.toString()}`);
 
@@ -194,6 +243,8 @@ export const fetchSubordinatesQueryOptions = (userId: string, startTime?: TZDate
 		},
 		staleTime: minutesToMilliseconds(10),
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
+		placeholderData: keepPreviousData,
+		refetchIntervalInBackground: true,
 	});
 };
 
@@ -217,7 +268,7 @@ export const useRemoveSubordinatesMutation = (parentUserId: string) => {
 		mutationFn: (subordinateIds: Array<string>) => removeSubordinates(parentUserId, subordinateIds),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: fetchSubordinatesQueryOptions(parentUserId).queryKey,
+				queryKey: buildSubordinatesQueryPrefix(parentUserId),
 			});
 		},
 	});
@@ -243,7 +294,7 @@ export const useAddSubordinatesMutation = (parentUserId: string) => {
 		mutationFn: (subordinateIds: Array<string>) => addSubordinates(parentUserId, subordinateIds),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: fetchSubordinatesQueryOptions(parentUserId).queryKey,
+				queryKey: buildSubordinatesQueryPrefix(parentUserId),
 			});
 		},
 	});
@@ -251,7 +302,7 @@ export const useAddSubordinatesMutation = (parentUserId: string) => {
 
 export const fetchThresholdSummaryQueryOptions = (managerUserId: string, startTime?: TZDate, endTime?: TZDate) =>
 	queryOptions({
-		queryKey: ["user.subordinates.threshold-summary", managerUserId, startTime, endTime],
+		queryKey: buildThresholdSummaryQueryKey(managerUserId, startTime, endTime),
 		queryFn: async () => {
 			const params = new URLSearchParams();
 			if (startTime) {
@@ -277,4 +328,6 @@ export const fetchThresholdSummaryQueryOptions = (managerUserId: string, startTi
 		},
 		staleTime: minutesToMilliseconds(10),
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
+		placeholderData: keepPreviousData,
+		refetchIntervalInBackground: true,
 	});

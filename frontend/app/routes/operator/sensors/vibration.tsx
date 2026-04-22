@@ -7,6 +7,7 @@ import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
+import { VibrationTrendLineChartCard } from "@/features/trend-line-chart-card/vibration-trend-line-chart-card";
 import { useUser } from "@/features/user/user-context";
 import { parseAsView } from "@/features/views/utils";
 import { WeekWidget } from "@/features/week-widget/week-widget";
@@ -66,70 +67,75 @@ export default function Vibration() {
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
 
-	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], "vibration");
+	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], "vibration", false);
 	const minTime = setHours(date, minHour);
 	const maxTime = setHours(date, maxHour);
 
+	const showTrendLineChart = view === "month" || view === "week";
+
 	return (
-		<div className="flex h-full w-full flex-col-reverse gap-4 md:flex-row">
-			<div className="flex flex-1 flex-col gap-4">
-				{isLoading ? (
-					<ExposureLineChartCardSkeleton />
-				) : isError ? (
-					<Card className="flex h-full w-full items-center">
-						<p>{t(($) => $.common.error)}</p>
-					</Card>
-				) : view === "month" ? (
-					<CalendarWidget selectedDay={date} data={calendarData} />
-				) : view === "week" ? (
-					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
-				) : !data || data.length === 0 ? (
-					<Card className="flex h-full w-full items-center">
-						<CardTitle>
-							{date.toLocaleDateString(i18n.language, {
-								day: "numeric",
-								month: "long",
-								year: "numeric",
-							})}
-						</CardTitle>
-						<p>{t(($) => $.common.noData)}</p>
-					</Card>
-				) : (
-					<div className="w-full">
-						<div id={chartContainerId}>
-							<ExposureLineChartCard
-								minTime={minTime}
-								maxTime={maxTime}
-								chartData={downsampleSensorData(sensor, data ?? [])}
-								unit={"points"}
-								maxY={maxY}
-								minY={minY}
-								lineType="monotone"
-								sensor={sensor}
-								headerRight={
-									<ExportButton
-										title={t(($) => $.common.exportAsPdf)}
-										onClick={() =>
-											exportToPDF(
-												chartContainerId,
-												`${date.toLocaleDateString(i18n.language, {
-													day: "numeric",
-													month: "long",
-													year: "numeric",
-												})}-${user.name}-Vibration-Exposure-Overview`,
-												`Vibration Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
-											)
-										}
-									/>
-								}
-							>
-								<ThresholdLine y={vibrationThreshold.danger} dangerLevel="danger" />
-								<ThresholdLine y={vibrationThreshold.warning} dangerLevel="warning" />
-							</ExposureLineChartCard>
+		<div className="flex flex-col gap-16">
+			<div className="flex h-full w-full flex-col-reverse gap-4 md:flex-row">
+				<div className="flex flex-1 flex-col gap-4">
+					{isLoading ? (
+						<ExposureLineChartCardSkeleton />
+					) : isError ? (
+						<Card className="flex h-full w-full items-center">
+							<p>{t(($) => $.common.error)}</p>
+						</Card>
+					) : view === "month" ? (
+						<CalendarWidget selectedDay={date} data={calendarData} />
+					) : view === "week" ? (
+						<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
+					) : !data || data.length === 0 ? (
+						<Card className="flex h-full w-full items-center">
+							<CardTitle>
+								{date.toLocaleDateString(i18n.language, {
+									day: "numeric",
+									month: "long",
+									year: "numeric",
+								})}
+							</CardTitle>
+							<p>{t(($) => $.common.noData)}</p>
+						</Card>
+					) : (
+						<div className="w-full">
+							<div id={chartContainerId}>
+								<ExposureLineChartCard
+									minTime={minTime}
+									maxTime={maxTime}
+									chartData={downsampleSensorData(sensor, data ?? [])}
+									unit={"points"}
+									maxY={maxY}
+									minY={minY}
+									lineType="monotone"
+									sensor={sensor}
+									headerRight={
+										<ExportButton
+											title={t(($) => $.common.exportAsPdf)}
+											onClick={() =>
+												exportToPDF(
+													chartContainerId,
+													`${date.toLocaleDateString(i18n.language, {
+														day: "numeric",
+														month: "long",
+														year: "numeric",
+													})}-${user.name}-Vibration-Exposure-Overview`,
+													`Vibration Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
+												)
+											}
+										/>
+									}
+								>
+									<ThresholdLine y={vibrationThreshold.danger} dangerLevel="danger" />
+									<ThresholdLine y={vibrationThreshold.warning} dangerLevel="warning" />
+								</ExposureLineChartCard>
+							</div>
 						</div>
-					</div>
-				)}
+					)}
+				</div>
 			</div>
+			{showTrendLineChart && <VibrationTrendLineChartCard />}
 		</div>
 	);
 }
