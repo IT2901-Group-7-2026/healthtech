@@ -8,6 +8,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
+import { DustTrendLineChartCard } from "@/features/trend-line-chart-card/dust-trend-line-chart-card";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
@@ -76,95 +77,93 @@ export default function Dust() {
 	const baseMaxY = 45;
 	const maxY = maxValue > baseMaxY ? computeYAxisRange(data ?? []).maxY : baseMaxY;
 
-	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor);
+	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, false);
 	const { minHour, maxHour } = getHourDomain(hourDomain, data?.map((d) => d.time) ?? [], view);
 
 	const minTime = setHours(date, minHour);
 	const maxTime = setHours(date, maxHour);
 
-	return (
-		<div className="flex flex-1 flex-col gap-4">
-			<Tabs value={dustField} onValueChange={(value) => setDustField(value as DustField)}>
-				<TabsList>
-					{dustFields.map((field) => (
-						<TabsTrigger key={field} value={field}>
-							{t(($) => $.sensors.dustFields[field])}
-						</TabsTrigger>
-					))}
-				</TabsList>
-			</Tabs>
+	const showTrendLineChart = view === "month" || view === "week";
 
-			{isLoading ? (
-				<ExposureLineChartCardSkeleton />
-			) : isError ? (
-				<Card className="flex h-full w-full items-center">
-					<p>{t(($) => $.common.error)}</p>
-				</Card>
-			) : view === "month" ? (
-				<CalendarWidget selectedDay={date} data={calendarData} />
-			) : view === "week" ? (
-				<WeekWidget
-					dayStartHour={minHour}
-					dayEndHour={maxHour}
-					data={calendarData}
-					buildLink={(dateQueryParam) =>
-						`?view=Day&date=${dateQueryParam}&dustField=${dustField}&unit=${dustUnit}`
-					}
-				/>
-			) : !data || data.length === 0 ? (
-				<Card className="flex h-24 w-full items-center">
-					<CardTitle>
-						{date.toLocaleDateString(locale, {
-							day: "numeric",
-							month: "long",
-							year: "numeric",
-						})}
-					</CardTitle>
-					<p>{t(($) => $.common.noData)}</p>
-				</Card>
-			) : (
-				<div className="w-full">
-					<div id={chartContainerId}>
-						<ExposureLineChartCard
-							minTime={minTime}
-							maxTime={maxTime}
-							chartData={downsampleSensorData(sensor, data ?? [])}
-							unit={dustUnit}
-							maxY={maxY}
-							minY={minY}
-							sensor={sensor}
-							dustField={query.field}
-							headerRight={
-								<div className="flex items-center gap-2">
-									<Tabs value={dustUnit} onValueChange={(v) => setDustUnit(v as SensorUnit)}>
-										<TabsList>
-											<TabsTrigger value="ug">{t(($) => $.sensors.units.ug)}</TabsTrigger>
-											<TabsTrigger value="mg">{t(($) => $.sensors.units.mg)}</TabsTrigger>
-										</TabsList>
-									</Tabs>
-									<ExportButton
-										title={t(($) => $.common.exportAsPdf)}
-										onClick={() =>
-											exportToPDF(
-												chartContainerId,
-												`${date.toLocaleDateString(locale, {
-													day: "numeric",
-													month: "long",
-													year: "numeric",
-												})}-${user.name}-Dust-Exposure-Overview`,
-												`Dust Exposure - ${user.name} - ${date.toLocaleDateString(locale)}`,
-											)
-										}
-									/>
-								</div>
-							}
-						>
-							<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
-							<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
-						</ExposureLineChartCard>
+	return (
+		<div className="flex flex-col gap-16">
+			<div className="flex flex-1 flex-col gap-4">
+				<Tabs value={dustField} onValueChange={(value) => setDustField(value as DustField)}>
+					<TabsList>
+						{dustFields.map((field) => (
+							<TabsTrigger key={field} value={field}>
+								{t(($) => $.sensors.dustFields[field])}
+							</TabsTrigger>
+						))}
+					</TabsList>
+				</Tabs>
+
+				{isLoading ? (
+					<ExposureLineChartCardSkeleton />
+				) : isError ? (
+					<Card className="flex h-full w-full items-center">
+						<p>{t(($) => $.common.error)}</p>
+					</Card>
+				) : view === "month" ? (
+					<CalendarWidget selectedDay={date} data={calendarData} />
+				) : view === "week" ? (
+					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
+				) : !data || data.length === 0 ? (
+					<Card className="flex h-24 w-full items-center">
+						<CardTitle>
+							{date.toLocaleDateString(locale, {
+								day: "numeric",
+								month: "long",
+								year: "numeric",
+							})}
+						</CardTitle>
+						<p>{t(($) => $.common.noData)}</p>
+					</Card>
+				) : (
+					<div className="w-full">
+						<div id={chartContainerId}>
+							<ExposureLineChartCard
+								minTime={minTime}
+								maxTime={maxTime}
+								chartData={downsampleSensorData(sensor, data ?? [])}
+								unit={dustUnit}
+								maxY={maxY}
+								minY={minY}
+								sensor={sensor}
+								dustField={query.field}
+								headerRight={
+									<div className="flex items-center gap-2">
+										<Tabs value={dustUnit} onValueChange={(v) => setDustUnit(v as SensorUnit)}>
+											<TabsList>
+												<TabsTrigger value="ug">{t(($) => $.sensors.units.ug)}</TabsTrigger>
+												<TabsTrigger value="mg">{t(($) => $.sensors.units.mg)}</TabsTrigger>
+											</TabsList>
+										</Tabs>
+										<ExportButton
+											title={t(($) => $.common.exportAsPdf)}
+											onClick={() =>
+												exportToPDF(
+													chartContainerId,
+													`${date.toLocaleDateString(locale, {
+														day: "numeric",
+														month: "long",
+														year: "numeric",
+													})}-${user.name}-Dust-Exposure-Overview`,
+													`Dust Exposure - ${user.name} - ${date.toLocaleDateString(locale)}`,
+												)
+											}
+										/>
+									</div>
+								}
+							>
+								<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
+								<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
+							</ExposureLineChartCard>
+						</div>
 					</div>
-				</div>
-			)}
+				)}
+			</div>
+			{showTrendLineChart && <DustTrendLineChartCard unit={dustUnit} />}
 		</div>
 	);
 }

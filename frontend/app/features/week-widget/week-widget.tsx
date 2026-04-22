@@ -18,7 +18,7 @@ import {
 	startOfHour,
 	startOfWeek,
 } from "date-fns";
-import { Link, type To } from "react-router";
+import { useView } from "../views/use-view";
 
 // ensure alignment between time-labels and hour slots
 const ROW_HEIGHT = "h-10";
@@ -30,12 +30,12 @@ interface WeekWidgetProps {
 	dayStartHour?: number;
 	dayEndHour?: number;
 	data: Array<TimeBucketStatus>;
-	buildLink?: (dateQueryParam: string) => To | null;
 }
 
-export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data, buildLink }: WeekWidgetProps) {
+export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data }: WeekWidgetProps) {
 	const formatDate = useFormatDate();
-	const { date: selectedDate } = useDate();
+	const { date: selectedDate, setDate } = useDate();
+	const { setView } = useView();
 
 	const daysInWeek = eachDayOfInterval({
 		start: startOfWeek(selectedDate),
@@ -59,7 +59,11 @@ export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data, buildLink 
 	});
 
 	const timeBucketsByHour = groupTimeBucketsByHour(visibleTimeBuckets);
-	const createLink = buildLink ?? ((d: string) => `?view=Day&date=${d}`);
+
+	const handleHourClick = (date: TimeBucketStatus["time"]) => {
+		setDate(date);
+		setView("day");
+	};
 
 	return (
 		<div className="overflow-hidden">
@@ -82,13 +86,22 @@ export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data, buildLink 
 					{/* Day columns */}
 					{timeSlotSegments.map((segment) => {
 						const formattedDate = formatDate(segment.date, "yyyy-MM-dd");
-						const linkTarget = createLink(formattedDate);
 						const today = isToday(segment.date);
 						const weekday = formatDate(segment.date, "EEE");
 						const date = formatDate(segment.date, "dd");
 
-						const columnContent = (
-							<>
+						return (
+							<button
+								key={getUnixTime(segment.date)}
+								type="button"
+								className={cn(
+									"flex min-w-20 flex-1 flex-col rounded-xl p-1.5 text-left",
+									"transition-colors hover:bg-secondary",
+									CELL_GAP,
+								)}
+								onClick={() => handleHourClick(segment.date)}
+								aria-label={`View day details for ${formattedDate}`}
+							>
 								{/* Column header */}
 								<div className={cn("flex items-center justify-center px-1 text-sm", HEADER_HEIGHT)}>
 									<p
@@ -117,9 +130,6 @@ export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data, buildLink 
 								{segment.timeSlots.map((timeSlot, timeSlotIndex) => {
 									const isFirstRow = timeSlotIndex === 0;
 									const isLastRow = timeSlotIndex === segment.timeSlots.length - 1;
-									// Each hour slot maps to at most one bucket.
-									// If multiple buckets fall in the same hour, the highest danger
-									// level wins — see groupTimeBucketsByHour for that logic.
 									const timeBucket = timeBucketsByHour.get(startOfHour(timeSlot).getTime());
 
 									return (
@@ -131,33 +141,7 @@ export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data, buildLink 
 										/>
 									);
 								})}
-							</>
-						);
-
-						if (linkTarget === null) {
-							return (
-								<div
-									key={getUnixTime(segment.date)}
-									className={cn("flex min-w-20 flex-1 flex-col rounded-xl p-1.5", CELL_GAP)}
-								>
-									{columnContent}
-								</div>
-							);
-						}
-
-						return (
-							<Link
-								key={getUnixTime(segment.date)}
-								to={linkTarget}
-								className={cn(
-									"flex min-w-20 flex-1 flex-col rounded-xl p-1.5",
-									"transition-colors hover:bg-secondary",
-									CELL_GAP,
-								)}
-								aria-label={`View day details for ${formattedDate}`}
-							>
-								{columnContent}
-							</Link>
+							</button>
 						);
 					})}
 				</div>

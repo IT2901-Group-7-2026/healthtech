@@ -30,7 +30,7 @@ type LocationMapProps = {
 	isLoading?: boolean;
 };
 
-export function LocationMap({ operators, isLoading, imageUrl = "/factory_arial_view.jpg" }: LocationMapProps) {
+export function LocationMap({ operators, isLoading, imageUrl = "/aker_verdal_sitemap.jpg" }: LocationMapProps) {
 	const imageSize = useImageSize(imageUrl);
 	const { t } = useTranslation();
 	const mapRef = useRef<L.Map | null>(null);
@@ -53,7 +53,7 @@ export function LocationMap({ operators, isLoading, imageUrl = "/factory_arial_v
 		{
 			name: "M-hallen",
 			operators,
-			positions: [xyToyx(170, 250), xyToyx(250, 250), xyToyx(250, 70), xyToyx(170, 70)],
+			positions: [xyToyx(440, 255), xyToyx(875, 250), xyToyx(875, 125), xyToyx(440, 125)],
 			baseStyle: {
 				color: hallOverlayColor,
 				weight: 2,

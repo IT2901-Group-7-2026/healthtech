@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
 
-import { DailyNotes } from "@/components/daily-notes.js";
 import { DatePicker } from "@/components/date-picker";
+import { NotesCard } from "@/components/notes-card";
 import { OperatorExposureStatusTable } from "@/components/operator-exposure-status-table";
 import { Card } from "@/components/ui/card";
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
@@ -124,7 +124,7 @@ export default function ForemanOverview() {
 			<div className="flex w-full flex-row gap-6">
 				<aside className="flex flex-col gap-6 md:w-1/5">
 					<TeamSummary subordinateCount={subordinateCount} />
-					<DailyNotes />
+					<NotesCard />
 				</aside>
 
 				<div
@@ -135,7 +135,7 @@ export default function ForemanOverview() {
 				>
 					<div className="flex flex-col gap-12">
 						{isUserSelected ? (
-							<UserDetails selectedUser={selectedUser} selectedDate={selectedDate} sensor={sensor} />
+							<UserDetails selectedUser={selectedUser} sensor={sensor} />
 						) : (
 							<>
 								<AttentionCard
@@ -221,32 +221,37 @@ function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSu
 	}
 
 	return (
-		<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
-			{sensors.map((sensorType: Sensor) => (
-				<PieChartCard
-					data={{
-						safe: {
-							name: "Safe",
-							value: thresholdSummary[sensorType].safe,
-							label: t(($) => $.foremanDashboard.overview.statCards.safe.label),
-						},
-						warning: {
-							name: "Warning",
-							value: thresholdSummary[sensorType].warning,
-							label: t(($) => $.foremanDashboard.overview.statCards.warning.label),
-						},
-						danger: {
-							name: "Danger",
-							value: thresholdSummary[sensorType].danger,
-							label: t(($) => $.foremanDashboard.overview.statCards.danger.label),
-						},
-					}}
-					label={t(($) => $.sensors[sensorType])}
-					to={`?sensor=${sensorType}`}
-					key={sensorType}
-					sensorType={sensorType}
-				/>
-			))}
+		<div className="flex flex-col gap-4">
+			<div className="font-extralight text-2xl text-color-muted">
+				{t(($) => $.foremanDashboard.overview.sensor)}
+			</div>
+			<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
+				{sensors.map((sensorType: Sensor) => (
+					<PieChartCard
+						data={{
+							safe: {
+								name: "Safe",
+								value: thresholdSummary[sensorType].safe,
+								label: t(($) => $.foremanDashboard.overview.statCards.safe.label),
+							},
+							warning: {
+								name: "Warning",
+								value: thresholdSummary[sensorType].warning,
+								label: t(($) => $.foremanDashboard.overview.statCards.warning.label),
+							},
+							danger: {
+								name: "Danger",
+								value: thresholdSummary[sensorType].danger,
+								label: t(($) => $.foremanDashboard.overview.statCards.danger.label),
+							},
+						}}
+						label={t(($) => $.sensors[sensorType])}
+						to={`?sensor=${sensorType}`}
+						key={sensorType}
+						sensorType={sensorType}
+					/>
+				))}
+			</div>
 		</div>
 	);
 }

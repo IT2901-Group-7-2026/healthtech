@@ -6,13 +6,15 @@
   "common": {
     "loading": "Laster inn data...",
     "error": "Noe gikk galt under henting av sensordata.",
-    "noData": "Ingen eksponeringsdata funnet for denne dagen",
+    "noData": "Ingen data",
+    "noDataForDay": "Ingen eksponeringsdata funnet for denne dagen",
     "noOptions": "Ingen alternativer tilgjengelig",
     "today": "I dag",
     "total": "Total eksponering",
     "points": "Poeng",
     "notifications": "Notifikasjoner",
-    "exportAsPdf": "Eksporter som PDF"
+    "exportAsPdf": "Eksporter som PDF",
+    "weekNumber": "Uke {{week}}"
   },
   "sensors": {
     "dust": "Støv",
@@ -22,13 +24,23 @@
     "overview": "Oversikt",
     "selectPlaceholder": "Sensor",
     "dustFields": {
+      "pm1_stel": "PM1",
+      "pm25_stel": "PM2.5",
+      "pm4_stel": "PM4",
+      "pm10_stel": "PM10",
       "pm1_twa": "PM1",
       "pm25_twa": "PM2.5",
+      "pm4_twa": "PM4",
       "pm10_twa": "PM10"
     },
     "dustExposureLabels": {
+      "pm1_stel": "PM1 (STEL)",
+      "pm25_stel": "PM2.5 (STEL)",
+      "pm4_stel": "PM4 (STEL)",
+      "pm10_stel": "PM10 (STEL)",
       "pm1_twa": "PM1 (TWA)",
       "pm25_twa": "PM2.5 (TWA)",
+      "pm4_twa": "PM4 (TWA)",
       "pm10_twa": "PM10 (TWA)"
     },
     "units": {
@@ -98,39 +110,32 @@
     }
   },
   "exposureSummary": {
-    "title": {
-      "day": "Eksponering",
-      "week": "Eksponering for uke {{week}}",
-      "month": "Eksponering for {{month}}"
+    "title": "Eksponering",
+    "aggregated": {
+      "safe": "innenfor trygge grenseverdier",
+      "warning": "over tiltaksverdi",
+      "danger": "over grenseverdi"
     },
-    "greenText": "innenfor trygge grenseverdier",
-    "greenHourText": "Timer innenfor trygge grenseverdier",
-    "greenDayText": "Dager innenfor trygge grenseverdier",
-    "orangeText": "over tiltaksverdi",
-    "orangeHourText": "Timer over tiltaksverdi",
-    "orangeDayText": "Dager over tiltaksverdi",
-    "redText": "over grenseverdi",
-    "redHourText": "Timer over grenseverdi",
-    "redDayText": "Dager over grenseverdi",
-    "dangerSmiley": "Over grenseverdi, høy eksponering",
-    "safeSmiley": "Innenfor trygge grenseverdier",
-    "warningSmiley": "Over tiltaksverdi, vær forsiktig",
-    "noData": "Ingen data"
+    "status": {
+      "danger": "Over grenseverdi",
+      "safe": "Over tiltaksverdi",
+      "warning": "Under grenseverdi"
+    }
   },
   "lineChart": {
     "danger": "Over grenseverdi",
     "warning": "Over tiltaksverdi",
     "safe": "Innenfor trygge grenseverdier"
   },
-  "dailyNotes": {
-    "viewTitle": "Dine notater",
-    "writeHere": "Logg observasjoner, tiltak eller avvik…",
-    "edit": "Rediger",
-    "save": "Lagre",
-    "day": "dagen",
-    "week": "uken",
-    "month": "måneden",
-    "emptyState": "Ingen notater for denne {{view}}. Velg en dag for å legge til notater."
+  "notes": {
+    "interactive": {
+      "title": "Notat",
+      "placeholder": "Logg observasjoner, tiltak eller avvik…"
+    },
+    "list": {
+      "title": "Dine notater",
+      "noNotes": "Ingen notater for denne {{view}}. Se en dag for å legge til notater."
+    }
   },
   "table": {
     "numberOfRowsSelected": "{{selected}} av {{total}} rader valgt",
@@ -207,6 +212,7 @@
       "pieChart": {
         "noData": "Ingen data funnet for denne datoen"
       },
+      "sensor": "Sensorer",
       "statCards": {
         "danger": {
           "label": "Over grenseverdi",
@@ -313,5 +319,8 @@
     "today": "I dag",
     "previous": "Forrige",
     "next": "Neste"
+  },
+  "exposureTrendLineChartCard": {
+    "title": "Eksponeringstrend for {{view}}"
   }
 }

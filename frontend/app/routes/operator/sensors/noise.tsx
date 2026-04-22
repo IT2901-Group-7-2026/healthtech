@@ -8,6 +8,7 @@ import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
+import { NoiseTrendLineChartCard } from "@/features/trend-line-chart-card/noise-trend-line-chart-card";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
@@ -35,9 +36,7 @@ export default function Noise() {
 	const chartContainerId = useId();
 
 	const sensor: Sensor = "noise";
-
 	const parseAsAggregation = parseAsStringLiteral(Aggregations);
-
 	const [aggregation, setAggregation] = useQueryState<Aggregation>(
 		"aggregation",
 		parseAsAggregation.withDefault("average"),
@@ -83,87 +82,88 @@ export default function Noise() {
 	}
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, usePeakAggregation);
-
 	const minTime = setHours(date, minHour);
 	const maxTime = setHours(date, maxHour);
 
-	return (
-		<div className="flex flex-1 flex-col gap-4">
-			<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
-				<TabsList>
-					<TabsTrigger value="average">{t(($) => $.measurement.average)}</TabsTrigger>
-					<TabsTrigger value="peak">{t(($) => $.measurement.peak)}</TabsTrigger>
-				</TabsList>
-			</Tabs>
+	const showTrendLineChart = view === "month" || view === "week";
 
-			{isLoading ? (
-				<ExposureLineChartCardSkeleton />
-			) : isError ? (
-				<Card className="flex h-full w-full items-center">
-					<p>{t(($) => $.common.error)}</p>
-				</Card>
-			) : view === "month" ? (
-				<CalendarWidget selectedDay={date} selectedAggregation={aggregation} data={calendarData} />
-			) : view === "week" ? (
-				<WeekWidget
-					dayStartHour={minHour}
-					dayEndHour={maxHour}
-					data={calendarData}
-					buildLink={(dateQueryParam) => `?view=Day&date=${dateQueryParam}&aggregation=${aggregation}`}
-				/>
-			) : !data || data.length === 0 ? (
-				<Card className="flex h-24 w-full items-center">
-					<CardTitle>
-						{date.toLocaleDateString(i18n.language, {
-							day: "numeric",
-							month: "long",
-							year: "numeric",
-						})}
-					</CardTitle>
-					<p>{t(($) => $.common.noData)}</p>
-				</Card>
-			) : (
-				<div className="w-full">
-					<div id={chartContainerId}>
-						<ExposureLineChartCard
-							minTime={minTime}
-							maxTime={maxTime}
-							chartData={downsampleSensorData(sensor, data ?? [])}
-							unit="dbTwa"
-							maxY={maxY}
-							minY={minY}
-							sensor={sensor}
-							headerRight={
-								<ExportButton
-									title={t(($) => $.common.exportAsPdf)}
-									onClick={() =>
-										exportToPDF(
-											chartContainerId,
-											`${date.toLocaleDateString(i18n.language, {
-												day: "numeric",
-												month: "long",
-												year: "numeric",
-											})}-${user.name}-Noise-Exposure-Overview`,
-											`Noise Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
-										)
-									}
-								/>
-							}
-						>
-							<ThresholdLine
-								y={
-									usePeakAggregation
-										? // biome-ignore lint/style/noNonNullAssertion: If usePeakAggregation is true and peakDangerLevel is null, there is a bug somewhere else
-											noiseThreshold.peakDanger!
-										: noiseThreshold.danger
+	return (
+		<div className="flex flex-col gap-16">
+			<div className="flex flex-1 flex-col gap-4">
+				<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
+					<TabsList>
+						<TabsTrigger value="average">{t(($) => $.measurement.average)}</TabsTrigger>
+						<TabsTrigger value="peak">{t(($) => $.measurement.peak)}</TabsTrigger>
+					</TabsList>
+				</Tabs>
+
+				{isLoading ? (
+					<ExposureLineChartCardSkeleton />
+				) : isError ? (
+					<Card className="flex h-full w-full items-center">
+						<p>{t(($) => $.common.error)}</p>
+					</Card>
+				) : view === "month" ? (
+					<CalendarWidget selectedDay={date} data={calendarData} />
+				) : view === "week" ? (
+					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
+				) : !data || data.length === 0 ? (
+					<Card className="flex h-24 w-full items-center">
+						<CardTitle>
+							{date.toLocaleDateString(i18n.language, {
+								day: "numeric",
+								month: "long",
+								year: "numeric",
+							})}
+						</CardTitle>
+						<p>{t(($) => $.common.noData)}</p>
+					</Card>
+				) : (
+					<div className="w-full">
+						<div id={chartContainerId}>
+							<ExposureLineChartCard
+								minTime={minTime}
+								maxTime={maxTime}
+								chartData={downsampleSensorData(sensor, data ?? [])}
+								unit="dbTwa"
+								maxY={maxY}
+								minY={minY}
+								sensor={sensor}
+								headerRight={
+									<ExportButton
+										title={t(($) => $.common.exportAsPdf)}
+										onClick={() =>
+											exportToPDF(
+												chartContainerId,
+												`${date.toLocaleDateString(i18n.language, {
+													day: "numeric",
+													month: "long",
+													year: "numeric",
+												})}-${user.name}-Noise-Exposure-Overview`,
+												`Noise Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
+											)
+										}
+									/>
 								}
-								dangerLevel="danger"
-							/>
-							{!usePeakAggregation && <ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />}
-						</ExposureLineChartCard>
+							>
+								<ThresholdLine
+									y={
+										usePeakAggregation
+											? // biome-ignore lint/style/noNonNullAssertion: If usePeakAggregation is true and peakDangerLevel is null, there is a bug somewhere else
+												noiseThreshold.peakDanger!
+											: noiseThreshold.danger
+									}
+									dangerLevel="danger"
+								/>
+								{!usePeakAggregation && (
+									<ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />
+								)}
+							</ExposureLineChartCard>
+						</div>
 					</div>
-				</div>
-			)}
+				)}
+			</div>
+			{showTrendLineChart && <NoiseTrendLineChartCard usePeakAggregation={usePeakAggregation} />}
 		</div>
 	);
 }
