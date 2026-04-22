@@ -75,7 +75,7 @@ const CustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, name
 	const dangerLevel = dangerLevelParseResult.success ? dangerLevelParseResult.data : null;
 
 	return (
-		<g transform={`translate(${x},${y})`} className="relative">
+		<g transform={`translate(${x},${y})`} className="pointer-events-none relative">
 			<foreignObject x={-sizePx / 2} y={-sizePx / 2} width={sizePx} height={sizePx}>
 				<DangerLevelDots dangerLevel={dangerLevel} />
 			</foreignObject>
