@@ -138,7 +138,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 
 	const { date } = useDate();
 
-	const query = buildSensorQuery(sensor, "day", date, {
+	const query = buildSensorQuery(sensor, view, date, {
 		field: dustField,
 	});
 
@@ -322,7 +322,7 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 	const sensor: Sensor = "vibration";
 	const vibrationThreshold = getThreshold(sensor);
 
-	const query = buildSensorQuery(sensor, "day", date);
+	const query = buildSensorQuery(sensor, view, date);
 
 	const { data: overviewResponse } = useQuery(
 		sensorOverviewQueryOptions({
@@ -422,7 +422,7 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const usePeakAggregation = aggregation === "peak";
 	const noiseThreshold = getThreshold(sensor);
 
-	const query = buildSensorQuery(sensor, "day", date, {
+	const query = buildSensorQuery(sensor, view, date, {
 		usePeakAggregation,
 	});
 
