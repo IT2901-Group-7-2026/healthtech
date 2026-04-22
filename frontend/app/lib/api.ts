@@ -113,6 +113,7 @@ export function sensorOverviewQueryOptions({
 		enabled,
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
 		placeholderData: keepPreviousData,
+		refetchIntervalInBackground: true,
 	});
 }
 
@@ -144,6 +145,7 @@ export function sensorQueryOptions({
 		enabled,
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
 		placeholderData: keepPreviousData,
+		refetchIntervalInBackground: true,
 	});
 }
 
@@ -242,6 +244,7 @@ export const fetchSubordinatesQueryOptions = (userId: string, startTime?: TZDate
 		staleTime: minutesToMilliseconds(10),
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
 		placeholderData: keepPreviousData,
+		refetchIntervalInBackground: true,
 	});
 };
 
@@ -326,4 +329,5 @@ export const fetchThresholdSummaryQueryOptions = (managerUserId: string, startTi
 		staleTime: minutesToMilliseconds(10),
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
 		placeholderData: keepPreviousData,
+		refetchIntervalInBackground: true,
 	});
