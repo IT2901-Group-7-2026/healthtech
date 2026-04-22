@@ -264,7 +264,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 											exportToPDF(
 												chartContainerId,
 												`${formatChartDate(date, i18n.language)}-${selectedUser.name}-Dust-Exposure-Overview`,
-												`Dust Exposure - ${selectedUser.name} - ${date.toLocaleDateString(i18n.language)}`,
+												`${t(($) => $.pdf.dustExposure)} - ${selectedUser.name} - ${date.toLocaleDateString(i18n.language)}`,
 											)
 										}
 									/>
@@ -390,7 +390,7 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 										exportToPDF(
 											chartContainerId,
 											`${formatChartDate(date, i18n.language)}-${selectedUser.name}-Vibration-Exposure-Overview`,
-											`Vibration Exposure - ${selectedUser.name} - ${date.toLocaleDateString(i18n.language)}`,
+											`${t(($) => $.pdf.vibrationExposure)} - ${selectedUser.name} - ${date.toLocaleDateString(i18n.language)}`,
 										)
 									}
 								/>
@@ -509,7 +509,7 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 											exportToPDF(
 												chartContainerId,
 												`${formatChartDate(date, i18n.language)}-${selectedUser.name}-Noise-Exposure-Overview`,
-												`Noise Exposure - ${selectedUser.name} - ${date.toLocaleDateString(i18n.language)}`,
+												`${t(($) => $.pdf.noiseExposure)} - ${selectedUser.name} - ${date.toLocaleDateString(i18n.language)}`,
 											)
 										}
 									/>

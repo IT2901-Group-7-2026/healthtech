@@ -322,5 +322,10 @@
   },
   "exposureTrendLineChartCard": {
     "title": "Eksponeringstrend for {{view}}"
+  },
+  "pdf": {
+    "dustExposure": "Støv Eksponering",
+    "noiseExposure": "Støy Eksponering",
+    "vibrationExposure": "Vibrasjons Eksponering"
   }
 }

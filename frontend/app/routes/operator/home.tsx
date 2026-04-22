@@ -100,8 +100,8 @@ export default function OperatorHome() {
 									exportMultipleToPDF(
 										[
 											pdfDustChartContainerId,
-											pdfVibrationChartContainerId,
 											pdfNoiseChartContainerId,
+											pdfVibrationChartContainerId,
 										],
 										`${date.toLocaleDateString(i18n.language, {
 											day: "numeric",
@@ -109,9 +109,9 @@ export default function OperatorHome() {
 											year: "numeric",
 										})}-${user.name}-Exposure-Overview`,
 										[
-											`Dust Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
-											`Vibration Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
-											`Noise Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
+											`${t(($) => $.pdf.dustExposure)} - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
+											`${t(($) => $.pdf.noiseExposure)} - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
+											`${t(($) => $.pdf.vibrationExposure)} - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
 										],
 									)
 								}
