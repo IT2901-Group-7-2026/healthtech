@@ -6,6 +6,7 @@ import { useFormatDate } from "@/hooks/use-format-date";
 import { now } from "@/lib/date";
 import { TZDate } from "@date-fns/tz";
 import { isBefore } from "date-fns";
+import { Share2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -73,6 +74,7 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 					<Card className="p-3">
 						<div>
 							<Button variant="outline" onClick={handleShareClick}>
+								<Share2 />
 								{t(($) => $.share.hygienist.button)}
 							</Button>
 							<div className="relative mt-2 h-2">
