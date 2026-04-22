@@ -201,6 +201,7 @@
       "pieChart": {
         "noData": "Ingen data funnet for denne datoen"
       },
+      "sensor": "Sensorer",
       "statCards": {
         "danger": {
           "label": "Over grenseverdi",
