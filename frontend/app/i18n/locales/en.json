@@ -76,7 +76,12 @@
   "measurement": {
     "peak": "Peak",
     "average": "Average",
-    "averageExposure": "Average exposure"
+    "averageExposure": "Average exposure",
+    "maximum": "Maximum",
+    "latest": "Latest",
+    "recordedAt": "Recorded at {{time}}",
+    "limitValuePercentageShort": "{{percentage}} %",
+    "limitValuePercentageFull": "{{percentage}} % of the limit value"
   },
   "layout": {
     "live": "Live",

@@ -77,7 +77,12 @@
   "measurement": {
     "peak": "Topp",
     "average": "Gjennomsnitt",
-    "averageExposure": "Gjennomsnittlig eksponering"
+    "averageExposure": "Gjennomsnittlig eksponering",
+    "maximum": "Maksimum",
+    "latest": "Siste",
+    "recordedAt": "Registrert kl. {{time}}",
+    "limitValuePercentageShort": "{{percentage}} %",
+    "limitValuePercentageFull": "{{percentage}} % av grenseverdien"
   },
   "layout": {
     "live": "Live",

@@ -4,14 +4,16 @@ import {
 	ExposureLineChartCardSkeleton,
 } from "@/components/exposure-line-chart/exposure-line-chart-card";
 import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
-import { Card, CardTitle } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
+import { SensorGraphEmptyState, SensorStatisticsSection } from "@/features/statistic-card";
+import { getMaxPointByValue } from "@/features/statistic-card-utils";
 import { VibrationTrendLineChartCard } from "@/features/trend-line-chart-card/vibration-trend-line-chart-card";
 import { useUser } from "@/features/user/user-context";
 import { parseAsView } from "@/features/views/utils";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
+import { useFormatDate } from "@/hooks/use-format-date";
 import { sensorQueryOptions } from "@/lib/api";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
@@ -27,6 +29,7 @@ import { useTranslation } from "react-i18next";
 export default function Vibration() {
 	const [view] = useQueryState("view", parseAsView.withDefault("day"));
 	const { t, i18n } = useTranslation();
+	const formatDate = useFormatDate();
 
 	const { date } = useDate();
 	const { user } = useUser();
@@ -52,6 +55,7 @@ export default function Vibration() {
 
 	const data = response?.data;
 	const hourDomain = response?.hourDomain;
+	const maxPoint = data && data.length > 0 ? getMaxPointByValue(data, (point) => point.value) : null;
 
 	const { minHour, maxHour } = getHourDomain(
 		hourDomain,
@@ -72,32 +76,36 @@ export default function Vibration() {
 	const maxTime = setHours(date, maxHour);
 
 	const showTrendLineChart = view === "month" || view === "week";
+	const showVibrationStatistics = view === "day";
 
 	return (
 		<div className="flex flex-col gap-16">
 			<div className="flex h-full w-full flex-col-reverse gap-4 md:flex-row">
 				<div className="flex flex-1 flex-col gap-4">
+					{showVibrationStatistics && (
+						<SensorStatisticsSection
+							isLoading={isLoading}
+							isEmpty={isError || !data?.length}
+							averageValue={null}
+							maxValue={maxPoint?.value ?? null}
+							maxTime={null}
+							latestValue={null}
+							dangerThreshold={vibrationThreshold.danger}
+							unit="points"
+							formatTime={(time) => formatDate(time, "HH:mm")}
+						/>
+					)}
+
 					{isLoading ? (
 						<ExposureLineChartCardSkeleton />
 					) : isError ? (
-						<Card className="flex h-full w-full items-center">
-							<p>{t(($) => $.common.error)}</p>
-						</Card>
+						<SensorGraphEmptyState date={date} locale={i18n.language} />
 					) : view === "month" ? (
 						<CalendarWidget selectedDay={date} data={calendarData} />
 					) : view === "week" ? (
 						<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
 					) : !data || data.length === 0 ? (
-						<Card className="flex h-full w-full items-center">
-							<CardTitle>
-								{date.toLocaleDateString(i18n.language, {
-									day: "numeric",
-									month: "long",
-									year: "numeric",
-								})}
-							</CardTitle>
-							<p>{t(($) => $.common.noData)}</p>
-						</Card>
+						<SensorGraphEmptyState date={date} locale={i18n.language} />
 					) : (
 						<div className="w-full">
 							<div id={chartContainerId}>

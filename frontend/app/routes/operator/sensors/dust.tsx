@@ -4,15 +4,17 @@ import {
 	ExposureLineChartCardSkeleton,
 } from "@/components/exposure-line-chart/exposure-line-chart-card";
 import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
-import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
+import { SensorGraphEmptyState, SensorStatisticsSection } from "@/features/statistic-card";
+import { getMaxPointByValue } from "@/features/statistic-card-utils";
 import { DustTrendLineChartCard } from "@/features/trend-line-chart-card/dust-trend-line-chart-card";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
+import { useFormatDate } from "@/hooks/use-format-date";
 import { sensorQueryOptions } from "@/lib/api";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import {
@@ -37,6 +39,7 @@ export default function Dust() {
 	const { view } = useView();
 	const { date } = useDate();
 	const { t, i18n } = useTranslation();
+	const formatDate = useFormatDate();
 	const locale = i18n.language;
 	const { user } = useUser();
 	const { exportToPDF } = useExportPDF();
@@ -71,7 +74,11 @@ export default function Dust() {
 	const data = response?.data;
 	const hourDomain = response?.hourDomain;
 
-	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
+	const latestPoint = data?.at(-1) ?? null;
+	const maxPoint = data && data.length > 0 ? getMaxPointByValue(data, (point) => point.value) : null;
+	const maxValue = maxPoint?.value ?? 0;
+	const averageValue =
+		data && data.length > 0 ? data.reduce((sum, point) => sum + point.value, 0) / data.length : null;
 
 	const minY = 0;
 	const baseMaxY = 45;
@@ -84,6 +91,7 @@ export default function Dust() {
 	const maxTime = setHours(date, maxHour);
 
 	const showTrendLineChart = view === "month" || view === "week";
+	const showDustStatistics = view === "day";
 
 	return (
 		<div className="flex flex-col gap-16">
@@ -98,27 +106,30 @@ export default function Dust() {
 					</TabsList>
 				</Tabs>
 
+				{showDustStatistics && (
+					<SensorStatisticsSection
+						isLoading={isLoading}
+						isEmpty={isError || data?.length === 0}
+						averageValue={averageValue}
+						maxValue={maxPoint?.value ?? null}
+						maxTime={maxPoint?.time ?? null}
+						latestValue={latestPoint?.value ?? null}
+						dangerThreshold={dustThreshold.danger}
+						unit={dustUnit}
+						formatTime={(time) => formatDate(time, "HH:mm")}
+					/>
+				)}
+
 				{isLoading ? (
 					<ExposureLineChartCardSkeleton />
 				) : isError ? (
-					<Card className="flex h-full w-full items-center">
-						<p>{t(($) => $.common.error)}</p>
-					</Card>
+					<SensorGraphEmptyState date={date} locale={locale} />
 				) : view === "month" ? (
 					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
 					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
 				) : !data || data.length === 0 ? (
-					<Card className="flex h-24 w-full items-center">
-						<CardTitle>
-							{date.toLocaleDateString(locale, {
-								day: "numeric",
-								month: "long",
-								year: "numeric",
-							})}
-						</CardTitle>
-						<p>{t(($) => $.common.noData)}</p>
-					</Card>
+					<SensorGraphEmptyState date={date} locale={locale} />
 				) : (
 					<div className="w-full">
 						<div id={chartContainerId}>
