@@ -4,17 +4,19 @@ import {
 	ExposureLineChartCardSkeleton,
 } from "@/components/exposure-line-chart/exposure-line-chart-card";
 import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
-import { Card, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
+import { SensorGraphEmptyState, SensorStatisticsSection } from "@/features/statistic-card";
+import { getMaxPointByValue } from "@/features/statistic-card-utils";
 import { NoiseTrendLineChartCard } from "@/features/trend-line-chart-card/noise-trend-line-chart-card";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
+import { useFormatDate } from "@/hooks/use-format-date";
 import { sensorQueryOptions } from "@/lib/api";
-import { type Aggregation, Aggregations } from "@/lib/dto";
+import { type Aggregation, Aggregations, type SensorDto } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
@@ -29,6 +31,7 @@ import { useTranslation } from "react-i18next";
 export default function Noise() {
 	const { view } = useView();
 	const { t, i18n } = useTranslation();
+	const formatDate = useFormatDate();
 
 	const { date } = useDate();
 	const { user } = useUser();
@@ -43,6 +46,9 @@ export default function Noise() {
 	);
 	const usePeakAggregation = aggregation === "peak";
 	const noiseThreshold = getThreshold(sensor);
+	const noiseDangerThreshold = usePeakAggregation
+		? (noiseThreshold.peakDanger ?? noiseThreshold.danger)
+		: noiseThreshold.danger;
 
 	const query = buildSensorQuery(sensor, view, date, {
 		usePeakAggregation,
@@ -62,6 +68,15 @@ export default function Noise() {
 
 	const data = response?.data;
 	const hourDomain = response?.hourDomain;
+	const latestPoint = data?.at(-1) ?? null;
+	const maxPoint =
+		data && data.length > 0
+			? getMaxPointByValue(data, (point) => getDisplayedNoiseValue(point, usePeakAggregation))
+			: null;
+	const averageValue =
+		data && data.length > 0
+			? data.reduce((sum, point) => sum + getDisplayedNoiseValue(point, usePeakAggregation), 0) / data.length
+			: null;
 
 	const { minHour, maxHour } = getHourDomain(
 		hourDomain,
@@ -69,9 +84,7 @@ export default function Noise() {
 		view,
 	);
 
-	const maxValue = data
-		? Math.max(...data.map((d) => (usePeakAggregation && d.peakValue ? d.peakValue : d.value)))
-		: 0;
+	const maxValue = maxPoint ? getDisplayedNoiseValue(maxPoint, usePeakAggregation) : 0;
 
 	const minY = 0;
 	let maxY = 150;
@@ -86,6 +99,7 @@ export default function Noise() {
 	const maxTime = setHours(date, maxHour);
 
 	const showTrendLineChart = view === "month" || view === "week";
+	const showNoiseStatistics = view === "day";
 
 	return (
 		<div className="flex flex-col gap-16">
@@ -97,27 +111,30 @@ export default function Noise() {
 					</TabsList>
 				</Tabs>
 
+				{showNoiseStatistics && (
+					<SensorStatisticsSection
+						isLoading={isLoading}
+						isEmpty={isError || !data?.length}
+						averageValue={averageValue}
+						maxValue={maxPoint ? getDisplayedNoiseValue(maxPoint, usePeakAggregation) : null}
+						maxTime={maxPoint?.time ?? null}
+						latestValue={latestPoint ? getDisplayedNoiseValue(latestPoint, usePeakAggregation) : null}
+						dangerThreshold={noiseDangerThreshold}
+						unit="dbTwa"
+						formatTime={(time) => formatDate(time, "HH:mm")}
+					/>
+				)}
+
 				{isLoading ? (
 					<ExposureLineChartCardSkeleton />
 				) : isError ? (
-					<Card className="flex h-full w-full items-center">
-						<p>{t(($) => $.common.error)}</p>
-					</Card>
+					<SensorGraphEmptyState date={date} locale={i18n.language} />
 				) : view === "month" ? (
 					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
 					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
 				) : !data || data.length === 0 ? (
-					<Card className="flex h-24 w-full items-center">
-						<CardTitle>
-							{date.toLocaleDateString(i18n.language, {
-								day: "numeric",
-								month: "long",
-								year: "numeric",
-							})}
-						</CardTitle>
-						<p>{t(($) => $.common.noData)}</p>
-					</Card>
+					<SensorGraphEmptyState date={date} locale={i18n.language} />
 				) : (
 					<div className="w-full">
 						<div id={chartContainerId}>
@@ -166,4 +183,8 @@ export default function Noise() {
 			{showTrendLineChart && <NoiseTrendLineChartCard usePeakAggregation={usePeakAggregation} />}
 		</div>
 	);
+}
+
+function getDisplayedNoiseValue(point: SensorDto, usePeakAggregation: boolean) {
+	return usePeakAggregation && point.peakValue != null ? point.peakValue : point.value;
 }
