@@ -263,7 +263,6 @@ function UserDropdown({
 				</DropdownMenuTrigger>
 
 				<DropdownMenuContent align="end" className="" sideOffset={10}>
-					{/* My account */}
 					<DropdownMenuItem onSelect={openProfilePopup}>
 						<UserIcon className="size-4" />
 						<span>{t(($) => $.profile.title)}</span>
@@ -271,7 +270,6 @@ function UserDropdown({
 
 					<DropdownMenuSeparator />
 
-					{/* Privacy settings */}
 					<DropdownMenuItem onSelect={openPrivacySettingsPopup}>
 						<HatGlassesIcon className="size-4" />
 						<span>{t(($) => $.profile.privacySettings)}</span>
