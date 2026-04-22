@@ -107,7 +107,7 @@ export default function Noise() {
 						<p>{t(($) => $.common.error)}</p>
 					</Card>
 				) : view === "month" ? (
-					<CalendarWidget selectedDay={date} selectedAggregation={aggregation} data={calendarData} />
+					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
 					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
 				) : !data || data.length === 0 ? (

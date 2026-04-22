@@ -135,7 +135,7 @@ export default function ForemanOverview() {
 				>
 					<div className="flex flex-col gap-12">
 						{isUserSelected ? (
-							<UserDetails selectedUser={selectedUser} selectedDate={selectedDate} sensor={sensor} />
+							<UserDetails selectedUser={selectedUser} sensor={sensor} />
 						) : (
 							<>
 								<AttentionCard
