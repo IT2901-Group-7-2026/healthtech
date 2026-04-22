@@ -299,8 +299,9 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 				<CardHeader>
 					<CardTitle>{t(($) => $.exposureSlider.title, { view })}</CardTitle>
 				</CardHeader>
-				<CardContent className="flex flex-row">
+				<CardContent className="flex flex-row flex-wrap">
 					<ExposureSlider
+						className="flex-1"
 						label={t(($) => $.sensors.dustExposureLabels.pm1_twa)}
 						value={avgPm1Twa}
 						sensor={sensor}
@@ -308,6 +309,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 						dangerLevel={getDangerLevel(avgPm1Twa, dustPm1TwaThreshold.warning, dustPm1TwaThreshold.danger)}
 					/>
 					<ExposureSlider
+						className="flex-1"
 						label={t(($) => $.sensors.dustExposureLabels.pm25_twa)}
 						value={avgPm25Twa}
 						sensor={sensor}
@@ -319,6 +321,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 						)}
 					/>
 					<ExposureSlider
+						className="flex-1"
 						label={t(($) => $.sensors.dustExposureLabels.pm4_twa)}
 						value={avgPm4Twa}
 						sensor={sensor}
@@ -326,6 +329,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 						dangerLevel={getDangerLevel(avgPm4Twa, dustPm4TwaThreshold.warning, dustPm4TwaThreshold.danger)}
 					/>
 					<ExposureSlider
+						className="flex-1"
 						label={t(($) => $.sensors.dustExposureLabels.pm10_twa)}
 						value={avgPm10Twa}
 						sensor={sensor}
