@@ -1,14 +1,12 @@
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
+import { DateInput } from "@/components/ui/date-input";
 import { Form, FormField, FormItem } from "@/components/ui/form";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useFormatDate } from "@/hooks/use-format-date";
-import { now, toTZDate } from "@/lib/date";
+import { now } from "@/lib/date";
 import type { User } from "@/lib/dto.js";
 import { TZDate } from "@date-fns/tz";
 import { isBefore } from "date-fns";
-import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -68,8 +66,6 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 	const minSelectableDate = new TZDate(2024, 0, 1, "Europe/Oslo");
 	const maxSelectableDate = now();
 
-	const [fromCalendarOpen, setFromCalendarOpen] = useState(false);
-	const [toCalendarOpen, setToCalendarOpen] = useState(false);
 	const [deleteText, setDeleteText] = useState(false);
 	const [showShareDataConfirmationMessage, setShowShareDataConfirmationMessage] = useState(false);
 
@@ -117,32 +113,14 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 										name="fromDate"
 										render={({ field }) => (
 											<FormItem>
-												<Popover open={fromCalendarOpen} onOpenChange={setFromCalendarOpen}>
-													<PopoverTrigger asChild={true}>
-														<Button
-															variant="outline"
-															className="h-8 w-32 justify-between text-sm"
-														>
-															{fromDate
-																? format(fromDate, "dd.MM.yy")
-																: t(($) => $.popup.startDate)}
-															<ChevronDownIcon />
-														</Button>
-													</PopoverTrigger>
-													<PopoverContent className="w-auto p-0">
-														<Calendar
-															mode="single"
-															selected={field.value}
-															onSelect={(value) =>
-																field.onChange(value ? toTZDate(value) : undefined)
-															}
-															disabled={{
-																before: minSelectableDate,
-																after: maxSelectableDate,
-															}}
-														/>
-													</PopoverContent>
-												</Popover>
+												{/* NOTE: we forward the field’s value & onChange */}
+												<DateInput
+													value={field.value}
+													onChange={field.onChange}
+													placeholder={t(($) => $.popup.startDate)}
+													minDate={minSelectableDate}
+													maxDate={maxSelectableDate}
+												/>
 											</FormItem>
 										)}
 									/>
@@ -156,32 +134,13 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 										name="toDate"
 										render={({ field }) => (
 											<FormItem>
-												<Popover open={toCalendarOpen} onOpenChange={setToCalendarOpen}>
-													<PopoverTrigger asChild={true}>
-														<Button
-															variant="outline"
-															className="h-8 w-32 justify-between text-sm"
-														>
-															{toDate
-																? format(toDate, "dd.MM.yy")
-																: t(($) => $.popup.endDate)}
-															<ChevronDownIcon />
-														</Button>
-													</PopoverTrigger>
-													<PopoverContent className="w-auto p-0">
-														<Calendar
-															mode="single"
-															selected={field.value}
-															onSelect={(value) =>
-																field.onChange(value ? toTZDate(value) : undefined)
-															}
-															disabled={{
-																before: minSelectableDate,
-																after: maxSelectableDate,
-															}}
-														/>
-													</PopoverContent>
-												</Popover>
+												<DateInput
+													value={field.value}
+													onChange={field.onChange}
+													placeholder={t(($) => $.popup.endDate)}
+													minDate={minSelectableDate}
+													maxDate={maxSelectableDate}
+												/>
 											</FormItem>
 										)}
 									/>
