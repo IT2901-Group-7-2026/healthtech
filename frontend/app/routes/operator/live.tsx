@@ -7,8 +7,9 @@ import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.js";
 import { SecurityRegulationsCard } from "@/features/security-regulations-card/security-regulations-card";
 import { useUser } from "@/features/user/user-context";
+import { useFormatDate } from "@/hooks/use-format-date";
 import { sensorQueryOptions } from "@/lib/api";
-import { now, toTZDate } from "@/lib/date";
+import { today as getToday, now, toTZDate } from "@/lib/date";
 import type { SensorDto } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { SensorUnit } from "@/lib/sensors";
@@ -36,15 +37,20 @@ const TIME_RANGE_MINUTES: Record<TimeRangeOption, number> = {
 export default function OperatorLiveView() {
 	const { user } = useUser();
 	const [selectedUserId] = useQueryState("userId", parseAsString);
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const formatDate = useFormatDate();
+
+	const today = getToday();
 
 	const [timeRange, setTimeRange] = useQueryState<TimeRangeOption>("timeRange", parseTimeRange.withDefault("30"));
 
 	const targetUserId = selectedUserId ?? user.id;
 
+	const timeRangeInMinutes = TIME_RANGE_MINUTES[timeRange];
+
 	const startOfCurrentMinute = startOfMinute(now());
 	const end = startOfCurrentMinute;
-	const start = addMinutes(startOfCurrentMinute, -TIME_RANGE_MINUTES[timeRange]);
+	const start = addMinutes(startOfCurrentMinute, -timeRangeInMinutes);
 
 	const [dustTwa1Result, dustTwa25Result, dustTwa10Result, noiseResult, vibrationResult] = useQueries({
 		queries: [
@@ -58,6 +64,8 @@ export default function OperatorLiveView() {
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
 			sensorQueryOptions({
 				sensor: "dust",
@@ -69,6 +77,8 @@ export default function OperatorLiveView() {
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
 			sensorQueryOptions({
 				sensor: "dust",
@@ -80,6 +90,8 @@ export default function OperatorLiveView() {
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
 			sensorQueryOptions({
 				sensor: "noise",
@@ -89,6 +101,8 @@ export default function OperatorLiveView() {
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
 			sensorQueryOptions({
 				sensor: "vibration",
@@ -98,6 +112,8 @@ export default function OperatorLiveView() {
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
 		],
 	});
@@ -116,6 +132,8 @@ export default function OperatorLiveView() {
 
 		return rawVibrationData.filter((d) => isWithinInterval(d.time, { start, end }));
 	}, [rawVibrationData, start, end]);
+
+	const formattedDate = formatDate(today, i18n.language === "en" ? "MMM d, yyyy" : "d. MMM yyyy");
 
 	return (
 		<div
@@ -215,10 +233,13 @@ export default function OperatorLiveView() {
 
 			<aside className="md:col-start-3">
 				<Card muted={true} className="flex flex-col gap-4">
-					<p className="flex items-center gap-2 text-sm">
-						<Clock size="1rem" />
-						{t(($) => $.live.timeRange.label)}
-					</p>
+					<div className="flex w-full flex-row justify-between">
+						<p className="flex items-center gap-2 text-sm">
+							<Clock size="1rem" />
+							{t(($) => $.live.timeRange.label)}
+						</p>
+						<p className="text-sm">{formattedDate}</p>
+					</div>
 					<ToggleGroup
 						type="single"
 						value={timeRange}

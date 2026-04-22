@@ -12,7 +12,8 @@
     "today": "Today",
     "total": "Total exposure",
     "notifications": "Notifications",
-    "exportAsPdf": "Export as PDF"
+    "exportAsPdf": "Export as PDF",
+    "weekNumber": "Week {{week}}"
   },
   "sensors": {
     "dust": "Dust",
@@ -22,13 +23,23 @@
     "overview": "Overview",
     "selectPlaceholder": "Sensor",
     "dustFields": {
+      "pm1_stel": "PM1",
+      "pm25_stel": "PM2.5",
+      "pm4_stel": "PM4",
+      "pm10_stel": "PM10",
       "pm1_twa": "PM1",
       "pm25_twa": "PM2.5",
+      "pm4_twa": "PM4",
       "pm10_twa": "PM10"
     },
     "dustExposureLabels": {
+      "pm1_stel": "PM1 (STEL)",
+      "pm25_stel": "PM2.5 (STEL)",
+      "pm4_stel": "PM4 (STEL)",
+      "pm10_stel": "PM10 (STEL)",
       "pm1_twa": "PM1 (TWA)",
       "pm25_twa": "PM2.5 (TWA)",
+      "pm4_twa": "PM4 (TWA)",
       "pm10_twa": "PM10 (TWA)"
     },
     "units": {
@@ -307,5 +318,8 @@
     "today": "Today",
     "previous": "Previous",
     "next": "Next"
+  },
+  "exposureTrendLineChartCard": {
+    "title": "Exposure trend for {{view}}"
   }
 }
