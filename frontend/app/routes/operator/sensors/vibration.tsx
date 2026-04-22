@@ -129,7 +129,7 @@ export default function Vibration() {
 														month: "long",
 														year: "numeric",
 													})}-${user.name}-Vibration-Exposure-Overview`,
-													`Vibration Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
+													`${t(($) => $.pdf.vibrationExposure)} - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
 												)
 											}
 										/>

@@ -150,7 +150,10 @@ function CustomDay({ data, day, className, handleDayClick, ...buttonProps }: Cus
 					{day.date.getDate()}
 				</span>
 			</span>
-			<DangerLevelDots dangerLevel={dangerLevel ?? null} className="absolute right-2 bottom-2" />
+			<DangerLevelDots
+				dangerLevel={dangerLevel ?? null}
+				className="pointer-events-none absolute right-2 bottom-2"
+			/>
 		</button>
 	);
 }

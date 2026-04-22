@@ -39,9 +39,7 @@ export default function Noise() {
 	const chartContainerId = useId();
 
 	const sensor: Sensor = "noise";
-
 	const parseAsAggregation = parseAsStringLiteral(Aggregations);
-
 	const [aggregation, setAggregation] = useQueryState<Aggregation>(
 		"aggregation",
 		parseAsAggregation.withDefault("average"),
@@ -97,7 +95,6 @@ export default function Noise() {
 	}
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, usePeakAggregation);
-
 	const minTime = setHours(date, minHour);
 	const maxTime = setHours(date, maxHour);
 
@@ -160,7 +157,7 @@ export default function Noise() {
 													month: "long",
 													year: "numeric",
 												})}-${user.name}-Noise-Exposure-Overview`,
-												`Noise Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
+												`${t(($) => $.pdf.noiseExposure)} - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
 											)
 										}
 									/>

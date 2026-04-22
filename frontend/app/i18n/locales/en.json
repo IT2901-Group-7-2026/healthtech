@@ -326,5 +326,13 @@
   },
   "exposureTrendLineChartCard": {
     "title": "Exposure trend for {{view}}"
+  },
+  "exposureSlider": {
+    "title": "Average exposure for {{view}}"
+  },
+  "pdf": {
+    "dustExposure": "Dust Exposure",
+    "noiseExposure": "Noise Exposure",
+    "vibrationExposure": "Vibration Exposure"
   }
 }
