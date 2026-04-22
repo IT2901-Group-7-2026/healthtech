@@ -313,7 +313,7 @@
   "share": {
     "hygienist": {
       "button": "Share data with hygienist",
-      "confirmation": "Monthly data shared ✓",
+      "confirmation": "Shared data from {{from}} to {{to}}.",
       "shareData": "Share data"
     }
   },
