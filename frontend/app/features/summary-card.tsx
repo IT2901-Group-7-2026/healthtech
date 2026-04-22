@@ -41,7 +41,11 @@ export function ExposureSummary({ exposureType }: ExposureSummaryProps) {
 	const granularity = sensor === "vibration" ? "hour" : "minute";
 
 	const sensorQuery =
-		sensor && buildSensorQuery(sensor, view, currentDate, { usePeakAggregation: peakAggregation, granularity });
+		sensor &&
+		buildSensorQuery(sensor, view, currentDate, {
+			usePeakAggregation: peakAggregation,
+			granularity,
+		});
 	const sensorQueryEnabled = sensor !== null && sensorQuery !== null;
 
 	const [sensorResponse, allSensorsResponse] = useQueries({
@@ -66,7 +70,11 @@ export function ExposureSummary({ exposureType }: ExposureSummaryProps) {
 	const response = sensor === null ? allSensorsResponse : sensorResponse;
 
 	const data = response.data
-		? calculateSummaryCounts(response.data.data, { sensor, peakAggregation, granularity })
+		? calculateSummaryCounts(response.data.data, {
+				sensor,
+				peakAggregation,
+				granularity,
+			})
 		: null;
 
 	if (data === null) {
@@ -138,7 +146,7 @@ function formatMinutesAsDuration(totalMinutes: number, locale: Locale) {
 		format.push("minutes");
 	}
 
-	return formatDuration({ days, hours, minutes: minutes }, { locale, format });
+	return formatDuration({ days, hours, minutes: minutes }, { locale, format }).replace("en", "1");
 }
 
 function SummaryCardSkeleton() {

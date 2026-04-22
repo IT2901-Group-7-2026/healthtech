@@ -312,8 +312,6 @@ const LiveExposureCard = ({
 	showLegend = false,
 	lineType,
 }: LiveExposureCardProps) => {
-	const { t } = useTranslation();
-
 	const maxValue = Math.max(...data.map((d) => d.value));
 
 	const minY = 0;
@@ -353,10 +351,7 @@ const LiveExposureCard = ({
 					contentClassName="p-0"
 					chartContainerClassName="!aspect-auto"
 					showLegend={showLegend}
-					xTickLabels={{
-						start: "", // TODO: We should show something like "8 hours ago"
-						end: t(($) => $.live.chart.now),
-					}}
+					xAxisMode="windowed"
 				>
 					<ThresholdLine y={threshold.danger} dangerLevel="danger" />
 					<ThresholdLine y={threshold.warning} dangerLevel="warning" />
