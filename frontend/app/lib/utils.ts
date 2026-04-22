@@ -225,3 +225,13 @@ export function normalizeDangerLevelForPeakForLineChart(dangerLevel: DangerLevel
 
 	return dangerLevel;
 }
+
+type DataPoint = {
+	time: number;
+	value: number;
+};
+
+export function getHighestValue(data: Array<DataPoint>) {
+	if (data.length === 0) return 0; // or throw error if you prefer
+	return Math.max(...data.map((d) => d.value));
+}
