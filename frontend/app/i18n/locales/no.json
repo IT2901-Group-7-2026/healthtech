@@ -162,7 +162,8 @@
     "startDate": "Startdato...",
     "endDate": "Sluttdato...",
     "date": "dato",
-    "invalidDate": "Velg en startdato som starter før sluttdato."
+    "invalidDate": "Velg en startdato som starter før sluttdato.",
+    "pickDate": "Velg et datointervall..."
   },
   "profile": {
     "title": "Min side",

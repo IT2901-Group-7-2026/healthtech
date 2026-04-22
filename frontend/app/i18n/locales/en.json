@@ -161,7 +161,8 @@
     "startDate": "Start date...",
     "endDate": "End date...",
     "date": "date",
-    "invalidDate": "Please select a start date that starts before the end date. "
+    "invalidDate": "Please select a start date that starts before the end date. ",
+    "pickDate": "Choose a date range..."
   },
   "profile": {
     "title": "My account",
