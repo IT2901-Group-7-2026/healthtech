@@ -150,7 +150,7 @@ export function ExposureLineChart({
 									fill: "var(--color-muted-foreground)",
 								}
 					}
-					// only dustchart with mg unit need to show decimals on y axis
+					// Only dustchart with mg unit need to show decimals on y axis
 					tickFormatter={(value) => formatSensorValue(value, unit as SensorUnit, 0, { mg: 3 })}
 				/>
 				<ExposureTooltip unit={unit} />
@@ -277,7 +277,7 @@ function buildTicks(xAxisMode: XAxisMode, minTime: Date, maxTime: Date) {
 		// Always include edges
 		const ticks = [min, max];
 
-		// Add hourly ticks in between
+		// Add ticks per hour
 		const current = new TZDate(minTime);
 
 		while (current < maxTime) {
@@ -290,7 +290,6 @@ function buildTicks(xAxisMode: XAxisMode, minTime: Date, maxTime: Date) {
 			current.setHours(current.getHours() + 1);
 		}
 
-		// Sort just in case
 		ticks.sort((a, b) => a - b);
 
 		return ticks;
