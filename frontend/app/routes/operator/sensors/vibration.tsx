@@ -132,10 +132,10 @@ export default function Vibration() {
 								</ExposureLineChartCard>
 							</div>
 						</div>
-						)}
-					</div>
+					)}
 				</div>
-				{showTrendLineChart && <VibrationTrendLineChartCard />}
 			</div>
+			{showTrendLineChart && <VibrationTrendLineChartCard />}
+		</div>
 	);
 }
