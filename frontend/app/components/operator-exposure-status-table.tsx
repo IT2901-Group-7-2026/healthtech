@@ -98,7 +98,7 @@ function OperatorExposureStatusSensorCell({ onClick, status, sensor }: OperatorE
 
 	return (
 		<button type="button" className="w-fit cursor-pointer" onClick={onClick}>
-			<ExposureBadge sensor={sensor} dangerLevel={status}>
+			<ExposureBadge sensor={sensor} dangerLevel={status} hoverable>
 				{label}
 			</ExposureBadge>
 		</button>

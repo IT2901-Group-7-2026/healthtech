@@ -10,9 +10,10 @@ interface ExposureBadgeProps extends PropsWithChildren {
 	sensor: Sensor;
 	dangerLevel: DangerLevel;
 	className?: string;
+	hoverable?: boolean;
 }
 
-export const ExposureBadge = ({ sensor, dangerLevel, className, children }: ExposureBadgeProps) => {
+export const ExposureBadge = ({ sensor, dangerLevel, className, hoverable, children }: ExposureBadgeProps) => {
 	const Icon = iconConfig[sensor];
 
 	const dangerLevelClasses = dangerLevel
@@ -29,6 +30,7 @@ export const ExposureBadge = ({ sensor, dangerLevel, className, children }: Expo
 				"flex h-fit items-center gap-1.5 rounded-full border px-2 py-0.5 text-sm",
 				dangerLevelClasses,
 				className,
+				hoverable && "cursor-pointer hover:brightness-95",
 			)}
 		>
 			<Icon title={sensor} className="inline-block h-4 w-4" />
