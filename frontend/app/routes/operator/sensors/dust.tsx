@@ -103,7 +103,14 @@ export default function Dust() {
 			) : view === "month" ? (
 				<CalendarWidget selectedDay={date} data={calendarData} />
 			) : view === "week" ? (
-				<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
+				<WeekWidget
+					dayStartHour={minHour}
+					dayEndHour={maxHour}
+					data={calendarData}
+					buildLink={(dateQueryParam) =>
+						`?view=Day&date=${dateQueryParam}&dustField=${dustField}&unit=${dustUnit}`
+					}
+				/>
 			) : !data || data.length === 0 ? (
 				<Card className="flex h-24 w-full items-center">
 					<CardTitle>

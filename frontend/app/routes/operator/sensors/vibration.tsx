@@ -82,7 +82,12 @@ export default function Vibration() {
 				) : view === "month" ? (
 					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
-					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
+					<WeekWidget
+						dayStartHour={minHour}
+						dayEndHour={maxHour}
+						data={calendarData}
+						buildLink={(dateQueryParam) => `?view=Day&date=${dateQueryParam}`}
+					/>
 				) : !data || data.length === 0 ? (
 					<Card className="flex h-full w-full items-center">
 						<CardTitle>

@@ -74,6 +74,41 @@ export function UserDetails({
 	);
 }
 
+function buildForemanDayLink({
+	date,
+	userId,
+	sensor,
+	extraParams,
+}: {
+	date: string;
+	userId?: string;
+	sensor?: Sensor;
+	extraParams?: Record<string, string | undefined>;
+}) {
+	const params = new URLSearchParams();
+
+	params.set("view", "Day");
+	params.set("date", date);
+
+	if (userId) {
+		params.set("userId", userId);
+	}
+
+	if (sensor) {
+		params.set("sensor", sensor);
+	}
+
+	if (extraParams) {
+		for (const [key, value] of Object.entries(extraParams)) {
+			if (value) {
+				params.set(key, value);
+			}
+		}
+	}
+
+	return `?${params.toString()}`;
+}
+
 function AllSensorsUserOverview({
 	selectedUser,
 	selectedDate,
@@ -111,6 +146,12 @@ function AllSensorsUserOverview({
 						dayStartHour={minHour}
 						dayEndHour={maxHour}
 						data={mapOverviewDataToTimeBucketStatuses(data ?? [])}
+						buildLink={(dateQueryParam) =>
+							buildForemanDayLink({
+								date: dateQueryParam,
+								userId: selectedUser.id,
+							})
+						}
 					/>
 				) : (
 					<DayWidget
@@ -247,6 +288,17 @@ function DustUserChart({ selectedUser, selectedDate }: { selectedUser: UserWithS
 							dayStartHour={minHour}
 							dayEndHour={maxHour}
 							data={mapOverviewDataToTimeBucketStatuses(overviewResponse?.data ?? [])}
+							buildLink={(dateQueryParam) =>
+								buildForemanDayLink({
+									date: dateQueryParam,
+									userId: selectedUser.id,
+									sensor,
+									extraParams: {
+										dustField,
+										unit: dustUnit,
+									},
+								})
+							}
 						/>
 					) : (
 						<div id={chartContainerId}>
@@ -382,6 +434,13 @@ function VibrationUserChart({ selectedUser, selectedDate }: { selectedUser: User
 						dayStartHour={minHour}
 						dayEndHour={maxHour}
 						data={mapOverviewDataToTimeBucketStatuses(overviewResponse?.data ?? [])}
+						buildLink={(dateQueryParam) =>
+							buildForemanDayLink({
+								date: dateQueryParam,
+								userId: selectedUser.id,
+								sensor,
+							})
+						}
 					/>
 				) : (
 					<div id={chartContainerId}>
@@ -498,6 +557,16 @@ function NoiseUserChart({ selectedUser, selectedDate }: { selectedUser: UserWith
 							dayStartHour={minHour}
 							dayEndHour={maxHour}
 							data={mapOverviewDataToTimeBucketStatuses(overviewResponse?.data ?? [])}
+							buildLink={(dateQueryParam) =>
+								buildForemanDayLink({
+									date: dateQueryParam,
+									userId: selectedUser.id,
+									sensor,
+									extraParams: {
+										aggregation,
+									},
+								})
+							}
 						/>
 					) : (
 						<div id={chartContainerId}>

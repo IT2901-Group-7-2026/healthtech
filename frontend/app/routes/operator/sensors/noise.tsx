@@ -105,7 +105,12 @@ export default function Noise() {
 			) : view === "month" ? (
 				<CalendarWidget selectedDay={date} selectedAggregation={aggregation} data={calendarData} />
 			) : view === "week" ? (
-				<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
+				<WeekWidget
+					dayStartHour={minHour}
+					dayEndHour={maxHour}
+					data={calendarData}
+					buildLink={(dateQueryParam) => `?view=Day&date=${dateQueryParam}&aggregation=${aggregation}`}
+				/>
 			) : !data || data.length === 0 ? (
 				<Card className="flex h-24 w-full items-center">
 					<CardTitle>
