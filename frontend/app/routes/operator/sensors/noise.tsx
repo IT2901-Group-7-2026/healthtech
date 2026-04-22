@@ -143,7 +143,7 @@ export default function Noise() {
 													month: "long",
 													year: "numeric",
 												})}-${user.name}-Noise-Exposure-Overview`,
-												`Noise Exposure - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
+												`${t(($) => $.pdf.noiseExposure)} - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
 											)
 										}
 									/>

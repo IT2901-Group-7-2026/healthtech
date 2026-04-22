@@ -325,5 +325,10 @@
   },
   "exposureSlider": {
     "title": "Gjennomsnittlig eksponering for {{view}}"
+  },
+  "pdf": {
+    "dustExposure": "Støveksponering",
+    "noiseExposure": "Støyeksponering",
+    "vibrationExposure": "Vibrasjoneksponering"
   }
 }

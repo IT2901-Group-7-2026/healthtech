@@ -149,7 +149,7 @@ export default function Dust() {
 														month: "long",
 														year: "numeric",
 													})}-${user.name}-Dust-Exposure-Overview`,
-													`Dust Exposure - ${user.name} - ${date.toLocaleDateString(locale)}`,
+													`${t(($) => $.pdf.dustExposure)} - ${user.name} - ${date.toLocaleDateString(locale)}`,
 												)
 											}
 										/>
