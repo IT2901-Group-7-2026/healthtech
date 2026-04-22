@@ -89,14 +89,14 @@ export function ExposureLineChart({
 
 	const formatTime = (time: number) => formatDate(toTZDate(time), "HH:mm");
 
-	const noData = getHighestValue(transformedData) !== 0;
+	const noData = getHighestValue(transformedData) === 0;
 
 	return (
 		<ChartContainer
 			config={chartConfig}
 			className={cn("h-full w-full", chartContainerClassName, compact && "!aspect-auto")}
 		>
-			{noData && (
+			{!noData && (
 				<LineChart
 					accessibilityLayer={true}
 					data={transformedData}
@@ -207,7 +207,7 @@ export function ExposureLineChart({
 					)}
 				</LineChart>
 			)}
-			{!noData && (
+			{noData && (
 				<div className="absolute inset-0 flex items-center justify-center">
 					<p className="text-[1.2vw]">{t(($) => $.foremanDashboard.overview.pieChart.noData)}</p>
 				</div>
