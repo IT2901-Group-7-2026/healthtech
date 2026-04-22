@@ -1,15 +1,14 @@
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { Field } from "@/components/ui/field";
 import { Form } from "@/components/ui/form";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { now } from "@/lib/date";
 import { TZDate } from "@date-fns/tz";
-import { format, isBefore } from "date-fns";
-import { CalendarIcon, Share2, Trash2 } from "lucide-react";
-import { useCallback, useId, useState } from "react"; // ← added useId
+import { isBefore } from "date-fns";
+import { Share2, Trash2 } from "lucide-react";
+import { useCallback, useState } from "react"; // ← added useId
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { BasePopup } from "./base-popup";
@@ -47,7 +46,6 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 
 	const [showDeleteText, setDeleteText] = useState(false);
 	const [showShareDataConfirmationMessage, setShowShareDataConfirmationMessage] = useState(false);
-	const datePickerId = useId();
 
 	const handleShareClick = useCallback(() => {
 		setShowShareDataConfirmationMessage(true);
@@ -66,11 +64,11 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 		},
 		[form, t],
 	);
-	const tzToPlain = (tz?: TZDate) => (tz ? new Date(tz.getTime()) : undefined);
-	const plainToTz = (plain?: Date) => (plain ? new TZDate(plain, "Europe/Oslo") : undefined);
 
-	const displayFrom = fromDate ? tzToPlain(fromDate) : undefined;
-	const displayTo = toDate ? tzToPlain(toDate) : undefined;
+	const handleRangeChange = (range: { from?: TZDate; to?: TZDate }) => {
+		form.setValue("fromDate", range.from);
+		form.setValue("toDate", range.to);
+	};
 
 	return (
 		<BasePopup title={title} open={open} relevantDate={null} onClose={onClose}>
@@ -102,60 +100,19 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 						<Form {...form}>
 							<form onSubmit={form.handleSubmit(handleSubmit)} className="max-w-sm space-y-2">
 								<Field className="mx-auto w-full">
-									<Popover>
-										<PopoverTrigger asChild={true}>
-											<Button
-												variant="outline"
-												id={datePickerId}
-												className="justify-start px-2.5 font-normal"
-											>
-												<CalendarIcon />
-												{displayFrom ? (
-													displayTo ? (
-														<>
-															{format(displayFrom, "LLL dd, y")}
-															<span className="mx-1">{"-"}</span>
-															{format(displayTo, "LLL dd, y")}
-														</>
-													) : (
-														format(displayFrom, "LLL dd, y")
-													)
-												) : (
-													<span>{t(($) => $.popup.pickDate)}</span>
-												)}
-											</Button>
-										</PopoverTrigger>
-
-										<PopoverContent className="w-auto p-0" align="start">
-											<Calendar
-												mode="range"
-												selected={{
-													from: displayFrom,
-													to: displayTo,
-												}}
-												onSelect={(range) => {
-													form.setValue("fromDate", plainToTz(range?.from));
-													form.setValue("toDate", plainToTz(range?.to));
-												}}
-												defaultMonth={displayFrom ?? new Date()}
-												numberOfMonths={2}
-												disabled={(date) => {
-													const time = date.getTime();
-													return (
-														time < MIN_DATA_DATE.getTime() || time > MAX_DATA_DATE.getTime()
-													);
-												}}
-											/>
-										</PopoverContent>
-									</Popover>
+									<DateRangePicker
+										value={{ from: fromDate, to: toDate }}
+										onChange={handleRangeChange}
+										minDate={MIN_DATA_DATE}
+										maxDate={MAX_DATA_DATE}
+										placeholder={t(($) => $.popup.pickDate)}
+									/>
 								</Field>
-
 								<div className="relative mt-4">
 									<Button type="submit" disabled={!(fromDate && toDate)} className="h-8 text-sm">
 										<Trash2 />
 										{t(($) => $.popup.deleteData)}
 									</Button>
-
 									<div className="relative mt-2 mb-4">
 										{showDeleteText && fromDate && toDate && (
 											<p
