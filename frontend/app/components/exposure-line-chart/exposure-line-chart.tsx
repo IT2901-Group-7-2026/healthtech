@@ -1,15 +1,15 @@
 import { ExposureTooltip } from "@/components/exposure-line-chart/exposure-tooltip";
 import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { useFormatDate } from "@/hooks/use-format-date";
+import { getLocale } from "@/i18n/locale";
 import { DangerLevels } from "@/lib/danger-levels";
 import { now as getNow, toTZDate } from "@/lib/date";
 import type { SensorDto, SensorTypeField } from "@/lib/dto";
 import type { Sensor, SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import { capitalize, cn, formatSensorValue } from "@/lib/utils";
+import { cn, formatSensorValue } from "@/lib/utils";
 import { TZDate } from "@date-fns/tz";
 import { addMinutes, formatDistanceToNowStrict } from "date-fns";
-import { enUS, nb } from "date-fns/locale";
 import { type PropsWithChildren, useId } from "react";
 import { useTranslation } from "react-i18next";
 import { CartesianGrid, Legend, Line, LineChart, XAxis, type XAxisTickContentProps, YAxis } from "recharts";
@@ -81,7 +81,9 @@ export function ExposureLineChart({
 
 	const xMin = minTime.getTime();
 	const xMax = maxTime.getTime();
-	const ticks = buildTicks(xAxisMode, minTime, maxTime);
+
+	const rawTicks = buildTicks(xAxisMode, minTime, maxTime);
+	const ticks = limitTicks(rawTicks, 6);
 
 	const compact = variant === "compact";
 
@@ -110,7 +112,7 @@ export function ExposureLineChart({
 					type="number"
 					domain={[xMin, xMax]}
 					ticks={ticks}
-					interval={xAxisMode === "default" ? 0 : "preserveStartEnd"}
+					interval={0}
 					allowDataOverflow={true}
 					tickLine={false}
 					axisLine={false}
@@ -256,17 +258,17 @@ function CustomXAxisTick({
 	);
 }
 
-function formatMsToDistanceString(msDiff: number, locale: string) {
+function formatMsToDistanceString(msDiff: number, language: string) {
 	const minutes = Math.round(msDiff / (1000 * 60));
 
 	const now = getNow();
 	const date = addMinutes(now, -minutes);
 
-	return capitalize(
-		formatDistanceToNowStrict(date, {
-			locale: locale === "no" ? nb : enUS,
-		}),
-	);
+	const locale = getLocale(language);
+
+	return formatDistanceToNowStrict(date, {
+		locale,
+	}).replace("en", "1");
 }
 
 function buildTicks(xAxisMode: XAxisMode, minTime: Date, maxTime: Date) {
@@ -309,4 +311,24 @@ function buildTicks(xAxisMode: XAxisMode, minTime: Date, maxTime: Date) {
 	}
 
 	return ticks;
+}
+
+function limitTicks(ticks: Array<number>, maxTicks: number) {
+	if (ticks.length <= maxTicks) {
+		return ticks;
+	}
+
+	const step = Math.ceil((ticks.length - 1) / (maxTicks - 1));
+	const result = ticks.filter((_, i) => i % step === 0);
+
+	// Ensure first & last are always included
+	if (result[0] !== ticks[0]) {
+		result.unshift(ticks[0]);
+	}
+
+	if (result[result.length - 1] !== ticks[ticks.length - 1]) {
+		result.push(ticks[ticks.length - 1]);
+	}
+
+	return result;
 }
