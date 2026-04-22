@@ -42,9 +42,11 @@ export default function OperatorLiveView() {
 
 	const targetUserId = selectedUserId ?? user.id;
 
+	const timeRangeInMinutes = TIME_RANGE_MINUTES[timeRange];
+
 	const startOfCurrentMinute = startOfMinute(now());
 	const end = startOfCurrentMinute;
-	const start = addMinutes(startOfCurrentMinute, -TIME_RANGE_MINUTES[timeRange]);
+	const start = addMinutes(startOfCurrentMinute, -timeRangeInMinutes);
 
 	const [dustTwa1Result, dustTwa25Result, dustTwa10Result, noiseResult, vibrationResult] = useQueries({
 		queries: [
@@ -58,6 +60,8 @@ export default function OperatorLiveView() {
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
 			sensorQueryOptions({
 				sensor: "dust",
@@ -69,6 +73,8 @@ export default function OperatorLiveView() {
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
 			sensorQueryOptions({
 				sensor: "dust",
@@ -80,6 +86,8 @@ export default function OperatorLiveView() {
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
 			sensorQueryOptions({
 				sensor: "noise",
@@ -89,6 +97,8 @@ export default function OperatorLiveView() {
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
 			sensorQueryOptions({
 				sensor: "vibration",
@@ -98,6 +108,8 @@ export default function OperatorLiveView() {
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
 		],
 	});

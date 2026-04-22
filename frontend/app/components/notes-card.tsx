@@ -4,6 +4,7 @@ import { useView } from "@/features/views/use-view";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import { TIMEZONE } from "@/i18n/locale";
 import { createNote, deleteNote, notesQueryOptions, updateNote } from "@/lib/api";
+import { buildNotesQueryKeyPrefix } from "@/lib/query-key-builder";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isSameDay } from "date-fns";
@@ -37,7 +38,9 @@ export const NotesCard = ({ forceInteractiveMode = false }: NotesCardProps) => {
 	const { mutate: mutateCreateNote } = useMutation({
 		mutationFn: createNote,
 		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: ["notes"] });
+			queryClient.invalidateQueries({
+				queryKey: buildNotesQueryKeyPrefix(user.id),
+			});
 			refetch();
 		},
 	});
@@ -45,7 +48,9 @@ export const NotesCard = ({ forceInteractiveMode = false }: NotesCardProps) => {
 	const { mutate: mutateUpdateNote } = useMutation({
 		mutationFn: updateNote,
 		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: ["notes"] });
+			queryClient.invalidateQueries({
+				queryKey: buildNotesQueryKeyPrefix(user.id),
+			});
 			refetch();
 		},
 	});
@@ -53,7 +58,9 @@ export const NotesCard = ({ forceInteractiveMode = false }: NotesCardProps) => {
 	const { mutate: mutateDeleteNote } = useMutation({
 		mutationFn: deleteNote,
 		onSettled: () => {
-			queryClient.invalidateQueries({ queryKey: ["notes"] });
+			queryClient.invalidateQueries({
+				queryKey: buildNotesQueryKeyPrefix(user.id),
+			});
 			refetch();
 		},
 	});
