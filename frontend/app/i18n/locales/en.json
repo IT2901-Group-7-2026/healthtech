@@ -6,12 +6,14 @@
   "common": {
     "loading": "Loading data...",
     "error": "Something went wrong while fetching sensor data.",
-    "noData": "No exposure data found for this day",
+    "noData": "No data",
+    "noDataForDay": "No exposure data found for this day",
     "noOptions": "No options available",
     "today": "Today",
     "total": "Total exposure",
     "notifications": "Notifications",
-    "exportAsPdf": "Export as PDF"
+    "exportAsPdf": "Export as PDF",
+    "weekNumber": "Week {{week}}"
   },
   "sensors": {
     "dust": "Dust",
@@ -21,13 +23,23 @@
     "overview": "Overview",
     "selectPlaceholder": "Sensor",
     "dustFields": {
+      "pm1_stel": "PM1",
+      "pm25_stel": "PM2.5",
+      "pm4_stel": "PM4",
+      "pm10_stel": "PM10",
       "pm1_twa": "PM1",
       "pm25_twa": "PM2.5",
+      "pm4_twa": "PM4",
       "pm10_twa": "PM10"
     },
     "dustExposureLabels": {
+      "pm1_stel": "PM1 (STEL)",
+      "pm25_stel": "PM2.5 (STEL)",
+      "pm4_stel": "PM4 (STEL)",
+      "pm10_stel": "PM10 (STEL)",
       "pm1_twa": "PM1 (TWA)",
       "pm25_twa": "PM2.5 (TWA)",
+      "pm4_twa": "PM4 (TWA)",
       "pm10_twa": "PM10 (TWA)"
     },
     "units": {
@@ -97,39 +109,32 @@
     }
   },
   "exposureSummary": {
-    "title": {
-      "day": "Exposure",
-      "week": "Exposure for week {{week}}",
-      "month": "Exposure for {{month}}"
+    "title": "Exposure",
+    "aggregated": {
+      "safe": "within safe limits",
+      "warning": "above action value",
+      "danger": "above limit value"
     },
-    "greenText": "Within safe limits",
-    "greenHourText": "Hours within safe limits",
-    "greenDayText": "Days within safe limits",
-    "orangeHourText": "Hours above action value",
-    "orangeText": "Above action value",
-    "orangeDayText": "Days above action value",
-    "redHourText": "Hours above limit value",
-    "redText": "Above limit value",
-    "redDayText": "Days above limit value",
-    "dangerSmiley": "Limit exceeded, high exposure",
-    "safeSmiley": "Within safe limits",
-    "warningSmiley": "Elevated exposure, caution needed",
-    "noData": "No data"
+    "status": {
+      "danger": "Above limit value",
+      "safe": "Above action value",
+      "warning": "Below limit value"
+    }
   },
   "lineChart": {
     "danger": "Above limit value",
     "warning": "Above action value",
     "safe": "Within safe limits"
   },
-  "dailyNotes": {
-    "viewTitle": "Your notes",
-    "writeHere": "Log observations, actions taken, or anomalies…",
-    "edit": "Edit",
-    "save": "Save",
-    "day": "day",
-    "week": "week",
-    "month": "month",
-    "emptyState": "No notes for this {{view}}. Select a day to add a note."
+  "notes": {
+    "interactive": {
+      "title": "Note",
+      "placeholder": "Log observations, actions taken, or anomalies…"
+    },
+    "list": {
+      "title": "Your notes",
+      "noNotes": "No notes for this {{view}}. View a day to add notes."
+    }
   },
   "table": {
     "numberOfRowsSelected": "{{selected}} of {{total}} rows selected",
@@ -207,6 +212,7 @@
       "pieChart": {
         "noData": "No data found for this date"
       },
+      "sensor": "Sensors",
       "statCards": {
         "danger": {
           "label": "Above limit value",
@@ -314,5 +320,8 @@
     "today": "Today",
     "previous": "Previous",
     "next": "Next"
+  },
+  "exposureTrendLineChartCard": {
+    "title": "Exposure trend for {{view}}"
   }
 }

@@ -7,7 +7,6 @@ import { addDays, addMonths, addWeeks, subDays, subMonths, subWeeks } from "date
 import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import type { DangerLevel } from "./danger-levels";
-import { now } from "./date";
 import { DEFAULT_MAX_HOUR_DOMAIN, DEFAULT_MIN_HOUR_DOMAIN, type HourDomainDto, type SensorDto, type User } from "./dto";
 import type { Sensor, SensorUnit } from "./sensors";
 
@@ -163,17 +162,19 @@ export function getHourDomain(
 	minHour: number;
 	maxHour: number;
 } {
-	if (!(dates && hourDomain)) {
-		const today = now();
-		return {
-			minHour: convertUtcHourToLocalHour(hourDomain?.minHourUtc ?? DEFAULT_MIN_HOUR_DOMAIN, today),
-			maxHour: convertUtcHourToLocalHour(hourDomain?.maxHourUtc ?? DEFAULT_MAX_HOUR_DOMAIN, today),
-		};
+	// Should we have no data, then we use the local defaults
+	if (!(dates?.length && hourDomain)) {
+		const minHour = clampHour(hourDomain?.minHourUtc ?? DEFAULT_MIN_HOUR_DOMAIN);
+		const maxHour = clampHour(hourDomain?.maxHourUtc ?? DEFAULT_MAX_HOUR_DOMAIN);
+
+		return { minHour, maxHour };
 	}
 
-	const minHours = dates.map((date) => convertUtcHourToLocalHour(hourDomain.minHourUtc, date));
+	// Should we have data, then the hourDomain is defined and is UTC
+	const { minHourUtc, maxHourUtc } = hourDomain;
 
-	const maxHours = dates.map((date) => convertUtcHourToLocalHour(hourDomain.maxHourUtc, date));
+	const minHours = dates.map((d) => convertUtcHourToLocalHour(minHourUtc, d));
+	const maxHours = dates.map((d) => convertUtcHourToLocalHour(maxHourUtc, d));
 
 	// maxHour in day views are non-inclusive, meaning if the last data point is 14:30,
 	// maxHour needs to be at least 15 to include that data point in the chart. While week and month views are inclusive.
@@ -181,10 +182,12 @@ export function getHourDomain(
 	const minHourPadding = 1;
 	const maxHourPadding = viewForPadding === "day" ? 2 : 1;
 
-	return {
-		minHour: clampHour(Math.min(...minHours) - minHourPadding),
-		maxHour: clampHour(Math.max(...maxHours) + maxHourPadding),
-	};
+	const rawMin = Math.min(...minHours);
+	const rawMax = Math.max(...maxHours);
+
+	const minHour = clampHour(rawMin - minHourPadding);
+	const maxHour = clampHour(rawMax + maxHourPadding);
+	return { minHour, maxHour };
 }
 
 function convertUtcHourToLocalHour(utcHour: number, date: TZDate): number {
@@ -210,4 +213,15 @@ export function formatSensorValue(
 	}
 
 	return value.toFixed(resolvedNumberOfUnits);
+}
+
+/**
+ * Peak data doesn't have a warning danger level, so we treat warning levels as safe
+ */
+export function normalizeDangerLevelForPeakForLineChart(dangerLevel: DangerLevel, isPeak?: boolean): DangerLevel {
+	if (isPeak && dangerLevel === "warning") {
+		return "safe";
+	}
+
+	return dangerLevel;
 }

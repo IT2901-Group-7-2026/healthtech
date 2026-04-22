@@ -1,17 +1,13 @@
 import { DangerLevelDots } from "@/components/danger-level-dots.js";
 import { useDate } from "@/features/date-picker/use-date";
-import { WeeklyPopup } from "@/features/popups/weekly-popup";
 import { useFormatDate } from "@/hooks/use-format-date.js";
 import { TIMEZONE } from "@/i18n/locale";
 import { dangerlevelStyles } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
-import type { Aggregation } from "@/lib/dto";
 import type { TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
-import { DialogDescription } from "@radix-ui/react-dialog";
 import {
 	addDays,
-	addHours,
 	eachDayOfInterval,
 	eachHourOfInterval,
 	getMinutes,
@@ -23,9 +19,8 @@ import {
 	startOfHour,
 	startOfWeek,
 } from "date-fns";
-import { type CSSProperties, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { usePopup } from "../popups/use-popup";
+import type { CSSProperties } from "react";
+import { useView } from "../views/use-view";
 
 const GRID_COLUMNS = "3.5rem repeat(7, 1fr)";
 
@@ -37,16 +32,12 @@ interface WeekWidgetProps {
 	dayStartHour?: number;
 	dayEndHour?: number;
 	data: Array<TimeBucketStatus>;
-	aggregation?: Aggregation;
 }
 
-export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data, aggregation }: WeekWidgetProps) {
-	const { visible, closePopup, openPopup } = usePopup();
+export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data }: WeekWidgetProps) {
 	const formatDate = useFormatDate();
-	const { date: selectedDate } = useDate();
-	const { t, i18n } = useTranslation();
-
-	const [selectedTimeBucket, setSelectedTimeBucket] = useState<TimeBucketStatus | null>(null);
+	const { date: selectedDate, setDate } = useDate();
+	const { setView } = useView();
 
 	const daysInWeek = eachDayOfInterval({
 		start: startOfWeek(selectedDate),
@@ -65,19 +56,6 @@ export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data, aggregatio
 		};
 	});
 
-	function handleSegmentClick(timeBucket: TimeBucketStatus): void {
-		setSelectedTimeBucket(timeBucket);
-		openPopup();
-	}
-
-	function formatTimeBucketTitle(timeBucket: TimeBucketStatus): string {
-		const day = formatDate(timeBucket.time, i18n.language === "en" ? "MMMM dd, yyyy" : "dd. MMMM yyyy");
-		const start = formatDate(timeBucket.time, "p");
-		const end = formatDate(addHours(timeBucket.time, 1), "p");
-
-		return t(($) => $.popup.eventTitle, { day, start, end });
-	}
-
 	const visibleTimeBuckets = data.filter((timeBucket) => {
 		const hour = timeBucket.time.getHours();
 
@@ -89,136 +67,122 @@ export function WeekWidget({ dayStartHour = 8, dayEndHour = 16, data, aggregatio
 	const timeBucketsByHour = groupTimeBucketsByHour(visibleTimeBuckets);
 	const rowCount = timeSlotSegments[0].timeSlots.length;
 
+	const handleHourClick = (timeBucket: TimeBucketStatus) => {
+		setDate(timeBucket.time);
+		setView("day");
+	};
+
 	return (
-		<>
-			<div className="flex flex-col overflow-hidden px-1">
-				<div className="flex flex-1 select-none flex-col overflow-hidden">
-					<div className="isolate flex flex-1 flex-col overflow-auto">
-						<div className="flex min-w-[500px] flex-none flex-col">
-							{/* Column headers */}
-							<div
-								className="my-1.5 grid gap-x-3 gap-y-1 text-sm leading-6"
-								style={{
-									gridTemplateColumns: GRID_COLUMNS,
-								}}
-							>
-								<div />
+		<div className="flex flex-col overflow-hidden px-1">
+			<div className="flex flex-1 select-none flex-col overflow-hidden">
+				<div className="isolate flex flex-1 flex-col overflow-auto">
+					<div className="flex min-w-[500px] flex-none flex-col">
+						{/* Column headers */}
+						<div
+							className="my-1.5 grid gap-x-3 gap-y-1 text-sm leading-6"
+							style={{
+								gridTemplateColumns: GRID_COLUMNS,
+							}}
+						>
+							<div />
 
-								{timeSlotSegments.map((segment) => {
-									const today = isToday(segment.date);
-									const weekday = formatDate(segment.date, "EEE");
-									const date = formatDate(segment.date, "dd");
+							{timeSlotSegments.map((segment) => {
+								const today = isToday(segment.date);
+								const weekday = formatDate(segment.date, "EEE");
+								const date = formatDate(segment.date, "dd");
 
-									return (
-										<div
-											key={getUnixTime(segment.date)}
-											className="flex items-center justify-center"
+								return (
+									<div key={getUnixTime(segment.date)} className="flex items-center justify-center">
+										<p
+											className={cn(
+												"flex items-center",
+												!today && "text-muted-foreground",
+												today && "font-semibold",
+											)}
 										>
-											<p
+											{weekday}{" "}
+											<span
 												className={cn(
-													"flex items-center",
-													!today && "text-muted-foreground",
-													today && "font-semibold",
+													"ml-1.5",
+													today && [
+														"flex size-6 items-center justify-center rounded-full",
+														"bg-foreground text-secondary",
+													],
 												)}
 											>
-												{weekday}{" "}
-												<span
-													className={cn(
-														"ml-1.5",
-														today && [
-															"flex size-6 items-center justify-center rounded-full",
-															"bg-foreground text-secondary",
-														],
-													)}
-												>
-													{date}
-												</span>
-											</p>
-										</div>
-									);
-								})}
-							</div>
+												{date}
+											</span>
+										</p>
+									</div>
+								);
+							})}
+						</div>
 
-							<div
-								className="grid gap-x-3 gap-y-1"
-								style={{
-									gridTemplateColumns: GRID_COLUMNS,
-									gridTemplateRows: buildGridRows(rowCount),
-								}}
-							>
-								{/* Time labels */}
-								{timeSlotSegments[0].timeSlots.map((timeSlot, cellIndex) => {
-									const isOnTheHour = getMinutes(timeSlot) === 0;
+						<div
+							className="grid gap-x-3 gap-y-1"
+							style={{
+								gridTemplateColumns: GRID_COLUMNS,
+								gridTemplateRows: buildGridRows(rowCount),
+							}}
+						>
+							{/* Time labels */}
+							{timeSlotSegments[0].timeSlots.map((timeSlot, cellIndex) => {
+								const isOnTheHour = getMinutes(timeSlot) === 0;
 
-									if (!isOnTheHour) {
-										return <div />;
-									}
+								if (!isOnTheHour) {
+									return <div />;
+								}
+
+								return (
+									<div
+										key={`time-${getUnixTime(timeSlot)}`}
+										className="flex items-start justify-end"
+										style={{
+											gridRowStart: cellIndex + 1,
+											gridRowEnd: cellIndex + 2,
+											gridColumnStart: 1,
+											gridColumnEnd: 2,
+										}}
+									>
+										<span className="text-muted-foreground text-xs tabular-nums">
+											{formatDate(timeSlot, "HH:mm")}
+										</span>
+									</div>
+								);
+							})}
+
+							{/* Time slot cells */}
+							{timeSlotSegments.map((day, dayIndex) =>
+								day.timeSlots.map((timeSlot, timeSlotIndex) => {
+									const isFirstRow = timeSlotIndex === 0;
+									const isLastRow = timeSlotIndex === day.timeSlots.length - 1;
+
+									const timeBuckets = timeBucketsByHour.get(timeSlot.getTime()) ?? [];
+
+									const style = {
+										gridRowStart: timeSlotIndex + 1,
+										gridRowEnd: timeSlotIndex + 2,
+										gridColumnStart: dayIndex + 2,
+										gridColumnEnd: dayIndex + 3,
+									};
 
 									return (
-										<div
-											key={`time-${getUnixTime(timeSlot)}`}
-											className="flex items-start justify-end"
-											style={{
-												gridRowStart: cellIndex + 1,
-												gridRowEnd: cellIndex + 2,
-												gridColumnStart: 1,
-												gridColumnEnd: 2,
-											}}
-										>
-											<span className="text-muted-foreground text-xs tabular-nums">
-												{formatDate(timeSlot, "HH:mm")}
-											</span>
-										</div>
+										<Cell
+											key={getUnixTime(timeSlot)}
+											timeBuckets={timeBuckets}
+											isFirstRow={isFirstRow}
+											isLastRow={isLastRow}
+											style={style}
+											onHourClick={handleHourClick}
+										/>
 									);
-								})}
-
-								{/* Time slot cells */}
-								{timeSlotSegments.map((day, dayIndex) =>
-									day.timeSlots.map((timeSlot, timeSlotIndex) => {
-										const isFirstRow = timeSlotIndex === 0;
-										const isLastRow = timeSlotIndex === day.timeSlots.length - 1;
-
-										const timeBuckets = timeBucketsByHour.get(timeSlot.getTime()) ?? [];
-
-										const style = {
-											gridRowStart: timeSlotIndex + 1,
-											gridRowEnd: timeSlotIndex + 2,
-											gridColumnStart: dayIndex + 2,
-											gridColumnEnd: dayIndex + 3,
-										};
-
-										return (
-											<Cell
-												key={getUnixTime(timeSlot)}
-												timeBuckets={timeBuckets}
-												isFirstRow={isFirstRow}
-												isLastRow={isLastRow}
-												style={style}
-												onSegmentClick={handleSegmentClick}
-											/>
-										);
-									}),
-								)}
-							</div>
+								}),
+							)}
 						</div>
 					</div>
 				</div>
 			</div>
-
-			{selectedTimeBucket && (
-				<WeeklyPopup
-					selectedAggregation={aggregation}
-					title={formatTimeBucketTitle(selectedTimeBucket)}
-					timeBucketStatus={selectedTimeBucket}
-					open={visible}
-					onClose={closePopup}
-				>
-					<DialogDescription className="font-medium text-xl">
-						{t(($) => $.popup.exposureTitle)}
-					</DialogDescription>
-				</WeeklyPopup>
-			)}
-		</>
+		</div>
 	);
 }
 
@@ -241,10 +205,10 @@ interface CellProps {
 	isLastRow: boolean;
 	timeBuckets: Array<TimeBucketStatus>;
 	style?: CSSProperties;
-	onSegmentClick: (timeBucket: TimeBucketStatus) => void;
+	onHourClick: (timeBucket: TimeBucketStatus) => void;
 }
 
-function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: CellProps) {
+function Cell({ isFirstRow, isLastRow, timeBuckets, style, onHourClick }: CellProps) {
 	const rounding = "rounded-md";
 
 	return (
@@ -286,7 +250,7 @@ function Cell({ isFirstRow, isLastRow, timeBuckets, style, onSegmentClick }: Cel
 							top: `calc(${topPercent}% + 1px)`,
 							bottom: `calc(${bottomPercent}% + 1px)`,
 						}}
-						onClick={() => onSegmentClick(timeBucket)}
+						onClick={() => onHourClick(timeBucket)}
 					>
 						<DangerLevelDots
 							dangerLevel={timeBucket.dangerLevel ?? null}

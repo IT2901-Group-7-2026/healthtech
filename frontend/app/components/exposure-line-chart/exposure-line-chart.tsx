@@ -1,7 +1,7 @@
 import { ExposureTooltip } from "@/components/exposure-line-chart/exposure-tooltip";
 import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { useFormatDate } from "@/hooks/use-format-date";
-import { type DangerLevel, DangerLevels, dangerlevelStyles, getDangerLevel } from "@/lib/danger-levels";
+import { DangerLevels } from "@/lib/danger-levels";
 import { toTZDate } from "@/lib/date";
 import type { SensorDto, SensorTypeField } from "@/lib/dto";
 import type { Sensor, SensorUnit } from "@/lib/sensors";
@@ -10,17 +10,10 @@ import { cn, formatSensorValue } from "@/lib/utils";
 import { TZDate } from "@date-fns/tz";
 import { type PropsWithChildren, useId } from "react";
 import { useTranslation } from "react-i18next";
-import {
-	type ActiveDotProps,
-	CartesianGrid,
-	Legend,
-	Line,
-	LineChart,
-	XAxis,
-	type XAxisTickContentProps,
-	YAxis,
-} from "recharts";
+import { CartesianGrid, Legend, Line, LineChart, XAxis, type XAxisTickContentProps, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
+import { ExposureDot } from "./exposure-dot";
+import { ExposureLineChartGradientStops } from "./exposure-line-chart-gradient-stops";
 import { ThresholdLegend } from "./threshold-legend";
 
 const Y_AXIS_WIDTH = 60;
@@ -182,7 +175,7 @@ export function ExposureLineChart({
 
 				<defs>
 					<linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-						<GradientStops
+						<ExposureLineChartGradientStops
 							values={transformedData.map((point) => point.value)}
 							warningThreshold={warning}
 							dangerThreshold={dangerThreshold}
@@ -199,7 +192,7 @@ export function ExposureLineChart({
 					animationDuration={0}
 					dot={false}
 					activeDot={(props) => (
-						<Dot {...props} warning={warning} danger={dangerThreshold} isPeak={usePeakData} />
+						<ExposureDot {...props} warning={warning} danger={dangerThreshold} isPeak={usePeakData} />
 					)}
 				/>
 				{children}
@@ -223,24 +216,12 @@ export function ExposureLineChart({
 								/>
 							</div>
 						)}
-					></Legend>
+					/>
 				)}
 			</LineChart>
 		</ChartContainer>
 	);
 }
-
-type DotProps = ActiveDotProps & { warning: number; danger: number };
-
-const Dot = ({ cx, cy, value, warning, danger, isPeak }: DotProps & { isPeak?: boolean }) => {
-	let dangerLevel = getDangerLevel(value, warning, danger);
-
-	dangerLevel = normalizeDangerLevelForPeak(dangerLevel, isPeak);
-
-	const fillColor = dangerlevelStyles[dangerLevel].color;
-
-	return <circle cx={cx} cy={cy} r={6} fill={fillColor} />;
-};
 
 type CustomXAxisTickProps = XAxisTickContentProps & {
 	xMin: number;
@@ -279,74 +260,4 @@ function CustomXAxisTick({ x, y, xMin, xMax, payload, xTickLabels, formatTime, v
 			{label}
 		</text>
 	);
-}
-
-interface GradientStopsProps {
-	values: Array<number>;
-	warningThreshold: number;
-	dangerThreshold: number;
-	usePeakData?: boolean;
-}
-
-function GradientStops({ values, warningThreshold, dangerThreshold, usePeakData }: GradientStopsProps) {
-	const minValue = values.length > 0 ? Math.min(...values) : 0;
-	const maxValue = values.length > 0 ? Math.max(...values) : 0;
-
-	let minDangerLevel = getDangerLevel(minValue, warningThreshold, dangerThreshold);
-	let maxDangerLevel = getDangerLevel(maxValue, warningThreshold, dangerThreshold);
-
-	minDangerLevel = normalizeDangerLevelForPeak(minDangerLevel, usePeakData);
-	maxDangerLevel = normalizeDangerLevelForPeak(maxDangerLevel, usePeakData);
-
-	const uniformDangerLevel = minDangerLevel === maxDangerLevel ? minDangerLevel : undefined;
-
-	const getOffset = (y: number) => {
-		if (maxValue === minValue) {
-			return "0%";
-		}
-
-		return `${((maxValue - y) / (maxValue - minValue)) * 100}%`;
-	};
-
-	const dangerOffset = getOffset(dangerThreshold);
-	const warningOffset = getOffset(warningThreshold);
-
-	// If all values fall within the same danger level, use a solid color for the line instead of a gradient
-	if (uniformDangerLevel) {
-		const dangerLevelColor = dangerlevelStyles[uniformDangerLevel].color;
-		return (
-			<>
-				<stop offset="0%" stopColor={dangerLevelColor} />
-				<stop offset="100%" stopColor={dangerLevelColor} />
-			</>
-		);
-	}
-
-	return (
-		<>
-			<stop offset={dangerOffset} stopColor="var(--danger)" />
-
-			{/* Only show the warning gradient for non-peak data */}
-			{usePeakData ? (
-				<stop offset={dangerOffset} stopColor="var(--safe)" />
-			) : (
-				<>
-					<stop offset={dangerOffset} stopColor="var(--warning)" />
-					<stop offset={warningOffset} stopColor="var(--warning)" />
-					<stop offset={warningOffset} stopColor="var(--safe)" />
-				</>
-			)}
-
-			<stop offset="100%" stopColor="var(--safe)" />
-		</>
-	);
-}
-
-// Peak data doesn't have a warning danger level, so we treat warning levels as safe
-function normalizeDangerLevelForPeak(dangerLevel: DangerLevel, isPeak?: boolean): DangerLevel {
-	if (isPeak && dangerLevel === "warning") {
-		return "safe";
-	}
-
-	return dangerLevel;
 }

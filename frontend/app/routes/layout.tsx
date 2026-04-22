@@ -183,7 +183,7 @@ export default function Layout() {
 	return (
 		<SidebarProvider defaultOpen={false}>
 			<SidebarInset>
-				<div className="mx-auto w-full max-w-7xl">
+				<div className="mx-auto w-full max-w-[90rem]">
 					<header className="sticky top-0 z-40 mx-5 flex items-center justify-between bg-background/95 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/80">
 						{desktopHeader}
 

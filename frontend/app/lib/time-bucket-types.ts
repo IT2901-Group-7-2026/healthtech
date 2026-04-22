@@ -14,9 +14,9 @@ export type TimeBucketStatus = {
 };
 
 export type SummaryLevelCounts = {
-	safeCount: number;
-	warningCount: number;
-	dangerCount: number;
+	safeMinutes: number;
+	warningMinutes: number;
+	dangerMinutes: number;
 };
 
 export type SummaryCounts = SummaryLevelCounts & {

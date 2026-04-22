@@ -1,6 +1,5 @@
 // biome-ignore-all lint/nursery/noShadow: Allow us to use the variable name "user" in different scopes
 
-import { ExposureBadge } from "@/components/exposure-badge";
 import { Button } from "@/components/ui/button.js";
 import { Checkbox } from "@/components/ui/checkbox.js";
 import { DataTable } from "@/components/ui/data-table";
@@ -12,7 +11,6 @@ import {
 	useRemoveSubordinatesMutation,
 	usersQueryOptions,
 } from "@/lib/api";
-import { mapDangerLevelToLabel } from "@/lib/danger-levels";
 import { type User, UserRole, type UserWithStatusDto } from "@/lib/dto";
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
@@ -60,58 +58,6 @@ export default function TeamPage() {
 			id: "jobDescription",
 			accessorKey: "jobDescription",
 			header: t(($) => $.foremanDashboard.team.table.jobDescription),
-		},
-
-		{
-			id: "dust",
-			header: t(($) => $.sensors.dust),
-			cell: ({ row }) => {
-				const status = row.original.status.dust?.dangerLevel ?? "safe";
-
-				const label = mapDangerLevelToLabel(status);
-
-				return (
-					<div className="w-fit">
-						<ExposureBadge sensor="dust" dangerLevel={status}>
-							{label}
-						</ExposureBadge>
-					</div>
-				);
-			},
-		},
-
-		{
-			id: "noise",
-			header: t(($) => $.sensors.noise),
-			cell: ({ row }) => {
-				const status = row.original.status.noise?.dangerLevel ?? "safe";
-				const label = mapDangerLevelToLabel(status);
-
-				return (
-					<div className="w-fit">
-						<ExposureBadge sensor="noise" dangerLevel={status}>
-							{label}
-						</ExposureBadge>
-					</div>
-				);
-			},
-		},
-		{
-			id: "vibration",
-			header: t(($) => $.sensors.vibration),
-			cell: ({ row }) => {
-				const status = row.original.status.vibration?.dangerLevel ?? "safe";
-
-				const label = mapDangerLevelToLabel(status);
-
-				return (
-					<div className="w-fit">
-						<ExposureBadge sensor="vibration" dangerLevel={status}>
-							{label}
-						</ExposureBadge>
-					</div>
-				);
-			},
 		},
 	];
 
