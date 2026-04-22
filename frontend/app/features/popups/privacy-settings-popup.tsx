@@ -46,6 +46,7 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 
 	const MIN_DATA_DATE = new TZDate(2025, 0, 1, "Europe/Oslo");
 	const MAX_DATA_DATE = now();
+	const TIMEOUT_5000_MS = 5000;
 
 	const [showDeleteText, setDeleteText] = useState(false);
 	const [showShareDataConfirmationMessage, setShowShareDataConfirmationMessage] = useState(false);
@@ -53,7 +54,7 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 	const handleShareSubmit = useCallback(() => {
 		if (shareFrom && shareTo) {
 			setShowShareDataConfirmationMessage(true);
-			setTimeout(() => setShowShareDataConfirmationMessage(false), 5_000);
+			setTimeout(() => setShowShareDataConfirmationMessage(false), TIMEOUT_5000_MS);
 		}
 	}, [shareFrom, shareTo]);
 
@@ -61,11 +62,11 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 		(data: DateFormValues) => {
 			if (data.fromDate && data.toDate && isBefore(data.toDate, data.fromDate)) {
 				form.setError("toDate", { message: t(($) => $.popup.invalidDate) });
-				setTimeout(() => form.clearErrors("toDate"), 5_000);
+				setTimeout(() => form.clearErrors("toDate"), TIMEOUT_5000_MS);
 				return;
 			}
 			setDeleteText(true);
-			setTimeout(() => setDeleteText(false), 5_000);
+			setTimeout(() => setDeleteText(false), TIMEOUT_5000_MS);
 		},
 		[form, t],
 	);
