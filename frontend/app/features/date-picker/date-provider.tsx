@@ -21,7 +21,10 @@ import { type ReactNode, useCallback } from "react";
 import { DateContext, type DateContextValue } from "./use-date";
 
 export function DateProvider({ children }: { children: ReactNode }) {
-	const [date, setDateQueryState] = useQueryState<TZDate>("date", parseAsTZDate.withDefault(today()));
+	const [date, setDateQueryState] = useQueryState<TZDate>(
+		"date",
+		parseAsTZDate.withDefault(today()).withOptions({ history: "push" }),
+	);
 
 	const { view } = useView();
 
