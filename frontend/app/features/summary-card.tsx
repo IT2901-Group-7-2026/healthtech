@@ -83,7 +83,7 @@ export function ExposureSummary({ exposureType }: ExposureSummaryProps) {
 				title={safeMinutesLabel}
 				className={cn(
 					"h-6 truncate rounded-md px-2 py-1 text-[0.675rem]",
-					data.safeMinutes > 0 ? "bg-safe-subtle text-safe" : "bg-card text-muted-foreground",
+					data.safeMinutes > 0 ? "bg-safe-subtle text-safe" : "bg-secondary text-muted-foreground",
 				)}
 			>
 				{safeMinutesLabel}
@@ -93,7 +93,7 @@ export function ExposureSummary({ exposureType }: ExposureSummaryProps) {
 				title={warningMinutesLabel}
 				className={cn(
 					"h-6 truncate rounded-md px-2 py-1 text-[0.675rem]",
-					data.warningMinutes > 0 ? "bg-warning-subtle text-warning" : "bg-card text-muted-foreground",
+					data.warningMinutes > 0 ? "bg-warning-subtle text-warning" : "bg-secondary text-muted-foreground",
 				)}
 			>
 				{warningMinutesLabel}
@@ -103,7 +103,7 @@ export function ExposureSummary({ exposureType }: ExposureSummaryProps) {
 				title={dangerMinutesLabel}
 				className={cn(
 					"h-6 truncate rounded-md px-2 py-1 text-[0.675rem]",
-					data.dangerMinutes > 0 ? "bg-danger-subtle text-danger" : "bg-card text-muted-foreground",
+					data.dangerMinutes > 0 ? "bg-danger-subtle text-danger" : "bg-secondary text-muted-foreground",
 				)}
 			>
 				{dangerMinutesLabel}
