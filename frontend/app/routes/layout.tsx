@@ -409,14 +409,7 @@ function UserDropdown({
 				setUser={setUser}
 			/>
 
-			<PrivacySettingsPopup
-				user={user}
-				avatarSrc="/userimage.png"
-				open={privacySettingsPopupVisible}
-				onClose={closePrivacySettingsPopup}
-				users={users}
-				setUser={setUser}
-			/>
+			<PrivacySettingsPopup open={privacySettingsPopupVisible} onClose={closePrivacySettingsPopup} />
 		</>
 	);
 }

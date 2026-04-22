@@ -4,21 +4,16 @@ import { DateInput } from "@/components/ui/date-input";
 import { Form, FormField, FormItem } from "@/components/ui/form";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { now } from "@/lib/date";
-import type { User } from "@/lib/dto.js";
 import { TZDate } from "@date-fns/tz";
 import { isBefore } from "date-fns";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { BasePopup } from "./base-popup";
 
 interface PrivacySettingsPopupProps {
-	user: User;
-	avatarSrc: string;
 	open: boolean;
 	onClose: () => void;
-	users?: Array<User>;
-	setUser?: (user: User) => void;
 	children?: React.ReactNode;
 }
 
@@ -43,31 +38,30 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 	const toDate = form.watch("toDate");
 	const format = useFormatDate();
 
-	const onSubmit = (data: DateFormValues) => {
-		if (data.fromDate && data.toDate && isBefore(data.toDate, data.fromDate)) {
-			form.setError("toDate", {
-				message: t(($) => $.popup.invalidDate),
-			});
+	// We chose the minimum date to be the 1st of January 2025 because there is no data before this date
+	const MIN_DATA_DATE = new TZDate(2025, 0, 1, "Europe/Oslo");
+	const MAX_DATA_DATE = now();
 
-			setTimeout(() => {
-				form.clearErrors("toDate");
-			}, 5000);
-			return;
-		}
-
-		setDeleteText(true);
-
-		setTimeout(() => {
-			setDeleteText(false);
-		}, 5000);
-	};
-
-	// We chose the minimum date to be the 1st of January 2024 because there is no data before this date
-	const minSelectableDate = new TZDate(2024, 0, 1, "Europe/Oslo");
-	const maxSelectableDate = now();
-
-	const [deleteText, setDeleteText] = useState(false);
+	const [showDeleteText, setDeleteText] = useState(false);
 	const [showShareDataConfirmationMessage, setShowShareDataConfirmationMessage] = useState(false);
+
+	const handleShareClick = useCallback(() => {
+		setShowShareDataConfirmationMessage(true);
+		setTimeout(() => setShowShareDataConfirmationMessage(false), 5000);
+	}, []);
+
+	const handleSubmit = useCallback(
+		(data: DateFormValues) => {
+			if (data.fromDate && data.toDate && isBefore(data.toDate, data.fromDate)) {
+				form.setError("toDate", { message: t(($) => $.popup.invalidDate) });
+				setTimeout(() => form.clearErrors("toDate"), 5000);
+				return;
+			}
+			setDeleteText(true);
+			setTimeout(() => setDeleteText(false), 5000);
+		},
+		[form, t],
+	);
 
 	return (
 		<BasePopup title={title} open={open} relevantDate={null} onClose={onClose}>
@@ -78,17 +72,7 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 					<p className="label text-muted-foreground">{t(($) => $.share.hygienist.button)}</p>
 					<Card className="p-3">
 						<div>
-							<Button
-								className=""
-								variant="outline"
-								onClick={() => {
-									setShowShareDataConfirmationMessage(true);
-
-									setTimeout(() => {
-										setShowShareDataConfirmationMessage(false);
-									}, 5000);
-								}}
-							>
+							<Button variant="outline" onClick={handleShareClick}>
 								{t(($) => $.share.hygienist.button)}
 							</Button>
 							<div className="relative mt-2 h-2">
@@ -104,7 +88,7 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 					<p className="label text-muted-foreground">{t(($) => $.profile.deletePersonalInformation)}</p>
 					<Card className="p-3">
 						<Form {...form}>
-							<form onSubmit={form.handleSubmit(onSubmit)} className="max-w-sm space-y-2">
+							<form onSubmit={form.handleSubmit(handleSubmit)} className="max-w-sm space-y-2">
 								<div className="flex flex-col gap-2">
 									<span>{t(($) => $.popup.from)}</span>
 									<FormField
@@ -116,8 +100,8 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 													value={field.value}
 													onChange={field.onChange}
 													placeholder={t(($) => $.popup.startDate)}
-													minDate={minSelectableDate}
-													maxDate={maxSelectableDate}
+													minDate={MIN_DATA_DATE}
+													maxDate={MAX_DATA_DATE}
 												/>
 											</FormItem>
 										)}
@@ -134,8 +118,8 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 													value={field.value}
 													onChange={field.onChange}
 													placeholder={t(($) => $.popup.endDate)}
-													minDate={minSelectableDate}
-													maxDate={maxSelectableDate}
+													minDate={MIN_DATA_DATE}
+													maxDate={MAX_DATA_DATE}
 												/>
 											</FormItem>
 										)}
@@ -153,7 +137,7 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 											</div>
 										)}
 
-										{deleteText && fromDate && toDate && (
+										{showDeleteText && fromDate && toDate && (
 											<div className="text-green-700 text-sm">
 												{t(($) => $.popup.dataDeleted, {
 													from: format(fromDate, "d MMMM yyyy"),
