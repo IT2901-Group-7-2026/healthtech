@@ -2,12 +2,14 @@ import { ExposureTooltip } from "@/components/exposure-line-chart/exposure-toolt
 import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { DangerLevels } from "@/lib/danger-levels";
-import { toTZDate } from "@/lib/date";
+import { now as getNow, toTZDate } from "@/lib/date";
 import type { SensorDto, SensorTypeField } from "@/lib/dto";
 import type { Sensor, SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import { cn, formatSensorValue } from "@/lib/utils";
+import { capitalize, cn, formatSensorValue } from "@/lib/utils";
 import { TZDate } from "@date-fns/tz";
+import { addMinutes, formatDistanceToNowStrict } from "date-fns";
+import { enUS, nb } from "date-fns/locale";
 import { type PropsWithChildren, useId } from "react";
 import { useTranslation } from "react-i18next";
 import { CartesianGrid, Legend, Line, LineChart, XAxis, type XAxisTickContentProps, YAxis } from "recharts";
@@ -15,6 +17,8 @@ import type { CurveType } from "recharts/types/shape/Curve";
 import { ExposureDot } from "./exposure-dot";
 import { ExposureLineChartGradientStops } from "./exposure-line-chart-gradient-stops";
 import { ThresholdLegend } from "./threshold-legend";
+
+export type XAxisMode = "default" | "windowed";
 
 const Y_AXIS_WIDTH = 60;
 
@@ -26,11 +30,6 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 type LineChartVariant = "default" | "compact";
-
-type XAxisTickLabels = {
-	start: string;
-	end: string;
-};
 
 export interface ExposureLineChartProps extends PropsWithChildren {
 	chartData: Array<SensorDto>;
@@ -46,7 +45,7 @@ export interface ExposureLineChartProps extends PropsWithChildren {
 	showLegend?: boolean;
 
 	variant?: LineChartVariant;
-	xTickLabels?: XAxisTickLabels;
+	xAxisMode?: XAxisMode;
 	minTime: Date;
 	maxTime: Date;
 }
@@ -66,9 +65,9 @@ export function ExposureLineChart({
 	chartContainerClassName,
 	variant = "default",
 	showLegend = true,
-	xTickLabels,
+	xAxisMode = "default",
 }: ExposureLineChartProps) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const id = useId();
 	const formatDate = useFormatDate();
 
@@ -82,26 +81,7 @@ export function ExposureLineChart({
 
 	const xMin = minTime.getTime();
 	const xMax = maxTime.getTime();
-	let ticks: Array<number>;
-
-	// Either only show tick labels at the start and end of the chart, or show them at every hour within the given time range
-	if (xTickLabels) {
-		ticks = [xMin, xMax];
-	} else {
-		// Remove minutes and seconds so ticks only show hours
-		const current = new TZDate(minTime);
-		current.setMinutes(0, 0, 0);
-
-		const end = new TZDate(maxTime);
-		end.setMinutes(0, 0, 0);
-
-		ticks = [];
-
-		while (current <= end) {
-			ticks.push(current.getTime());
-			current.setHours(current.getHours() + 1);
-		}
-	}
+	const ticks = buildTicks(xAxisMode, minTime, maxTime);
 
 	const compact = variant === "compact";
 
@@ -130,7 +110,7 @@ export function ExposureLineChart({
 					type="number"
 					domain={[xMin, xMax]}
 					ticks={ticks}
-					interval={0}
+					interval={xAxisMode === "default" ? 0 : "preserveStartEnd"}
 					allowDataOverflow={true}
 					tickLine={false}
 					axisLine={false}
@@ -142,7 +122,9 @@ export function ExposureLineChart({
 							formatTime={formatTime}
 							xMin={xMin}
 							xMax={xMax}
-							xTickLabels={xTickLabels}
+							xAxisMode={xAxisMode}
+							t={t}
+							locale={i18n.language}
 						/>
 					)}
 				/>
@@ -228,10 +210,23 @@ type CustomXAxisTickProps = XAxisTickContentProps & {
 	xMax: number;
 	variant: LineChartVariant;
 	formatTime: (time: number) => string;
-	xTickLabels?: XAxisTickLabels;
+	xAxisMode?: XAxisMode;
+	t: ReturnType<typeof useTranslation>["t"];
+	locale: string;
 };
 
-function CustomXAxisTick({ x, y, xMin, xMax, payload, xTickLabels, formatTime, variant }: CustomXAxisTickProps) {
+function CustomXAxisTick({
+	x,
+	y,
+	xMin,
+	xMax,
+	payload,
+	formatTime,
+	variant,
+	xAxisMode,
+	t,
+	locale,
+}: CustomXAxisTickProps) {
 	const value: number = payload.value ?? 0;
 
 	const isFirst = value === xMin;
@@ -239,12 +234,11 @@ function CustomXAxisTick({ x, y, xMin, xMax, payload, xTickLabels, formatTime, v
 
 	let label = formatTime(value);
 
-	if (xTickLabels) {
-		if (value === xMin) {
-			label = xTickLabels.start;
-		}
-		if (value === xMax) {
-			label = xTickLabels.end;
+	if (xAxisMode === "windowed") {
+		if (isLast) {
+			label = t(($) => $.live.chart.now);
+		} else {
+			label = formatMsToDistanceString(xMax - value, locale);
 		}
 	}
 
@@ -260,4 +254,60 @@ function CustomXAxisTick({ x, y, xMin, xMax, payload, xTickLabels, formatTime, v
 			{label}
 		</text>
 	);
+}
+
+function formatMsToDistanceString(msDiff: number, locale: string) {
+	const minutes = Math.round(msDiff / (1000 * 60));
+
+	const now = getNow();
+	const date = addMinutes(now, -minutes);
+
+	return capitalize(
+		formatDistanceToNowStrict(date, {
+			locale: locale === "no" ? nb : enUS,
+		}),
+	);
+}
+
+function buildTicks(xAxisMode: XAxisMode, minTime: Date, maxTime: Date) {
+	const min = minTime.getTime();
+	const max = maxTime.getTime();
+
+	if (xAxisMode === "windowed") {
+		// Always include edges
+		const ticks = [min, max];
+
+		// Add hourly ticks in between
+		const current = new TZDate(minTime);
+
+		while (current < maxTime) {
+			const t = current.getTime();
+
+			if (t > min) {
+				ticks.push(t);
+			}
+
+			current.setHours(current.getHours() + 1);
+		}
+
+		// Sort just in case
+		ticks.sort((a, b) => a - b);
+
+		return ticks;
+	}
+
+	const current = new TZDate(minTime);
+	current.setMinutes(0, 0, 0);
+
+	const end = new TZDate(maxTime);
+	end.setMinutes(0, 0, 0);
+
+	const ticks = [];
+
+	while (current <= end) {
+		ticks.push(current.getTime());
+		current.setHours(current.getHours() + 1);
+	}
+
+	return ticks;
 }
