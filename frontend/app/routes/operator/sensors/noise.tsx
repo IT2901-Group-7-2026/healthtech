@@ -36,9 +36,7 @@ export default function Noise() {
 	const chartContainerId = useId();
 
 	const sensor: Sensor = "noise";
-
 	const parseAsAggregation = parseAsStringLiteral(Aggregations);
-
 	const [aggregation, setAggregation] = useQueryState<Aggregation>(
 		"aggregation",
 		parseAsAggregation.withDefault("average"),
@@ -84,7 +82,6 @@ export default function Noise() {
 	}
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, usePeakAggregation);
-
 	const minTime = setHours(date, minHour);
 	const maxTime = setHours(date, maxHour);
 
