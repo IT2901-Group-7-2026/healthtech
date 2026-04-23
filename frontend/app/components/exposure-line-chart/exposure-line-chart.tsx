@@ -89,7 +89,7 @@ export function ExposureLineChart({
 
 	const formatTime = (time: number) => formatDate(toTZDate(time), "HH:mm");
 
-	const noData = transformedData.length === 0
+	const noData = transformedData.length === 0;
 
 	if (noData) {
 		return (
