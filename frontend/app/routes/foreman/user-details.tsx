@@ -320,7 +320,11 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 
 			<Card className="w-full">
 				<CardHeader>
-					<CardTitle>{t(($) => $.exposureSlider.title, { view })}</CardTitle>
+					<CardTitle>
+						{t(($) => $.exposureSlider.title, {
+							view: t(($) => $.views[view]).toLowerCase(),
+						})}
+					</CardTitle>
 				</CardHeader>
 				<CardContent className="flex flex-row flex-wrap">
 					<ExposureSlider
