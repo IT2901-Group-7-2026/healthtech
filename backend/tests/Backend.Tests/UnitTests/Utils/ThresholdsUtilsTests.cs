@@ -198,7 +198,14 @@ public class ThresholdsUtilsTests
 		var threshold = Threshold.DustPm10Twa;
 		var safeResult = ThresholdUtils.CalculateDangerLevel(
 			SensorType.Dust,
-			value: threshold.Danger - 1,
+			value: threshold.Warning - 0.1,
+			maxValue: null,
+			field: Field.Pm10_twa
+		);
+
+		var warningResult = ThresholdUtils.CalculateDangerLevel(
+			SensorType.Dust,
+			value: threshold.Warning,
 			maxValue: null,
 			field: Field.Pm10_twa
 		);
@@ -211,8 +218,46 @@ public class ThresholdsUtilsTests
 		);
 
 		Assert.Equal(DangerLevel.Safe, safeResult.dangerLevel);
+		Assert.Equal(DangerLevel.Warning, warningResult.dangerLevel);
 		Assert.Equal(DangerLevel.Danger, dangerResult.dangerLevel);
 		Assert.Null(safeResult.peakDangerLevel);
+		Assert.Null(warningResult.peakDangerLevel);
+		Assert.Null(dangerResult.peakDangerLevel);
+	}
+
+	/// <summary>
+	/// Verifies that dust calculations use the PM4-specific field thresholds when a PM4 override is provided.
+	/// </summary>
+	[Fact]
+	public void CalculateDangerLevel_DustFieldOverride_Pm4Twa_UsesFieldThresholds()
+	{
+		var threshold = Threshold.DustPm4Twa;
+		var safeResult = ThresholdUtils.CalculateDangerLevel(
+			SensorType.Dust,
+			value: threshold.Warning - 0.1,
+			maxValue: null,
+			field: Field.Pm4_twa
+		);
+
+		var warningResult = ThresholdUtils.CalculateDangerLevel(
+			SensorType.Dust,
+			value: threshold.Warning,
+			maxValue: null,
+			field: Field.Pm4_twa
+		);
+
+		var dangerResult = ThresholdUtils.CalculateDangerLevel(
+			SensorType.Dust,
+			value: threshold.Danger,
+			maxValue: null,
+			field: Field.Pm4_twa
+		);
+
+		Assert.Equal(DangerLevel.Safe, safeResult.dangerLevel);
+		Assert.Equal(DangerLevel.Warning, warningResult.dangerLevel);
+		Assert.Equal(DangerLevel.Danger, dangerResult.dangerLevel);
+		Assert.Null(safeResult.peakDangerLevel);
+		Assert.Null(warningResult.peakDangerLevel);
 		Assert.Null(dangerResult.peakDangerLevel);
 	}
 
