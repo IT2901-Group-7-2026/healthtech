@@ -167,10 +167,12 @@
     "startDate": "Startdato...",
     "endDate": "Sluttdato...",
     "date": "dato",
-    "invalidDate": "Velg en startdato som starter før sluttdato."
+    "invalidDate": "Velg en startdato som starter før sluttdato.",
+    "pickDate": "Velg et datointervall..."
   },
   "profile": {
     "title": "Min side",
+    "privacySettings": "Personverninnstillinger",
     "location": "Lokasjon",
     "name": "Navn",
     "currentSecurityRegulations": "Gjeldende sikkerhetsreguleringer",
@@ -317,7 +319,8 @@
   "share": {
     "hygienist": {
       "button": "Del data med hygieniker",
-      "confirmation": "Månedlige data delt ✓"
+      "confirmation": "Data delt fra {{from}} til {{to}}.",
+      "shareData": "Del data"
     }
   },
   "viewPicker": {
