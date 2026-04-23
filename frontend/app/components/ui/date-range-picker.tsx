@@ -27,18 +27,11 @@ export function DateRangePicker({
 	placeholder = "Velg dato",
 }: DateRangePickerProps) {
 	
-
-	const tzToPlain = (tz?: TZDate) => (tz ? new Date(tz.getTime()) : undefined);
-	const plainToTz = (plain?: Date) => (plain ? new TZDate(plain, "Europe/Oslo") : undefined);
-
-	const displayFrom = tzToPlain(value.from);
-	const displayTo = tzToPlain(value.to);
-
 	const handleSelect = useCallback(
 		(range: { from?: Date; to?: Date }) => {
 			onChange({
-				from: plainToTz(range.from),
-				to: plainToTz(range.to),
+				from: range.from as TZDate,
+				to: range.to as TZDate,
 			});
 		},
 		[onChange],
@@ -49,15 +42,15 @@ export function DateRangePicker({
 			<PopoverTrigger asChild={true}>
 				<Button variant="outline" className="justify-center px-2.5 font-normal max-w-[300px]">
 					<CalendarIcon className="mr-2 h-[1.2rem] w-[1.2rem]" />
-					{displayFrom ? (
-						displayTo ? (
+					{value.from ? (
+						value.to ? (
 							<>
-								{format(displayFrom, "LLL dd, y")}
+								{format(value.from, "LLL dd, y")}
 								<span className="mx-1">-</span>
-								{format(displayTo, "LLL dd, y")}
+								{format(value.to, "LLL dd, y")}
 							</>
 						) : (
-							format(displayFrom, "LLL dd, y")
+							format(value.from, "LLL dd, y")
 						)
 					) : (
 						<span>{placeholder}</span>
@@ -69,9 +62,9 @@ export function DateRangePicker({
 				<Calendar
 					mode="range"
 					required={true}
-					selected={{ from: displayFrom, to: displayTo }}
+					selected={{ from: value.from, to: value.to }}
 					onSelect={handleSelect}
-					defaultMonth={displayFrom ?? new Date()}
+					defaultMonth={value.from ?? new TZDate()}
 					numberOfMonths={2}
 					disabled={(date) => {
 						const ts = date.getTime();
