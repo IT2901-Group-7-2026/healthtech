@@ -89,21 +89,6 @@ export function ExposureLineChart({
 
 	const formatTime = (time: number) => formatDate(toTZDate(time), "HH:mm");
 
-	const noData = transformedData.length === 0;
-
-	if (noData) {
-		return (
-			<ChartContainer
-				config={chartConfig}
-				className={cn("h-full w-full", chartContainerClassName, compact && "!aspect-auto")}
-			>
-				<p className="absolute inset-0 flex items-center justify-center text-[1.2vw]">
-					{t(($) => $.foremanDashboard.overview.pieChart.noData)}
-				</p>
-			</ChartContainer>
-		);
-	}
-
 	return (
 		<ChartContainer
 			config={chartConfig}
