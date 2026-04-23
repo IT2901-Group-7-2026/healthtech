@@ -4,7 +4,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { TZDate } from "@date-fns/tz";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useCallback, useId } from "react";
+import { useCallback } from "react";
 
 export type DateRange = {
 	from?: TZDate;
