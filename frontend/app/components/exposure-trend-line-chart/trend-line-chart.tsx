@@ -4,7 +4,7 @@ import { DangerLevels } from "@/lib/danger-levels";
 import type { SensorDto, SensorTypeField } from "@/lib/dto";
 import type { Sensor, SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import { cn, formatSensorValue } from "@/lib/utils";
+import { buildYAxisTicks, cn, DUST_Y_AXIS_STEP, formatSensorValue } from "@/lib/utils";
 import { addDays, addWeeks, endOfMonth, endOfWeek, getISOWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -67,6 +67,10 @@ export function TrendLineChart({
 	const chartData = buildChartData(bucketDates, seriesDefinitions, granularity, formatDate, t);
 
 	const [hoveredSeriesKey, setHoveredSeriesKey] = useState<string | null>(null);
+	const isDustChart = series.every((serie) => serie.sensor === "dust");
+	const yTicks = isDustChart ? buildYAxisTicks(minY, maxY, DUST_Y_AXIS_STEP) : undefined;
+	const defaultFractionDigits = isDustChart ? 1 : 0;
+	const fractionDigitsPerUnit = isDustChart ? { mg: 4 } : { mg: 3 };
 
 	const isSingleSeries = seriesDefinitions.length === 1;
 
@@ -127,7 +131,10 @@ export function TrendLineChart({
 						fill: "var(--color-muted-foreground)",
 					}}
 					domain={[minY, maxY]}
-					tickFormatter={(value) => formatSensorValue(value, unit, 0, { mg: 3 })}
+					ticks={yTicks}
+					tickFormatter={(value) =>
+						formatSensorValue(value, unit, defaultFractionDigits, fractionDigitsPerUnit)
+					}
 					label={{
 						value: t(($) => $.sensors.units[unit]),
 						position: "inside",
