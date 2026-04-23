@@ -9,12 +9,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDate } from "@/features/date-picker/use-date";
 import { DayWidget } from "@/features/day-widget/day-widget";
+import { SensorStatisticsSection } from "@/features/statistic-card";
+import { getMaxPointByValue } from "@/features/statistic-card-utils";
 import { DustTrendLineChartCard } from "@/features/trend-line-chart-card/dust-trend-line-chart-card";
 import { NoiseTrendLineChartCard } from "@/features/trend-line-chart-card/noise-trend-line-chart-card";
 import { VibrationTrendLineChartCard } from "@/features/trend-line-chart-card/vibration-trend-line-chart-card";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
+import { useFormatDate } from "@/hooks/use-format-date";
 import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
 import { getDangerLevel } from "@/lib/danger-levels";
 import {
@@ -129,6 +132,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const { view } = useView();
 	const { t, i18n } = useTranslation();
 	const { exportToPDF } = useExportPDF();
+	const formatDate = useFormatDate();
 	const chartContainerId = useId();
 	const sensor: Sensor = "dust";
 	const [dustField, setDustField] = useQueryState<DustField>(
@@ -203,6 +207,10 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 
 	const data = dataResult?.data?.data;
 	const hourDomain = dataResult?.data?.hourDomain;
+	const latestPoint = data?.at(-1) ?? null;
+	const maxPoint = data && data.length > 0 ? getMaxPointByValue(data, (point) => point.value) : null;
+	const averageValue =
+		data && data.length > 0 ? data.reduce((sum, point) => sum + point.value, 0) / data.length : null;
 
 	const avgDustTwa1Data = dustTwa1Result.data?.data ?? [];
 	const avgDustTwa25Data = dustTwa25Result.data?.data ?? [];
@@ -214,7 +222,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const avgPm25Twa = getAvgValue(avgDustTwa25Data);
 	const avgPm10Twa = getAvgValue(avgDustTwa10Data);
 
-	const maxValue = data ? Math.max(...data.map((point) => point.value)) : 0;
+	const maxValue = maxPoint?.value ?? 0;
 	const minY = 0;
 	let maxY = 45;
 	if (maxValue > maxY) {
@@ -230,9 +238,10 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const maxTime = setHours(date, maxHour);
 
 	const showTrendLineChart = view === "month" || view === "week";
+	const showDustStatistics = view === "day";
 
 	return (
-		<div className="flex max-w-4xl flex-col gap-6">
+		<div className="flex max-w-4xl flex-col gap-4">
 			<Tabs value={dustField} onValueChange={(value) => setDustField(value as DustField)}>
 				<TabsList>
 					{dustFields.map((field) => (
@@ -242,6 +251,20 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 					))}
 				</TabsList>
 			</Tabs>
+
+			{showDustStatistics && (
+				<SensorStatisticsSection
+					isLoading={dataResult.isLoading}
+					isEmpty={dataResult.isError || !data?.length}
+					averageValue={averageValue}
+					maxValue={maxPoint?.value ?? null}
+					maxTime={maxPoint?.time ?? null}
+					latestValue={latestPoint?.value ?? null}
+					dangerThreshold={dustThreshold.danger}
+					unit={dustUnit}
+					formatTime={(time) => formatDate(time, "HH:mm")}
+				/>
+			)}
 
 			<SensorChartCard
 				isLoading={dataResult.isLoading}
@@ -297,7 +320,11 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 
 			<Card className="w-full">
 				<CardHeader>
-					<CardTitle>{t(($) => $.exposureSlider.title, { view })}</CardTitle>
+					<CardTitle>
+						{t(($) => $.exposureSlider.title, {
+							view: t(($) => $.views[view]).toLowerCase(),
+						})}
+					</CardTitle>
 				</CardHeader>
 				<CardContent className="flex flex-row flex-wrap">
 					<ExposureSlider
@@ -353,6 +380,7 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 	const { date } = useDate();
 	const { t, i18n } = useTranslation();
 	const { exportToPDF } = useExportPDF();
+	const formatDate = useFormatDate();
 	const chartContainerId = useId();
 	const sensor: Sensor = "vibration";
 	const vibrationThreshold = getThreshold(sensor);
@@ -380,8 +408,12 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 
 	const data = response?.data;
 	const hourDomain = response?.hourDomain;
+	const latestPoint = data?.at(-1) ?? null;
+	const maxPoint = data && data.length > 0 ? getMaxPointByValue(data, (point) => point.value) : null;
+	const averageValue =
+		data && data.length > 0 ? data.reduce((sum, point) => sum + point.value, 0) / data.length : null;
 
-	const maxValue = data ? Math.max(...data.map((point) => point.value)) : 0;
+	const maxValue = maxPoint?.value ?? 0;
 	const minY = 0;
 	let maxY = 450;
 	if (maxValue > maxY) {
@@ -397,9 +429,24 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 	const maxTime = setHours(date, maxHour);
 
 	const showTrendLineChart = view === "month" || view === "week";
+	const showVibrationStatistics = view === "day";
 
 	return (
-		<div className="flex flex-col gap-12">
+		<div className="flex flex-col gap-4">
+			{showVibrationStatistics && (
+				<SensorStatisticsSection
+					isLoading={isLoading}
+					isEmpty={isError || !data?.length}
+					averageValue={averageValue}
+					maxValue={maxPoint?.value ?? null}
+					maxTime={maxPoint?.time ?? null}
+					latestValue={latestPoint?.value ?? null}
+					dangerThreshold={vibrationThreshold.danger}
+					unit="points"
+					formatTime={(time) => formatDate(time, "HH:mm")}
+				/>
+			)}
+
 			<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={date} isSensor={true}>
 				{view === "week" ? (
 					<WeekWidget
@@ -447,6 +494,7 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const { date } = useDate();
 	const { t, i18n } = useTranslation();
 	const { exportToPDF } = useExportPDF();
+	const formatDate = useFormatDate();
 	const chartContainerId = useId();
 	const sensor: Sensor = "noise";
 	const parseAsAggregation = parseAsStringLiteral(Aggregations);
@@ -456,6 +504,9 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	);
 	const usePeakAggregation = aggregation === "peak";
 	const noiseThreshold = getThreshold(sensor);
+	const noiseDangerThreshold = usePeakAggregation
+		? (noiseThreshold.peakDanger ?? noiseThreshold.danger)
+		: noiseThreshold.danger;
 
 	const query = buildSensorQuery(sensor, view, date, {
 		usePeakAggregation,
@@ -482,10 +533,17 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 
 	const data = response?.data;
 	const hourDomain = response?.hourDomain;
+	const latestPoint = data?.at(-1) ?? null;
+	const maxPoint =
+		data && data.length > 0
+			? getMaxPointByValue(data, (point) => getDisplayedNoiseValue(point, usePeakAggregation))
+			: null;
+	const averageValue =
+		data && data.length > 0
+			? data.reduce((sum, point) => sum + getDisplayedNoiseValue(point, usePeakAggregation), 0) / data.length
+			: null;
 
-	const maxValue = data
-		? Math.max(...data.map((point) => (usePeakAggregation && point.peakValue ? point.peakValue : point.value)))
-		: 0;
+	const maxValue = maxPoint ? getDisplayedNoiseValue(maxPoint, usePeakAggregation) : 0;
 	const minY = 0;
 	let maxY = 150;
 	if (maxValue > maxY) {
@@ -503,72 +561,80 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const maxTime = setHours(date, maxHour);
 
 	const showTrendLineChart = view === "month" || view === "week";
+	const showNoiseStatistics = view === "day";
 
 	return (
-		<div className="flex flex-col gap-12">
-			<div className="flex max-w-4xl flex-col gap-4">
-				<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
-					<TabsList>
-						<TabsTrigger value="average">{t(($) => $.measurement.average)}</TabsTrigger>
-						<TabsTrigger value="peak">{t(($) => $.measurement.peak)}</TabsTrigger>
-					</TabsList>
-				</Tabs>
-				<SensorChartCard
+		<div className="flex max-w-4xl flex-col gap-4">
+			<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
+				<TabsList>
+					<TabsTrigger value="average">{t(($) => $.measurement.average)}</TabsTrigger>
+					<TabsTrigger value="peak">{t(($) => $.measurement.peak)}</TabsTrigger>
+				</TabsList>
+			</Tabs>
+			{showNoiseStatistics && (
+				<SensorStatisticsSection
 					isLoading={isLoading}
-					isError={isError}
-					data={data}
-					selectedDate={date}
-					isSensor={true}
-				>
-					{view === "week" ? (
-						<WeekWidget
-							dayStartHour={minHour}
-							dayEndHour={maxHour}
-							data={mapOverviewDataToTimeBucketStatuses(overviewResponse?.data ?? [])}
-						/>
-					) : (
-						<div id={chartContainerId}>
-							<ExposureLineChartCard
-								minTime={minTime}
-								maxTime={maxTime}
-								usePeakData={usePeakAggregation}
-								chartData={downsampleSensorData(sensor, data ?? [])}
-								unit="dbTwa"
-								maxY={maxY}
-								minY={minY}
-								sensor={sensor}
-								headerRight={
-									<ExportButton
-										title={t(($) => $.common.exportAsPdf)}
-										onClick={() =>
-											exportToPDF(
-												chartContainerId,
-												`${formatChartDate(date, i18n.language)}-${selectedUser.name}-Noise-Exposure-Overview`,
-												`${t(($) => $.pdf.noiseExposure)} - ${selectedUser.name} - ${date.toLocaleDateString(i18n.language)}`,
-											)
-										}
-									/>
-								}
-							>
-								<ThresholdLine
-									y={
-										usePeakAggregation
-											? (noiseThreshold.peakDanger ?? noiseThreshold.danger)
-											: noiseThreshold.danger
+					isEmpty={isError || !data?.length}
+					averageValue={averageValue}
+					maxValue={maxPoint ? getDisplayedNoiseValue(maxPoint, usePeakAggregation) : null}
+					maxTime={maxPoint?.time ?? null}
+					latestValue={latestPoint ? getDisplayedNoiseValue(latestPoint, usePeakAggregation) : null}
+					dangerThreshold={noiseDangerThreshold}
+					unit="dbTwa"
+					formatTime={(time) => formatDate(time, "HH:mm")}
+				/>
+			)}
+			<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={date} isSensor={true}>
+				{view === "week" ? (
+					<WeekWidget
+						dayStartHour={minHour}
+						dayEndHour={maxHour}
+						data={mapOverviewDataToTimeBucketStatuses(overviewResponse?.data ?? [])}
+					/>
+				) : (
+					<div id={chartContainerId}>
+						<ExposureLineChartCard
+							minTime={minTime}
+							maxTime={maxTime}
+							usePeakData={usePeakAggregation}
+							chartData={downsampleSensorData(sensor, data ?? [])}
+							unit="dbTwa"
+							maxY={maxY}
+							minY={minY}
+							sensor={sensor}
+							headerRight={
+								<ExportButton
+									title={t(($) => $.common.exportAsPdf)}
+									onClick={() =>
+										exportToPDF(
+											chartContainerId,
+											`${formatChartDate(date, i18n.language)}-${selectedUser.name}-Noise-Exposure-Overview`,
+											`${t(($) => $.pdf.noiseExposure)} - ${selectedUser.name} - ${date.toLocaleDateString(i18n.language)}`,
+										)
 									}
-									dangerLevel="danger"
 								/>
-								{!usePeakAggregation && (
-									<ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />
-								)}
-							</ExposureLineChartCard>
-						</div>
-					)}
-				</SensorChartCard>
-			</div>
+							}
+						>
+							<ThresholdLine
+								y={
+									usePeakAggregation
+										? (noiseThreshold.peakDanger ?? noiseThreshold.danger)
+										: noiseThreshold.danger
+								}
+								dangerLevel="danger"
+							/>
+							{!usePeakAggregation && <ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />}
+						</ExposureLineChartCard>
+					</div>
+				)}
+			</SensorChartCard>
 			{showTrendLineChart && <NoiseTrendLineChartCard userId={selectedUser.id} />}
 		</div>
 	);
+}
+
+function getDisplayedNoiseValue(point: SensorDto, usePeakAggregation: boolean) {
+	return usePeakAggregation && point.peakValue != null ? point.peakValue : point.value;
 }
 
 function SensorChartCard({

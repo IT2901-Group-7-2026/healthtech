@@ -7,7 +7,7 @@ import { getLocale } from "@/i18n/locale";
 import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
 import { type Aggregation, Aggregations } from "@/lib/dto";
 import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
-import { sensors } from "@/lib/sensors";
+import { defaultDustField, parseAsDustField, sensors } from "@/lib/sensors";
 import { calculateSummaryCounts } from "@/lib/time-bucket-utils";
 import { cn } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
@@ -30,6 +30,7 @@ export function ExposureSummary({ exposureType }: ExposureSummaryProps) {
 
 	const parseAsAggregation = parseAsStringLiteral(Aggregations);
 	const [aggregation] = useQueryState<Aggregation>("aggregation", parseAsAggregation.withDefault("average"));
+	const [dustField] = useQueryState("dustField", parseAsDustField.withDefault(defaultDustField));
 
 	const peakAggregation = aggregation === "peak";
 
@@ -45,6 +46,7 @@ export function ExposureSummary({ exposureType }: ExposureSummaryProps) {
 		buildSensorQuery(sensor, view, currentDate, {
 			usePeakAggregation: peakAggregation,
 			granularity,
+			field: sensor === "dust" ? dustField : undefined,
 		});
 	const sensorQueryEnabled = sensor !== null && sensorQuery !== null;
 
@@ -86,11 +88,11 @@ export function ExposureSummary({ exposureType }: ExposureSummaryProps) {
 	const dangerMinutesLabel = `${formatMinutesAsDuration(data.dangerMinutes, locale)} ${t(($) => $.exposureSummary.aggregated.danger)}`;
 
 	return (
-		<div className="grid grid-cols-3 items-center gap-2">
+		<div className="grid grid-cols-3 items-center gap-3">
 			<p
 				title={safeMinutesLabel}
 				className={cn(
-					"h-6 truncate rounded-md px-2 py-1 text-[0.675rem]",
+					"h-6 truncate rounded-lg px-2 py-1 text-[0.675rem]",
 					data.safeMinutes > 0 ? "bg-safe-subtle text-safe" : "bg-secondary text-muted-foreground",
 				)}
 			>
@@ -100,7 +102,7 @@ export function ExposureSummary({ exposureType }: ExposureSummaryProps) {
 			<p
 				title={warningMinutesLabel}
 				className={cn(
-					"h-6 truncate rounded-md px-2 py-1 text-[0.675rem]",
+					"h-6 truncate rounded-lg px-2 py-1 text-[0.675rem]",
 					data.warningMinutes > 0 ? "bg-warning-subtle text-warning" : "bg-secondary text-muted-foreground",
 				)}
 			>
@@ -110,7 +112,7 @@ export function ExposureSummary({ exposureType }: ExposureSummaryProps) {
 			<p
 				title={dangerMinutesLabel}
 				className={cn(
-					"h-6 truncate rounded-md px-2 py-1 text-[0.675rem]",
+					"h-6 truncate rounded-lg px-2 py-1 text-[0.675rem]",
 					data.dangerMinutes > 0 ? "bg-danger-subtle text-danger" : "bg-secondary text-muted-foreground",
 				)}
 			>

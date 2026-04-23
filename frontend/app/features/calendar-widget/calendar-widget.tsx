@@ -1,7 +1,6 @@
 /** biome-ignore-all lint/correctness/noNestedComponentDefinitions: CustomDay is intentionally defined inside CalendarView for prop access. */
 
 import { DangerLevelDots } from "@/components/danger-level-dots";
-import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { getLocale, TIMEZONE } from "@/i18n/locale";
 import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels";
@@ -10,7 +9,6 @@ import type { TimeBucketStatus } from "@/lib/time-bucket-types";
 import { cn } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { isSameDay, startOfDay } from "date-fns";
-import { useState } from "react";
 import type { CalendarDay, Modifiers } from "react-day-picker";
 import { useTranslation } from "react-i18next";
 import { useDate } from "../date-picker/use-date";
@@ -25,9 +23,8 @@ type CalendarProps = {
 };
 
 export function CalendarWidget({ selectedDay, data }: CalendarProps) {
-	const { t, i18n } = useTranslation();
+	const { i18n } = useTranslation();
 	const { setDate } = useDate();
-	const [showShareDataConfirmationMessage, setShowShareDataConfirmationMessage] = useState(false);
 	const { setView } = useView();
 
 	const safeDays = data.filter((d) => d.dangerLevel === "safe").map((d) => d.time);
@@ -44,26 +41,6 @@ export function CalendarWidget({ selectedDay, data }: CalendarProps) {
 
 	return (
 		<div className="mr-auto w-full max-w-4xl">
-			<div className="flex justify-end pb-4">
-				<Button
-					variant="outline"
-					onClick={() => {
-						setShowShareDataConfirmationMessage(true);
-
-						setTimeout(() => {
-							setShowShareDataConfirmationMessage(false);
-						}, 5000); // Confirmation message duration in ms
-					}}
-				>
-					{t(($) => $.share.hygienist.button)}
-				</Button>
-
-				{showShareDataConfirmationMessage && (
-					<div className="text-green-600 text-xs">
-						<div className="text-green-600 text-xs">{t(($) => $.share.hygienist.confirmation)}</div>
-					</div>
-				)}
-			</div>
 			<Calendar
 				locale={getLocale(i18n.language)}
 				month={selectedDay}
@@ -150,7 +127,10 @@ function CustomDay({ data, day, className, handleDayClick, ...buttonProps }: Cus
 					{day.date.getDate()}
 				</span>
 			</span>
-			<DangerLevelDots dangerLevel={dangerLevel ?? null} className="absolute right-2 bottom-2" />
+			<DangerLevelDots
+				dangerLevel={dangerLevel ?? null}
+				className="pointer-events-none absolute right-2 bottom-2"
+			/>
 		</button>
 	);
 }

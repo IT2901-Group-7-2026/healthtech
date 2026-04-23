@@ -3,12 +3,18 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import type { Sensor } from "@/features/sensor-picker/sensors";
+import { type DangerLevel, DangerLevelSchema, DangerLevels } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import { getThreshold } from "@/lib/thresholds";
 import { cn } from "@/lib/utils";
+import type { ComponentProps } from "react";
 import { useTranslation } from "react-i18next";
-import { Bar, BarChart, type BarProps, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, type BarProps, CartesianGrid, Legend, Rectangle, XAxis, YAxis } from "recharts";
+import { ThresholdLegend } from "./exposure-line-chart/threshold-legend";
 import { ThresholdLine } from "./exposure-line-chart/threshold-line";
+
+const OUTER_BAR_RADIUS = 4;
+const LEFT_BAR_RADIUS = 0;
 
 interface Props {
 	users: Array<UserWithStatusDto>;
@@ -82,6 +88,34 @@ export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props)
 		userId: item.id,
 	}));
 
+	type ChartDataEntry = (typeof chartData)[number];
+
+	const getSegmentRadius = (item: ChartDataEntry, key: DangerLevel): [number, number, number, number] => {
+		if (item[key] <= 0) {
+			return [0, 0, 0, 0];
+		}
+
+		const visibleSegments = DangerLevelSchema.options.filter((level) => item[level] > 0);
+		const isFirstVisibleSegment = visibleSegments[0] === key;
+		const isLastVisibleSegment = visibleSegments.at(-1) === key;
+
+		return [
+			isFirstVisibleSegment ? LEFT_BAR_RADIUS : 0,
+			isLastVisibleSegment ? OUTER_BAR_RADIUS : 0,
+			isLastVisibleSegment ? OUTER_BAR_RADIUS : 0,
+			isFirstVisibleSegment ? LEFT_BAR_RADIUS : 0,
+		];
+	};
+
+	const renderBarSegment =
+		(key: DangerLevel) => (props: ComponentProps<typeof Rectangle> & { payload?: ChartDataEntry }) => {
+			if (!props.payload) {
+				return null;
+			}
+
+			return <Rectangle {...props} radius={getSegmentRadius(props.payload, key)} />;
+		};
+
 	const maxPercent = Math.max(100, ...chartData.map((item) => item.percent));
 	const xDomainPadding = 15;
 	const xDomainMax = maxPercent + xDomainPadding;
@@ -109,9 +143,10 @@ export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props)
 						layout="vertical"
 						data={chartData}
 						margin={{
-							bottom: 32,
-							top: 24,
+							bottom: 24,
+							top: 12,
 							left: 12,
+							right: 12,
 						}}
 						maxBarSize={48}
 					>
@@ -127,12 +162,12 @@ export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props)
 							label={{
 								value: t(($) => $.foremanDashboard.userStatusChart.xAxisLabel),
 								position: "insideBottom",
-								offset: -24,
-								className: "text-base",
+								offset: -12,
+								className: "text-xs",
 								fill: "var(--color-muted-foreground)",
 							}}
 							tick={{
-								className: "text-base",
+								className: "text-xs",
 								fill: "var(--color-muted-foreground)",
 							}}
 						/>
@@ -204,9 +239,48 @@ export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props)
 								);
 							}}
 						/>
-						<Bar dataKey="safe" stackId="risk" fill="var(--safe)" onClick={barOnClick} />
-						<Bar dataKey="warning" stackId="risk" fill="var(--warning)" onClick={barOnClick} />
-						<Bar dataKey="danger" stackId="risk" fill="var(--danger)" onClick={barOnClick} />
+						<Bar
+							dataKey="safe"
+							stackId="risk"
+							fill="var(--safe)"
+							onClick={barOnClick}
+							shape={renderBarSegment("safe")}
+						/>
+						<Bar
+							dataKey="warning"
+							stackId="risk"
+							fill="var(--warning)"
+							onClick={barOnClick}
+							shape={renderBarSegment("warning")}
+						/>
+						<Bar
+							dataKey="danger"
+							stackId="risk"
+							fill="var(--danger)"
+							onClick={barOnClick}
+							shape={renderBarSegment("danger")}
+						/>
+						<Legend
+							verticalAlign="bottom"
+							align="left"
+							wrapperStyle={{ bottom: 0 }}
+							content={() => (
+								<div style={{ marginLeft: 120 }}>
+									<ThresholdLegend
+										items={[
+											{
+												dangerLevel: "danger",
+												color: `var(--${DangerLevels.danger.color})`,
+											},
+											{
+												dangerLevel: "warning",
+												color: `var(--${DangerLevels.warning.color})`,
+											},
+										]}
+									/>
+								</div>
+							)}
+						/>
 					</BarChart>
 				</ChartContainer>
 			</CardContent>
