@@ -26,7 +26,7 @@ export function DateRangePicker({
 	maxDate,
 	placeholder = "Velg dato",
 }: DateRangePickerProps) {
-	const pickerId = useId();
+	
 
 	const tzToPlain = (tz?: TZDate) => (tz ? new Date(tz.getTime()) : undefined);
 	const plainToTz = (plain?: Date) => (plain ? new TZDate(plain, "Europe/Oslo") : undefined);
@@ -47,7 +47,7 @@ export function DateRangePicker({
 	return (
 		<Popover>
 			<PopoverTrigger asChild={true}>
-				<Button variant="outline" id={pickerId} className="justify-center px-2.5 font-normal max-w-[300px]">
+				<Button variant="outline" className="justify-center px-2.5 font-normal max-w-[300px]">
 					<CalendarIcon className="mr-2 h-[1.2rem] w-[1.2rem]" />
 					{displayFrom ? (
 						displayTo ? (
