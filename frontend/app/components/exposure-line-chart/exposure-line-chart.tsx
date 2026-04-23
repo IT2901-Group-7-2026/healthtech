@@ -7,7 +7,7 @@ import { now as getNow, toTZDate } from "@/lib/date";
 import type { SensorDto, SensorTypeField } from "@/lib/dto";
 import type { Sensor, SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import { cn, formatSensorValue, getHighestValue } from "@/lib/utils";
+import { cn, formatSensorValue } from "@/lib/utils";
 import { TZDate } from "@date-fns/tz";
 import { addMinutes, formatDistanceToNowStrict } from "date-fns";
 import { type PropsWithChildren, useId } from "react";
@@ -89,129 +89,135 @@ export function ExposureLineChart({
 
 	const formatTime = (time: number) => formatDate(toTZDate(time), "HH:mm");
 
-	const noData = getHighestValue(transformedData) === 0;
+	const noData = transformedData.reduce((m, { value }) => Math.max(m, value), 0) === 0;
+
+	if (noData) {
+		return (
+			<ChartContainer
+				config={chartConfig}
+				className={cn("h-full w-full", chartContainerClassName, compact && "!aspect-auto")}
+			>
+				<p className="absolute inset-0 flex items-center justify-center text-[1.2vw]">
+					{t(($) => $.foremanDashboard.overview.pieChart.noData)}
+				</p>
+			</ChartContainer>
+		);
+	}
 
 	return (
 		<ChartContainer
 			config={chartConfig}
 			className={cn("h-full w-full", chartContainerClassName, compact && "!aspect-auto")}
 		>
-			{!noData && (
-				<LineChart
-					accessibilityLayer={true}
-					data={transformedData}
-					margin={
+			<LineChart
+				accessibilityLayer={true}
+				data={transformedData}
+				margin={
+					compact
+						? undefined
+						: {
+								left: 12,
+								right: 12,
+							}
+				}
+			>
+				<CartesianGrid vertical={true} strokeDasharray="3 3" />
+				<XAxis
+					dataKey="time"
+					type="number"
+					domain={[xMin, xMax]}
+					ticks={ticks}
+					interval={0}
+					allowDataOverflow={true}
+					tickLine={false}
+					axisLine={false}
+					tickMargin={8}
+					tick={(props) => (
+						<CustomXAxisTick
+							{...props}
+							variant={variant}
+							formatTime={formatTime}
+							xMin={xMin}
+							xMax={xMax}
+							xAxisMode={xAxisMode}
+							t={t}
+							locale={i18n.language}
+						/>
+					)}
+				/>
+				<YAxis
+					dataKey="value"
+					width={compact ? Y_AXIS_WIDTH : undefined}
+					tickLine={false}
+					axisLine={false}
+					tick={{
+						className: compact ? "text-sm" : "text-base",
+						fill: "var(--color-muted-foreground)",
+					}}
+					domain={[minY, maxY]}
+					label={
 						compact
 							? undefined
 							: {
-									left: 12,
-									right: 12,
+									value: t(($) => $.sensors.units[unit]),
+									position: "inside",
+									dx: -32,
+									angle: -90,
+									className: "text-lg mr-4",
+									fill: "var(--color-muted-foreground)",
 								}
 					}
-				>
-					<CartesianGrid vertical={true} strokeDasharray="3 3" />
-					<XAxis
-						dataKey="time"
-						type="number"
-						domain={[xMin, xMax]}
-						ticks={ticks}
-						interval={0}
-						allowDataOverflow={true}
-						tickLine={false}
-						axisLine={false}
-						tickMargin={8}
-						tick={(props) => (
-							<CustomXAxisTick
-								{...props}
-								variant={variant}
-								formatTime={formatTime}
-								xMin={xMin}
-								xMax={xMax}
-								xAxisMode={xAxisMode}
-								t={t}
-								locale={i18n.language}
-							/>
-						)}
-					/>
-					<YAxis
-						dataKey="value"
-						width={compact ? Y_AXIS_WIDTH : undefined}
-						tickLine={false}
-						axisLine={false}
-						tick={{
-							className: compact ? "text-sm" : "text-base",
-							fill: "var(--color-muted-foreground)",
-						}}
-						domain={[minY, maxY]}
-						label={
-							compact
-								? undefined
-								: {
-										value: t(($) => $.sensors.units[unit]),
-										position: "inside",
-										dx: -32,
-										angle: -90,
-										className: "text-lg mr-4",
-										fill: "var(--color-muted-foreground)",
-									}
-						}
-						// Only dustchart with mg unit need to show decimals on y axis
-						tickFormatter={(value) => formatSensorValue(value, unit as SensorUnit, 0, { mg: 3 })}
-					/>
-					<ExposureTooltip unit={unit} />
+					// Only dustchart with mg unit need to show decimals on y axis
+					tickFormatter={(value) => formatSensorValue(value, unit as SensorUnit, 0, { mg: 3 })}
+				/>
+				<ExposureTooltip unit={unit} />
 
-					<defs>
-						<linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-							<ExposureLineChartGradientStops
-								values={transformedData.map((point) => point.value)}
-								warningThreshold={warning}
-								dangerThreshold={dangerThreshold}
-								usePeakData={usePeakData}
-							/>
-						</linearGradient>
-					</defs>
-					<Line
-						dataKey="value"
-						type={lineType}
-						stroke={`url(#${id})`}
-						strokeWidth={1.25}
-						isAnimationActive={false}
-						animationDuration={0}
-						dot={false}
-						activeDot={(props) => (
-							<ExposureDot {...props} warning={warning} danger={dangerThreshold} isPeak={usePeakData} />
+				<defs>
+					<linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+						<ExposureLineChartGradientStops
+							values={transformedData.map((point) => point.value)}
+							warningThreshold={warning}
+							dangerThreshold={dangerThreshold}
+							usePeakData={usePeakData}
+						/>
+					</linearGradient>
+				</defs>
+				<Line
+					dataKey="value"
+					type={lineType}
+					stroke={`url(#${id})`}
+					strokeWidth={1.25}
+					isAnimationActive={false}
+					animationDuration={0}
+					dot={false}
+					activeDot={(props) => (
+						<ExposureDot {...props} warning={warning} danger={dangerThreshold} isPeak={usePeakData} />
+					)}
+				/>
+				{children}
+				{showLegend && (
+					<Legend
+						verticalAlign="bottom"
+						align="left"
+						content={() => (
+							<div style={{ marginLeft: Y_AXIS_WIDTH }}>
+								<ThresholdLegend
+									items={[
+										{
+											dangerLevel: "danger",
+											color: `var(--${DangerLevels.danger.color})`,
+										},
+										{
+											dangerLevel: "warning",
+											color: `var(--${DangerLevels.warning.color})`,
+										},
+									]}
+								/>
+							</div>
 						)}
 					/>
-					{children}
-					{showLegend && (
-						<Legend
-							verticalAlign="bottom"
-							align="left"
-							content={() => (
-								<div style={{ marginLeft: Y_AXIS_WIDTH }}>
-									<ThresholdLegend
-										items={[
-											{
-												dangerLevel: "danger",
-												color: `var(--${DangerLevels.danger.color})`,
-											},
-											{
-												dangerLevel: "warning",
-												color: `var(--${DangerLevels.warning.color})`,
-											},
-										]}
-									/>
-								</div>
-							)}
-						/>
-					)}
-				</LineChart>
-			)}
-			{noData && (
-				<div className="absolute inset-0 flex items-center justify-center">
-					<p className="text-[1.2vw]">{t(($) => $.foremanDashboard.overview.pieChart.noData)}</p>
-				</div>
-			)}
+				)}
+			</LineChart>
 		</ChartContainer>
 	);
 }
