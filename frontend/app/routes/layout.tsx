@@ -86,12 +86,12 @@ function getLinks(t: TranslateFn, role: User["role"] | null): Array<{ to: To; la
 					label: t(($) => $.layout.home),
 				},
 				{
-					to: href("/foreman/team"),
-					label: t(($) => $.layout.team),
-				},
-				{
 					to: href("/foreman/map"),
 					label: t(($) => $.layout.map),
+				},
+				{
+					to: href("/foreman/team"),
+					label: t(($) => $.layout.team),
 				},
 			];
 		}
