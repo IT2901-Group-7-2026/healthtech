@@ -28,7 +28,7 @@ import {
 } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
+import { computeYAxisRange, DUST_Y_AXIS_STEP, downsampleSensorData, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { setHours } from "date-fns";
 import { useQueryState } from "nuqs";
@@ -82,7 +82,10 @@ export default function Dust() {
 
 	const minY = 0;
 	const baseMaxY = 45;
-	const maxY = maxValue > baseMaxY ? computeYAxisRange(data ?? []).maxY : baseMaxY;
+	const maxY =
+		maxValue > baseMaxY
+			? computeYAxisRange(data ?? [], { step: DUST_Y_AXIS_STEP, topPadding: DUST_Y_AXIS_STEP }).maxY
+			: baseMaxY;
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, false);
 	const { minHour, maxHour } = getHourDomain(hourDomain, data?.map((d) => d.time) ?? [], view);

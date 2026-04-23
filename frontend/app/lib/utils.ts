@@ -13,6 +13,7 @@ import type { Sensor, SensorUnit } from "./sensors";
 const MAX_CHART_HOUR = 23;
 const MIN_CHART_HOUR = 0;
 const UG_TO_MG = 0.001;
+export const DUST_Y_AXIS_STEP = 7.5;
 
 export function cn(...inputs: Array<ClassValue>) {
 	return twMerge(clsx(inputs));
@@ -68,6 +69,17 @@ export function computeYAxisRange(
 	const clampedMinY = clampToZero ? Math.max(0, minY) : minY;
 
 	return { minY: clampedMinY, maxY };
+}
+
+export function buildYAxisTicks(minY: number, maxY: number, step: number): Array<number> {
+	const ticks: Array<number> = [];
+	const precision = Math.max(0, `${step}`.split(".")[1]?.length ?? 0);
+
+	for (let value = minY; value <= maxY + step / 1000; value += step) {
+		ticks.push(Number(value.toFixed(precision)));
+	}
+
+	return ticks;
 }
 
 export const userRoleToString = (role: User["role"], t: TranslateFn) => {

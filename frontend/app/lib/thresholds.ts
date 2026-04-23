@@ -9,8 +9,8 @@ export type Threshold = {
 
 const thresholds: Record<Sensor, Threshold> = {
 	dust: {
-		warning: 15,
-		danger: 30,
+		warning: 7.5,
+		danger: 15,
 		peakDanger: null,
 	},
 	noise: {
@@ -26,13 +26,43 @@ const thresholds: Record<Sensor, Threshold> = {
 };
 
 const dustThresholdOverrides: Partial<Record<SensorTypeField, Threshold>> = {
-	pm25_twa: {
+	pm1_stel: {
+		warning: 7.5,
+		danger: 15,
+		peakDanger: null,
+	},
+	pm25_stel: {
+		warning: 7.5,
+		danger: 15,
+		peakDanger: null,
+	},
+	pm4_stel: {
+		warning: 7.5,
+		danger: 15,
+		peakDanger: null,
+	},
+	pm10_stel: {
 		warning: 15,
 		danger: 30,
 		peakDanger: null,
 	},
+	pm1_twa: {
+		warning: 7.5,
+		danger: 15,
+		peakDanger: null,
+	},
+	pm25_twa: {
+		warning: 7.5,
+		danger: 15,
+		peakDanger: null,
+	},
+	pm4_twa: {
+		warning: 7.5,
+		danger: 15,
+		peakDanger: null,
+	},
 	pm10_twa: {
-		warning: 30,
+		warning: 15,
 		danger: 30,
 		peakDanger: null,
 	},

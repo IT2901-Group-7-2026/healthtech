@@ -40,7 +40,7 @@ import {
 } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapOverviewBucketsToChartRows, mapOverviewDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
+import { computeYAxisRange, DUST_Y_AXIS_STEP, downsampleSensorData, getHourDomain } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { setHours } from "date-fns";
@@ -226,7 +226,10 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const minY = 0;
 	let maxY = 45;
 	if (maxValue > maxY) {
-		maxY = computeYAxisRange(data ?? []).maxY;
+		maxY = computeYAxisRange(data ?? [], {
+			step: DUST_Y_AXIS_STEP,
+			topPadding: DUST_Y_AXIS_STEP,
+		}).maxY;
 	}
 	const { minHour, maxHour } = getHourDomain(
 		hourDomain,

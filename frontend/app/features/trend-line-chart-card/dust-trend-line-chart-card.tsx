@@ -3,7 +3,7 @@ import { sensorQueryOptions } from "@/lib/api";
 import type { SensorTypeField } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { SensorUnit } from "@/lib/sensors";
-import { computeYAxisRange } from "@/lib/utils";
+import { computeYAxisRange, DUST_Y_AXIS_STEP } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";
 import { useDate } from "../date-picker/use-date";
 import { useUser } from "../user/user-context";
@@ -62,7 +62,10 @@ export function DustTrendLineChartCard({ unit, userId }: Props) {
 	// TODO: we should compute maxY from sensor in a utils that also has the default maxY for every sensor
 	const minY = 0;
 	const baseMaxY = 45;
-	const maxY = maxValue > baseMaxY ? computeYAxisRange(allData).maxY : baseMaxY;
+	const maxY =
+		maxValue > baseMaxY
+			? computeYAxisRange(allData, { step: DUST_Y_AXIS_STEP, topPadding: DUST_Y_AXIS_STEP }).maxY
+			: baseMaxY;
 
 	return (
 		<BaseTrendLineChartCard>

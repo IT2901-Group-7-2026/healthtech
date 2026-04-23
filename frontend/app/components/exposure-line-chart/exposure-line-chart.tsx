@@ -7,7 +7,7 @@ import { now as getNow, toTZDate } from "@/lib/date";
 import type { SensorDto, SensorTypeField } from "@/lib/dto";
 import type { Sensor, SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import { cn, formatSensorValue } from "@/lib/utils";
+import { buildYAxisTicks, cn, DUST_Y_AXIS_STEP, formatSensorValue } from "@/lib/utils";
 import { TZDate } from "@date-fns/tz";
 import { addMinutes, formatDistanceToNowStrict } from "date-fns";
 import { type PropsWithChildren, useId } from "react";
@@ -73,6 +73,9 @@ export function ExposureLineChart({
 
 	const { warning, danger, peakDanger } = getThreshold(sensor, dustField);
 	const dangerThreshold = usePeakData && peakDanger ? peakDanger : danger;
+	const yTicks = sensor === "dust" ? buildYAxisTicks(minY, maxY, DUST_Y_AXIS_STEP) : undefined;
+	const defaultFractionDigits = sensor === "dust" ? 1 : 0;
+	const fractionDigitsPerUnit = sensor === "dust" ? { mg: 4 } : { mg: 3 };
 
 	const transformedData = chartData.map((item) => ({
 		time: item.time.getTime(),
@@ -140,6 +143,7 @@ export function ExposureLineChart({
 						fill: "var(--color-muted-foreground)",
 					}}
 					domain={[minY, maxY]}
+					ticks={yTicks}
 					label={
 						compact
 							? undefined
@@ -152,8 +156,9 @@ export function ExposureLineChart({
 									fill: "var(--color-muted-foreground)",
 								}
 					}
-					// Only dustchart with mg unit need to show decimals on y axis
-					tickFormatter={(value) => formatSensorValue(value, unit as SensorUnit, 0, { mg: 3 })}
+					tickFormatter={(value) =>
+						formatSensorValue(value, unit as SensorUnit, defaultFractionDigits, fractionDigitsPerUnit)
+					}
 				/>
 				<ExposureTooltip unit={unit} />
 

@@ -14,7 +14,7 @@ import type { SensorDto } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
-import { computeYAxisRange } from "@/lib/utils";
+import { computeYAxisRange, DUST_Y_AXIS_STEP } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries } from "@tanstack/react-query";
 import { addMinutes, isWithinInterval, startOfDay, startOfMinute } from "date-fns";
@@ -317,7 +317,13 @@ const LiveExposureCard = ({
 	const minY = 0;
 	let maxY = sensor === "vibration" ? 450 : sensor === "noise" ? 150 : 45;
 	if (maxValue > maxY) {
-		maxY = computeYAxisRange(data ?? []).maxY;
+		maxY =
+			sensor === "dust"
+				? computeYAxisRange(data ?? [], {
+						step: DUST_Y_AXIS_STEP,
+						topPadding: DUST_Y_AXIS_STEP,
+					}).maxY
+				: computeYAxisRange(data ?? []).maxY;
 	}
 
 	const threshold = getThreshold(sensor, exposureField);
