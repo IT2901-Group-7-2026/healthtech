@@ -1,14 +1,12 @@
-import { ExportButton } from "@/components/export-button";
-import {
-	ExposureLineChartCard,
-	ExposureLineChartCardSkeleton,
-} from "@/components/exposure-line-chart/exposure-line-chart-card";
-import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { ExposureSlider } from "@/components/exposure-slider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useDate } from "@/features/date-picker/use-date";
 import { DayWidget } from "@/features/day-widget/day-widget";
+import { ExposureLineChartCardSkeleton } from "@/features/exposure-line-chart-card/base-exposure-line-chart-card";
+import { DustExposureLineChartCard } from "@/features/exposure-line-chart-card/dust-exposure-line-chart-card";
+import NoiseExposureLineChartCard from "@/features/exposure-line-chart-card/noise-exposure-line-chart-card";
+import VibrationExposureLineChartCard from "@/features/exposure-line-chart-card/vibration-exposure-line-chart-card";
 import { SensorStatisticsSection } from "@/features/statistic-card";
 import { getMaxPointByValue } from "@/features/statistic-card-utils";
 import { DustTrendLineChartCard } from "@/features/trend-line-chart-card/dust-trend-line-chart-card";
@@ -16,7 +14,6 @@ import { NoiseTrendLineChartCard } from "@/features/trend-line-chart-card/noise-
 import { VibrationTrendLineChartCard } from "@/features/trend-line-chart-card/vibration-trend-line-chart-card";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
-import { useExportPDF } from "@/hooks/use-export-pdf";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
 import { getDangerLevel } from "@/lib/danger-levels";
@@ -35,17 +32,15 @@ import {
 	parseAsDustField,
 	parseAsSensorUnit,
 	type Sensor,
-	type SensorUnit,
 	sensors,
 } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapOverviewBucketsToChartRows, mapOverviewDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, DUST_Y_AXIS_STEP, downsampleSensorData, getHourDomain } from "@/lib/utils";
+import { computeYAxisRange, DUST_Y_AXIS_STEP, getHourDomain } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import { setHours } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import { type ReactNode, useId } from "react";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 export function UserDetails({ selectedUser, sensor }: { selectedUser: UserWithStatusDto; sensor: Sensor | null }) {
@@ -130,16 +125,14 @@ function AllSensorsUserOverview({ selectedUser }: { selectedUser: UserWithStatus
 
 function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const { view } = useView();
-	const { t, i18n } = useTranslation();
-	const { exportToPDF } = useExportPDF();
+	const { t } = useTranslation();
 	const formatDate = useFormatDate();
-	const chartContainerId = useId();
 	const sensor: Sensor = "dust";
 	const [dustField, setDustField] = useQueryState<DustField>(
 		"dustField",
 		parseAsDustField.withDefault(defaultDustField),
 	);
-	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
+	const [dustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
 
 	const { date } = useDate();
 
@@ -223,7 +216,6 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const avgPm10Twa = getAvgValue(avgDustTwa10Data);
 
 	const maxValue = maxPoint?.value ?? 0;
-	const minY = 0;
 	let maxY = 45;
 	if (maxValue > maxY) {
 		maxY = computeYAxisRange(data ?? [], {
@@ -236,9 +228,6 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 		data?.map((d) => d.time),
 		view,
 	);
-
-	const minTime = setHours(date, minHour);
-	const maxTime = setHours(date, maxHour);
 
 	const showTrendLineChart = view === "month" || view === "week";
 	const showDustStatistics = view === "day";
@@ -283,41 +272,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 						data={mapOverviewDataToTimeBucketStatuses(overviewResponse?.data ?? [])}
 					/>
 				) : (
-					<div id={chartContainerId}>
-						<ExposureLineChartCard
-							minTime={minTime}
-							maxTime={maxTime}
-							chartData={downsampleSensorData(sensor, data ?? [])}
-							unit={dustUnit}
-							maxY={maxY}
-							minY={minY}
-							sensor={sensor}
-							dustField={query.field}
-							headerRight={
-								<div className="flex items-center gap-2">
-									<Tabs value={dustUnit} onValueChange={(v) => setDustUnit(v as SensorUnit)}>
-										<TabsList>
-											<TabsTrigger value="ug">{t(($) => $.sensors.units.ug)}</TabsTrigger>
-											<TabsTrigger value="mg">{t(($) => $.sensors.units.mg)}</TabsTrigger>
-										</TabsList>
-									</Tabs>
-									<ExportButton
-										title={t(($) => $.common.exportAsPdf)}
-										onClick={() =>
-											exportToPDF(
-												chartContainerId,
-												`${formatChartDate(date, i18n.language)}-${selectedUser.name}-Dust-Exposure-Overview`,
-												`${t(($) => $.pdf.dustExposure)} - ${selectedUser.name} - ${date.toLocaleDateString(i18n.language)}`,
-											)
-										}
-									/>
-								</div>
-							}
-						>
-							<ThresholdLine y={dustThreshold.danger} dangerLevel="danger" />
-							<ThresholdLine y={dustThreshold.warning} dangerLevel="warning" />
-						</ExposureLineChartCard>
-					</div>
+					<DustExposureLineChartCard userId={selectedUser.id} />
 				)}
 			</SensorChartCard>
 
@@ -381,10 +336,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const { view } = useView();
 	const { date } = useDate();
-	const { t, i18n } = useTranslation();
-	const { exportToPDF } = useExportPDF();
 	const formatDate = useFormatDate();
-	const chartContainerId = useId();
 	const sensor: Sensor = "vibration";
 	const vibrationThreshold = getThreshold(sensor);
 
@@ -417,7 +369,6 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 		data && data.length > 0 ? data.reduce((sum, point) => sum + point.value, 0) / data.length : null;
 
 	const maxValue = maxPoint?.value ?? 0;
-	const minY = 0;
 	let maxY = 450;
 	if (maxValue > maxY) {
 		maxY = computeYAxisRange(data ?? []).maxY;
@@ -427,9 +378,6 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 		data?.map((d) => d.time),
 		view,
 	);
-
-	const minTime = setHours(date, minHour);
-	const maxTime = setHours(date, maxHour);
 
 	const showTrendLineChart = view === "month" || view === "week";
 	const showVibrationStatistics = view === "day";
@@ -458,33 +406,7 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 						data={mapOverviewDataToTimeBucketStatuses(overviewResponse?.data ?? [])}
 					/>
 				) : (
-					<div id={chartContainerId}>
-						<ExposureLineChartCard
-							minTime={minTime}
-							maxTime={maxTime}
-							chartData={downsampleSensorData(sensor, data ?? [])}
-							unit={"points"}
-							maxY={maxY}
-							minY={minY}
-							lineType="monotone"
-							sensor={sensor}
-							headerRight={
-								<ExportButton
-									title={t(($) => $.common.exportAsPdf)}
-									onClick={() =>
-										exportToPDF(
-											chartContainerId,
-											`${formatChartDate(date, i18n.language)}-${selectedUser.name}-Vibration-Exposure-Overview`,
-											`${t(($) => $.pdf.vibrationExposure)} - ${selectedUser.name} - ${date.toLocaleDateString(i18n.language)}`,
-										)
-									}
-								/>
-							}
-						>
-							<ThresholdLine y={vibrationThreshold.danger} dangerLevel="danger" />
-							<ThresholdLine y={vibrationThreshold.warning} dangerLevel="warning" />
-						</ExposureLineChartCard>
-					</div>
+					<VibrationExposureLineChartCard userId={selectedUser.id} />
 				)}
 			</SensorChartCard>
 			{showTrendLineChart && <VibrationTrendLineChartCard userId={selectedUser.id} />}
@@ -495,10 +417,8 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const { view } = useView();
 	const { date } = useDate();
-	const { t, i18n } = useTranslation();
-	const { exportToPDF } = useExportPDF();
+	const { t } = useTranslation();
 	const formatDate = useFormatDate();
-	const chartContainerId = useId();
 	const sensor: Sensor = "noise";
 	const parseAsAggregation = parseAsStringLiteral(Aggregations);
 	const [aggregation, setAggregation] = useQueryState<Aggregation>(
@@ -547,7 +467,6 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 			: null;
 
 	const maxValue = maxPoint ? getDisplayedNoiseValue(maxPoint, usePeakAggregation) : 0;
-	const minY = 0;
 	let maxY = 150;
 	if (maxValue > maxY) {
 		maxY = computeYAxisRange(data ?? [], {
@@ -559,9 +478,6 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 		data?.map((d) => d.time),
 		view,
 	);
-
-	const minTime = setHours(date, minHour);
-	const maxTime = setHours(date, maxHour);
 
 	const showTrendLineChart = view === "month" || view === "week";
 	const showNoiseStatistics = view === "day";
@@ -595,40 +511,7 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 						data={mapOverviewDataToTimeBucketStatuses(overviewResponse?.data ?? [])}
 					/>
 				) : (
-					<div id={chartContainerId}>
-						<ExposureLineChartCard
-							minTime={minTime}
-							maxTime={maxTime}
-							usePeakData={usePeakAggregation}
-							chartData={downsampleSensorData(sensor, data ?? [])}
-							unit="dbTwa"
-							maxY={maxY}
-							minY={minY}
-							sensor={sensor}
-							headerRight={
-								<ExportButton
-									title={t(($) => $.common.exportAsPdf)}
-									onClick={() =>
-										exportToPDF(
-											chartContainerId,
-											`${formatChartDate(date, i18n.language)}-${selectedUser.name}-Noise-Exposure-Overview`,
-											`${t(($) => $.pdf.noiseExposure)} - ${selectedUser.name} - ${date.toLocaleDateString(i18n.language)}`,
-										)
-									}
-								/>
-							}
-						>
-							<ThresholdLine
-								y={
-									usePeakAggregation
-										? (noiseThreshold.peakDanger ?? noiseThreshold.danger)
-										: noiseThreshold.danger
-								}
-								dangerLevel="danger"
-							/>
-							{!usePeakAggregation && <ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />}
-						</ExposureLineChartCard>
-					</div>
+					<NoiseExposureLineChartCard userId={selectedUser.id} />
 				)}
 			</SensorChartCard>
 			{showTrendLineChart && <NoiseTrendLineChartCard userId={selectedUser.id} />}
