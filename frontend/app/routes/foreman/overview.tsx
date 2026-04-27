@@ -230,21 +230,9 @@ function ExposureSummaryGrid({ thresholdSummary }: { thresholdSummary: Threshold
 				{exposures.map((exposureType: Exposure) => (
 					<PieChartCard
 						data={{
-							safe: {
-								name: "Safe",
-								value: thresholdSummary[exposureType].safe,
-								label: t(($) => $.foremanDashboard.overview.statCards.safe.label),
-							},
-							warning: {
-								name: "Warning",
-								value: thresholdSummary[exposureType].warning,
-								label: t(($) => $.foremanDashboard.overview.statCards.warning.label),
-							},
-							danger: {
-								name: "Danger",
-								value: thresholdSummary[exposureType].danger,
-								label: t(($) => $.foremanDashboard.overview.statCards.danger.label),
-							},
+							safe: thresholdSummary[exposureType].safe,
+							warning: thresholdSummary[exposureType].warning,
+							danger: thresholdSummary[exposureType].danger,
 						}}
 						label={t(($) => $.exposures[exposureType])}
 						to={`?exposure=${exposureType}`}
