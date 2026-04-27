@@ -52,24 +52,15 @@ export function UserDetails({
 }) {
 	return (
 		<section className="flex flex-col gap-6">
-			<div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
-				<div className="space-y-1">
-					<h2 className="font-semibold text-2xl">{selectedUser.name}</h2>
-					<p className="text-muted-foreground">{selectedUser.email}</p>
-				</div>
-			</div>
-
-			<div className="flex flex-col gap-6">
-				{exposure === null ? (
-					<AllExposuresUserOverview selectedUser={selectedUser} />
-				) : exposure === "dust" ? (
-					<DustUserChart selectedUser={selectedUser} />
-				) : exposure === "noise" ? (
-					<NoiseUserChart selectedUser={selectedUser} />
-				) : (
-					<VibrationUserChart selectedUser={selectedUser} />
-				)}
-			</div>
+			{exposure === null ? (
+				<AllExposuresUserOverview selectedUser={selectedUser} />
+			) : exposure === "dust" ? (
+				<DustUserChart selectedUser={selectedUser} />
+			) : exposure === "noise" ? (
+				<NoiseUserChart selectedUser={selectedUser} />
+			) : (
+				<VibrationUserChart selectedUser={selectedUser} />
+			)}
 		</section>
 	);
 }

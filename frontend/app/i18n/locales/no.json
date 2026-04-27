@@ -5,7 +5,7 @@
   },
   "common": {
     "loading": "Laster inn data...",
-    "error": "Noe gikk galt under henting av exposuredata.",
+    "error": "Noe gikk galt under henting av eksponeringsdata.",
     "noData": "Ingen data",
     "noDataForDay": "Ingen eksponeringsdata funnet for denne dagen",
     "noOptions": "Ingen alternativer tilgjengelig",
@@ -21,9 +21,9 @@
     "dust": "Støv",
     "vibration": "Vibrasjon",
     "noise": "Støy",
-    "all": "Alle exposureer",
+    "all": "Alle eksponeringer",
     "overview": "Oversikt",
-    "selectPlaceholder": "Exposure",
+    "selectPlaceholder": "Eksponering",
     "dustFields": {
       "pm1_stel": "PM1",
       "pm25_stel": "PM2.5",
@@ -216,11 +216,16 @@
       "mapTitle": "Lokasjonskart"
     },
     "overview": {
-      "title": "Foreman Oversikt",
+      "title": {
+        "all": "Ditt teams eksponering",
+        "allForUser": "{{name}}s eksponering",
+        "exposure": "Ditt teams {{exposure}}eksponering",
+        "exposureForUser": "{{name}}s {{exposure}}eksponering"
+      },
       "pieChart": {
         "noData": "Ingen data funnet for denne datoen"
       },
-      "exposure": "Exposureer",
+      "exposure": "Eksponeringer",
       "statCards": {
         "danger": {
           "label": "Over grenseverdi",
@@ -235,7 +240,9 @@
           "noOperators": "Ingen innenfor trygge grenseverdier"
         }
       },
-      "selectUserPlaceholder": "Velg et teammedlem"
+      "selectUserPlaceholder": "Velg et teammedlem",
+      "clearExposureFilter": "Fjern eksponeringsfilter",
+      "yourTeam": "Ditt team"
     },
     "actionCard": {
       "safe": "Alt er bra!",
@@ -255,7 +262,7 @@
     },
     "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",
-      "noData": "Ingen exposuredata tilgjengelig for operatører"
+      "noData": "Ingen eksponeringsdata tilgjengelig for operatører"
     },
     "siteMap": {
       "title": "Områdekart",

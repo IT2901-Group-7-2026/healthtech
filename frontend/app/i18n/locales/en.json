@@ -215,7 +215,12 @@
       "mapTitle": "Location map"
     },
     "overview": {
-      "title": "Foreman Overview",
+      "title": {
+        "all": "Your team's exposure",
+        "allForUser": "{{name}}'s exposure",
+        "exposure": "Your team's {{exposure}} exposure",
+        "exposureForUser": "{{name}}'s {{exposure}} exposure"
+      },
       "pieChart": {
         "noData": "No data found for this date"
       },
@@ -234,7 +239,9 @@
           "noOperators": "No operators within safe limits"
         }
       },
-      "selectUserPlaceholder": "Select team member"
+      "selectUserPlaceholder": "Select team member",
+      "clearExposureFilter": "Clear exposure filter",
+      "yourTeam": "Your team"
     },
     "actionCard": {
       "safe": "All good!",
