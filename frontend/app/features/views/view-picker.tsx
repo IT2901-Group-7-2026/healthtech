@@ -3,7 +3,8 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { TIMEZONE } from "@/i18n/locale";
 import { today } from "@/lib/date";
 import { cn } from "@/lib/utils";
-import { isToday } from "date-fns";
+import type { TZDate } from "@date-fns/tz";
+import { isAfter, isBefore, isToday } from "date-fns";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useDate } from "../date-picker/use-date";
@@ -15,13 +16,24 @@ interface ViewPickerProps {
 	withNavigationButtons?: boolean;
 	className?: string;
 	allowedViews?: Array<View>;
+	minDate?: TZDate;
+	maxDate?: TZDate;
 }
 
-export function ViewPicker({ className, withNavigationButtons = false, allowedViews }: ViewPickerProps) {
+export function ViewPicker({
+	className,
+	withNavigationButtons = false,
+	allowedViews,
+	minDate,
+	maxDate,
+}: ViewPickerProps) {
 	const { view, setView } = useView();
 	const { date, navigate, setDate } = useDate();
 	const { t } = useTranslation();
 	const views = allowedViews ?? ["day", "week", "month"];
+
+	const canNavigatePrevious = minDate ? !isBefore(navigate.previousValue, minDate) : true;
+	const canNavigateNext = maxDate ? !isAfter(navigate.nextValue, maxDate) : true;
 
 	const isTodayDate = isToday(date, { in: TIMEZONE });
 
@@ -82,6 +94,7 @@ export function ViewPicker({ className, withNavigationButtons = false, allowedVi
 						variant="ghost"
 						className="px-1!"
 						onClick={() => navigate.previous()}
+						disabled={!canNavigatePrevious}
 					>
 						<ChevronLeftIcon className="size-3.5 shrink-0" />
 						<p className="truncate text-xs">{previousString}</p>
@@ -105,6 +118,7 @@ export function ViewPicker({ className, withNavigationButtons = false, allowedVi
 						variant="ghost"
 						className="px-1!"
 						onClick={() => navigate.next()}
+						disabled={!canNavigateNext}
 					>
 						<p className="truncate text-xs">{nextString}</p>
 						<ChevronRightIcon className="size-3.5 shrink-0" />
