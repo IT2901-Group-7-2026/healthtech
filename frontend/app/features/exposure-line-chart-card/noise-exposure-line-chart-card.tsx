@@ -9,18 +9,18 @@ import { getMaxPointByValue } from "@/features/statistic-card-utils";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { useExportPDF } from "@/hooks/use-export-pdf";
-import { sensorQueryOptions } from "@/lib/api";
-import { type Aggregation, Aggregations, type SensorDto } from "@/lib/dto";
-import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import type { Sensor } from "@/lib/sensors";
+import { exposureQueryOptions } from "@/lib/api";
+import { type Aggregation, Aggregations, type ExposureDto } from "@/lib/dto";
+import { buildExposureQuery } from "@/lib/exposure-query-utils";
+import type { Exposure } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
-import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
+import { computeYAxisRange, downsampleExposureData, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { setHours } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
-import { SensorGraphEmptyState } from "../statistic-card";
+import { ExposureGraphEmptyState } from "../statistic-card";
 
 interface Props {
 	userId?: string;
@@ -35,19 +35,19 @@ export default function NoiseExposureLineChartCard({ userId }: Props) {
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 
-	const sensor: Sensor = "noise";
+	const exposure: Exposure = "noise";
 	const parseAsAggregation = parseAsStringLiteral(Aggregations);
 	const [aggregation] = useQueryState<Aggregation>("aggregation", parseAsAggregation.withDefault("average"));
 	const usePeakAggregation = aggregation === "peak";
-	const noiseThreshold = getThreshold(sensor);
+	const noiseThreshold = getThreshold(exposure);
 
-	const query = buildSensorQuery(sensor, view, date, {
+	const query = buildExposureQuery(exposure, view, date, {
 		usePeakAggregation,
 	});
 
 	const { data: response, isLoading } = useQuery(
-		sensorQueryOptions({
-			sensor,
+		exposureQueryOptions({
+			exposure,
 			query,
 			userId: userId ?? user.id,
 		}),
@@ -84,18 +84,18 @@ export default function NoiseExposureLineChartCard({ userId }: Props) {
 	}
 
 	if (!data || data.length === 0) {
-		return <SensorGraphEmptyState date={date} locale={i18n.language} />;
+		return <ExposureGraphEmptyState date={date} locale={i18n.language} />;
 	}
 
 	return (
 		<BaseExposureLineChartCard
 			minTime={minTime}
 			maxTime={maxTime}
-			chartData={downsampleSensorData(sensor, data ?? [])}
+			chartData={downsampleExposureData(exposure, data ?? [])}
 			unit="dbTwa"
 			maxY={maxY}
 			minY={minY}
-			sensor={sensor}
+			exposure={exposure}
 			id={chartContainerId}
 			headerRight={
 				<ExportButton
@@ -128,6 +128,6 @@ export default function NoiseExposureLineChartCard({ userId }: Props) {
 	);
 }
 
-function getDisplayedNoiseValue(point: SensorDto, usePeakAggregation: boolean) {
+function getDisplayedNoiseValue(point: ExposureDto, usePeakAggregation: boolean) {
 	return usePeakAggregation && point.peakValue != null ? point.peakValue : point.value;
 }

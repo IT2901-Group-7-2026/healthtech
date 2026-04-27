@@ -33,26 +33,26 @@ public class Threshold(double warning, double danger, double? peakDanger = null)
 	public double Danger { get; set; } = danger;
 	public double? PeakDanger { get; set; } = peakDanger;
 
-	public static Threshold GetThresholdForSensorType(SensorType sensorType)
+	public static Threshold GetThresholdForExposureType(ExposureType exposureType)
 	{
-		return sensorType switch
+		return exposureType switch
 		{
-			SensorType.Dust => Dust,
-			SensorType.Noise => Noise,
-			SensorType.Vibration => Vibration,
+			ExposureType.Dust => Dust,
+			ExposureType.Noise => Noise,
+			ExposureType.Vibration => Vibration,
 			_ => throw new ArgumentOutOfRangeException(
-				nameof(sensorType),
-				sensorType,
-				$"No threshold defined for data type {sensorType}"
+				nameof(exposureType),
+				exposureType,
+				$"No threshold defined for data type {exposureType}"
 			),
 		};
 	}
 
-	public static Threshold GetThresholdForSensorTypeAndField(SensorType sensorType, Field? field)
+	public static Threshold GetThresholdForExposureTypeAndField(ExposureType exposureType, Field? field)
 	{
-		if (sensorType != SensorType.Dust)
+		if (exposureType != ExposureType.Dust)
 		{
-			return GetThresholdForSensorType(sensorType);
+			return GetThresholdForExposureType(exposureType);
 		}
 
 		if (field.HasValue && DustThresholdsByField.TryGetValue(field.Value, out var threshold))

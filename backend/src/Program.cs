@@ -64,8 +64,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 builder.Services.AddScoped<SignedInUserContext>();
-builder.Services.AddScoped<ISensorDataService, SensorDataService>();
-builder.Services.AddScoped<ValidateFieldForSensorTypeFilter>();
+builder.Services.AddScoped<IExposureDataService, ExposureDataService>();
+builder.Services.AddScoped<ValidateFieldForExposureTypeFilter>();
 builder.Services.AddScoped<INoteDataService, NoteDataService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserStatusService, UserStatusService>();

@@ -1,4 +1,4 @@
-import { type Sensor, SensorSchema } from "@/features/sensor-picker/sensors";
+import { type Exposure, ExposureSchema } from "@/features/exposure-picker/exposures";
 import { tzDateSchema } from "@/lib/date";
 import type { TZDate } from "@date-fns/tz";
 import { z } from "zod";
@@ -34,17 +34,17 @@ export const HourDomainDtoSchema = z.object({
 
 export type HourDomainDto = z.infer<typeof HourDomainDtoSchema>;
 
-export type SensorDataRequestDto = {
+export type ExposureDataRequestDto = {
 	startTime: TZDate;
 	endTime: TZDate;
 	granularity: GranularityKey;
 	function: AggregateFnKey;
-	field?: SensorTypeField;
+	field?: ExposureTypeField;
 };
 
-export type SensorOverviewRequestDto = Partial<Record<Sensor, SensorDataRequestDto>>;
+export type ExposureOverviewRequestDto = Partial<Record<Exposure, ExposureDataRequestDto>>;
 
-export const SensorDtoSchema = z.object({
+export const ExposureDtoSchema = z.object({
 	time: tzDateSchema,
 	value: z.number(),
 	peakValue: z.number().nullable(),
@@ -52,41 +52,41 @@ export const SensorDtoSchema = z.object({
 	peakDangerLevel: DangerLevelSchema.nullable(),
 });
 
-export type SensorDto = z.infer<typeof SensorDtoSchema>;
+export type ExposureDto = z.infer<typeof ExposureDtoSchema>;
 
-export const SensorResponseDtoSchema = z.object({
-	data: SensorDtoSchema.array(),
+export const ExposureResponseDtoSchema = z.object({
+	data: ExposureDtoSchema.array(),
 	hourDomain: HourDomainDtoSchema,
 });
 
-export type SensorResponseDto = z.infer<typeof SensorResponseDtoSchema>;
+export type ExposureResponseDto = z.infer<typeof ExposureResponseDtoSchema>;
 
 // TODO: This should (maybe) include peakDangerLevel
-export const SensorOverviewBucketDtoSchema = z.object({
+export const ExposureOverviewBucketDtoSchema = z.object({
 	time: tzDateSchema,
 	dangerLevel: DangerLevelSchema,
-	sensorDangerLevels: z.partialRecord(SensorSchema, DangerLevelSchema),
+	exposureDangerLevels: z.partialRecord(ExposureSchema, DangerLevelSchema),
 });
 
-export type SensorOverviewBucketDto = z.infer<typeof SensorOverviewBucketDtoSchema>;
+export type ExposureOverviewBucketDto = z.infer<typeof ExposureOverviewBucketDtoSchema>;
 
-export const SensorOverviewResponseDtoSchema = z.object({
-	data: SensorOverviewBucketDtoSchema.array(),
+export const ExposureOverviewResponseDtoSchema = z.object({
+	data: ExposureOverviewBucketDtoSchema.array(),
 	hourDomain: HourDomainDtoSchema,
 });
 
-export type SensorOverviewResponseDto = z.infer<typeof SensorOverviewResponseDtoSchema>;
+export type ExposureOverviewResponseDto = z.infer<typeof ExposureOverviewResponseDtoSchema>;
 
-export type SensorDataResult = {
-	data: Array<SensorDto> | undefined;
+export type ExposureDataResult = {
+	data: Array<ExposureDto> | undefined;
 	isLoading: boolean;
 	isError: boolean;
 };
 
-export type AllSensors = Record<Sensor, SensorDataResult>;
+export type AllExposures = Record<Exposure, ExposureDataResult>;
 
-export type AllSensorData = {
-	everySensorData: AllSensors;
+export type AllExposureData = {
+	everyExposureData: AllExposures;
 	isLoadingAny: boolean;
 	isErrorAny: boolean;
 };
@@ -136,21 +136,21 @@ export const UserSchema = z.object({
 
 export type User = z.infer<typeof UserSchema>;
 
-export const UserSensorStatusSchema = z.object({
+export const UserExposureStatusSchema = z.object({
 	dangerLevel: DangerLevelSchema,
 	peakDangerLevel: DangerLevelSchema.nullable(),
 	value: z.number(),
 	peakValue: z.number().nullable(),
 });
 
-export type UserSensorStatusDto = z.infer<typeof UserSensorStatusSchema>;
+export type UserExposureStatusDto = z.infer<typeof UserExposureStatusSchema>;
 
 export const UserStatusSchema = z.object({
 	userId: z.string(),
 	status: DangerLevelSchema,
-	noise: UserSensorStatusSchema.nullable(),
-	dust: UserSensorStatusSchema.nullable(),
-	vibration: UserSensorStatusSchema.nullable(),
+	noise: UserExposureStatusSchema.nullable(),
+	dust: UserExposureStatusSchema.nullable(),
+	vibration: UserExposureStatusSchema.nullable(),
 });
 
 export type UserStatusDto = z.infer<typeof UserStatusSchema>;
@@ -167,23 +167,23 @@ export const createLocationName = (location: Location) =>
 export type Aggregation = "average" | "peak";
 export const Aggregations: Array<Aggregation> = ["average", "peak"];
 
-export const SensorThresholdSummarySchema = z.object({
+export const ExposureThresholdSummarySchema = z.object({
 	safe: z.int().nonnegative(),
 	warning: z.int().nonnegative(),
 	danger: z.int().nonnegative(),
 });
 
 export const ThresholdSummarySchema = z.object({
-	total: SensorThresholdSummarySchema,
-	dust: SensorThresholdSummarySchema,
-	vibration: SensorThresholdSummarySchema,
-	noise: SensorThresholdSummarySchema,
-} satisfies Record<Sensor | "total", unknown>);
+	total: ExposureThresholdSummarySchema,
+	dust: ExposureThresholdSummarySchema,
+	vibration: ExposureThresholdSummarySchema,
+	noise: ExposureThresholdSummarySchema,
+} satisfies Record<Exposure | "total", unknown>);
 
-export type SensorThresholdSummary = z.infer<typeof SensorThresholdSummarySchema>;
+export type ExposureThresholdSummary = z.infer<typeof ExposureThresholdSummarySchema>;
 export type ThresholdSummary = z.infer<typeof ThresholdSummarySchema>;
 
-export const SensorTypeFieldSchema = z.enum([
+export const ExposureTypeFieldSchema = z.enum([
 	"pm1_stel",
 	"pm25_stel",
 	"pm4_stel",
@@ -194,4 +194,4 @@ export const SensorTypeFieldSchema = z.enum([
 	"pm10_twa",
 ]);
 
-export type SensorTypeField = z.infer<typeof SensorTypeFieldSchema>;
+export type ExposureTypeField = z.infer<typeof ExposureTypeFieldSchema>;

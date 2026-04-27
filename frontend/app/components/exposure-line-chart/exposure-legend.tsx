@@ -1,9 +1,9 @@
-export type SensorLegendItem = {
+export type ExposureLegendItem = {
 	label: string;
 	color: string;
 };
 
-export function SensorLegend({ items }: { items: Array<SensorLegendItem> }) {
+export function ExposureLegend({ items }: { items: Array<ExposureLegendItem> }) {
 	return (
 		<div className="flex items-center gap-6 text-muted-foreground text-xs">
 			{items.map((item) => (

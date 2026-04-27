@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import type { Sensor } from "@/features/sensor-picker/sensors";
+import type { Exposure } from "@/features/exposure-picker/exposures";
 import { type DangerLevel, DangerLevelSchema, DangerLevels } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import { getThreshold } from "@/lib/thresholds";
@@ -18,53 +18,53 @@ const LEFT_BAR_RADIUS = 0;
 
 interface Props {
 	users: Array<UserWithStatusDto>;
-	sensor: Sensor;
+	exposure: Exposure;
 	userOnClick?: (userId: string) => void;
 	isWeekly?: boolean;
 }
 
-export function UserStatusChart({ users, sensor, userOnClick, isWeekly }: Props) {
+export function UserStatusChart({ users, exposure, userOnClick, isWeekly }: Props) {
 	const [t] = useTranslation();
-	const threshold = getThreshold(sensor);
+	const threshold = getThreshold(exposure);
 	const getPercent = (value: number) => Math.round((value / threshold.danger) * 100);
 
-	const hasAnySensorData = users.some((u) => {
-		const sensorStatus = u.status[sensor];
-		if (!sensorStatus) return false;
+	const hasAnyExposureData = users.some((u) => {
+		const exposureStatus = u.status[exposure];
+		if (!exposureStatus) return false;
 
-		return getPercent(sensorStatus.value) >= 1;
+		return getPercent(exposureStatus.value) >= 1;
 	});
 
 	const data = users.flatMap((user) => {
-		const sensorStatus = user.status[sensor];
-		if (!sensorStatus) {
+		const exposureStatus = user.status[exposure];
+		if (!exposureStatus) {
 			return [];
 		}
 
 		const days = isWeekly ? 7 : 1;
 
 		// Vibration should show average value in graph
-		const normalizedValue = sensor === "vibration" ? sensorStatus.value / days : sensorStatus.value;
+		const normalizedValue = exposure === "vibration" ? exposureStatus.value / days : exposureStatus.value;
 
 		const percent = getPercent(normalizedValue);
 		// Only show peak if it's above the current value
 		const peakPercent =
-			sensorStatus.peakValue && sensorStatus.peakValue > sensorStatus.value
-				? getPercent(sensorStatus.peakValue)
+			exposureStatus.peakValue && exposureStatus.peakValue > exposureStatus.value
+				? getPercent(exposureStatus.peakValue)
 				: null;
 
 		return [
 			{
 				name: user.name,
 				id: user.id,
-				status: sensorStatus.dangerLevel,
+				status: exposureStatus.dangerLevel,
 				percent,
 				peakPercent,
 			},
 		];
 	});
 
-	if (!hasAnySensorData) {
+	if (!hasAnyExposureData) {
 		return (
 			<Card className="w-192">
 				<CardContent className="flex h-48 items-center justify-center text-muted-foreground text-sm">

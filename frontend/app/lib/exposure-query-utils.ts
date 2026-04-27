@@ -1,13 +1,13 @@
-import type { Sensor } from "@/features/sensor-picker/sensors";
+import type { Exposure } from "@/features/exposure-picker/exposures";
 import type { View } from "@/features/views/views";
 import type { TZDate } from "@date-fns/tz";
 import { endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import type {
 	AggregateFnKey,
 	GranularityKey,
-	SensorDataRequestDto,
-	SensorOverviewRequestDto,
-	SensorTypeField,
+	ExposureDataRequestDto,
+	ExposureOverviewRequestDto,
+	ExposureTypeField,
 } from "./dto";
 
 function getGranularityFromView(view: View, isOverview?: boolean): GranularityKey {
@@ -22,8 +22,8 @@ function getGranularityFromView(view: View, isOverview?: boolean): GranularityKe
 	}
 }
 
-function getAggregationFunction(sensor: Sensor, usePeakAggregation: boolean): AggregateFnKey {
-	switch (sensor) {
+function getAggregationFunction(exposure: Exposure, usePeakAggregation: boolean): AggregateFnKey {
+	switch (exposure) {
 		case "dust":
 			return "avg";
 		case "noise":
@@ -33,8 +33,8 @@ function getAggregationFunction(sensor: Sensor, usePeakAggregation: boolean): Ag
 	}
 }
 
-function getSensorTypeFieldFromSensor(sensor: Sensor): SensorTypeField | undefined {
-	switch (sensor) {
+function getExposureTypeFieldFromExposure(exposure: Exposure): ExposureTypeField | undefined {
+	switch (exposure) {
 		case "dust":
 			return "pm1_twa";
 		case "noise":
@@ -69,20 +69,20 @@ export function getStartEnd(
 	}
 }
 
-export function buildSensorQuery(
-	sensor: Sensor,
+export function buildExposureQuery(
+	exposure: Exposure,
 	view: View,
 	selectedDay: TZDate,
 	options?: {
 		granularity?: GranularityKey;
 		aggregationFunction?: AggregateFnKey;
-		field?: SensorTypeField;
+		field?: ExposureTypeField;
 		usePeakAggregation?: boolean;
 		isOverview?: boolean;
 		startTime?: TZDate;
 		endTime?: TZDate;
 	},
-): SensorDataRequestDto {
+): ExposureDataRequestDto {
 	const { startTime: defaultStartTime, endTime: defaultEndTime } = getStartEnd(view, selectedDay);
 
 	const startTime = options?.startTime ?? defaultStartTime;
@@ -90,10 +90,10 @@ export function buildSensorQuery(
 
 	const granularity = options?.granularity ?? getGranularityFromView(view, options?.isOverview);
 	const aggregationFunction =
-		options?.aggregationFunction ?? getAggregationFunction(sensor, options?.usePeakAggregation ?? false);
-	const field = options?.field ?? getSensorTypeFieldFromSensor(sensor);
+		options?.aggregationFunction ?? getAggregationFunction(exposure, options?.usePeakAggregation ?? false);
+	const field = options?.field ?? getExposureTypeFieldFromExposure(exposure);
 
-	const query: SensorDataRequestDto = {
+	const query: ExposureDataRequestDto = {
 		startTime,
 		endTime,
 		granularity,
@@ -104,19 +104,19 @@ export function buildSensorQuery(
 	return query;
 }
 
-export function buildSensorOverviewQuery(
-	sensors: Array<Sensor>,
+export function buildExposureOverviewQuery(
+	exposures: Array<Exposure>,
 	view: View,
 	selectedDate: TZDate,
 	options?: {
 		usePeakAggregation?: boolean;
 		granularity?: GranularityKey;
 	},
-): SensorOverviewRequestDto {
+): ExposureOverviewRequestDto {
 	return Object.fromEntries(
-		sensors.map((sensor) => [
-			sensor,
-			buildSensorQuery(sensor, view, selectedDate, {
+		exposures.map((exposure) => [
+			exposure,
+			buildExposureQuery(exposure, view, selectedDate, {
 				isOverview: true,
 				usePeakAggregation: options?.usePeakAggregation,
 				granularity: options?.granularity,

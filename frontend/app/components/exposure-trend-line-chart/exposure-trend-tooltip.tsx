@@ -1,5 +1,5 @@
-import type { SensorUnit } from "@/lib/sensors";
-import { formatSensorValue } from "@/lib/utils";
+import type { ExposureUnit } from "@/lib/exposures";
+import { formatExposureValue } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { ChartTooltip } from "../ui/chart";
 import type { SeriesDefinition } from "./trend-line-chart";
@@ -8,7 +8,7 @@ export function ExposureTrendTooltip({
 	unit,
 	seriesDefinitions,
 }: {
-	unit: SensorUnit;
+	unit: ExposureUnit;
 	seriesDefinitions: Array<SeriesDefinition>;
 }) {
 	const { t } = useTranslation();
@@ -47,7 +47,7 @@ export function ExposureTrendTooltip({
 										</div>
 
 										<span>
-											{formatSensorValue(entry.value, unit)} {t(($) => $.sensors.units[unit])}
+											{formatExposureValue(entry.value, unit)} {t(($) => $.exposures.units[unit])}
 										</span>
 									</div>
 								);

@@ -5,14 +5,14 @@ namespace Backend.Data;
 
 public class RequestContext
 {
-	public SensorDataRequestDto Request { get; set; }
+	public ExposureDataRequestDto Request { get; set; }
 	public Guid? UserId { get; set; }
-	public SensorType SensorType { get; set; }
+	public ExposureType ExposureType { get; set; }
 
-	public RequestContext(SensorDataRequestDto request, Guid userId, SensorType sensorType)
+	public RequestContext(ExposureDataRequestDto request, Guid userId, ExposureType exposureType)
 	{
 		Request = request;
 		UserId = userId;
-		SensorType = sensorType;
+		ExposureType = exposureType;
 	}
 }

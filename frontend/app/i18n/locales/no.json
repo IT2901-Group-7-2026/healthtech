@@ -5,7 +5,7 @@
   },
   "common": {
     "loading": "Laster inn data...",
-    "error": "Noe gikk galt under henting av sensordata.",
+    "error": "Noe gikk galt under henting av exposuredata.",
     "noData": "Ingen data",
     "noDataForDay": "Ingen eksponeringsdata funnet for denne dagen",
     "noOptions": "Ingen alternativer tilgjengelig",
@@ -17,13 +17,13 @@
     "weekNumber": "Uke {{week}}",
     "noDataLive": "Ingen data per nå."
   },
-  "sensors": {
+  "exposures": {
     "dust": "Støv",
     "vibration": "Vibrasjon",
     "noise": "Støy",
-    "all": "Alle sensorer",
+    "all": "Alle exposureer",
     "overview": "Oversikt",
-    "selectPlaceholder": "Sensor",
+    "selectPlaceholder": "Exposure",
     "dustFields": {
       "pm1_stel": "PM1",
       "pm25_stel": "PM2.5",
@@ -220,7 +220,7 @@
       "pieChart": {
         "noData": "Ingen data funnet for denne datoen"
       },
-      "sensor": "Sensorer",
+      "exposure": "Exposureer",
       "statCards": {
         "danger": {
           "label": "Over grenseverdi",
@@ -255,18 +255,18 @@
     },
     "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",
-      "noData": "Ingen sensordata tilgjengelig for operatører"
+      "noData": "Ingen exposuredata tilgjengelig for operatører"
     },
     "siteMap": {
       "title": "Områdekart",
       "noOperators": "Ingen operatører i bygg",
       "viewUser": "Se {{name}}",
       "viewUserAria": "Se bruker {{name}}",
-      "viewSensorData": "Se {{sensor}} data for {{name}}",
-      "operatorSensorStatus": {
-        "danger": "Over grenseverdi for {{sensor}}",
-        "warning": "Over tiltaksverdi for {{sensor}}",
-        "safe": "Innenfor trygge grenseverdier for {{sensor}}"
+      "viewExposureData": "Se {{exposure}} data for {{name}}",
+      "operatorExposureStatus": {
+        "danger": "Over grenseverdi for {{exposure}}",
+        "warning": "Over tiltaksverdi for {{exposure}}",
+        "safe": "Innenfor trygge grenseverdier for {{exposure}}"
       }
     }
   },
@@ -290,7 +290,7 @@
   "operatorHeader": {
     "title": {
       "yourExposure": "Din eksponering",
-      "yourSensorExposure": "Din {{sensor}}eksponering"
+      "yourExposureExposure": "Din {{exposure}}eksponering"
     },
     "subtitle": {
       "allExposureTypes": "Alle eksponeringstyper",

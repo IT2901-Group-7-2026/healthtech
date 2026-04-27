@@ -1,21 +1,21 @@
 import type { TZDate } from "@date-fns/tz";
 import { startOfDay } from "date-fns";
-import type { SensorDataRequestDto, SensorOverviewRequestDto } from "./dto";
-import { type Sensor, sensors } from "./sensors";
+import type { ExposureDataRequestDto, ExposureOverviewRequestDto } from "./dto";
+import { type Exposure, exposures } from "./exposures";
 
 /**
  * For queries that fetches data for exact time-ranges and not just whole days, `windowed` should be used.
  * If not, startTime and endTime will be normalized to the start of their respective days to ensure cache key consistency.
  */
-export type SensorQueryKind = "default" | "windowed";
+export type ExposureQueryKind = "default" | "windowed";
 
-function buildSensorQueryCachePart({
+function buildExposureQueryCachePart({
 	query,
 	queryKind,
 	windowMinutes,
 }: {
-	query?: SensorDataRequestDto;
-	queryKind?: SensorQueryKind;
+	query?: ExposureDataRequestDto;
+	queryKind?: ExposureQueryKind;
 	windowMinutes?: number;
 }) {
 	if (!query) {
@@ -31,43 +31,43 @@ function buildSensorQueryCachePart({
 	return [...base, startOfDay(query.startTime).getTime(), startOfDay(query.endTime).getTime()];
 }
 
-export function buildSensorQueryKey({
-	sensor,
+export function buildExposureQueryKey({
+	exposure,
 	userId,
 	query,
 	queryKind,
 	windowMinutes,
 }: {
-	sensor: Sensor;
+	exposure: Exposure;
 	userId?: string;
-	query?: SensorDataRequestDto;
-	queryKind?: SensorQueryKind;
+	query?: ExposureDataRequestDto;
+	queryKind?: ExposureQueryKind;
 	windowMinutes?: number;
 }) {
-	return ["sensor", userId ?? null, sensor, ...buildSensorQueryCachePart({ query, queryKind, windowMinutes })];
+	return ["exposure", userId ?? null, exposure, ...buildExposureQueryCachePart({ query, queryKind, windowMinutes })];
 }
 
-export function buildSensorOverviewQueryKey({
+export function buildExposureOverviewQueryKey({
 	query,
 	userId,
 	queryKind,
 	windowMinutes,
 }: {
-	query: SensorOverviewRequestDto;
+	query: ExposureOverviewRequestDto;
 	userId?: string;
-	queryKind?: SensorQueryKind;
+	queryKind?: ExposureQueryKind;
 	windowMinutes?: number;
 }) {
-	const sensorKeys = sensors.map((sensor) => [
-		sensor,
-		...buildSensorQueryCachePart({
-			query: query[sensor],
+	const exposureKeys = exposures.map((exposure) => [
+		exposure,
+		...buildExposureQueryCachePart({
+			query: query[exposure],
 			queryKind,
 			windowMinutes,
 		}),
 	]);
 
-	return ["sensor-overview", userId ?? null, ...sensorKeys.flat()];
+	return ["exposure-overview", userId ?? null, ...exposureKeys.flat()];
 }
 
 export function buildSubordinatesQueryKey(userId: string, startTime?: TZDate, endTime?: TZDate) {

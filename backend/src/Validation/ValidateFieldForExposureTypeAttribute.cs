@@ -5,36 +5,36 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Backend.Validation;
 
-public class ValidateFieldForSensorTypeFilter : IActionFilter
+public class ValidateFieldForExposureTypeFilter : IActionFilter
 {
 	public void OnActionExecuting(ActionExecutingContext context)
 	{
-		// Get SensorType from route
+		// Get ExposureType from route
 		if (
-			!context.RouteData.Values.TryGetValue("sensorType", out var sensorTypeObj)
-			|| !Enum.TryParse<SensorType>(sensorTypeObj?.ToString(), true, out var sensorType)
+			!context.RouteData.Values.TryGetValue("exposureType", out var exposureTypeObj)
+			|| !Enum.TryParse<ExposureType>(exposureTypeObj?.ToString(), true, out var exposureType)
 		)
 		{
 			context.Result = new BadRequestObjectResult(
-				new { error = "Invalid or missing sensorType." }
+				new { error = "Invalid or missing exposureType." }
 			);
 			return;
 		}
 
 		// Get the DTO from action arguments
-		var dto = context.ActionArguments.Values.OfType<SensorDataRequestDto>().FirstOrDefault();
+		var dto = context.ActionArguments.Values.OfType<ExposureDataRequestDto>().FirstOrDefault();
 		if (dto == null)
 		{
 			return;
 		}
 
 		// Validate
-		var validFields = GetValidFields(sensorType);
+		var validFields = GetValidFields(exposureType);
 
 		if (validFields.Count == 0 && dto.Field != null)
 		{
 			context.Result = new BadRequestObjectResult(
-				new { error = $"Field must not be specified for {sensorType}." }
+				new { error = $"Field must not be specified for {exposureType}." }
 			);
 			return;
 		}
@@ -44,7 +44,7 @@ public class ValidateFieldForSensorTypeFilter : IActionFilter
 			if (dto.Field == null)
 			{
 				context.Result = new BadRequestObjectResult(
-					new { error = $"Field is required for {sensorType}." }
+					new { error = $"Field is required for {exposureType}." }
 				);
 				return;
 			}
@@ -52,7 +52,7 @@ public class ValidateFieldForSensorTypeFilter : IActionFilter
 			if (!validFields.Contains(dto.Field.Value))
 			{
 				context.Result = new BadRequestObjectResult(
-					new { error = $"Field '{dto.Field}' is not valid for {sensorType}." }
+					new { error = $"Field '{dto.Field}' is not valid for {exposureType}." }
 				);
 				return;
 			}
@@ -61,7 +61,7 @@ public class ValidateFieldForSensorTypeFilter : IActionFilter
 
 	public void OnActionExecuted(ActionExecutedContext context) { }
 
-	private static HashSet<Field> GetValidFields(SensorType sensorType)
+	private static HashSet<Field> GetValidFields(ExposureType exposureType)
 	{
 		return
 		[
@@ -69,9 +69,9 @@ public class ValidateFieldForSensorTypeFilter : IActionFilter
 				.Where(f =>
 					typeof(Field)
 						.GetField(f.ToString())
-						?.GetCustomAttributes(typeof(SensorTypeFieldAttribute), false)
-						.Cast<SensorTypeFieldAttribute>()
-						.Any(attr => attr.SensorType == sensorType) == true
+						?.GetCustomAttributes(typeof(ExposureTypeFieldAttribute), false)
+						.Cast<ExposureTypeFieldAttribute>()
+						.Any(attr => attr.ExposureType == exposureType) == true
 				),
 		];
 	}

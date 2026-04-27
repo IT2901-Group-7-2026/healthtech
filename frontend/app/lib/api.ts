@@ -1,4 +1,4 @@
-import type { Sensor } from "@/features/sensor-picker/sensors";
+import type { Exposure } from "@/features/exposure-picker/exposures";
 import type { TZDate } from "@date-fns/tz";
 import { keepPreviousData, queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { minutesToMilliseconds } from "date-fns";
@@ -7,26 +7,26 @@ import {
 	type Note,
 	type NoteDataRequest,
 	NoteSchema,
-	type SensorDataRequestDto,
-	type SensorOverviewRequestDto,
-	type SensorOverviewResponseDto,
-	SensorOverviewResponseDtoSchema,
-	type SensorResponseDto,
-	SensorResponseDtoSchema,
+	type ExposureDataRequestDto,
+	type ExposureOverviewRequestDto,
+	type ExposureOverviewResponseDto,
+	ExposureOverviewResponseDtoSchema,
+	type ExposureResponseDto,
+	ExposureResponseDtoSchema,
 	ThresholdSummarySchema,
 	UserSchema,
 	UserWithStatusSchema,
 } from "./dto";
 import {
 	buildNotesQueryKey,
-	buildSensorOverviewQueryKey,
-	buildSensorQueryKey,
+	buildExposureOverviewQueryKey,
+	buildExposureQueryKey,
 	buildSubordinatesQueryKey,
 	buildSubordinatesQueryPrefix,
 	buildThresholdSummaryQueryKey,
-	type SensorQueryKind,
+	type ExposureQueryKind,
 } from "./query-key-builder";
-import { getStartEnd } from "./sensor-query-utils";
+import { getStartEnd } from "./exposure-query-utils";
 import type { View } from "./views";
 
 // We have at most 1 data point every minute so we don't need a shorter refetch interval than that
@@ -53,62 +53,62 @@ export function usersQueryOptions() {
 	});
 }
 
-const fetchSensorData = async (
-	sensor: Sensor,
-	sensorDataRequest: SensorDataRequestDto,
+const fetchExposureData = async (
+	exposure: Exposure,
+	exposureDataRequest: ExposureDataRequestDto,
 	userId?: string,
-): Promise<SensorResponseDto> => {
-	const response = await fetchWithUserId(`sensor/${sensor}/${userId}`, {
+): Promise<ExposureResponseDto> => {
+	const response = await fetchWithUserId(`exposure/${exposure}/${userId}`, {
 		method: "POST",
-		body: JSON.stringify(sensorDataRequest),
+		body: JSON.stringify(exposureDataRequest),
 	});
 
 	if (!response.ok) {
-		throw new Error("Failed to fetch sensor data");
+		throw new Error("Failed to fetch exposure data");
 	}
 
 	const json = await response.json();
-	return SensorResponseDtoSchema.parseAsync(json);
+	return ExposureResponseDtoSchema.parseAsync(json);
 };
 
-const fetchSensorOverviewData = async (
-	requests: SensorOverviewRequestDto,
+const fetchExposureOverviewData = async (
+	requests: ExposureOverviewRequestDto,
 	userId?: string,
-): Promise<SensorOverviewResponseDto> => {
-	const response = await fetchWithUserId(`sensor/overview/${userId}`, {
+): Promise<ExposureOverviewResponseDto> => {
+	const response = await fetchWithUserId(`exposure/overview/${userId}`, {
 		method: "POST",
 		body: JSON.stringify(requests),
 	});
 
 	if (!response.ok) {
-		throw new Error("Failed to fetch sensor overview data");
+		throw new Error("Failed to fetch exposure overview data");
 	}
 
 	const json = await response.json();
-	return SensorOverviewResponseDtoSchema.parseAsync(json);
+	return ExposureOverviewResponseDtoSchema.parseAsync(json);
 };
 
-export function sensorOverviewQueryOptions({
+export function exposureOverviewQueryOptions({
 	query,
 	userId,
 	enabled,
 	queryKind,
 	windowMinutes,
 }: {
-	query: SensorOverviewRequestDto;
+	query: ExposureOverviewRequestDto;
 	userId?: string;
 	enabled?: boolean;
-	queryKind?: SensorQueryKind;
+	queryKind?: ExposureQueryKind;
 	windowMinutes?: number;
 }) {
 	return queryOptions({
-		queryKey: buildSensorOverviewQueryKey({
+		queryKey: buildExposureOverviewQueryKey({
 			userId,
 			query,
 			queryKind,
 			windowMinutes,
 		}),
-		queryFn: () => fetchSensorOverviewData(query, userId),
+		queryFn: () => fetchExposureOverviewData(query, userId),
 		staleTime: minutesToMilliseconds(10),
 		enabled,
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
@@ -117,30 +117,30 @@ export function sensorOverviewQueryOptions({
 	});
 }
 
-export function sensorQueryOptions({
-	sensor,
+export function exposureQueryOptions({
+	exposure,
 	query,
 	userId,
 	enabled,
 	queryKind,
 	windowMinutes,
 }: {
-	sensor: Sensor;
-	query: SensorDataRequestDto;
+	exposure: Exposure;
+	query: ExposureDataRequestDto;
 	userId?: string;
 	enabled?: boolean;
-	queryKind?: SensorQueryKind;
+	queryKind?: ExposureQueryKind;
 	windowMinutes?: number;
 }) {
 	return queryOptions({
-		queryKey: buildSensorQueryKey({
-			sensor,
+		queryKey: buildExposureQueryKey({
+			exposure,
 			userId,
 			query,
 			queryKind,
 			windowMinutes,
 		}),
-		queryFn: () => fetchSensorData(sensor, query, userId),
+		queryFn: () => fetchExposureData(exposure, query, userId),
 		staleTime: minutesToMilliseconds(10),
 		enabled,
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,

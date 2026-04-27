@@ -9,12 +9,12 @@ using Moq;
 namespace Backend.Tests.UnitTests.Controllers;
 
 /// <summary>
-/// Unit tests for SensorDataController to verify handling of various data retrieval scenarios.
+/// Unit tests for ExposureDataController to verify handling of various data retrieval scenarios.
 /// </summary>
-public class SensorDataControllerTests
+public class ExposureDataControllerTests
 {
 	/// <summary>
-	/// Nested test class verifies that GetAggregatedData returns an empty list when no sensor data (noise, dust, vibration) is available.
+	/// Nested test class verifies that GetAggregatedData returns an empty list when no exposure data (noise, dust, vibration) is available.
 	/// </summary>
 	/// <remarks>
 	/// These tests ensure that the controller properly handles empty datasets from the service layer
@@ -22,22 +22,22 @@ public class SensorDataControllerTests
 	/// </remarks>
 	public class GetEmptyAggregatedDataListTests
 	{
-		private readonly Mock<ISensorDataService> _mockService;
-		private readonly SensorDataController _controller;
+		private readonly Mock<IExposureDataService> _mockService;
+		private readonly ExposureDataController _controller;
 
 		public GetEmptyAggregatedDataListTests()
 		{
-			_mockService = new Mock<ISensorDataService>();
-			_controller = new SensorDataController(_mockService.Object);
+			_mockService = new Mock<IExposureDataService>();
+			_controller = new ExposureDataController(_mockService.Object);
 			_mockService
 				.Setup(service =>
 					service.GetAggregatedDataAsync(
-						It.IsAny<SensorDataRequestDto>(),
+						It.IsAny<ExposureDataRequestDto>(),
 						null,
-						SensorType.Dust
+						ExposureType.Dust
 					)
 				)
-				.ReturnsAsync(new List<SensorDataDto>());
+				.ReturnsAsync(new List<ExposureDataDto>());
 		}
 
 		/// <summary>
@@ -46,7 +46,7 @@ public class SensorDataControllerTests
 		[Fact]
 		public async Task GetAggregatedData_ReturnsEmptyList_WhenNoNoiseData()
 		{
-			var noiseRequest = new SensorDataRequestDto(
+			var noiseRequest = new ExposureDataRequestDto(
 				DateTimeOffset.Parse("2025-02-12T10:12:31+00:00"),
 				DateTimeOffset.Parse("2025-02-25T16:14:10+00:00"),
 				(TimeGranularity)2,
@@ -56,11 +56,11 @@ public class SensorDataControllerTests
 			var noiseResult = await _controller.GetAggregatedData(
 				noiseRequest,
 				Guid.NewGuid(),
-				SensorType.Noise
+				ExposureType.Noise
 			);
 			var okNoiseResult = noiseResult.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okNoiseResult);
-			var noiseData = okNoiseResult.Value as SensorResponseDto;
+			var noiseData = okNoiseResult.Value as ExposureResponseDto;
 			Assert.NotNull(noiseData);
 			Assert.Empty(noiseData.Data);
 		}
@@ -71,7 +71,7 @@ public class SensorDataControllerTests
 		[Fact]
 		public async Task GetAggregatedData_ReturnsEmptyList_WhenNoDustData()
 		{
-			var dustRequest = new SensorDataRequestDto(
+			var dustRequest = new ExposureDataRequestDto(
 				DateTimeOffset.Parse("2025-02-12T10:12:31+00:00"),
 				DateTimeOffset.Parse("2025-02-25T16:14:10+00:00"),
 				(TimeGranularity)2,
@@ -82,11 +82,11 @@ public class SensorDataControllerTests
 			var dustResult = await _controller.GetAggregatedData(
 				dustRequest,
 				Guid.NewGuid(),
-				SensorType.Dust
+				ExposureType.Dust
 			);
 			var okDustResult = dustResult.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okDustResult);
-			var dustData = okDustResult.Value as SensorResponseDto;
+			var dustData = okDustResult.Value as ExposureResponseDto;
 			Assert.NotNull(dustData);
 			Assert.Empty(dustData.Data);
 		}
@@ -97,7 +97,7 @@ public class SensorDataControllerTests
 		[Fact]
 		public async Task GetAggregatedData_ReturnsEmptyList_WhenNoVibrationData()
 		{
-			var vibrationRequest = new SensorDataRequestDto(
+			var vibrationRequest = new ExposureDataRequestDto(
 				DateTimeOffset.Parse("2025-02-12T10:12:31+00:00"),
 				DateTimeOffset.Parse("2025-02-25T16:14:10+00:00"),
 				(TimeGranularity)2,
@@ -107,32 +107,32 @@ public class SensorDataControllerTests
 			var vibrationResult = await _controller.GetAggregatedData(
 				vibrationRequest,
 				Guid.NewGuid(),
-				SensorType.Vibration
+				ExposureType.Vibration
 			);
 			var okVibrationResult = vibrationResult.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okVibrationResult);
-			var vibrationData = okVibrationResult.Value as SensorResponseDto;
+			var vibrationData = okVibrationResult.Value as ExposureResponseDto;
 			Assert.NotNull(vibrationData);
 			Assert.Empty(vibrationData.Data);
 		}
 	}
 
 	/// <summary>
-	/// Verifies that GetAggregatedData returns a list of sensor data (noise, dust, vibration) when data is available.
+	/// Verifies that GetAggregatedData returns a list of exposure data (noise, dust, vibration) when data is available.
 	/// </summary>
 	/// <remarks>
 	/// These tests ensure that the controller properly handles datasets from the service layer
-	/// and returns an appropriate HTTP 200 response with the expected collection of sensor data for noise, dust and vibration.
+	/// and returns an appropriate HTTP 200 response with the expected collection of exposure data for noise, dust and vibration.
 	/// </remarks>
 	public class GetAggregatedDataListTests
 	{
-		private readonly Mock<ISensorDataService> _mockService;
-		private readonly SensorDataController _controller;
+		private readonly Mock<IExposureDataService> _mockService;
+		private readonly ExposureDataController _controller;
 
 		public GetAggregatedDataListTests()
 		{
-			_mockService = new Mock<ISensorDataService>();
-			_controller = new SensorDataController(_mockService.Object);
+			_mockService = new Mock<IExposureDataService>();
+			_controller = new ExposureDataController(_mockService.Object);
 		}
 
 		/// <summary>
@@ -142,25 +142,25 @@ public class SensorDataControllerTests
 		public async Task GetAggregatedData_ReturnsDataList_WhenNoiseDataExists()
 		{
 			Guid userId = Guid.NewGuid();
-			SensorType sensorType = SensorType.Noise;
+			ExposureType exposureType = ExposureType.Noise;
 
 			_mockService
 				.Setup(service =>
 					service.GetAggregatedDataAsync(
-						It.IsAny<SensorDataRequestDto>(),
+						It.IsAny<ExposureDataRequestDto>(),
 						userId,
-						sensorType
+						exposureType
 					)
 				)
 				.ReturnsAsync(
-					new List<SensorDataDto>
+					new List<ExposureDataDto>
 					{
-						new SensorDataDto
+						new ExposureDataDto
 						{
 							Time = DateTime.Parse("2025-02-12T10:12:31+00:00"),
 							Value = 42.0,
 						},
-						new SensorDataDto
+						new ExposureDataDto
 						{
 							Time = DateTime.Parse("2025-02-13T11:15:45+00:00"),
 							Value = 36.5,
@@ -168,18 +168,18 @@ public class SensorDataControllerTests
 					}
 				);
 
-			var request = new SensorDataRequestDto(
+			var request = new ExposureDataRequestDto(
 				DateTimeOffset.Parse("2025-02-12T10:12:31+00:00"),
 				DateTimeOffset.Parse("2025-02-25T16:14:10+00:00"),
 				(TimeGranularity)2,
 				(AggregationFunction)0,
 				null
 			);
-			var result = await _controller.GetAggregatedData(request, userId, sensorType);
+			var result = await _controller.GetAggregatedData(request, userId, exposureType);
 			var okResult = result.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okResult);
 
-			var data = okResult.Value as SensorResponseDto;
+			var data = okResult.Value as ExposureResponseDto;
 			Assert.NotNull(data);
 			Assert.Equal(2, data.Data.Count());
 		}
@@ -191,25 +191,25 @@ public class SensorDataControllerTests
 		public async Task GetAggregatedData_ReturnsDataList_WhenDustDataExists()
 		{
 			Guid userId = Guid.NewGuid();
-			SensorType sensorType = SensorType.Dust;
+			ExposureType exposureType = ExposureType.Dust;
 
 			_mockService
 				.Setup(service =>
 					service.GetAggregatedDataAsync(
-						It.IsAny<SensorDataRequestDto>(),
+						It.IsAny<ExposureDataRequestDto>(),
 						userId,
-						sensorType
+						exposureType
 					)
 				)
 				.ReturnsAsync(
-					new List<SensorDataDto>
+					new List<ExposureDataDto>
 					{
-						new SensorDataDto
+						new ExposureDataDto
 						{
 							Time = DateTime.Parse("2025-02-12T10:12:31+00:00"),
 							Value = 15.0,
 						},
-						new SensorDataDto
+						new ExposureDataDto
 						{
 							Time = DateTime.Parse("2025-02-13T11:15:45+00:00"),
 							Value = 20.5,
@@ -217,18 +217,18 @@ public class SensorDataControllerTests
 					}
 				);
 
-			var request = new SensorDataRequestDto(
+			var request = new ExposureDataRequestDto(
 				DateTimeOffset.Parse("2025-02-12T10:12:31+00:00"),
 				DateTimeOffset.Parse("2025-02-25T16:14:10+00:00"),
 				(TimeGranularity)2,
 				(AggregationFunction)0,
 				Field.Pm10_stel
 			);
-			var result = await _controller.GetAggregatedData(request, userId, sensorType);
+			var result = await _controller.GetAggregatedData(request, userId, exposureType);
 			var okResult = result.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okResult);
 
-			var data = okResult.Value as SensorResponseDto;
+			var data = okResult.Value as ExposureResponseDto;
 			Assert.NotNull(data);
 			Assert.Equal(2, data.Data.Count());
 		}
@@ -240,25 +240,25 @@ public class SensorDataControllerTests
 		public async Task GetAggregatedData_ReturnsDataList_WhenVibrationDataExists()
 		{
 			Guid userId = Guid.NewGuid();
-			SensorType sensorType = SensorType.Vibration;
+			ExposureType exposureType = ExposureType.Vibration;
 
 			_mockService
 				.Setup(service =>
 					service.GetAggregatedDataAsync(
-						It.IsAny<SensorDataRequestDto>(),
+						It.IsAny<ExposureDataRequestDto>(),
 						userId,
-						sensorType
+						exposureType
 					)
 				)
 				.ReturnsAsync(
-					new List<SensorDataDto>
+					new List<ExposureDataDto>
 					{
-						new SensorDataDto
+						new ExposureDataDto
 						{
 							Time = DateTime.Parse("2025-02-12T10:12:31+00:00"),
 							Value = 5.0,
 						},
-						new SensorDataDto
+						new ExposureDataDto
 						{
 							Time = DateTime.Parse("2025-02-13T11:15:45+00:00"),
 							Value = 7.5,
@@ -266,25 +266,25 @@ public class SensorDataControllerTests
 					}
 				);
 
-			var request = new SensorDataRequestDto(
+			var request = new ExposureDataRequestDto(
 				DateTimeOffset.Parse("2025-02-12T10:12:31+00:00"),
 				DateTimeOffset.Parse("2025-02-25T16:14:10+00:00"),
 				(TimeGranularity)2,
 				(AggregationFunction)0,
 				null
 			);
-			var result = await _controller.GetAggregatedData(request, userId, sensorType);
+			var result = await _controller.GetAggregatedData(request, userId, exposureType);
 			var okResult = result.Result as OkObjectResult;
 			Assert.IsType<OkObjectResult>(okResult);
 
-			var data = okResult.Value as SensorResponseDto;
+			var data = okResult.Value as ExposureResponseDto;
 			Assert.NotNull(data);
 			Assert.Equal(2, data.Data.Count());
 		}
 	}
 
 	/// <summary>
-	/// Nested test class for testing different invalid request scenarios. The sensortype used is Noise.
+	/// Nested test class for testing different invalid request scenarios. The exposuretype used is Noise.
 	/// </summary>
 	/// <remarks>
 	/// These tests ensure that the controller properly handles invalid requests and exceptions from the service layer,
@@ -293,13 +293,13 @@ public class SensorDataControllerTests
 	/// </remarks>
 	public class InvalidRequestTests
 	{
-		private readonly Mock<ISensorDataService> _mockService;
-		private readonly SensorDataController _controller;
+		private readonly Mock<IExposureDataService> _mockService;
+		private readonly ExposureDataController _controller;
 
 		public InvalidRequestTests()
 		{
-			_mockService = new Mock<ISensorDataService>();
-			_controller = new SensorDataController(_mockService.Object);
+			_mockService = new Mock<IExposureDataService>();
+			_controller = new ExposureDataController(_mockService.Object);
 		}
 
 		/// <summary>
@@ -308,7 +308,7 @@ public class SensorDataControllerTests
 		[Fact]
 		public async Task GetAggregatedData_ReturnsBadRequest_WhenStartTimeIsAfterEndTime()
 		{
-			var request = new SensorDataRequestDto(
+			var request = new ExposureDataRequestDto(
 				DateTimeOffset.Parse("2025-02-25T16:14:10+00:00"),
 				DateTimeOffset.Parse("2025-02-12T10:12:31+00:00"),
 				(TimeGranularity)2,
@@ -319,7 +319,7 @@ public class SensorDataControllerTests
 			var result = await _controller.GetAggregatedData(
 				request,
 				Guid.NewGuid(),
-				SensorType.Noise
+				ExposureType.Noise
 			);
 			var badRequestResult = result.Result as BadRequestObjectResult;
 
@@ -335,19 +335,19 @@ public class SensorDataControllerTests
 		public async Task GetAggregatedData_ReturnsBadRequest_WhenServiceThrowsArgumentException()
 		{
 			Guid userId = Guid.NewGuid();
-			SensorType sensorType = SensorType.Noise;
+			ExposureType exposureType = ExposureType.Noise;
 
 			_mockService
 				.Setup(service =>
 					service.GetAggregatedDataAsync(
-						It.IsAny<SensorDataRequestDto>(),
+						It.IsAny<ExposureDataRequestDto>(),
 						userId,
-						sensorType
+						exposureType
 					)
 				)
 				.ThrowsAsync(new ArgumentException("Invalid argument"));
 
-			var request = new SensorDataRequestDto(
+			var request = new ExposureDataRequestDto(
 				DateTimeOffset.Parse("2025-02-12T10:12:31+00:00"),
 				DateTimeOffset.Parse("2025-02-25T16:14:10+00:00"),
 				(TimeGranularity)2,
@@ -355,7 +355,7 @@ public class SensorDataControllerTests
 				null
 			);
 
-			var result = await _controller.GetAggregatedData(request, userId, sensorType);
+			var result = await _controller.GetAggregatedData(request, userId, exposureType);
 			var badRequestResult = result.Result as BadRequestObjectResult;
 
 			Assert.IsType<BadRequestObjectResult>(badRequestResult);
@@ -370,19 +370,19 @@ public class SensorDataControllerTests
 		public async Task GetAggregatedData_ReturnsNotFound_WhenServiceThrowsInvalidOperationException()
 		{
 			Guid userId = Guid.NewGuid();
-			SensorType sensorType = SensorType.Noise;
+			ExposureType exposureType = ExposureType.Noise;
 
 			_mockService
 				.Setup(service =>
 					service.GetAggregatedDataAsync(
-						It.IsAny<SensorDataRequestDto>(),
+						It.IsAny<ExposureDataRequestDto>(),
 						userId,
-						sensorType
+						exposureType
 					)
 				)
 				.ThrowsAsync(new InvalidOperationException("Resource not found"));
 
-			var request = new SensorDataRequestDto(
+			var request = new ExposureDataRequestDto(
 				DateTimeOffset.Parse("2025-02-12T10:12:31+00:00"),
 				DateTimeOffset.Parse("2025-02-25T16:14:10+00:00"),
 				(TimeGranularity)2,
@@ -390,7 +390,7 @@ public class SensorDataControllerTests
 				null
 			);
 
-			var result = await _controller.GetAggregatedData(request, userId, sensorType);
+			var result = await _controller.GetAggregatedData(request, userId, exposureType);
 			var notFoundResult = result.Result as NotFoundObjectResult;
 
 			Assert.IsType<NotFoundObjectResult>(notFoundResult);
@@ -408,19 +408,19 @@ public class SensorDataControllerTests
 		public async Task GetAggregatedData_ReturnsInternalServerError_WhenServiceThrowsException()
 		{
 			Guid userId = Guid.NewGuid();
-			SensorType sensorType = SensorType.Noise;
+			ExposureType exposureType = ExposureType.Noise;
 
 			_mockService
 				.Setup(service =>
 					service.GetAggregatedDataAsync(
-						It.IsAny<SensorDataRequestDto>(),
+						It.IsAny<ExposureDataRequestDto>(),
 						userId,
-						sensorType
+						exposureType
 					)
 				)
 				.ThrowsAsync(new Exception("Unexpected error"));
 
-			var request = new SensorDataRequestDto(
+			var request = new ExposureDataRequestDto(
 				DateTimeOffset.Parse("2025-02-12T10:12:31+00:00"),
 				DateTimeOffset.Parse("2025-02-25T16:14:10+00:00"),
 				(TimeGranularity)2,
@@ -428,7 +428,7 @@ public class SensorDataControllerTests
 				null
 			);
 
-			var result = await _controller.GetAggregatedData(request, userId, sensorType);
+			var result = await _controller.GetAggregatedData(request, userId, exposureType);
 			var internalErrorResult = result.Result as ObjectResult;
 
 			Assert.IsType<ObjectResult>(internalErrorResult);

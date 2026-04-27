@@ -1,10 +1,10 @@
 import { ChartContainer } from "@/components/ui/chart";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { DangerLevels } from "@/lib/danger-levels";
-import type { SensorDto, SensorTypeField } from "@/lib/dto";
-import type { Sensor, SensorUnit } from "@/lib/sensors";
+import type { ExposureDto, ExposureTypeField } from "@/lib/dto";
+import type { Exposure, ExposureUnit } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
-import { buildYAxisTicks, cn, DUST_Y_AXIS_STEP, formatSensorValue } from "@/lib/utils";
+import { buildYAxisTicks, cn, DUST_Y_AXIS_STEP, formatExposureValue } from "@/lib/utils";
 import { addDays, addWeeks, endOfMonth, endOfWeek, getISOWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -12,7 +12,7 @@ import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
 import { ExposureDot } from "../exposure-line-chart/exposure-dot";
 import { ExposureLineChartGradientStops } from "../exposure-line-chart/exposure-line-chart-gradient-stops";
-import { SensorLegend } from "../exposure-line-chart/sensor-legend";
+import { ExposureLegend } from "../exposure-line-chart/exposure-legend";
 import { ThresholdLegend } from "../exposure-line-chart/threshold-legend";
 import { ThresholdLine } from "../exposure-line-chart/threshold-line";
 import { ExposureTrendTooltip } from "./exposure-trend-tooltip";
@@ -22,15 +22,15 @@ type TrendGranularity = "day" | "week";
 const Y_AXIS_WIDTH = 60;
 
 export type TrendSeries = {
-	sensor: Sensor;
-	sensorField?: SensorTypeField;
-	data: Array<SensorDto>;
+	exposure: Exposure;
+	exposureField?: ExposureTypeField;
+	data: Array<ExposureDto>;
 };
 
 export interface TrendLineChartProps {
 	series: Array<TrendSeries>;
 	selectedDate: Date;
-	unit: SensorUnit;
+	unit: ExposureUnit;
 	minY: number;
 	maxY: number;
 	granularity: TrendGranularity;
@@ -40,8 +40,8 @@ export interface TrendLineChartProps {
 }
 
 export type SeriesDefinition = {
-	sensor: Sensor;
-	sensorField?: SensorTypeField;
+	exposure: Exposure;
+	exposureField?: ExposureTypeField;
 	dataKey: string;
 	label: string;
 	valuesByBucket: Map<string, number>;
@@ -67,7 +67,7 @@ export function TrendLineChart({
 	const chartData = buildChartData(bucketDates, seriesDefinitions, granularity, formatDate, t);
 
 	const [hoveredSeriesKey, setHoveredSeriesKey] = useState<string | null>(null);
-	const isDustChart = series.every((serie) => serie.sensor === "dust");
+	const isDustChart = series.every((serie) => serie.exposure === "dust");
 	const yTicks = isDustChart ? buildYAxisTicks(minY, maxY, DUST_Y_AXIS_STEP) : undefined;
 	const defaultFractionDigits = isDustChart ? 1 : 0;
 	const fractionDigitsPerUnit = isDustChart ? { mg: 4 } : { mg: 3 };
@@ -89,7 +89,7 @@ export function TrendLineChart({
 	let singleSeriesValues: Array<number> = [];
 
 	if (singleSeries) {
-		singleSeriesThreshold = getThreshold(singleSeries.sensor, singleSeries.sensorField);
+		singleSeriesThreshold = getThreshold(singleSeries.exposure, singleSeries.exposureField);
 
 		singleSeriesDangerThreshold = usePeakDangerThreshold
 			? singleSeriesThreshold.peakDanger
@@ -133,10 +133,10 @@ export function TrendLineChart({
 					domain={[minY, maxY]}
 					ticks={yTicks}
 					tickFormatter={(value) =>
-						formatSensorValue(value, unit, defaultFractionDigits, fractionDigitsPerUnit)
+						formatExposureValue(value, unit, defaultFractionDigits, fractionDigitsPerUnit)
 					}
 					label={{
-						value: t(($) => $.sensors.units[unit]),
+						value: t(($) => $.exposures.units[unit]),
 						position: "inside",
 						dx: -32,
 						angle: -90,
@@ -166,7 +166,7 @@ export function TrendLineChart({
 						name={serie.label}
 						dataKey={serie.dataKey}
 						type={lineType}
-						stroke={isSingleSeries ? `url(#${gradientId})` : getDustFieldColor(serie.sensorField)}
+						stroke={isSingleSeries ? `url(#${gradientId})` : getDustFieldColor(serie.exposureField)}
 						strokeWidth={3}
 						isAnimationActive={false}
 						connectNulls={true}
@@ -186,7 +186,7 @@ export function TrendLineChart({
 									)
 								: {
 										r: 5,
-										fill: getDustFieldColor(serie.sensorField),
+										fill: getDustFieldColor(serie.exposureField),
 										stroke: "none",
 									}
 						}
@@ -199,12 +199,12 @@ export function TrendLineChart({
 				<Legend
 					content={() => (
 						<div className="mt-2 flex flex-col gap-3" style={{ marginLeft: Y_AXIS_WIDTH }}>
-							{/* Only show sensor legend if there are multiple sensors or fields */}
+							{/* Only show exposure legend if there are multiple exposures or fields */}
 							{!isSingleSeries && (
-								<SensorLegend
+								<ExposureLegend
 									items={seriesDefinitions.map((serie) => ({
-										label: getSeriesLabel(serie.sensor, serie.sensorField, t),
-										color: getDustFieldColor(serie.sensorField),
+										label: getSeriesLabel(serie.exposure, serie.exposureField, t),
+										color: getDustFieldColor(serie.exposureField),
 									}))}
 								/>
 							)}
@@ -232,7 +232,7 @@ function getThresholdLines(
 	serie: SeriesDefinition,
 	usePeakDangerThreshold: boolean,
 ): Array<{ key: string; y: number; dangerLevel: "warning" | "danger" }> {
-	const threshold = getThreshold(serie.sensor, serie.sensorField);
+	const threshold = getThreshold(serie.exposure, serie.exposureField);
 	const lines: Array<{
 		key: string;
 		y: number;
@@ -273,10 +273,10 @@ function buildSeriesDefinitions(
 	t: ReturnType<typeof useTranslation>["t"],
 ): Array<SeriesDefinition> {
 	return series.map((serie) => ({
-		sensor: serie.sensor,
-		sensorField: serie.sensorField,
-		dataKey: getSeriesDataKey(serie.sensor, serie.sensorField),
-		label: getSeriesLabel(serie.sensor, serie.sensorField, t),
+		exposure: serie.exposure,
+		exposureField: serie.exposureField,
+		dataKey: getSeriesDataKey(serie.exposure, serie.exposureField),
+		label: getSeriesLabel(serie.exposure, serie.exposureField, t),
 		valuesByBucket: new Map(serie.data.map((item) => [normalizeBucketKey(item.time, granularity), item.value])),
 	}));
 }
@@ -319,23 +319,23 @@ function getBucketLabel(
 	return formatDate(date, "dd.MM");
 }
 
-function getSeriesDataKey(sensor: Sensor, field?: SensorTypeField): string {
-	return field ? `${sensor}:${field}` : sensor;
+function getSeriesDataKey(exposure: Exposure, field?: ExposureTypeField): string {
+	return field ? `${exposure}:${field}` : exposure;
 }
 
 function getSeriesLabel(
-	sensor: Sensor,
-	field: SensorTypeField | undefined,
+	exposure: Exposure,
+	field: ExposureTypeField | undefined,
 	t: ReturnType<typeof useTranslation>["t"],
 ): string {
 	if (!field) {
-		return t(($) => $.sensors[sensor]);
+		return t(($) => $.exposures[exposure]);
 	}
 
-	return t(($) => $.sensors.dustExposureLabels[field]);
+	return t(($) => $.exposures.dustExposureLabels[field]);
 }
 
-function getDustFieldColor(field?: SensorTypeField): string {
+function getDustFieldColor(field?: ExposureTypeField): string {
 	switch (field) {
 		case "pm1_twa":
 			return "var(--color-green-700)";

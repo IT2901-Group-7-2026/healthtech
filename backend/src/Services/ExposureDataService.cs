@@ -7,43 +7,43 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
 
-public interface ISensorDataService
+public interface IExposureDataService
 {
-	Task<IEnumerable<SensorDataDto>> GetAggregatedDataAsync(
-		SensorDataRequestDto request,
+	Task<IEnumerable<ExposureDataDto>> GetAggregatedDataAsync(
+		ExposureDataRequestDto request,
 		Guid? userId,
-		SensorType sensorType
+		ExposureType exposureType
 	);
-	Task<IEnumerable<CombinedSensorBucketDto>> GetOverviewDataAsync(
-		Dictionary<SensorType, SensorDataRequestDto> requests,
+	Task<IEnumerable<CombinedExposureBucketDto>> GetOverviewDataAsync(
+		Dictionary<ExposureType, ExposureDataRequestDto> requests,
 		Guid? userId
 	);
 	Task<HourDomainDto> GetHourDomainForWeekAsync(
-		Dictionary<SensorType, SensorDataRequestDto> requests,
+		Dictionary<ExposureType, ExposureDataRequestDto> requests,
 		Guid? userId
 	);
 }
 
-public class SensorDataService(AppDbContext context, SignedInUserContext signedInUserContext)
-	: ISensorDataService
+public class ExposureDataService(AppDbContext context, SignedInUserContext signedInUserContext)
+	: IExposureDataService
 {
 	private readonly AppDbContext _context = context;
 	private readonly SignedInUserContext _signedInUserContext = signedInUserContext;
 
-	public async Task<IEnumerable<SensorDataDto>> GetAggregatedDataAsync(
-		SensorDataRequestDto request,
+	public async Task<IEnumerable<ExposureDataDto>> GetAggregatedDataAsync(
+		ExposureDataRequestDto request,
 		Guid? userId,
-		SensorType sensorType
+		ExposureType exposureType
 	)
 	{
-		string materializedViewName = SensorUtils.GetMaterializedViewName(
-			sensorType,
+		string materializedViewName = ExposureUtils.GetMaterializedViewName(
+			exposureType,
 			request.Granularity
 		);
 
-		string aggregateColumnName = SensorUtils.GetAggregateColumnName(
+		string aggregateColumnName = ExposureUtils.GetAggregateColumnName(
 			request.Function,
-			sensorType,
+			exposureType,
 			request.Field
 		);
 
@@ -56,21 +56,21 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 		);
 		endTime = TimeWindowUtils.ClampRequestEndDateToCurrentDateTime(endTime.UtcDateTime);
 
-		string avgColumnName = SensorUtils.GetAggregateColumnName(
+		string avgColumnName = ExposureUtils.GetAggregateColumnName(
 			AggregationFunction.Avg,
-			sensorType,
+			exposureType,
 			request.Field
 		);
 
-		string maxColumnName = SensorUtils.GetAggregateColumnName(
+		string maxColumnName = ExposureUtils.GetAggregateColumnName(
 			AggregationFunction.Max,
-			sensorType,
+			exposureType,
 			request.Field
 		);
 
-		string sumColumnName = SensorUtils.GetAggregateColumnName(
+		string sumColumnName = ExposureUtils.GetAggregateColumnName(
 			AggregationFunction.Sum,
-			sensorType,
+			exposureType,
 			request.Field
 		);
 
@@ -85,8 +85,8 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 				user_id as ""UserId""
             FROM {materializedViewName}";
 
-		var rawSensorData = await _context
-			.Database.SqlQueryRaw<RawSensorData>(sql)
+		var rawExposureData = await _context
+			.Database.SqlQueryRaw<RawExposureData>(sql)
 			.AsQueryable()
 			.Where(data =>
 				data.Time >= startTime
@@ -100,23 +100,23 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 		// If the requested aggregation function is sum, the value is cumulated.
 		// NOTE: Maybe this should be changed in the future, for example by only allowing sum aggregation for vibration data,
 		// but for now this is done to allow fetching different aggregations while making sure the threshold logic remains correct.
-		var dataWithCumulatedSensorSumValues = SensorUtils.CumulateVibrationSumValues(
-			sensorType,
+		var dataWithCumulatedExposureSumValues = ExposureUtils.CumulateVibrationSumValues(
+			exposureType,
 			request.Function,
-			rawSensorData
+			rawExposureData
 		);
 
 		var dataWithDangerLevels = ThresholdUtils.CalculateDangerLevels(
-			sensorType,
-			dataWithCumulatedSensorSumValues,
+			exposureType,
+			dataWithCumulatedExposureSumValues,
 			request.Field
 		);
 
-		var result = dataWithDangerLevels.Select(item => new SensorDataDto
+		var result = dataWithDangerLevels.Select(item => new ExposureDataDto
 		{
 			Time = item.data.Time,
 			Value = item.data.Value,
-			PeakValue = sensorType == SensorType.Noise ? item.data.MaxValue : null,
+			PeakValue = exposureType == ExposureType.Noise ? item.data.MaxValue : null,
 			DangerLevel = item.dangerLevels.dangerLevel,
 			PeakDangerLevel = item.dangerLevels.peakDangerLevel,
 		});
@@ -125,19 +125,19 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 	}
 
 	/// <summary>
-	/// Combines data from multiple sensor requests into buckets
+	/// Combines data from multiple exposure requests into buckets
 	/// </summary>
 	/// <param name="requests"></param>
 	/// <param name="userId"></param>
 	/// <returns></returns>
-	public async Task<IEnumerable<CombinedSensorBucketDto>> GetOverviewDataAsync(
-		Dictionary<SensorType, SensorDataRequestDto> requests,
+	public async Task<IEnumerable<CombinedExposureBucketDto>> GetOverviewDataAsync(
+		Dictionary<ExposureType, ExposureDataRequestDto> requests,
 		Guid? userId
 	)
 	{
-		Dictionary<DateTime, CombinedSensorBucketDto> combinedData = [];
+		Dictionary<DateTime, CombinedExposureBucketDto> combinedData = [];
 
-		foreach (var (sensorType, request) in requests)
+		foreach (var (exposureType, request) in requests)
 		{
 			DateTime startTime = AuthorizationUtils.ClampRequestStartDateForRole(
 				request.StartTime.UtcDateTime,
@@ -147,30 +147,30 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 				request.EndTime.UtcDateTime
 			);
 
-			IEnumerable<SensorDataDto> sensorDataList = await GetAggregatedDataAsync(
+			IEnumerable<ExposureDataDto> exposureDataList = await GetAggregatedDataAsync(
 				request,
 				userId,
-				sensorType
+				exposureType
 			);
 
-			foreach (var sensorData in sensorDataList)
+			foreach (var exposureData in exposureDataList)
 			{
-				if (!combinedData.TryGetValue(sensorData.Time, out CombinedSensorBucketDto? bucket))
+				if (!combinedData.TryGetValue(exposureData.Time, out CombinedExposureBucketDto? bucket))
 				{
-					bucket = new CombinedSensorBucketDto
+					bucket = new CombinedExposureBucketDto
 					{
-						Time = sensorData.Time,
-						DangerLevel = sensorData.DangerLevel,
-						SensorDangerLevels = [],
+						Time = exposureData.Time,
+						DangerLevel = exposureData.DangerLevel,
+						ExposureDangerLevels = [],
 					};
-					combinedData[sensorData.Time] = bucket;
+					combinedData[exposureData.Time] = bucket;
 				}
 
-				bucket.SensorDangerLevels[sensorType] = sensorData.DangerLevel;
+				bucket.ExposureDangerLevels[exposureType] = exposureData.DangerLevel;
 
-				if (sensorData.DangerLevel > bucket.DangerLevel)
+				if (exposureData.DangerLevel > bucket.DangerLevel)
 				{
-					bucket.DangerLevel = sensorData.DangerLevel;
+					bucket.DangerLevel = exposureData.DangerLevel;
 				}
 			}
 		}
@@ -179,13 +179,13 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 	}
 
 	public async Task<HourDomainDto> GetHourDomainForWeekAsync(
-		Dictionary<SensorType, SensorDataRequestDto> requests,
+		Dictionary<ExposureType, ExposureDataRequestDto> requests,
 		Guid? userId
 	)
 	{
 		HashSet<DateTime> timestamps = [];
 
-		foreach (var (sensorType, request) in requests)
+		foreach (var (exposureType, request) in requests)
 		{
 			// We always calculate domain based on the hourly data for the whole week.
 			DateTimeOffset weekStart = GetWeekStart(request.StartTime.UtcDateTime);
@@ -206,7 +206,7 @@ public class SensorDataService(AppDbContext context, SignedInUserContext signedI
 				Granularity = TimeGranularity.Hour,
 			};
 
-			var weekData = await GetAggregatedDataAsync(weekRequest, userId, sensorType);
+			var weekData = await GetAggregatedDataAsync(weekRequest, userId, exposureType);
 
 			foreach (var dataPoint in weekData)
 			{

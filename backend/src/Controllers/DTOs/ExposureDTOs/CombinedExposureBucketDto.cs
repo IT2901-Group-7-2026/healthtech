@@ -2,9 +2,9 @@ using Backend.Models;
 
 namespace Backend.DTOs;
 
-public class CombinedSensorBucketDto
+public class CombinedExposureBucketDto
 {
 	public DateTime Time { get; set; }
 	public DangerLevel DangerLevel { get; set; }
-	public Dictionary<SensorType, DangerLevel> SensorDangerLevels { get; set; } = new();
+	public Dictionary<ExposureType, DangerLevel> ExposureDangerLevels { get; set; } = new();
 }

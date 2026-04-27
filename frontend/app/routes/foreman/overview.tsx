@@ -17,7 +17,7 @@ import { ViewPicker } from "@/features/views/view-picker";
 import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions } from "@/lib/api.js";
 import { today, toTZDate } from "@/lib/date";
 import type { ThresholdSummary } from "@/lib/dto";
-import { parseAsSensor, type Sensor, sensors } from "@/lib/sensors";
+import { parseAsExposure, type Exposure, exposures } from "@/lib/exposures";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { addWeeks, endOfDay, startOfDay, subDays } from "date-fns";
@@ -29,7 +29,7 @@ export default function ForemanOverview() {
 	const { t } = useTranslation();
 	const { user } = useUser();
 
-	const [sensor, setSensor] = useQueryState("sensor", parseAsSensor.withOptions({ history: "push" }));
+	const [exposure, setExposure] = useQueryState("exposure", parseAsExposure.withOptions({ history: "push" }));
 	const { date, setDate } = useDate();
 	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString.withOptions({ history: "push" }));
 
@@ -71,26 +71,26 @@ export default function ForemanOverview() {
 			<Card muted={true} className="flex flex-row justify-between p-2">
 				<ToggleGroup
 					type="single"
-					value={sensor ?? "all"}
+					value={exposure ?? "all"}
 					variant="outline"
 					className={cn("inline-grid auto-cols-fr grid-flow-col")}
-					onValueChange={(value: Sensor | "all" | "") => {
+					onValueChange={(value: Exposure | "all" | "") => {
 						if (value) {
-							setSensor(value === "all" ? null : value);
+							setExposure(value === "all" ? null : value);
 						}
 					}}
 				>
-					<ToggleGroupItem value="all" aria-label={t(($) => $.sensors.overview)}>
-						<p className="text-sm">{t(($) => $.sensors.overview)}</p>
+					<ToggleGroupItem value="all" aria-label={t(($) => $.exposures.overview)}>
+						<p className="text-sm">{t(($) => $.exposures.overview)}</p>
 					</ToggleGroupItem>
-					<ToggleGroupItem value="dust" aria-label={t(($) => $.sensors.dust)}>
-						<p className="text-sm">{t(($) => $.sensors.dust)}</p>
+					<ToggleGroupItem value="dust" aria-label={t(($) => $.exposures.dust)}>
+						<p className="text-sm">{t(($) => $.exposures.dust)}</p>
 					</ToggleGroupItem>
-					<ToggleGroupItem value="noise" aria-label={t(($) => $.sensors.noise)}>
-						<p className="text-sm">{t(($) => $.sensors.noise)}</p>
+					<ToggleGroupItem value="noise" aria-label={t(($) => $.exposures.noise)}>
+						<p className="text-sm">{t(($) => $.exposures.noise)}</p>
 					</ToggleGroupItem>
-					<ToggleGroupItem value="vibration" aria-label={t(($) => $.sensors.vibration)}>
-						<p className="text-sm">{t(($) => $.sensors.vibration)}</p>
+					<ToggleGroupItem value="vibration" aria-label={t(($) => $.exposures.vibration)}>
+						<p className="text-sm">{t(($) => $.exposures.vibration)}</p>
 					</ToggleGroupItem>
 				</ToggleGroup>
 
@@ -136,7 +136,7 @@ export default function ForemanOverview() {
 					<div className="flex flex-col gap-12">
 						{/* TODO: Redo the loading logic here */}
 						{isUserSelected ? (
-							<UserDetails selectedUser={selectedUser} sensor={sensor} />
+							<UserDetails selectedUser={selectedUser} exposure={exposure} />
 						) : (
 							<>
 								<AttentionCard
@@ -147,16 +147,16 @@ export default function ForemanOverview() {
 									isWeekly={isWeekly}
 								/>
 
-								{sensor ? (
+								{exposure ? (
 									<UserStatusChart
 										users={subordinates ?? []}
-										sensor={sensor}
+										exposure={exposure}
 										isWeekly={isWeekly}
 										userOnClick={(id) => setSelectedUserId(id)}
 									/>
 								) : (
 									<>
-										<SensorSummaryGrid thresholdSummary={thresholdSummary} />
+										<ExposureSummaryGrid thresholdSummary={thresholdSummary} />
 
 										<Card muted={true} className="flex flex-col gap-4 p-4">
 											<h2 className="font-semibold text-lg">
@@ -176,7 +176,7 @@ export default function ForemanOverview() {
 												<OperatorExposureStatusTable
 													data={subordinates}
 													setSelectedUserId={(id) => setSelectedUserId(id)}
-													setSensor={(s) => setSensor(s as Sensor)}
+													setExposure={(s) => setExposure(s as Exposure)}
 												/>
 											)}
 										</Card>
@@ -214,7 +214,7 @@ export default function ForemanOverview() {
 	);
 }
 
-function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSummary | undefined }) {
+function ExposureSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSummary | undefined }) {
 	const { t } = useTranslation();
 
 	if (thresholdSummary === undefined) {
@@ -224,32 +224,32 @@ function SensorSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSu
 	return (
 		<div className="flex flex-col gap-4">
 			<div className="font-extralight text-2xl text-color-muted">
-				{t(($) => $.foremanDashboard.overview.sensor)}
+				{t(($) => $.foremanDashboard.overview.exposure)}
 			</div>
 			<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
-				{sensors.map((sensorType: Sensor) => (
+				{exposures.map((exposureType: Exposure) => (
 					<PieChartCard
 						data={{
 							safe: {
 								name: "Safe",
-								value: thresholdSummary[sensorType].safe,
+								value: thresholdSummary[exposureType].safe,
 								label: t(($) => $.foremanDashboard.overview.statCards.safe.label),
 							},
 							warning: {
 								name: "Warning",
-								value: thresholdSummary[sensorType].warning,
+								value: thresholdSummary[exposureType].warning,
 								label: t(($) => $.foremanDashboard.overview.statCards.warning.label),
 							},
 							danger: {
 								name: "Danger",
-								value: thresholdSummary[sensorType].danger,
+								value: thresholdSummary[exposureType].danger,
 								label: t(($) => $.foremanDashboard.overview.statCards.danger.label),
 							},
 						}}
-						label={t(($) => $.sensors[sensorType])}
-						to={`?sensor=${sensorType}`}
-						key={sensorType}
-						sensorType={sensorType}
+						label={t(($) => $.exposures[exposureType])}
+						to={`?exposure=${exposureType}`}
+						key={exposureType}
+						exposureType={exposureType}
 					/>
 				))}
 			</div>

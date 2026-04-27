@@ -1,6 +1,6 @@
 namespace Backend.DTOs;
 
-public record SensorThresholdSummaryDto
+public record ExposureThresholdSummaryDto
 {
 	public int Safe { get; set; } = 0;
 	public int Warning { get; set; } = 0;

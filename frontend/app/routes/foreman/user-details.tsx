@@ -7,7 +7,7 @@ import { ExposureLineChartCardSkeleton } from "@/features/exposure-line-chart-ca
 import { DustExposureLineChartCard } from "@/features/exposure-line-chart-card/dust-exposure-line-chart-card";
 import NoiseExposureLineChartCard from "@/features/exposure-line-chart-card/noise-exposure-line-chart-card";
 import VibrationExposureLineChartCard from "@/features/exposure-line-chart-card/vibration-exposure-line-chart-card";
-import { SensorStatisticsSection } from "@/features/statistic-card";
+import { ExposureStatisticsSection } from "@/features/statistic-card";
 import { getMaxPointByValue } from "@/features/statistic-card-utils";
 import { DustTrendLineChartCard } from "@/features/trend-line-chart-card/dust-trend-line-chart-card";
 import { NoiseTrendLineChartCard } from "@/features/trend-line-chart-card/noise-trend-line-chart-card";
@@ -15,25 +15,25 @@ import { VibrationTrendLineChartCard } from "@/features/trend-line-chart-card/vi
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useFormatDate } from "@/hooks/use-format-date";
-import { sensorOverviewQueryOptions, sensorQueryOptions } from "@/lib/api";
+import { exposureOverviewQueryOptions, exposureQueryOptions } from "@/lib/api";
 import { getDangerLevel } from "@/lib/danger-levels";
 import {
 	type Aggregation,
 	Aggregations,
-	type SensorDto,
-	type SensorOverviewBucketDto,
+	type ExposureDto,
+	type ExposureOverviewBucketDto,
 	type UserWithStatusDto,
 } from "@/lib/dto";
-import { buildSensorOverviewQuery, buildSensorQuery } from "@/lib/sensor-query-utils";
+import { buildExposureOverviewQuery, buildExposureQuery } from "@/lib/exposure-query-utils";
 import {
 	type DustField,
 	defaultDustField,
 	dustFields,
 	parseAsDustField,
-	parseAsSensorUnit,
-	type Sensor,
-	sensors,
-} from "@/lib/sensors";
+	parseAsExposureUnit,
+	type Exposure,
+	exposures,
+} from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
 import { mapOverviewBucketsToChartRows, mapOverviewDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, DUST_Y_AXIS_STEP, getHourDomain } from "@/lib/utils";
@@ -43,7 +43,7 @@ import { parseAsStringLiteral, useQueryState } from "nuqs";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
-export function UserDetails({ selectedUser, sensor }: { selectedUser: UserWithStatusDto; sensor: Sensor | null }) {
+export function UserDetails({ selectedUser, exposure }: { selectedUser: UserWithStatusDto; exposure: Exposure | null }) {
 	return (
 		<section className="flex flex-col gap-6">
 			<div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
@@ -54,11 +54,11 @@ export function UserDetails({ selectedUser, sensor }: { selectedUser: UserWithSt
 			</div>
 
 			<div className="flex flex-col gap-6">
-				{sensor === null ? (
-					<AllSensorsUserOverview selectedUser={selectedUser} />
-				) : sensor === "dust" ? (
+				{exposure === null ? (
+					<AllExposuresUserOverview selectedUser={selectedUser} />
+				) : exposure === "dust" ? (
 					<DustUserChart selectedUser={selectedUser} />
-				) : sensor === "noise" ? (
+				) : exposure === "noise" ? (
 					<NoiseUserChart selectedUser={selectedUser} />
 				) : (
 					<VibrationUserChart selectedUser={selectedUser} />
@@ -68,7 +68,7 @@ export function UserDetails({ selectedUser, sensor }: { selectedUser: UserWithSt
 	);
 }
 
-function AllSensorsUserOverview({ selectedUser }: { selectedUser: UserWithStatusDto }) {
+function AllExposuresUserOverview({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const { view } = useView();
 	const { date } = useDate();
 
@@ -77,8 +77,8 @@ function AllSensorsUserOverview({ selectedUser }: { selectedUser: UserWithStatus
 		isLoading,
 		isError,
 	} = useQuery(
-		sensorOverviewQueryOptions({
-			query: buildSensorOverviewQuery([...sensors], view, date),
+		exposureOverviewQueryOptions({
+			query: buildExposureOverviewQuery([...exposures], view, date),
 			userId: selectedUser.id,
 		}),
 	);
@@ -93,7 +93,7 @@ function AllSensorsUserOverview({ selectedUser }: { selectedUser: UserWithStatus
 	);
 
 	return (
-		<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={date}>
+		<ExposureChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={date}>
 			{view === "week" ? (
 				<WeekWidget
 					dayStartHour={minHour}
@@ -105,9 +105,9 @@ function AllSensorsUserOverview({ selectedUser }: { selectedUser: UserWithStatus
 					data={mapOverviewBucketsToChartRows(data ?? [], 0, 23)}
 					startHour={minHour}
 					endHour={maxHour}
-					buildLink={(sensor, dateQueryParam) => {
+					buildLink={(exposure, dateQueryParam) => {
 						const params = new URLSearchParams();
-						params.set("sensor", sensor);
+						params.set("exposure", exposure);
 
 						if (selectedUser?.id) {
 							params.set("userId", selectedUser.id);
@@ -119,7 +119,7 @@ function AllSensorsUserOverview({ selectedUser }: { selectedUser: UserWithStatus
 					}}
 				/>
 			)}
-		</SensorChartCard>
+		</ExposureChartCard>
 	);
 }
 
@@ -127,68 +127,68 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const { view } = useView();
 	const { t } = useTranslation();
 	const formatDate = useFormatDate();
-	const sensor: Sensor = "dust";
+	const exposure: Exposure = "dust";
 	const [dustField, setDustField] = useQueryState<DustField>(
 		"dustField",
 		parseAsDustField.withDefault(defaultDustField),
 	);
-	const [dustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
+	const [dustUnit] = useQueryState("unit", parseAsExposureUnit.withDefault("ug"));
 
 	const { date } = useDate();
 
-	const query = buildSensorQuery(sensor, view, date, {
+	const query = buildExposureQuery(exposure, view, date, {
 		field: dustField,
 	});
 
 	const { data: overviewResponse } = useQuery(
-		sensorOverviewQueryOptions({
-			query: buildSensorOverviewQuery([sensor], view, date),
+		exposureOverviewQueryOptions({
+			query: buildExposureOverviewQuery([exposure], view, date),
 			userId: selectedUser.id,
 		}),
 	);
-	const dustThreshold = getThreshold(sensor, query.field);
-	const dustPm1TwaThreshold = getThreshold(sensor, "pm1_twa");
-	const dustPm25TwaThreshold = getThreshold(sensor, "pm25_twa");
-	const dustPm4TwaThreshold = getThreshold(sensor, "pm4_twa");
-	const dustPm10TwaThreshold = getThreshold(sensor, "pm10_twa");
+	const dustThreshold = getThreshold(exposure, query.field);
+	const dustPm1TwaThreshold = getThreshold(exposure, "pm1_twa");
+	const dustPm25TwaThreshold = getThreshold(exposure, "pm25_twa");
+	const dustPm4TwaThreshold = getThreshold(exposure, "pm4_twa");
+	const dustPm10TwaThreshold = getThreshold(exposure, "pm10_twa");
 
 	const [dataResult, dustTwa1Result, dustTwa25Result, dustTwa4Result, dustTwa10Result] = useQueries({
 		queries: [
-			sensorQueryOptions({
-				sensor,
+			exposureQueryOptions({
+				exposure,
 				query,
 				userId: selectedUser.id,
 			}),
-			sensorQueryOptions({
-				sensor,
-				query: buildSensorQuery(sensor, view, date, {
+			exposureQueryOptions({
+				exposure,
+				query: buildExposureQuery(exposure, view, date, {
 					granularity: "day",
 					aggregationFunction: "avg",
 					field: "pm1_twa",
 				}),
 				userId: selectedUser.id,
 			}),
-			sensorQueryOptions({
-				sensor,
-				query: buildSensorQuery(sensor, view, date, {
+			exposureQueryOptions({
+				exposure,
+				query: buildExposureQuery(exposure, view, date, {
 					granularity: "day",
 					aggregationFunction: "avg",
 					field: "pm25_twa",
 				}),
 				userId: selectedUser.id,
 			}),
-			sensorQueryOptions({
-				sensor,
-				query: buildSensorQuery(sensor, view, date, {
+			exposureQueryOptions({
+				exposure,
+				query: buildExposureQuery(exposure, view, date, {
 					granularity: "day",
 					aggregationFunction: "avg",
 					field: "pm4_twa",
 				}),
 				userId: selectedUser.id,
 			}),
-			sensorQueryOptions({
-				sensor,
-				query: buildSensorQuery(sensor, view, date, {
+			exposureQueryOptions({
+				exposure,
+				query: buildExposureQuery(exposure, view, date, {
 					granularity: "day",
 					aggregationFunction: "avg",
 					field: "pm10_twa",
@@ -238,14 +238,14 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 				<TabsList>
 					{dustFields.map((field) => (
 						<TabsTrigger key={field} value={field}>
-							{t(($) => $.sensors.dustFields[field])}
+							{t(($) => $.exposures.dustFields[field])}
 						</TabsTrigger>
 					))}
 				</TabsList>
 			</Tabs>
 
 			{showDustStatistics && (
-				<SensorStatisticsSection
+				<ExposureStatisticsSection
 					isLoading={dataResult.isLoading}
 					isEmpty={dataResult.isError || !data?.length}
 					averageValue={averageValue}
@@ -258,12 +258,12 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 				/>
 			)}
 
-			<SensorChartCard
+			<ExposureChartCard
 				isLoading={dataResult.isLoading}
 				isError={dataResult.isError}
 				data={data}
 				selectedDate={date}
-				isSensor={true}
+				isExposure={true}
 			>
 				{view === "week" ? (
 					<WeekWidget
@@ -274,7 +274,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 				) : (
 					<DustExposureLineChartCard userId={selectedUser.id} />
 				)}
-			</SensorChartCard>
+			</ExposureChartCard>
 
 			<Card className="w-full">
 				<CardHeader>
@@ -287,17 +287,17 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 				<CardContent className="flex flex-row flex-wrap">
 					<ExposureSlider
 						className="flex-1"
-						label={t(($) => $.sensors.dustExposureLabels.pm1_twa)}
+						label={t(($) => $.exposures.dustExposureLabels.pm1_twa)}
 						value={avgPm1Twa}
-						sensor={sensor}
+						exposure={exposure}
 						unitLabel="ug"
 						dangerLevel={getDangerLevel(avgPm1Twa, dustPm1TwaThreshold.warning, dustPm1TwaThreshold.danger)}
 					/>
 					<ExposureSlider
 						className="flex-1"
-						label={t(($) => $.sensors.dustExposureLabels.pm25_twa)}
+						label={t(($) => $.exposures.dustExposureLabels.pm25_twa)}
 						value={avgPm25Twa}
-						sensor={sensor}
+						exposure={exposure}
 						unitLabel="ug"
 						dangerLevel={getDangerLevel(
 							avgPm25Twa,
@@ -307,17 +307,17 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 					/>
 					<ExposureSlider
 						className="flex-1"
-						label={t(($) => $.sensors.dustExposureLabels.pm4_twa)}
+						label={t(($) => $.exposures.dustExposureLabels.pm4_twa)}
 						value={avgPm4Twa}
-						sensor={sensor}
+						exposure={exposure}
 						unitLabel="ug"
 						dangerLevel={getDangerLevel(avgPm4Twa, dustPm4TwaThreshold.warning, dustPm4TwaThreshold.danger)}
 					/>
 					<ExposureSlider
 						className="flex-1"
-						label={t(($) => $.sensors.dustExposureLabels.pm10_twa)}
+						label={t(($) => $.exposures.dustExposureLabels.pm10_twa)}
 						value={avgPm10Twa}
-						sensor={sensor}
+						exposure={exposure}
 						unitLabel="ug"
 						dangerLevel={getDangerLevel(
 							avgPm10Twa,
@@ -337,14 +337,14 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 	const { view } = useView();
 	const { date } = useDate();
 	const formatDate = useFormatDate();
-	const sensor: Sensor = "vibration";
-	const vibrationThreshold = getThreshold(sensor);
+	const exposure: Exposure = "vibration";
+	const vibrationThreshold = getThreshold(exposure);
 
-	const query = buildSensorQuery(sensor, view, date);
+	const query = buildExposureQuery(exposure, view, date);
 
 	const { data: overviewResponse } = useQuery(
-		sensorOverviewQueryOptions({
-			query: buildSensorOverviewQuery([sensor], view, date),
+		exposureOverviewQueryOptions({
+			query: buildExposureOverviewQuery([exposure], view, date),
 			userId: selectedUser.id,
 		}),
 	);
@@ -354,8 +354,8 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 		isLoading,
 		isError,
 	} = useQuery(
-		sensorQueryOptions({
-			sensor,
+		exposureQueryOptions({
+			exposure,
 			query,
 			userId: selectedUser.id,
 		}),
@@ -385,7 +385,7 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 	return (
 		<div className="flex flex-col gap-4">
 			{showVibrationStatistics && (
-				<SensorStatisticsSection
+				<ExposureStatisticsSection
 					isLoading={isLoading}
 					isEmpty={isError || !data?.length}
 					averageValue={averageValue}
@@ -398,7 +398,7 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 				/>
 			)}
 
-			<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={date} isSensor={true}>
+			<ExposureChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={date} isExposure={true}>
 				{view === "week" ? (
 					<WeekWidget
 						dayStartHour={minHour}
@@ -408,7 +408,7 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 				) : (
 					<VibrationExposureLineChartCard userId={selectedUser.id} />
 				)}
-			</SensorChartCard>
+			</ExposureChartCard>
 			{showTrendLineChart && <VibrationTrendLineChartCard userId={selectedUser.id} />}
 		</div>
 	);
@@ -419,25 +419,25 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 	const { date } = useDate();
 	const { t } = useTranslation();
 	const formatDate = useFormatDate();
-	const sensor: Sensor = "noise";
+	const exposure: Exposure = "noise";
 	const parseAsAggregation = parseAsStringLiteral(Aggregations);
 	const [aggregation, setAggregation] = useQueryState<Aggregation>(
 		"aggregation",
 		parseAsAggregation.withDefault("average"),
 	);
 	const usePeakAggregation = aggregation === "peak";
-	const noiseThreshold = getThreshold(sensor);
+	const noiseThreshold = getThreshold(exposure);
 	const noiseDangerThreshold = usePeakAggregation
 		? (noiseThreshold.peakDanger ?? noiseThreshold.danger)
 		: noiseThreshold.danger;
 
-	const query = buildSensorQuery(sensor, view, date, {
+	const query = buildExposureQuery(exposure, view, date, {
 		usePeakAggregation,
 	});
 
 	const { data: overviewResponse } = useQuery(
-		sensorOverviewQueryOptions({
-			query: buildSensorOverviewQuery([sensor], view, date),
+		exposureOverviewQueryOptions({
+			query: buildExposureOverviewQuery([exposure], view, date),
 			userId: selectedUser.id,
 		}),
 	);
@@ -447,8 +447,8 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 		isLoading,
 		isError,
 	} = useQuery(
-		sensorQueryOptions({
-			sensor,
+		exposureQueryOptions({
+			exposure,
 			query,
 			userId: selectedUser.id,
 		}),
@@ -491,7 +491,7 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 				</TabsList>
 			</Tabs>
 			{showNoiseStatistics && (
-				<SensorStatisticsSection
+				<ExposureStatisticsSection
 					isLoading={isLoading}
 					isEmpty={isError || !data?.length}
 					averageValue={averageValue}
@@ -503,7 +503,7 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 					formatTime={(time) => formatDate(time, "HH:mm")}
 				/>
 			)}
-			<SensorChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={date} isSensor={true}>
+			<ExposureChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={date} isExposure={true}>
 				{view === "week" ? (
 					<WeekWidget
 						dayStartHour={minHour}
@@ -513,34 +513,34 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 				) : (
 					<NoiseExposureLineChartCard userId={selectedUser.id} />
 				)}
-			</SensorChartCard>
+			</ExposureChartCard>
 			{showTrendLineChart && <NoiseTrendLineChartCard userId={selectedUser.id} />}
 		</div>
 	);
 }
 
-function getDisplayedNoiseValue(point: SensorDto, usePeakAggregation: boolean) {
+function getDisplayedNoiseValue(point: ExposureDto, usePeakAggregation: boolean) {
 	return usePeakAggregation && point.peakValue != null ? point.peakValue : point.value;
 }
 
-function SensorChartCard({
+function ExposureChartCard({
 	isLoading,
 	isError,
 	data,
-	isSensor,
+	isExposure,
 	selectedDate,
 	children,
 }: {
 	isLoading: boolean;
 	isError: boolean;
-	data: Array<SensorDto> | Array<SensorOverviewBucketDto> | undefined;
-	isSensor?: boolean;
+	data: Array<ExposureDto> | Array<ExposureOverviewBucketDto> | undefined;
+	isExposure?: boolean;
 	selectedDate: TZDate;
 	children: ReactNode;
 }) {
 	const { t, i18n } = useTranslation();
 
-	if (isLoading && isSensor) {
+	if (isLoading && isExposure) {
 		return <ExposureLineChartCardSkeleton />;
 	}
 
@@ -580,7 +580,7 @@ function formatChartDate(selectedDate: TZDate, locale: string) {
 	});
 }
 
-function getAvgValue(data: Array<SensorDto>): number {
+function getAvgValue(data: Array<ExposureDto>): number {
 	if (data.length === 0) {
 		return 0;
 	}

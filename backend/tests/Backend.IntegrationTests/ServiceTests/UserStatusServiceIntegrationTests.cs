@@ -163,7 +163,7 @@ public sealed class UserStatusServiceIntegrationTests(PostgresTestDbFixture fixt
 	}
 
 	[Fact]
-	public async Task GetStatusForUsersInRange_UserWithoutMeasurements_ReturnsSafeWithNullSensors()
+	public async Task GetStatusForUsersInRange_UserWithoutMeasurements_ReturnsSafeWithNullExposures()
 	{
 		await using var context = Fixture.CreateDbContext();
 

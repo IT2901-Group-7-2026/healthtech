@@ -4,33 +4,33 @@ using Backend.Records;
 
 namespace Backend.Utils;
 
-public class SensorUtils
+public class ExposureUtils
 {
-	public static string GetMaterializedViewName(SensorType sensorType, TimeGranularity granularity)
+	public static string GetMaterializedViewName(ExposureType exposureType, TimeGranularity granularity)
 	{
-		var sensorTypeLower = sensorType.ToString().ToLower();
+		var exposureTypeLower = exposureType.ToString().ToLower();
 
-		var sensorType_split = sensorTypeLower + "_data";
+		var exposureType_split = exposureTypeLower + "_data";
 
 		return granularity switch
 		{
-			TimeGranularity.Minute => sensorType_split + "_minutely",
-			TimeGranularity.Hour => sensorType_split + "_hourly",
-			TimeGranularity.Day => sensorType_split + "_daily",
+			TimeGranularity.Minute => exposureType_split + "_minutely",
+			TimeGranularity.Hour => exposureType_split + "_hourly",
+			TimeGranularity.Day => exposureType_split + "_daily",
 			_ => throw new ArgumentException($"Unsupported scope: {granularity}"),
 		};
 	}
 
 	public static string GetAggregateColumnName(
 		AggregationFunction function,
-		SensorType sensorType,
+		ExposureType exposureType,
 		Field? field
 	)
 	{
-		var sensorTypeLower = sensorType.ToString().ToLower();
+		var exposureTypeLower = exposureType.ToString().ToLower();
 
 		// Noise uses laeq for average and lcpk for max
-		if (sensorType == SensorType.Noise)
+		if (exposureType == ExposureType.Noise)
 		{
 			if (function == AggregationFunction.Avg)
 			{
@@ -44,10 +44,10 @@ public class SensorUtils
 
 		var aggregateColumnName = function switch
 		{
-			AggregationFunction.Avg => "avg_" + sensorTypeLower,
-			AggregationFunction.Sum => "sum_" + sensorTypeLower,
-			AggregationFunction.Min => "min_" + sensorTypeLower,
-			AggregationFunction.Max => "max_" + sensorTypeLower,
+			AggregationFunction.Avg => "avg_" + exposureTypeLower,
+			AggregationFunction.Sum => "sum_" + exposureTypeLower,
+			AggregationFunction.Min => "min_" + exposureTypeLower,
+			AggregationFunction.Max => "max_" + exposureTypeLower,
 			AggregationFunction.Count => "sample_count",
 			_ => throw new ArgumentException($"Unsupported aggregation type: {function}"),
 		};
@@ -57,7 +57,7 @@ public class SensorUtils
 			aggregateColumnName += "_" + field.Value.ToString().ToLower();
 		}
 
-		if (sensorType == SensorType.Noise)
+		if (exposureType == ExposureType.Noise)
 		{
 			if (function == AggregationFunction.Max)
 			{
@@ -72,19 +72,19 @@ public class SensorUtils
 		return aggregateColumnName;
 	}
 
-	public static List<RawSensorData> CumulateVibrationSumValues(
-		SensorType sensor,
+	public static List<RawExposureData> CumulateVibrationSumValues(
+		ExposureType exposure,
 		AggregationFunction function,
-		List<RawSensorData> rawData
+		List<RawExposureData> rawData
 	)
 	{
 		// Only summed vibration data is cumulative
-		if (sensor != SensorType.Vibration || function != AggregationFunction.Sum)
+		if (exposure != ExposureType.Vibration || function != AggregationFunction.Sum)
 		{
 			return rawData;
 		}
 
-		List<RawSensorData> result = [];
+		List<RawExposureData> result = [];
 
 		var sortedData = rawData.OrderBy(data => data.Time).ToList();
 		double cumulativeValue = 0;
@@ -100,7 +100,7 @@ public class SensorUtils
 
 			cumulativeValue += data.Value;
 			result.Add(
-				new RawSensorData(
+				new RawExposureData(
 					data.Time,
 					cumulativeValue,
 					data.AvgValue,

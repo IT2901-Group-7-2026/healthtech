@@ -3,25 +3,25 @@ import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
 import { ExposureLineChartCardSkeleton } from "@/features/exposure-line-chart-card/base-exposure-line-chart-card";
 import { DustExposureLineChartCard } from "@/features/exposure-line-chart-card/dust-exposure-line-chart-card";
-import { SensorGraphEmptyState, SensorStatisticsSection } from "@/features/statistic-card";
+import { ExposureGraphEmptyState, ExposureStatisticsSection } from "@/features/statistic-card";
 import { getMaxPointByValue } from "@/features/statistic-card-utils";
 import { DustTrendLineChartCard } from "@/features/trend-line-chart-card/dust-trend-line-chart-card";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useFormatDate } from "@/hooks/use-format-date";
-import { sensorQueryOptions } from "@/lib/api";
-import { buildSensorQuery } from "@/lib/sensor-query-utils";
+import { exposureQueryOptions } from "@/lib/api";
+import { buildExposureQuery } from "@/lib/exposure-query-utils";
 import {
 	type DustField,
 	defaultDustField,
 	dustFields,
 	parseAsDustField,
-	parseAsSensorUnit,
-	type Sensor,
-} from "@/lib/sensors";
+	parseAsExposureUnit,
+	type Exposure,
+} from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
-import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
+import { mapExposureDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
@@ -39,23 +39,23 @@ export default function Dust() {
 		"dustField",
 		parseAsDustField.withDefault(defaultDustField),
 	);
-	const [dustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
+	const [dustUnit] = useQueryState("unit", parseAsExposureUnit.withDefault("ug"));
 
-	const sensor: Sensor = "dust";
+	const exposure: Exposure = "dust";
 
-	const query = buildSensorQuery(sensor, view, date, {
+	const query = buildExposureQuery(exposure, view, date, {
 		field: dustField,
 	});
 
-	const dustThreshold = getThreshold(sensor, query.field);
+	const dustThreshold = getThreshold(exposure, query.field);
 
 	const {
 		data: response,
 		isLoading,
 		isError,
 	} = useQuery(
-		sensorQueryOptions({
-			sensor,
+		exposureQueryOptions({
+			exposure,
 			query,
 			userId: user.id,
 		}),
@@ -69,7 +69,7 @@ export default function Dust() {
 	const averageValue =
 		data && data.length > 0 ? data.reduce((sum, point) => sum + point.value, 0) / data.length : null;
 
-	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, false);
+	const calendarData = mapExposureDataToTimeBucketStatuses(data ?? [], exposure, false);
 	const { minHour, maxHour } = getHourDomain(hourDomain, data?.map((d) => d.time) ?? [], view);
 
 	const showTrendLineChart = view === "month" || view === "week";
@@ -82,14 +82,14 @@ export default function Dust() {
 					<TabsList>
 						{dustFields.map((field) => (
 							<TabsTrigger key={field} value={field}>
-								{t(($) => $.sensors.dustFields[field])}
+								{t(($) => $.exposures.dustFields[field])}
 							</TabsTrigger>
 						))}
 					</TabsList>
 				</Tabs>
 
 				{showDustStatistics && (
-					<SensorStatisticsSection
+					<ExposureStatisticsSection
 						isLoading={isLoading}
 						isEmpty={isError || data?.length === 0}
 						averageValue={averageValue}
@@ -105,13 +105,13 @@ export default function Dust() {
 				{isLoading ? (
 					<ExposureLineChartCardSkeleton />
 				) : isError ? (
-					<SensorGraphEmptyState date={date} locale={locale} />
+					<ExposureGraphEmptyState date={date} locale={locale} />
 				) : view === "month" ? (
 					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
 					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
 				) : !data || data.length === 0 ? (
-					<SensorGraphEmptyState date={date} locale={locale} />
+					<ExposureGraphEmptyState date={date} locale={locale} />
 				) : (
 					<DustExposureLineChartCard />
 				)}

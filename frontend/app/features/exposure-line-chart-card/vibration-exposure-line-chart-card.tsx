@@ -8,17 +8,17 @@ import {
 import { useUser } from "@/features/user/user-context";
 import { parseAsView } from "@/features/views/utils";
 import { useExportPDF } from "@/hooks/use-export-pdf";
-import { sensorQueryOptions } from "@/lib/api";
-import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import type { Sensor } from "@/lib/sensors";
+import { exposureQueryOptions } from "@/lib/api";
+import { buildExposureQuery } from "@/lib/exposure-query-utils";
+import type { Exposure } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
-import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
+import { computeYAxisRange, downsampleExposureData, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { setHours } from "date-fns";
 import { useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
-import { SensorGraphEmptyState } from "../statistic-card";
+import { ExposureGraphEmptyState } from "../statistic-card";
 
 interface Props {
 	userId?: string;
@@ -33,14 +33,14 @@ export default function VibrationExposureLineChartCard({ userId }: Props) {
 	const { exportToPDF } = useExportPDF();
 	const chartContainerId = useId();
 
-	const sensor: Sensor = "vibration";
-	const vibrationThreshold = getThreshold(sensor);
+	const exposure: Exposure = "vibration";
+	const vibrationThreshold = getThreshold(exposure);
 
-	const query = buildSensorQuery(sensor, view, date);
+	const query = buildExposureQuery(exposure, view, date);
 
 	const { data: response, isLoading } = useQuery(
-		sensorQueryOptions({
-			sensor,
+		exposureQueryOptions({
+			exposure,
 			query,
 			userId: userId ?? user.id,
 		}),
@@ -71,19 +71,19 @@ export default function VibrationExposureLineChartCard({ userId }: Props) {
 	}
 
 	if (!data || data.length === 0) {
-		return <SensorGraphEmptyState date={date} locale={i18n.language} />;
+		return <ExposureGraphEmptyState date={date} locale={i18n.language} />;
 	}
 
 	return (
 		<BaseExposureLineChartCard
 			minTime={minTime}
 			maxTime={maxTime}
-			chartData={downsampleSensorData(sensor, data ?? [])}
+			chartData={downsampleExposureData(exposure, data ?? [])}
 			unit="points"
 			maxY={maxY}
 			minY={minY}
 			lineType="monotone"
-			sensor={sensor}
+			exposure={exposure}
 			id={chartContainerId}
 			headerRight={
 				<ExportButton
