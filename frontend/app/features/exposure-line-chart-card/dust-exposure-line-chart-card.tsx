@@ -10,24 +10,24 @@ import { getMaxPointByValue } from "@/features/statistic-card-utils";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { useExportPDF } from "@/hooks/use-export-pdf";
-import { sensorQueryOptions } from "@/lib/api";
-import { buildSensorQuery } from "@/lib/sensor-query-utils";
+import { exposureQueryOptions } from "@/lib/api";
+import { buildExposureQuery } from "@/lib/exposure-query-utils";
 import {
 	type DustField,
 	defaultDustField,
+	type Exposure,
+	type ExposureUnit,
 	parseAsDustField,
-	parseAsSensorUnit,
-	type Sensor,
-	type SensorUnit,
-} from "@/lib/sensors";
+	parseAsExposureUnit,
+} from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
-import { computeYAxisRange, DUST_Y_AXIS_STEP, downsampleSensorData, getHourDomain } from "@/lib/utils";
+import { computeYAxisRange, DUST_Y_AXIS_STEP, downsampleExposureData, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { setHours } from "date-fns";
 import { useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
-import { SensorGraphEmptyState } from "../statistic-card";
+import { ExposureGraphEmptyState } from "../statistic-card";
 
 interface Props {
 	userId?: string;
@@ -43,19 +43,19 @@ export function DustExposureLineChartCard({ userId }: Props) {
 	const chartContainerId = useId();
 
 	const [dustField] = useQueryState<DustField>("dustField", parseAsDustField.withDefault(defaultDustField));
-	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsSensorUnit.withDefault("ug"));
+	const [dustUnit, setDustUnit] = useQueryState("unit", parseAsExposureUnit.withDefault("ug"));
 
-	const sensor: Sensor = "dust";
+	const exposure: Exposure = "dust";
 
-	const query = buildSensorQuery(sensor, view, date, {
+	const query = buildExposureQuery(exposure, view, date, {
 		field: dustField,
 	});
 
-	const dustThreshold = getThreshold(sensor, query.field);
+	const dustThreshold = getThreshold(exposure, query.field);
 
 	const { data: response, isLoading } = useQuery(
-		sensorQueryOptions({
-			sensor,
+		exposureQueryOptions({
+			exposure,
 			query,
 			userId: userId ?? user.id,
 		}),
@@ -87,26 +87,26 @@ export function DustExposureLineChartCard({ userId }: Props) {
 	}
 
 	if (!data || data.length === 0) {
-		return <SensorGraphEmptyState date={date} locale={i18n.language} />;
+		return <ExposureGraphEmptyState date={date} locale={i18n.language} />;
 	}
 
 	return (
 		<BaseExposureLineChartCard
 			minTime={minTime}
 			maxTime={maxTime}
-			chartData={downsampleSensorData(sensor, data ?? [])}
+			chartData={downsampleExposureData(exposure, data ?? [])}
 			unit={dustUnit}
 			id={chartContainerId}
 			maxY={maxY}
 			minY={minY}
-			sensor={sensor}
+			exposure={exposure}
 			dustField={query.field}
 			headerRight={
 				<div className="flex items-center gap-2">
-					<Tabs value={dustUnit} onValueChange={(v) => setDustUnit(v as SensorUnit)}>
+					<Tabs value={dustUnit} onValueChange={(v) => setDustUnit(v as ExposureUnit)}>
 						<TabsList>
-							<TabsTrigger value="ug">{t(($) => $.sensors.units.ug)}</TabsTrigger>
-							<TabsTrigger value="mg">{t(($) => $.sensors.units.mg)}</TabsTrigger>
+							<TabsTrigger value="ug">{t(($) => $.exposures.units.ug)}</TabsTrigger>
+							<TabsTrigger value="mg">{t(($) => $.exposures.units.mg)}</TabsTrigger>
 						</TabsList>
 					</Tabs>
 					<ExportButton

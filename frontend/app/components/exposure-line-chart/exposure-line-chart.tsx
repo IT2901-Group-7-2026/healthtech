@@ -4,10 +4,10 @@ import { useFormatDate } from "@/hooks/use-format-date";
 import { getLocale } from "@/i18n/locale";
 import { DangerLevels } from "@/lib/danger-levels";
 import { now as getNow, toTZDate } from "@/lib/date";
-import type { SensorDto, SensorTypeField } from "@/lib/dto";
-import type { Sensor, SensorUnit } from "@/lib/sensors";
+import type { ExposureDto, ExposureTypeField } from "@/lib/dto";
+import type { Exposure, ExposureUnit } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
-import { buildYAxisTicks, cn, DUST_Y_AXIS_STEP, formatSensorValue } from "@/lib/utils";
+import { buildYAxisTicks, cn, DUST_Y_AXIS_STEP, formatExposureValue } from "@/lib/utils";
 import { TZDate } from "@date-fns/tz";
 import { addMinutes, formatDistanceToNowStrict } from "date-fns";
 import { type PropsWithChildren, useId } from "react";
@@ -32,14 +32,14 @@ const chartConfig = {
 type LineChartVariant = "default" | "compact";
 
 export interface ExposureLineChartProps extends PropsWithChildren {
-	chartData: Array<SensorDto>;
+	chartData: Array<ExposureDto>;
 	maxY: number;
 	minY: number;
-	unit: SensorUnit;
+	unit: ExposureUnit;
 	lineType?: CurveType;
-	sensor: Sensor;
+	exposure: Exposure;
 	usePeakData?: boolean;
-	dustField?: SensorTypeField;
+	dustField?: ExposureTypeField;
 
 	chartContainerClassName?: string;
 	showLegend?: boolean;
@@ -57,7 +57,7 @@ export function ExposureLineChart({
 	unit,
 	lineType = "linear",
 	children,
-	sensor,
+	exposure,
 	usePeakData = false,
 	dustField,
 	minTime,
@@ -71,11 +71,11 @@ export function ExposureLineChart({
 	const id = useId();
 	const formatDate = useFormatDate();
 
-	const { warning, danger, peakDanger } = getThreshold(sensor, dustField);
+	const { warning, danger, peakDanger } = getThreshold(exposure, dustField);
 	const dangerThreshold = usePeakData && peakDanger ? peakDanger : danger;
-	const yTicks = sensor === "dust" ? buildYAxisTicks(minY, maxY, DUST_Y_AXIS_STEP) : undefined;
-	const defaultFractionDigits = sensor === "dust" ? 1 : 0;
-	const fractionDigitsPerUnit = sensor === "dust" ? { mg: 4 } : { mg: 3 };
+	const yTicks = exposure === "dust" ? buildYAxisTicks(minY, maxY, DUST_Y_AXIS_STEP) : undefined;
+	const defaultFractionDigits = exposure === "dust" ? 1 : 0;
+	const fractionDigitsPerUnit = exposure === "dust" ? { mg: 4 } : { mg: 3 };
 
 	const transformedData = chartData.map((item) => ({
 		time: item.time.getTime(),
@@ -148,7 +148,7 @@ export function ExposureLineChart({
 						compact
 							? undefined
 							: {
-									value: t(($) => $.sensors.units[unit]),
+									value: t(($) => $.exposures.units[unit]),
 									position: "inside",
 									dx: -32,
 									angle: -90,
@@ -157,7 +157,7 @@ export function ExposureLineChart({
 								}
 					}
 					tickFormatter={(value) =>
-						formatSensorValue(value, unit as SensorUnit, defaultFractionDigits, fractionDigitsPerUnit)
+						formatExposureValue(value, unit as ExposureUnit, defaultFractionDigits, fractionDigitsPerUnit)
 					}
 				/>
 				<ExposureTooltip unit={unit} />

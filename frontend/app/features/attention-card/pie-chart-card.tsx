@@ -1,7 +1,7 @@
-import { SensorIcon } from "@/components/sensor-icon";
+import { ExposureIcon } from "@/components/exposure-icon";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { type UserStatusData, UserStatusPieChart } from "@/components/users-status-pie-chart";
-import type { Sensor } from "@/features/sensor-picker/sensors";
+import type { Exposure } from "@/features/exposure-picker/exposures";
 import {
 	DANGER_LEVEL_SEVERITY,
 	DangerLevelSchema,
@@ -18,10 +18,10 @@ export type PieChartCardProps = {
 	to: string;
 	label: string;
 	data: UserStatusData;
-	sensorType: Sensor;
+	exposureType: Exposure;
 };
 
-export const PieChartCard = ({ className, to, label, data, sensorType }: PieChartCardProps) => {
+export const PieChartCard = ({ className, to, label, data, exposureType }: PieChartCardProps) => {
 	const { t } = useTranslation();
 
 	if (data.danger.value === 0 && data.warning.value === 0 && data.safe.value === 0) {
@@ -29,7 +29,7 @@ export const PieChartCard = ({ className, to, label, data, sensorType }: PieChar
 			<Card hoverable={true} className={cn("h-full gap-4", className)}>
 				<CardHeader className="text-sm">
 					<h2 className="flex items-center gap-3 text-sm uppercase tracking-wide">
-						<SensorIcon type={sensorType} size="sm" />
+						<ExposureIcon type={exposureType} size="sm" />
 						{label}
 					</h2>
 				</CardHeader>
@@ -48,7 +48,7 @@ export const PieChartCard = ({ className, to, label, data, sensorType }: PieChar
 			<Card hoverable={true} className={cn("h-full gap-4", className)}>
 				<CardHeader className="text-sm">
 					<h2 className="flex items-center gap-3 text-sm uppercase tracking-wide">
-						<SensorIcon type={sensorType} size="sm" />
+						<ExposureIcon type={exposureType} size="sm" />
 						{label}
 					</h2>
 				</CardHeader>

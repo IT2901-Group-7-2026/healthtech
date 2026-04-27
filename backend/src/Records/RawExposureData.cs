@@ -1,6 +1,6 @@
 namespace Backend.Records;
 
-public record RawSensorData(
+public record RawExposureData(
 	DateTime Time,
 	double Value,
 	double AvgValue,

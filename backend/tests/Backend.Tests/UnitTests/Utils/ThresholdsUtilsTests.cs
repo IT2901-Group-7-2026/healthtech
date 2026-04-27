@@ -11,15 +11,15 @@ namespace Backend.Tests.UnitTests.Utils;
 public class ThresholdsUtilsTests
 {
 	/// <summary>
-	/// Verifies that calculating danger levels returns an empty result when no raw sensor data is provided.
+	/// Verifies that calculating danger levels returns an empty result when no raw exposure data is provided.
 	/// </summary>
 	[Fact]
 	public void CalculateDangerLevels_NoData_ReturnsEmpty()
 	{
-		var sensorType = SensorType.Noise;
-		var rawSensorData = new List<RawSensorData>();
+		var exposureType = ExposureType.Noise;
+		var rawExposureData = new List<RawExposureData>();
 
-		var result = ThresholdUtils.CalculateDangerLevels(sensorType, rawSensorData);
+		var result = ThresholdUtils.CalculateDangerLevels(exposureType, rawExposureData);
 
 		Assert.Empty(result);
 	}
@@ -30,9 +30,9 @@ public class ThresholdsUtilsTests
 	[Fact]
 	public void CalculateDangerLevels_SingleNoiseDataPoint_ReturnsExpectedLevels()
 	{
-		var sensorType = SensorType.Noise;
+		var exposureType = ExposureType.Noise;
 		var threshold = Threshold.Noise;
-		var rawSensorData = new List<RawSensorData>
+		var rawExposureData = new List<RawExposureData>
 		{
 			new(
 				DateTime.UtcNow,
@@ -43,7 +43,7 @@ public class ThresholdsUtilsTests
 				Guid.NewGuid()
 			),
 		};
-		var result = ThresholdUtils.CalculateDangerLevels(sensorType, rawSensorData).ToList();
+		var result = ThresholdUtils.CalculateDangerLevels(exposureType, rawExposureData).ToList();
 
 		Assert.Single(result);
 		var (_, dangerLevels) = result[0];
@@ -58,7 +58,7 @@ public class ThresholdsUtilsTests
 	public void CalculateDangerLevels_SingleNoiseDataPoint_WithPeakBreach_ReturnsPeakDanger()
 	{
 		var threshold = Threshold.Noise;
-		var rawSensorData = new List<RawSensorData>
+		var rawExposureData = new List<RawExposureData>
 		{
 			new(
 				DateTime.UtcNow,
@@ -70,7 +70,9 @@ public class ThresholdsUtilsTests
 			),
 		};
 
-		var result = ThresholdUtils.CalculateDangerLevels(SensorType.Noise, rawSensorData).ToList();
+		var result = ThresholdUtils
+			.CalculateDangerLevels(ExposureType.Noise, rawExposureData)
+			.ToList();
 
 		Assert.Single(result);
 		var (_, dangerLevels) = result[0];
@@ -85,12 +87,14 @@ public class ThresholdsUtilsTests
 	public void CalculateDangerLevels_Dust_UsesAverageValueAndHasNoPeakLevel()
 	{
 		var threshold = Threshold.Dust;
-		var rawSensorData = new List<RawSensorData>
+		var rawExposureData = new List<RawExposureData>
 		{
 			new(DateTime.UtcNow, 0, threshold.Danger + 1, 0, 0, Guid.NewGuid()),
 		};
 
-		var result = ThresholdUtils.CalculateDangerLevels(SensorType.Dust, rawSensorData).ToList();
+		var result = ThresholdUtils
+			.CalculateDangerLevels(ExposureType.Dust, rawExposureData)
+			.ToList();
 
 		Assert.Single(result);
 		var (_, dangerLevels) = result[0];
@@ -110,7 +114,7 @@ public class ThresholdsUtilsTests
 		var dayOneSecond = new DateTime(2026, 4, 10, 9, 0, 0, DateTimeKind.Utc);
 		var dayTwoFirst = new DateTime(2026, 4, 11, 8, 0, 0, DateTimeKind.Utc);
 
-		var rawSensorData = new List<RawSensorData>
+		var rawExposureData = new List<RawExposureData>
 		{
 			new(dayOneSecond, 0, 0, 0, threshold.Warning - 30, userId),
 			new(dayTwoFirst, 0, 0, 0, threshold.Warning - 40, userId),
@@ -118,7 +122,7 @@ public class ThresholdsUtilsTests
 		};
 
 		var result = ThresholdUtils
-			.CalculateDangerLevels(SensorType.Vibration, rawSensorData)
+			.CalculateDangerLevels(ExposureType.Vibration, rawExposureData)
 			.ToList();
 
 		Assert.Equal(3, result.Count);
@@ -146,7 +150,7 @@ public class ThresholdsUtilsTests
 	{
 		var threshold = Threshold.Noise;
 		var result = ThresholdUtils.CalculateDangerLevel(
-			SensorType.Noise,
+			ExposureType.Noise,
 			value: threshold.Warning - 1,
 			maxValue: threshold.PeakDanger!.Value - 1
 		);
@@ -163,7 +167,7 @@ public class ThresholdsUtilsTests
 	{
 		var threshold = Threshold.Noise;
 		var result = ThresholdUtils.CalculateDangerLevel(
-			SensorType.Noise,
+			ExposureType.Noise,
 			value: threshold.Warning,
 			maxValue: threshold.Warning
 		);
@@ -180,7 +184,7 @@ public class ThresholdsUtilsTests
 	{
 		var threshold = Threshold.Noise;
 		var result = ThresholdUtils.CalculateDangerLevel(
-			SensorType.Noise,
+			ExposureType.Noise,
 			value: threshold.Danger,
 			maxValue: threshold.PeakDanger!.Value
 		);
@@ -197,21 +201,21 @@ public class ThresholdsUtilsTests
 	{
 		var threshold = Threshold.DustPm10Twa;
 		var safeResult = ThresholdUtils.CalculateDangerLevel(
-			SensorType.Dust,
+			ExposureType.Dust,
 			value: threshold.Warning - 0.1,
 			maxValue: null,
 			field: Field.Pm10_twa
 		);
 
 		var warningResult = ThresholdUtils.CalculateDangerLevel(
-			SensorType.Dust,
+			ExposureType.Dust,
 			value: threshold.Warning,
 			maxValue: null,
 			field: Field.Pm10_twa
 		);
 
 		var dangerResult = ThresholdUtils.CalculateDangerLevel(
-			SensorType.Dust,
+			ExposureType.Dust,
 			value: threshold.Danger,
 			maxValue: null,
 			field: Field.Pm10_twa
@@ -233,21 +237,21 @@ public class ThresholdsUtilsTests
 	{
 		var threshold = Threshold.DustPm4Twa;
 		var safeResult = ThresholdUtils.CalculateDangerLevel(
-			SensorType.Dust,
+			ExposureType.Dust,
 			value: threshold.Warning - 0.1,
 			maxValue: null,
 			field: Field.Pm4_twa
 		);
 
 		var warningResult = ThresholdUtils.CalculateDangerLevel(
-			SensorType.Dust,
+			ExposureType.Dust,
 			value: threshold.Warning,
 			maxValue: null,
 			field: Field.Pm4_twa
 		);
 
 		var dangerResult = ThresholdUtils.CalculateDangerLevel(
-			SensorType.Dust,
+			ExposureType.Dust,
 			value: threshold.Danger,
 			maxValue: null,
 			field: Field.Pm4_twa

@@ -1,11 +1,11 @@
-import type { SensorDto } from "@/lib/dto";
+import type { ExposureDto } from "@/lib/dto";
 import { startOfWeek } from "date-fns";
 
 /**
  * Returns one datapoint for each week, with the maximum value of that week
  */
-export function toWeeklyMax(data: Array<SensorDto>): Array<SensorDto> {
-	const maxByWeek = new Map<string, SensorDto>();
+export function toWeeklyMax(data: Array<ExposureDto>): Array<ExposureDto> {
+	const maxByWeek = new Map<string, ExposureDto>();
 
 	for (const item of data) {
 		const weekStart = startOfWeek(item.time, { weekStartsOn: 1 });

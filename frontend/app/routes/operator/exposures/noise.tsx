@@ -3,19 +3,19 @@ import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
 import { ExposureLineChartCardSkeleton } from "@/features/exposure-line-chart-card/base-exposure-line-chart-card";
 import NoiseExposureLineChartCard from "@/features/exposure-line-chart-card/noise-exposure-line-chart-card";
-import { SensorGraphEmptyState, SensorStatisticsSection } from "@/features/statistic-card";
+import { ExposureGraphEmptyState, ExposureStatisticsSection } from "@/features/statistic-card";
 import { getMaxPointByValue } from "@/features/statistic-card-utils";
 import { NoiseTrendLineChartCard } from "@/features/trend-line-chart-card/noise-trend-line-chart-card";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useFormatDate } from "@/hooks/use-format-date";
-import { sensorQueryOptions } from "@/lib/api";
-import { type Aggregation, Aggregations, type SensorDto } from "@/lib/dto";
-import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import type { Sensor } from "@/lib/sensors";
+import { exposureQueryOptions } from "@/lib/api";
+import { type Aggregation, Aggregations, type ExposureDto } from "@/lib/dto";
+import { buildExposureQuery } from "@/lib/exposure-query-utils";
+import type { Exposure } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
-import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
+import { mapExposureDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
@@ -29,19 +29,19 @@ export default function Noise() {
 	const { date } = useDate();
 	const { user } = useUser();
 
-	const sensor: Sensor = "noise";
+	const exposure: Exposure = "noise";
 	const parseAsAggregation = parseAsStringLiteral(Aggregations);
 	const [aggregation, setAggregation] = useQueryState<Aggregation>(
 		"aggregation",
 		parseAsAggregation.withDefault("average"),
 	);
 	const usePeakAggregation = aggregation === "peak";
-	const noiseThreshold = getThreshold(sensor);
+	const noiseThreshold = getThreshold(exposure);
 	const noiseDangerThreshold = usePeakAggregation
 		? (noiseThreshold.peakDanger ?? noiseThreshold.danger)
 		: noiseThreshold.danger;
 
-	const query = buildSensorQuery(sensor, view, date, {
+	const query = buildExposureQuery(exposure, view, date, {
 		usePeakAggregation,
 	});
 
@@ -50,8 +50,8 @@ export default function Noise() {
 		isLoading,
 		isError,
 	} = useQuery(
-		sensorQueryOptions({
-			sensor,
+		exposureQueryOptions({
+			exposure,
 			query,
 			userId: user.id,
 		}),
@@ -84,7 +84,7 @@ export default function Noise() {
 		}).maxY;
 	}
 
-	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, usePeakAggregation);
+	const calendarData = mapExposureDataToTimeBucketStatuses(data ?? [], exposure, usePeakAggregation);
 
 	const showTrendLineChart = view === "month" || view === "week";
 	const showNoiseStatistics = view === "day";
@@ -100,7 +100,7 @@ export default function Noise() {
 				</Tabs>
 
 				{showNoiseStatistics && (
-					<SensorStatisticsSection
+					<ExposureStatisticsSection
 						isLoading={isLoading}
 						isEmpty={isError || !data?.length}
 						averageValue={averageValue}
@@ -116,13 +116,13 @@ export default function Noise() {
 				{isLoading ? (
 					<ExposureLineChartCardSkeleton />
 				) : isError ? (
-					<SensorGraphEmptyState date={date} locale={i18n.language} />
+					<ExposureGraphEmptyState date={date} locale={i18n.language} />
 				) : view === "month" ? (
 					<CalendarWidget selectedDay={date} data={calendarData} />
 				) : view === "week" ? (
 					<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
 				) : !data || data.length === 0 ? (
-					<SensorGraphEmptyState date={date} locale={i18n.language} />
+					<ExposureGraphEmptyState date={date} locale={i18n.language} />
 				) : (
 					<NoiseExposureLineChartCard />
 				)}
@@ -132,6 +132,6 @@ export default function Noise() {
 	);
 }
 
-function getDisplayedNoiseValue(point: SensorDto, usePeakAggregation: boolean) {
+function getDisplayedNoiseValue(point: ExposureDto, usePeakAggregation: boolean) {
 	return usePeakAggregation && point.peakValue != null ? point.peakValue : point.value;
 }

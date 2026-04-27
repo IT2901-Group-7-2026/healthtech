@@ -81,11 +81,11 @@ function getLinks(t: TranslateFn, role: User["role"] | null): Array<{ to: To; la
 			return [
 				{ to: href("/operator/live"), label: t(($) => $.layout.live) },
 				{ to: href("/operator"), label: t(($) => $.layout.overview) },
-				{ to: href("/operator/dust"), label: t(($) => $.sensors.dust) },
-				{ to: href("/operator/noise"), label: t(($) => $.sensors.noise) },
+				{ to: href("/operator/dust"), label: t(($) => $.exposures.dust) },
+				{ to: href("/operator/noise"), label: t(($) => $.exposures.noise) },
 				{
 					to: href("/operator/vibration"),
-					label: t(($) => $.sensors.vibration),
+					label: t(($) => $.exposures.vibration),
 				},
 			];
 		}

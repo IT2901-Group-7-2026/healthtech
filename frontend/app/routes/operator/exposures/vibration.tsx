@@ -2,18 +2,18 @@ import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
 import { ExposureLineChartCardSkeleton } from "@/features/exposure-line-chart-card/base-exposure-line-chart-card";
 import VibrationExposureLineChartCard from "@/features/exposure-line-chart-card/vibration-exposure-line-chart-card";
-import { SensorGraphEmptyState, SensorStatisticsSection } from "@/features/statistic-card";
+import { ExposureGraphEmptyState, ExposureStatisticsSection } from "@/features/statistic-card";
 import { getMaxPointByValue } from "@/features/statistic-card-utils";
 import { VibrationTrendLineChartCard } from "@/features/trend-line-chart-card/vibration-trend-line-chart-card";
 import { useUser } from "@/features/user/user-context";
 import { parseAsView } from "@/features/views/utils";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useFormatDate } from "@/hooks/use-format-date";
-import { sensorQueryOptions } from "@/lib/api";
-import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import type { Sensor } from "@/lib/sensors";
+import { exposureQueryOptions } from "@/lib/api";
+import { buildExposureQuery } from "@/lib/exposure-query-utils";
+import type { Exposure } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
-import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
+import { mapExposureDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { computeYAxisRange, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
@@ -27,18 +27,18 @@ export default function Vibration() {
 	const { date } = useDate();
 	const { user } = useUser();
 
-	const sensor: Sensor = "vibration";
-	const vibrationThreshold = getThreshold(sensor);
+	const exposure: Exposure = "vibration";
+	const vibrationThreshold = getThreshold(exposure);
 
-	const query = buildSensorQuery(sensor, view, date);
+	const query = buildExposureQuery(exposure, view, date);
 
 	const {
 		data: response,
 		isLoading,
 		isError,
 	} = useQuery(
-		sensorQueryOptions({
-			sensor,
+		exposureQueryOptions({
+			exposure,
 			query,
 			userId: user.id,
 		}),
@@ -61,7 +61,7 @@ export default function Vibration() {
 		maxY = computeYAxisRange(data ?? []).maxY;
 	}
 
-	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], "vibration", false);
+	const calendarData = mapExposureDataToTimeBucketStatuses(data ?? [], "vibration", false);
 
 	const showTrendLineChart = view === "month" || view === "week";
 	const showVibrationStatistics = view === "day";
@@ -71,7 +71,7 @@ export default function Vibration() {
 			<div className="flex h-full w-full flex-col-reverse gap-4 md:flex-row">
 				<div className="flex flex-1 flex-col gap-4">
 					{showVibrationStatistics && (
-						<SensorStatisticsSection
+						<ExposureStatisticsSection
 							isLoading={isLoading}
 							isEmpty={isError || !data?.length}
 							averageValue={null}
@@ -87,13 +87,13 @@ export default function Vibration() {
 					{isLoading ? (
 						<ExposureLineChartCardSkeleton />
 					) : isError ? (
-						<SensorGraphEmptyState date={date} locale={i18n.language} />
+						<ExposureGraphEmptyState date={date} locale={i18n.language} />
 					) : view === "month" ? (
 						<CalendarWidget selectedDay={date} data={calendarData} />
 					) : view === "week" ? (
 						<WeekWidget dayStartHour={minHour} dayEndHour={maxHour} data={calendarData} />
 					) : !data || data.length === 0 ? (
-						<SensorGraphEmptyState date={date} locale={i18n.language} />
+						<ExposureGraphEmptyState date={date} locale={i18n.language} />
 					) : (
 						<VibrationExposureLineChartCard />
 					)}

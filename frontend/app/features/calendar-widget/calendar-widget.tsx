@@ -12,12 +12,12 @@ import { isSameDay, startOfDay } from "date-fns";
 import type { CalendarDay, Modifiers } from "react-day-picker";
 import { useTranslation } from "react-i18next";
 import { useDate } from "../date-picker/use-date";
-import type { Sensor } from "../sensor-picker/sensors";
+import type { Exposure } from "../exposure-picker/exposures";
 import { useView } from "../views/use-view";
 
 type CalendarProps = {
 	selectedDay: TZDate;
-	exposureType?: Sensor;
+	exposureType?: Exposure;
 	data: Array<TimeBucketStatus>;
 	headerRight?: React.ReactNode;
 };

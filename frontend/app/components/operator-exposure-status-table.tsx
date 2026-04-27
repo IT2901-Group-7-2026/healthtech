@@ -2,17 +2,17 @@ import { ExposureBadge } from "@/components/exposure-badge";
 import { DataTable } from "@/components/ui/data-table";
 import { type DangerLevel, mapDangerLevelToLabel } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
-import type { Sensor } from "@/lib/sensors";
+import type { Exposure } from "@/lib/exposures";
 import type { ColumnDef } from "@tanstack/react-table";
 import { t } from "i18next";
 
-export interface SensorTableCellProps {
+export interface ExposureTableCellProps {
 	data: Array<UserWithStatusDto> | undefined;
 	setSelectedUserId: (userId: string) => void;
-	setSensor: (sensor: string) => void;
+	setExposure: (exposure: string) => void;
 }
 
-export function OperatorExposureStatusTable({ data, setSelectedUserId, setSensor }: SensorTableCellProps) {
+export function OperatorExposureStatusTable({ data, setSelectedUserId, setExposure }: ExposureTableCellProps) {
 	const columns: Array<ColumnDef<UserWithStatusDto>> = [
 		{
 			id: "name",
@@ -30,17 +30,17 @@ export function OperatorExposureStatusTable({ data, setSelectedUserId, setSensor
 		},
 		{
 			id: "dust",
-			header: t(($) => $.sensors.dust),
+			header: t(($) => $.exposures.dust),
 			cell: ({ row }) => {
 				const status = row.original.status.dust?.dangerLevel ?? "safe";
 
 				return (
-					<OperatorExposureStatusSensorCell
+					<OperatorExposureStatusExposureCell
 						status={status}
-						sensor="dust"
+						exposure="dust"
 						onClick={() => {
 							setSelectedUserId(row.original.id);
-							setSensor("dust");
+							setExposure("dust");
 						}}
 					/>
 				);
@@ -48,17 +48,17 @@ export function OperatorExposureStatusTable({ data, setSelectedUserId, setSensor
 		},
 		{
 			id: "noise",
-			header: t(($) => $.sensors.noise),
+			header: t(($) => $.exposures.noise),
 			cell: ({ row }) => {
 				const status = row.original.status.noise?.dangerLevel ?? "safe";
 
 				return (
-					<OperatorExposureStatusSensorCell
+					<OperatorExposureStatusExposureCell
 						status={status}
-						sensor="noise"
+						exposure="noise"
 						onClick={() => {
 							setSelectedUserId(row.original.id);
-							setSensor("noise");
+							setExposure("noise");
 						}}
 					/>
 				);
@@ -66,17 +66,17 @@ export function OperatorExposureStatusTable({ data, setSelectedUserId, setSensor
 		},
 		{
 			id: "vibration",
-			header: t(($) => $.sensors.vibration),
+			header: t(($) => $.exposures.vibration),
 			cell: ({ row }) => {
 				const status = row.original.status.vibration?.dangerLevel ?? "safe";
 
 				return (
-					<OperatorExposureStatusSensorCell
+					<OperatorExposureStatusExposureCell
 						status={status}
-						sensor="vibration"
+						exposure="vibration"
 						onClick={() => {
 							setSelectedUserId(row.original.id);
-							setSensor("vibration");
+							setExposure("vibration");
 						}}
 					/>
 				);
@@ -90,15 +90,15 @@ export function OperatorExposureStatusTable({ data, setSelectedUserId, setSensor
 interface OperatorExposureStatusCellProps {
 	onClick?: () => void;
 	status: DangerLevel;
-	sensor: Sensor;
+	exposure: Exposure;
 }
 
-function OperatorExposureStatusSensorCell({ onClick, status, sensor }: OperatorExposureStatusCellProps) {
+function OperatorExposureStatusExposureCell({ onClick, status, exposure }: OperatorExposureStatusCellProps) {
 	const label = mapDangerLevelToLabel(status);
 
 	return (
 		<button type="button" className="w-fit cursor-pointer" onClick={onClick}>
-			<ExposureBadge sensor={sensor} dangerLevel={status}>
+			<ExposureBadge exposure={exposure} dangerLevel={status}>
 				{label}
 			</ExposureBadge>
 		</button>

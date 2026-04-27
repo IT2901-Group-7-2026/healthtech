@@ -1,5 +1,5 @@
-import type { Sensor } from "@/features/sensor-picker/sensors";
-import type { SensorTypeField } from "@/lib/dto";
+import type { Exposure } from "@/features/exposure-picker/exposures";
+import type { ExposureTypeField } from "@/lib/dto";
 
 export type Threshold = {
 	warning: number;
@@ -7,7 +7,7 @@ export type Threshold = {
 	peakDanger: number | null;
 };
 
-const thresholds: Record<Sensor, Threshold> = {
+const thresholds: Record<Exposure, Threshold> = {
 	dust: {
 		warning: 7.5,
 		danger: 15,
@@ -25,7 +25,7 @@ const thresholds: Record<Sensor, Threshold> = {
 	},
 };
 
-const dustThresholdOverrides: Partial<Record<SensorTypeField, Threshold>> = {
+const dustThresholdOverrides: Partial<Record<ExposureTypeField, Threshold>> = {
 	pm1_stel: {
 		warning: 7.5,
 		danger: 15,
@@ -68,10 +68,10 @@ const dustThresholdOverrides: Partial<Record<SensorTypeField, Threshold>> = {
 	},
 };
 
-export function getThreshold(sensor: Sensor, dustField?: SensorTypeField | null): Threshold {
-	if (sensor === "dust" && dustField) {
+export function getThreshold(exposure: Exposure, dustField?: ExposureTypeField | null): Threshold {
+	if (exposure === "dust" && dustField) {
 		return dustThresholdOverrides[dustField] ?? thresholds.dust;
 	}
 
-	return thresholds[sensor];
+	return thresholds[exposure];
 }

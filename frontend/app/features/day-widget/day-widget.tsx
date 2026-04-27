@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { useDate } from "@/features/date-picker/use-date";
-import { sensors } from "@/features/sensor-picker/sensors";
+import { exposures } from "@/features/exposure-picker/exposures";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels";
 import type { OverviewChartRow } from "@/lib/time-bucket-types";
@@ -10,7 +10,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, type To } from "react-router";
 import { DangerLevelDots } from "../../components/danger-level-dots.js";
-import { SensorIcon } from "../../components/sensor-icon.js";
+import { ExposureIcon } from "../../components/exposure-icon.js";
 
 const getDangerLevelClasses = (dangerLevel: DangerLevel | null) => {
 	if (dangerLevel) {
@@ -25,7 +25,7 @@ interface DailyBarChartProps {
 	startHour?: number;
 	endHour?: number;
 	headerRight?: React.ReactNode;
-	buildLink?: (sensor: string, dateQueryParam: string) => To | null;
+	buildLink?: (exposure: string, dateQueryParam: string) => To | null;
 }
 
 export function DayWidget({ data, startHour = 0, endHour = 23, headerRight, buildLink }: DailyBarChartProps) {
@@ -55,15 +55,15 @@ export function DayWidget({ data, startHour = 0, endHour = 23, headerRight, buil
 	const dateQueryParam = useMemo(() => formatDate(date, "yyyy-MM-dd"), [date, formatDate]);
 	const createLink =
 		buildLink ??
-		((sensor: string, formattedDate: string) => ({
-			pathname: sensor,
+		((exposure: string, formattedDate: string) => ({
+			pathname: exposure,
 			search: `?view=Day&date=${formattedDate}`,
 		}));
 
-	const dataBySensor = useMemo(
+	const dataByExposure = useMemo(
 		() =>
 			data.reduce<Record<string, OverviewChartRow>>((acc, row) => {
-				acc[row.sensor] = row;
+				acc[row.exposure] = row;
 				return acc;
 			}, {}),
 		[data],
@@ -76,16 +76,18 @@ export function DayWidget({ data, startHour = 0, endHour = 23, headerRight, buil
 			<CardContent>
 				<div className="overflow-x-auto">
 					<div className="w-max min-w-full space-y-1">
-						{sensors.map((sensor) => {
-							const rowData = dataBySensor[sensor];
-							const linkTarget = createLink(sensor, dateQueryParam);
+						{exposures.map((exposure) => {
+							const rowData = dataByExposure[exposure];
+							const linkTarget = createLink(exposure, dateQueryParam);
 							const isLinkable = linkTarget !== null;
 
 							const rowContent = (
 								<>
 									<div className="sticky left-0 flex w-fit items-center gap-2 px-4 py-3">
-										<SensorIcon type={sensor} size="sm" />
-										<span className="text-base text-foreground">{t(($) => $.sensors[sensor])}</span>
+										<ExposureIcon type={exposure} size="sm" />
+										<span className="text-base text-foreground">
+											{t(($) => $.exposures[exposure])}
+										</span>
 									</div>
 
 									<div className="flex items-start gap-1.5 px-4 pb-3">
@@ -100,7 +102,7 @@ export function DayWidget({ data, startHour = 0, endHour = 23, headerRight, buil
 
 											return (
 												<div
-													key={`${sensor}-${localHour}`}
+													key={`${exposure}-${localHour}`}
 													className="flex shrink-0 flex-col items-start"
 												>
 													{/* hour slot */}
@@ -133,13 +135,13 @@ export function DayWidget({ data, startHour = 0, endHour = 23, headerRight, buil
 							if (isLinkable) {
 								return (
 									<Link
-										key={sensor}
+										key={exposure}
 										to={linkTarget}
 										className={cn(
 											"group block rounded-lg transition-colors",
 											isLinkable && "hover:bg-card-highlight",
 										)}
-										aria-label={`View ${t(($) => $.sensors[sensor])} data`}
+										aria-label={`View ${t(($) => $.exposures[exposure])} data`}
 									>
 										{rowContent}
 									</Link>
@@ -147,7 +149,7 @@ export function DayWidget({ data, startHour = 0, endHour = 23, headerRight, buil
 							}
 
 							return (
-								<div key={sensor} className="group block rounded-lg transition-colors">
+								<div key={exposure} className="group block rounded-lg transition-colors">
 									{rowContent}
 								</div>
 							);

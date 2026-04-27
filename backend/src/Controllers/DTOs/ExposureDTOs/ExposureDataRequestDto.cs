@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using SensorType = Backend.Models.SensorType;
+using ExposureType = Backend.Models.ExposureType;
 
 namespace Backend.DTOs;
 
@@ -22,38 +22,38 @@ public enum AggregationFunction
 
 public enum Field
 {
-	[SensorTypeField(SensorType.Dust)]
+	[ExposureTypeField(ExposureType.Dust)]
 	Pm1_stel,
 
-	[SensorTypeField(SensorType.Dust)]
+	[ExposureTypeField(ExposureType.Dust)]
 	Pm25_stel,
 
-	[SensorTypeField(SensorType.Dust)]
+	[ExposureTypeField(ExposureType.Dust)]
 	Pm4_stel,
 
-	[SensorTypeField(SensorType.Dust)]
+	[ExposureTypeField(ExposureType.Dust)]
 	Pm10_stel,
 
-	[SensorTypeField(SensorType.Dust)]
+	[ExposureTypeField(ExposureType.Dust)]
 	Pm1_twa,
 
-	[SensorTypeField(SensorType.Dust)]
+	[ExposureTypeField(ExposureType.Dust)]
 	Pm25_twa,
 
-	[SensorTypeField(SensorType.Dust)]
+	[ExposureTypeField(ExposureType.Dust)]
 	Pm4_twa,
 
-	[SensorTypeField(SensorType.Dust)]
+	[ExposureTypeField(ExposureType.Dust)]
 	Pm10_twa,
 }
 
-public class SensorTypeFieldAttribute(SensorType sensorType) : Attribute
+public class ExposureTypeFieldAttribute(ExposureType exposureType) : Attribute
 {
-	public SensorType SensorType { get; } = sensorType;
+	public ExposureType ExposureType { get; } = exposureType;
 }
 
 // TODO: Get rid of this, just use parameters
-public record SensorDataRequestDto(
+public record ExposureDataRequestDto(
 	[Required] DateTimeOffset StartTime,
 	[Required] DateTimeOffset EndTime,
 	[Required] TimeGranularity Granularity,

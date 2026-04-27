@@ -2,7 +2,7 @@ using Backend.Models;
 
 namespace Backend.DTOs;
 
-public class SensorDataDto
+public class ExposureDataDto
 {
 	public DateTime Time { get; set; }
 	public double Value { get; set; }

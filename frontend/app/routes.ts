@@ -5,10 +5,10 @@ export default [
 	layout("routes/layout.tsx", [
 		index("routes/landing.tsx"),
 		route("/foreman/", "routes/foreman/overview.tsx"),
-		layout("routes/operator/sensors/sensor-layout.tsx", [
-			route("/operator/dust", "routes/operator/sensors/dust.tsx"),
-			route("/operator/vibration", "routes/operator/sensors/vibration.tsx"),
-			route("/operator/noise", "routes/operator/sensors/noise.tsx"),
+		layout("routes/operator/exposures/exposure-layout.tsx", [
+			route("/operator/dust", "routes/operator/exposures/dust.tsx"),
+			route("/operator/vibration", "routes/operator/exposures/vibration.tsx"),
+			route("/operator/noise", "routes/operator/exposures/noise.tsx"),
 			route("/operator/", "routes/operator/home.tsx"),
 		]),
 		route("/operator/live", "routes/operator/live.tsx"),

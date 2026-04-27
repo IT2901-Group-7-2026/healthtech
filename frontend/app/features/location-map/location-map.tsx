@@ -9,7 +9,7 @@ import { Fragment, useRef, useState } from "react";
 import { renderToString } from "react-dom/server";
 import { useTranslation } from "react-i18next";
 import { ImageOverlay, MapContainer, Marker, Polygon } from "react-leaflet";
-import { type Sensor, sensors } from "../sensor-picker/sensors";
+import { type Exposure, exposures } from "../exposure-picker/exposures";
 import { HallOperatorList, HallOperatorListSkeleton } from "./hall-operator-list";
 import { MapUsersBadge } from "./location-map-users-badge";
 import { getCenterPoint, xyToyx } from "./location-map-utils";
@@ -35,18 +35,18 @@ export function LocationMap({ operators, isLoading, imageUrl = "/aker_verdal_sit
 	const { t } = useTranslation();
 	const mapRef = useRef<L.Map | null>(null);
 
-	const [sensor, setSensor] = useQueryState(
-		"mapSensor",
-		parseAsStringLiteral(["all", ...sensors]).withDefault("all"),
+	const [exposure, setExposure] = useQueryState(
+		"mapExposure",
+		parseAsStringLiteral(["all", ...exposures]).withDefault("all"),
 	);
 
-	const highestDangerLevel = getHighestDangerLevel(operators, sensor === "all" ? null : sensor);
+	const highestDangerLevel = getHighestDangerLevel(operators, exposure === "all" ? null : exposure);
 
-	// To avoid combining danger levels from multiple sensors when "all" is selected, we use a default color
+	// To avoid combining danger levels from multiple exposures when "all" is selected, we use a default color
 	const hallOverlayColor =
-		sensor === "all" ? "var(--color-blue-600)" : `var(--${mapDangerLevelToColor(highestDangerLevel)})`;
+		exposure === "all" ? "var(--color-blue-600)" : `var(--${mapDangerLevelToColor(highestDangerLevel)})`;
 
-	const markerColor = sensor === "all" ? "bg-teal-700" : dangerlevelStyles[highestDangerLevel].bg;
+	const markerColor = exposure === "all" ? "bg-teal-700" : dangerlevelStyles[highestDangerLevel].bg;
 
 	// TODO: Data for prototype
 	const halls: Array<Hall> = [
@@ -137,7 +137,7 @@ export function LocationMap({ operators, isLoading, imageUrl = "/aker_verdal_sit
 							halls.map((hall) => (
 								<HallOperatorList
 									key={hall.name}
-									sensor={sensor}
+									exposure={exposure}
 									operators={hall.operators}
 									hallName={hall.name}
 									selectedHall={selectedHallName}
@@ -149,19 +149,19 @@ export function LocationMap({ operators, isLoading, imageUrl = "/aker_verdal_sit
 					<div className="w-full">
 						<ToggleGroup
 							type="single"
-							value={sensor}
+							value={exposure}
 							variant="outline"
 							className="mb-4 inline-grid auto-cols-fr grid-flow-col"
-							onValueChange={(value: Sensor | "all" | "") => {
+							onValueChange={(value: Exposure | "all" | "") => {
 								if (value) {
-									setSensor(value);
+									setExposure(value);
 								}
 							}}
 						>
-							<ToggleGroupItem value="all"> {t(($) => $.sensors.overview)}</ToggleGroupItem>
-							{sensors.map((s) => (
+							<ToggleGroupItem value="all"> {t(($) => $.exposures.overview)}</ToggleGroupItem>
+							{exposures.map((s) => (
 								<ToggleGroupItem key={s} value={s}>
-									{t(($) => $.sensors[s])}
+									{t(($) => $.exposures[s])}
 								</ToggleGroupItem>
 							))}
 						</ToggleGroup>

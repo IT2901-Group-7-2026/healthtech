@@ -1,12 +1,12 @@
-import { sensorIconConfig } from "@/components/icons/sensor-icons";
+import { exposureIconConfig } from "@/components/icons/exposure-icons";
 import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.js";
-import type { Sensor } from "@/lib/sensors.js";
+import type { Exposure } from "@/lib/exposures.js";
 import { cn } from "@/lib/utils.js";
 import { DangerLevelDots } from "./danger-level-dots.js";
 
-type SensorIconSize = "xs" | "sm" | "md" | "lg" | "xl";
+type ExposureIconSize = "xs" | "sm" | "md" | "lg" | "xl";
 
-const iconSizeClass: Record<SensorIconSize, string> = {
+const iconSizeClass: Record<ExposureIconSize, string> = {
 	xs: "p-1 size-6",
 	sm: "p-1.5 size-8",
 	md: "p-[0.4rem] size-9",
@@ -14,9 +14,9 @@ const iconSizeClass: Record<SensorIconSize, string> = {
 	xl: "p-3 size-16",
 };
 
-interface SensorIconProps {
-	type: Sensor | "all";
-	size?: SensorIconSize;
+interface ExposureIconProps {
+	type: Exposure | "all";
+	size?: ExposureIconSize;
 	dangerLevel?: DangerLevel;
 	className?: string;
 	iconClassName?: string;
@@ -26,8 +26,16 @@ interface SensorIconProps {
 
 const defaultIconContainerClass = "bg-muted text-foreground border border-border";
 
-export const SensorIcon = ({ type, size, dangerLevel, className, iconClassName, title, inline }: SensorIconProps) => {
-	const Icon = sensorIconConfig[type];
+export const ExposureIcon = ({
+	type,
+	size,
+	dangerLevel,
+	className,
+	iconClassName,
+	title,
+	inline,
+}: ExposureIconProps) => {
+	const Icon = exposureIconConfig[type];
 	const Component = inline ? "span" : "div";
 
 	const resolvedIconSize = size ?? "md";

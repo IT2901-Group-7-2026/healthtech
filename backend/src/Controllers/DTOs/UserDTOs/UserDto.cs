@@ -47,12 +47,12 @@ public class UserStatusDto
 {
 	public Guid UserId { get; set; }
 	public DangerLevel Status { get; set; }
-	public UserSensorStatusDto? Noise { get; set; }
-	public UserSensorStatusDto? Dust { get; set; }
-	public UserSensorStatusDto? Vibration { get; set; }
+	public UserExposureStatusDto? Noise { get; set; }
+	public UserExposureStatusDto? Dust { get; set; }
+	public UserExposureStatusDto? Vibration { get; set; }
 }
 
-public record UserSensorStatusDto(
+public record UserExposureStatusDto(
 	DangerLevel dangerLevel,
 	DangerLevel? peakDangerLevel,
 	double Value,

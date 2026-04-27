@@ -11,9 +11,9 @@ using Microsoft.VisualBasic;
 namespace Backend.Tests.UnitTests.Validation;
 
 /// <summary>
-/// Unit tests for ValidateFieldForSensorTypeFilter to verify field validation logic.
+/// Unit tests for ValidateFieldForExposureTypeFilter to verify field validation logic.
 /// </summary>
-public class ValidateFieldForSensorTypeFilterTests
+public class ValidateFieldForExposureTypeFilterTests
 {
 	/// <summary>
 	/// Tests for scenarios where field validation should pass.
@@ -23,22 +23,22 @@ public class ValidateFieldForSensorTypeFilterTests
 	/// </remarks>
 	public class ValidFieldTests
 	{
-		private readonly ValidateFieldForSensorTypeFilter _filter;
+		private readonly ValidateFieldForExposureTypeFilter _filter;
 
 		public ValidFieldTests()
 		{
-			_filter = new ValidateFieldForSensorTypeFilter();
+			_filter = new ValidateFieldForExposureTypeFilter();
 		}
 
 		/// <summary>
 		/// Verifies that validation passes when no field is provided for the noise data type.
 		/// </summary>
 		[Fact]
-		public void OnActionExecuting_PassesValidation_WhenNoFieldForNoiseSensorType()
+		public void OnActionExecuting_PassesValidation_WhenNoFieldForNoiseExposureType()
 		{
 			var context = CreateActionExecutingContext(
-				SensorType.Noise,
-				new SensorDataRequestDto(
+				ExposureType.Noise,
+				new ExposureDataRequestDto(
 					DateTimeOffset.Now,
 					DateTimeOffset.Now.AddDays(1),
 					TimeGranularity.Day,
@@ -55,11 +55,11 @@ public class ValidateFieldForSensorTypeFilterTests
 		/// Verifies that validation passes when no field is provided for the vibration data type.
 		/// </summary>
 		[Fact]
-		public void OnActionExecuting_PassesValidation_WhenNoFieldForVibrationSensorType()
+		public void OnActionExecuting_PassesValidation_WhenNoFieldForVibrationExposureType()
 		{
 			var context = CreateActionExecutingContext(
-				SensorType.Vibration,
-				new SensorDataRequestDto(
+				ExposureType.Vibration,
+				new ExposureDataRequestDto(
 					DateTimeOffset.Now,
 					DateTimeOffset.Now.AddDays(1),
 					TimeGranularity.Day,
@@ -76,11 +76,11 @@ public class ValidateFieldForSensorTypeFilterTests
 		/// Verifies that validation passes when a valid field is provided for the dust data type.
 		/// </summary>
 		[Fact]
-		public void OnActionExecuting_PassesValidation_WhenValidFieldForDustSensorType()
+		public void OnActionExecuting_PassesValidation_WhenValidFieldForDustExposureType()
 		{
 			var context = CreateActionExecutingContext(
-				SensorType.Dust,
-				new SensorDataRequestDto(
+				ExposureType.Dust,
+				new ExposureDataRequestDto(
 					DateTimeOffset.Now,
 					DateTimeOffset.Now.AddDays(1),
 					TimeGranularity.Day,
@@ -102,22 +102,22 @@ public class ValidateFieldForSensorTypeFilterTests
 	/// </remarks>
 	public class InvalidFieldTests
 	{
-		private readonly ValidateFieldForSensorTypeFilter _filter;
+		private readonly ValidateFieldForExposureTypeFilter _filter;
 
 		public InvalidFieldTests()
 		{
-			_filter = new ValidateFieldForSensorTypeFilter();
+			_filter = new ValidateFieldForExposureTypeFilter();
 		}
 
 		/// <summary>
 		/// Verifies that validation fails when a field is provided for the noise data type.
 		/// </summary>
 		[Fact]
-		public void OnActionExecuting_ReturnsBadRequest_WhenFieldProvidedForNoiseSensorType()
+		public void OnActionExecuting_ReturnsBadRequest_WhenFieldProvidedForNoiseExposureType()
 		{
 			var context = CreateActionExecutingContext(
-				SensorType.Noise,
-				new SensorDataRequestDto(
+				ExposureType.Noise,
+				new ExposureDataRequestDto(
 					DateTimeOffset.Now,
 					DateTimeOffset.Now.AddDays(1),
 					TimeGranularity.Day,
@@ -139,11 +139,11 @@ public class ValidateFieldForSensorTypeFilterTests
 		/// Verifies that validation fails when no field is provided for the dust data type.
 		/// </summary>
 		[Fact]
-		public void OnActionExecuting_ReturnsBadRequest_WhenNoFieldForDustSensorType()
+		public void OnActionExecuting_ReturnsBadRequest_WhenNoFieldForDustExposureType()
 		{
 			var context = CreateActionExecutingContext(
-				SensorType.Dust,
-				new SensorDataRequestDto(
+				ExposureType.Dust,
+				new ExposureDataRequestDto(
 					DateTimeOffset.Now,
 					DateTimeOffset.Now.AddDays(1),
 					TimeGranularity.Day,
@@ -162,11 +162,11 @@ public class ValidateFieldForSensorTypeFilterTests
 		/// Verifies that validation fails when a field is provided for the vibration data type.
 		/// </summary>
 		[Fact]
-		public void OnActionExecuting_ReturnsBadRequest_WhenFieldProvidedForVibrationSensorType()
+		public void OnActionExecuting_ReturnsBadRequest_WhenFieldProvidedForVibrationExposureType()
 		{
 			var context = CreateActionExecutingContext(
-				SensorType.Vibration,
-				new SensorDataRequestDto(
+				ExposureType.Vibration,
+				new ExposureDataRequestDto(
 					DateTimeOffset.Now,
 					DateTimeOffset.Now.AddDays(1),
 					TimeGranularity.Day,
@@ -188,11 +188,11 @@ public class ValidateFieldForSensorTypeFilterTests
 		/// Verifies that validation fails when an invalid field is provided for the dust data type.
 		/// </summary>
 		[Fact]
-		public void OnActionExecuting_ReturnsBadRequest_WhenInvalidFieldForDustSensorType()
+		public void OnActionExecuting_ReturnsBadRequest_WhenInvalidFieldForDustExposureType()
 		{
 			var context = CreateActionExecutingContext(
-				SensorType.Dust,
-				new SensorDataRequestDto(
+				ExposureType.Dust,
+				new ExposureDataRequestDto(
 					DateTimeOffset.Now,
 					DateTimeOffset.Now.AddDays(1),
 					TimeGranularity.Day,
@@ -205,7 +205,7 @@ public class ValidateFieldForSensorTypeFilterTests
 			var badRequestResult = context.Result as BadRequestObjectResult;
 			Assert.IsType<BadRequestObjectResult>(badRequestResult);
 			Assert.Equal(
-				$"Field '999' is not valid for {SensorType.Dust}.",
+				$"Field '999' is not valid for {ExposureType.Dust}.",
 				GetErrorMessage(badRequestResult)
 			);
 		}
@@ -214,16 +214,16 @@ public class ValidateFieldForSensorTypeFilterTests
 	/// <summary>
 	/// Helper method to create ActionExecutingContext for testing.
 	/// </summary>
-	/// <param name="sensorType">The SensorType to set in route values.</param>
-	/// <param name="dto">The SensorDataRequestDto to include in action arguments.</param>
+	/// <param name="exposureType">The ExposureType to set in route values.</param>
+	/// <param name="dto">The ExposureDataRequestDto to include in action arguments.</param>
 	/// <returns>A configured ActionExecutingContext instance.</returns>
 	/// <remarks>
 	/// This method sets up the necessary context to simulate an action execution environment,
-	/// including route data and action arguments, for testing the ValidateFieldForSensorTypeFilter.
+	/// including route data and action arguments, for testing the ValidateFieldForExposureTypeFilter.
 	/// </remarks>
 	private static ActionExecutingContext CreateActionExecutingContext(
-		SensorType sensorType,
-		SensorDataRequestDto dto
+		ExposureType exposureType,
+		ExposureDataRequestDto dto
 	)
 	{
 		var actionContext = new ActionContext(
@@ -232,8 +232,8 @@ public class ValidateFieldForSensorTypeFilterTests
 			new ActionDescriptor()
 		);
 
-		// Set the sensorType in route
-		actionContext.RouteData.Values["sensorType"] = sensorType.ToString();
+		// Set the exposureType in route
+		actionContext.RouteData.Values["exposureType"] = exposureType.ToString();
 
 		// Set the dto in action arguments
 		var actionExecutingContext = new ActionExecutingContext(

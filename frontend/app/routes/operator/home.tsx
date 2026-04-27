@@ -5,22 +5,22 @@ import { Card } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
 import { DayWidget } from "@/features/day-widget/day-widget";
-import { sensors } from "@/features/sensor-picker/sensors";
-import { SensorGraphEmptyState } from "@/features/statistic-card";
+import { exposures } from "@/features/exposure-picker/exposures";
+import { ExposureGraphEmptyState } from "@/features/statistic-card";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useExportPDF } from "@/hooks/use-export-pdf";
-import { sensorOverviewQueryOptions } from "@/lib/api";
-import { buildSensorOverviewQuery } from "@/lib/sensor-query-utils";
+import { exposureOverviewQueryOptions } from "@/lib/api";
+import { buildExposureOverviewQuery } from "@/lib/exposure-query-utils";
 import { mapOverviewBucketsToChartRows, mapOverviewDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
 import { getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
-import Dust from "./sensors/dust";
-import Noise from "./sensors/noise";
-import Vibration from "./sensors/vibration";
+import Dust from "./exposures/dust";
+import Noise from "./exposures/noise";
+import Vibration from "./exposures/vibration";
 
 export default function OperatorHome() {
 	const { t, i18n } = useTranslation();
@@ -41,8 +41,8 @@ export default function OperatorHome() {
 		isLoading,
 		isError,
 	} = useQuery(
-		sensorOverviewQueryOptions({
-			query: buildSensorOverviewQuery([...sensors], view, date),
+		exposureOverviewQueryOptions({
+			query: buildExposureOverviewQuery([...exposures], view, date),
 			userId: user.id,
 		}),
 	);
@@ -79,7 +79,7 @@ export default function OperatorHome() {
 						data={mapOverviewDataToTimeBucketStatuses(overviewBuckets ?? [])}
 					/>
 				) : !overviewBuckets || overviewBuckets.length === 0 ? (
-					<SensorGraphEmptyState date={date} locale={i18n.language} />
+					<ExposureGraphEmptyState date={date} locale={i18n.language} />
 				) : (
 					<DayWidget
 						data={mapOverviewBucketsToChartRows(overviewBuckets ?? [], 0, 23)}

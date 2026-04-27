@@ -1,6 +1,6 @@
 import { DatePicker } from "@/components/date-picker";
+import { ExposureIcon } from "@/components/exposure-icon";
 import { NotesCard } from "@/components/notes-card";
-import { SensorIcon } from "@/components/sensor-icon";
 import { Badge } from "@/components/ui/badge";
 import { useDate } from "@/features/date-picker/use-date";
 import { ExposureSummary } from "@/features/summary-card";
@@ -9,7 +9,7 @@ import { ViewPicker } from "@/features/views/view-picker";
 import { getViewIcon } from "@/features/views/views";
 import { useFormatDate } from "@/hooks/use-format-date";
 import type { TranslateFn } from "@/i18n/config";
-import { toSensor } from "@/lib/sensors";
+import { toExposure } from "@/lib/exposures";
 import type { View } from "@/lib/views";
 import { Card } from "@/ui/card";
 import type { TZDate } from "@date-fns/tz";
@@ -17,15 +17,15 @@ import { getISOWeek } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { Outlet, useLocation } from "react-router";
 
-export default function SensorLayout() {
+export default function ExposureLayout() {
 	const { date, selection, setDate } = useDate();
 	const { pathname } = useLocation();
 	const { view } = useView();
 	const { t, i18n } = useTranslation();
 	const formatDate = useFormatDate();
 
-	// pathname is "/operator" or "/operator/<sensor>"
-	const sensor = toSensor(pathname.split("/").at(-1) ?? "");
+	// pathname is "/operator" or "/operator/<exposure>"
+	const exposure = toExposure(pathname.split("/").at(-1) ?? "");
 
 	const ViewIcon = getViewIcon(view);
 
@@ -41,11 +41,11 @@ export default function SensorLayout() {
 			<div className="col-span-3 row-start-1 flex flex-col gap-4">
 				<div className="flex flex-col gap-0.5">
 					<div className="flex flex-row items-center gap-3">
-						<SensorIcon type={sensor ?? "all"} size="lg" className="ml-1" />
+						<ExposureIcon type={exposure ?? "all"} size="lg" className="ml-1" />
 						<h1 className="font-medium text-3xl">
-							{sensor
-								? t(($) => $.operatorHeader.title.yourSensorExposure, {
-										sensor: t(($) => $.sensors[sensor]).toLowerCase(),
+							{exposure
+								? t(($) => $.operatorHeader.title.yourExposureExposure, {
+										exposure: t(($) => $.exposures[exposure]).toLowerCase(),
 									})
 								: t(($) => $.operatorHeader.title.yourExposure)}
 						</h1>
@@ -63,9 +63,9 @@ export default function SensorLayout() {
 					</Badge>
 
 					<Badge variant="secondary" className="gap-1.5 px-1 py-1 pr-2.5 font-normal text-sm">
-						<SensorIcon type={sensor ?? "all"} iconClassName="p-0.75 size-5" />
-						{sensor ? (
-							<p>{t(($) => $.sensors[sensor])}</p>
+						<ExposureIcon type={exposure ?? "all"} iconClassName="p-0.75 size-5" />
+						{exposure ? (
+							<p>{t(($) => $.exposures[exposure])}</p>
 						) : (
 							<p>{t(($) => $.operatorHeader.subtitle.allExposureTypes)}</p>
 						)}
@@ -78,7 +78,7 @@ export default function SensorLayout() {
 			</aside>
 
 			<article className="col-start-2 row-start-2 flex flex-col gap-4">
-				<ExposureSummary exposureType={sensor ?? "all"} />
+				<ExposureSummary exposureType={exposure ?? "all"} />
 				<Outlet />
 			</article>
 

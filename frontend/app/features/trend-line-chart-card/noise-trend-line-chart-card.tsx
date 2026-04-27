@@ -1,6 +1,6 @@
 import { TrendLineChart } from "@/components/exposure-trend-line-chart/trend-line-chart";
-import { sensorQueryOptions } from "@/lib/api";
-import { buildSensorQuery } from "@/lib/sensor-query-utils";
+import { exposureQueryOptions } from "@/lib/api";
+import { buildExposureQuery } from "@/lib/exposure-query-utils";
 import { computeYAxisRange } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useDate } from "../date-picker/use-date";
@@ -19,15 +19,15 @@ export function NoiseTrendLineChartCard({ usePeakAggregation, userId }: Props) {
 	const { view } = useView();
 	const { user } = useUser();
 
-	const sensor = "noise";
+	const exposure = "noise";
 
-	const query = buildSensorQuery(sensor, view, date, {
+	const query = buildExposureQuery(exposure, view, date, {
 		usePeakAggregation,
 	});
 
 	const { data: response } = useQuery(
-		sensorQueryOptions({
-			sensor: sensor,
+		exposureQueryOptions({
+			exposure: exposure,
 			query,
 			userId: userId ?? user.id,
 		}),
@@ -60,7 +60,7 @@ export function NoiseTrendLineChartCard({ usePeakAggregation, userId }: Props) {
 				series={[
 					{
 						data: data ?? [],
-						sensor: sensor,
+						exposure: exposure,
 					},
 				]}
 			/>

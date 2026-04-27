@@ -1,6 +1,6 @@
 namespace Backend.Models;
 
-public enum SensorType
+public enum ExposureType
 {
 	Noise,
 	Vibration,

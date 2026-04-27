@@ -1,11 +1,11 @@
 import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { toTZDate } from "@/lib/date";
-import type { SensorUnit } from "@/lib/sensors";
-import { formatSensorValue } from "@/lib/utils";
+import type { ExposureUnit } from "@/lib/exposures";
+import { formatExposureValue } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
-export function ExposureTooltip({ unit }: { unit: SensorUnit }) {
+export function ExposureTooltip({ unit }: { unit: ExposureUnit }) {
 	const formatDate = useFormatDate();
 	const { t } = useTranslation();
 
@@ -23,7 +23,7 @@ export function ExposureTooltip({ unit }: { unit: SensorUnit }) {
 					}}
 				/>
 			}
-			formatter={(value?: number) => [`${formatSensorValue(value, unit)} ${t(($) => $.sensors.units[unit])}`]}
+			formatter={(value?: number) => [`${formatExposureValue(value, unit)} ${t(($) => $.exposures.units[unit])}`]}
 		/>
 	);
 }

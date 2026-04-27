@@ -1,12 +1,12 @@
 import { Card, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import type { SensorUnit } from "@/lib/sensors";
-import { formatSensorValue } from "@/lib/utils";
+import type { ExposureUnit } from "@/lib/exposures";
+import { formatExposureValue } from "@/lib/utils";
 import { ArrowUpToLine } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-type SensorStatisticsSectionProps = {
+type ExposureStatisticsSectionProps = {
 	isLoading: boolean;
 	isEmpty: boolean;
 	averageValue: number | null;
@@ -14,11 +14,11 @@ type SensorStatisticsSectionProps = {
 	maxTime: Date | null;
 	latestValue: number | null;
 	dangerThreshold: number | null;
-	unit: SensorUnit;
+	unit: ExposureUnit;
 	formatTime: (time: Date) => string;
 };
 
-export function SensorStatisticsSection({
+export function ExposureStatisticsSection({
 	isLoading,
 	isEmpty,
 	averageValue,
@@ -28,19 +28,19 @@ export function SensorStatisticsSection({
 	dangerThreshold,
 	unit,
 	formatTime,
-}: SensorStatisticsSectionProps) {
+}: ExposureStatisticsSectionProps) {
 	const { t } = useTranslation();
 
 	if (isLoading) {
-		return <SensorStatisticsSkeleton />;
+		return <ExposureStatisticsSkeleton />;
 	}
 
 	if (isEmpty) {
 		return null;
 	}
 
-	const unitLabel = t(($) => $.sensors.units[unit]);
-	const formatValue = (value: number | null) => formatSensorValue(value ?? undefined, unit, 2, { mg: 3 });
+	const unitLabel = t(($) => $.exposures.units[unit]);
+	const formatValue = (value: number | null) => formatExposureValue(value ?? undefined, unit, 2, { mg: 3 });
 	const maxPointCaption = maxTime ? t(($) => $.measurement.recordedAt, { time: formatTime(maxTime) }) : undefined;
 
 	return (
@@ -74,7 +74,7 @@ export function SensorStatisticsSection({
 	);
 }
 
-export function SensorGraphEmptyState({ date, locale }: { date: Date; locale: string }) {
+export function ExposureGraphEmptyState({ date, locale }: { date: Date; locale: string }) {
 	const { t } = useTranslation();
 
 	return (
@@ -91,7 +91,7 @@ export function SensorGraphEmptyState({ date, locale }: { date: Date; locale: st
 	);
 }
 
-function SensorStatisticsSkeleton() {
+function ExposureStatisticsSkeleton() {
 	return (
 		<div className="grid gap-3 md:grid-cols-3">
 			{["average", "maximum", "latest"].map((key) => (

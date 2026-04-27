@@ -1,16 +1,16 @@
 import type { TZDate } from "@date-fns/tz";
 import type { DangerLevel } from "./danger-levels";
-import type { Sensor } from "./sensors";
+import type { Exposure } from "./exposures";
 
 export type OverviewChartRow = {
-	sensor: Sensor;
+	exposure: Exposure;
 	dangerLevelByHour: Record<number, DangerLevel | null>;
 };
 
 export type TimeBucketStatus = {
 	time: TZDate;
 	dangerLevel: DangerLevel;
-	sensorDangerLevels?: Partial<Record<Sensor, DangerLevel>>;
+	exposureDangerLevels?: Partial<Record<Exposure, DangerLevel>>;
 };
 
 export type SummaryLevelCounts = {
@@ -20,5 +20,5 @@ export type SummaryLevelCounts = {
 };
 
 export type SummaryCounts = SummaryLevelCounts & {
-	bySensor: Record<Sensor, SummaryLevelCounts>;
+	byExposure: Record<Exposure, SummaryLevelCounts>;
 };
