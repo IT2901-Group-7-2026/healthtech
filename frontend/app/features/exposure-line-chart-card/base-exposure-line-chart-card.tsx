@@ -23,19 +23,8 @@ export function BaseExposureLineChartCard({
 }) {
 	const { t } = useTranslation();
 	return (
-		<Card
-			className={cn(
-				"relative w-full",
-				props.variant === "compact" && "pl-0",
-				className,
-			)}
-			id={id}
-		>
-			{headerRight && (
-				<div className="absolute top-2 right-2 z-10 flex items-center gap-2">
-					{headerRight}
-				</div>
-			)}
+		<Card className={cn("relative w-full", props.variant === "compact" && "pl-0", className)} id={id}>
+			{headerRight && <div className="absolute top-2 right-2 z-10 flex items-center gap-2">{headerRight}</div>}
 			<CardContent className={cn("flex h-full flex-1", contentClassName)}>
 				<ExposureLineChart {...props} />
 				{props.chartData.length === 0 && (
