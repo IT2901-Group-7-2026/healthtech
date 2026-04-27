@@ -88,13 +88,7 @@ export function OperatorExposureStatusTable({ data }: ExposureTableCellProps) {
 		},
 	];
 
-	return (
-		<DataTable
-			columns={columns}
-			data={data ?? []}
-			getRowId={(teamMember) => teamMember.id}
-		/>
-	);
+	return <DataTable columns={columns} data={data ?? []} getRowId={(teamMember) => teamMember.id} />;
 }
 
 interface OperatorExposureStatusCellProps {
@@ -103,11 +97,7 @@ interface OperatorExposureStatusCellProps {
 	exposure: Exposure;
 }
 
-function OperatorExposureStatusExposureCell({
-	search,
-	status,
-	exposure,
-}: OperatorExposureStatusCellProps) {
+function OperatorExposureStatusExposureCell({ search, status, exposure }: OperatorExposureStatusCellProps) {
 	const label = mapDangerLevelToLabel(status);
 
 	return (
