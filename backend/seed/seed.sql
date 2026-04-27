@@ -22,7 +22,7 @@ SELECT setseed(0.424242);
 
 
 
--- Randomized multiplier and jitter values for each user and sensor for fixtures
+-- Randomized multiplier and jitter values for each user and exposure for fixtures
 DROP TABLE IF EXISTS seed_user_profile;
 CREATE TEMP TABLE seed_user_profile (
   user_id uuid PRIMARY KEY,

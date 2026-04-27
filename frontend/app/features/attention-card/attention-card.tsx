@@ -7,7 +7,7 @@ import { TIMEZONE } from "@/i18n/locale";
 import { type DangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels.js";
 import { now } from "@/lib/date";
 import type { ThresholdSummary, UserWithStatusDto } from "@/lib/dto.js";
-import { parseAsSensor } from "@/lib/sensors.js";
+import { parseAsExposure } from "@/lib/exposures.js";
 import { cn } from "@/lib/utils";
 import { isSameDay } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
@@ -31,7 +31,7 @@ export const AttentionCard = ({
 	isWeekly,
 }: AttentionCardProps) => {
 	const { t } = useTranslation();
-	const [sensor] = useQueryState("sensor", parseAsSensor);
+	const [exposure] = useQueryState("exposure", parseAsExposure);
 	const { date } = useDate();
 	const [, setSelectedUserId] = useQueryState("userId", parseAsString);
 
@@ -48,7 +48,7 @@ export const AttentionCard = ({
 	};
 
 	const highestDangerLevel = useMemo(() => {
-		const sensorType = sensor ?? "total";
+		const exposureType = exposure ?? "total";
 		if (thresholdSummary === undefined) {
 			return null;
 		}
@@ -57,18 +57,18 @@ export const AttentionCard = ({
 			return "safe";
 		}
 
-		if (thresholdSummary[sensorType].danger > 0) {
+		if (thresholdSummary[exposureType].danger > 0) {
 			return "danger";
 		}
 
-		if (thresholdSummary[sensorType].warning > 0) {
+		if (thresholdSummary[exposureType].warning > 0) {
 			return "warning";
 		}
 
 		return "safe";
-	}, [thresholdSummary, subordinates, sensor]);
+	}, [thresholdSummary, subordinates, exposure]);
 
-	const selectedSensorKey = sensor ?? "total";
+	const selectedExposureKey = exposure ?? "total";
 	const showActionCard = !isWeekly && date ? isSameDay(date, now(), { in: TIMEZONE }) : false;
 
 	const dangerLevelColor = highestDangerLevel === null ? null : `text-${mapDangerLevelToColor(highestDangerLevel)}`;
@@ -113,48 +113,48 @@ export const AttentionCard = ({
 						<p>{t(($) => $.foremanDashboard.actionCard.oldData)}</p>
 					)}
 					<div className="mt-5 grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
-						{!sensor && (
+						{!exposure && (
 							<>
 								<StatCard
 									className="text-red-500"
 									label={t(($) => $.foremanDashboard.overview.statCards.danger.label)}
 									onClick={() => openForStatus("danger")}
-									value={thresholdSummary[selectedSensorKey].danger}
+									value={thresholdSummary[selectedExposureKey].danger}
 								/>
 
 								<StatCard
 									className="text-orange-400"
 									label={t(($) => $.foremanDashboard.overview.statCards.warning.label)}
 									onClick={() => openForStatus("warning")}
-									value={thresholdSummary[selectedSensorKey].warning}
+									value={thresholdSummary[selectedExposureKey].warning}
 								/>
 
 								<StatCard
 									className="text-green-600"
 									label={t(($) => $.foremanDashboard.overview.statCards.safe.label)}
 									onClick={() => openForStatus("safe")}
-									value={thresholdSummary[selectedSensorKey].safe}
+									value={thresholdSummary[selectedExposureKey].safe}
 								/>
 							</>
 						)}
 
-						{sensor && (
+						{exposure && (
 							<>
 								<ExposureRiskCard
 									users={subordinates ?? []}
-									sensor={sensor}
+									exposure={exposure}
 									dangerLevel="danger"
 									onUserClick={setSelectedUserId}
 								/>
 								<ExposureRiskCard
 									users={subordinates ?? []}
-									sensor={sensor}
+									exposure={exposure}
 									dangerLevel="warning"
 									onUserClick={setSelectedUserId}
 								/>
 								<ExposureRiskCard
 									users={subordinates ?? []}
-									sensor={sensor}
+									exposure={exposure}
 									dangerLevel="safe"
 									onUserClick={setSelectedUserId}
 								/>

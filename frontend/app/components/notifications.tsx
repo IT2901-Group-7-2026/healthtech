@@ -2,37 +2,37 @@ import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@/comp
 import { useUser } from "@/features/user/user-context";
 import { TIMEZONE } from "@/i18n/locale";
 import type { DangerLevel } from "@/lib/danger-levels";
-import type { Sensor } from "@/lib/sensors";
+import type { Exposure } from "@/lib/exposures";
 import { cn } from "@/lib/utils";
 import { Card } from "@/ui/card";
 import { TZDate } from "@date-fns/tz";
 import { formatDate } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router";
-import { SensorIcon } from "./sensor-icon";
+import { ExposureIcon } from "./exposure-icon";
 
 const notifications: Array<{
-	sensor: Sensor;
+	exposure: Exposure;
 	dangerLevel: DangerLevel;
 	date: TZDate;
 }> = [
 	{
-		sensor: "dust",
+		exposure: "dust",
 		dangerLevel: "warning",
 		date: new TZDate(2026, 3, 7, 9, 0, "Europe/Oslo"),
 	},
 	{
-		sensor: "noise",
+		exposure: "noise",
 		dangerLevel: "warning",
 		date: new TZDate(2026, 3, 6, 9, 0, "Europe/Oslo"),
 	},
 	{
-		sensor: "vibration",
+		exposure: "vibration",
 		dangerLevel: "warning",
 		date: new TZDate(2026, 3, 3, 15, 40, "Europe/Oslo"),
 	},
 	{
-		sensor: "noise",
+		exposure: "noise",
 		dangerLevel: "danger",
 		date: new TZDate(2026, 3, 1, 9, 10, "Europe/Oslo"),
 	},
@@ -45,13 +45,13 @@ export function Notifications({ onParentClose }: { onParentClose: () => void }) 
 	return (
 		<Card className="h-64 w-full gap-0 overflow-y-auto px-4">
 			<ItemGroup className="gap-1" role="list">
-				{notifications.map(({ sensor, date, dangerLevel }) => {
-					const notificationLink = user.role === "foreman" ? `/foreman` : `/operator/${sensor}`;
+				{notifications.map(({ exposure, date, dangerLevel }) => {
+					const notificationLink = user.role === "foreman" ? `/foreman` : `/operator/${exposure}`;
 					let notificationLinkSearch = "";
 
 					if (user.role === "foreman") {
 						const formattedDate = formatDate(date, "yyyy-MM-dd");
-						notificationLinkSearch = `?sensor=${sensor}&date=${formattedDate}`;
+						notificationLinkSearch = `?exposure=${exposure}&date=${formattedDate}`;
 					} else {
 						const formattedDate = formatDate(date, "yyyy-MM-dd");
 						notificationLinkSearch = `?view=Day&date=${formattedDate}`;
@@ -59,7 +59,7 @@ export function Notifications({ onParentClose }: { onParentClose: () => void }) 
 
 					return (
 						<NavLink
-							key={`${date} ${sensor} ${dangerLevel}`}
+							key={`${date} ${exposure} ${dangerLevel}`}
 							to={`${notificationLink}${notificationLinkSearch}`}
 							className="cursor-pointer"
 							onClick={onParentClose}
@@ -70,9 +70,9 @@ export function Notifications({ onParentClose }: { onParentClose: () => void }) 
 								size="sm"
 								className="rounded-3xl border-3 border-border bg-background hover:bg-card-highlight"
 							>
-								<SensorIcon type={sensor} size="md" dangerLevel={dangerLevel} />
+								<ExposureIcon type={exposure} size="md" dangerLevel={dangerLevel} />
 								<ItemContent>
-									<ItemTitle className="line-clamp-1">{t(($) => $.sensors[sensor])}</ItemTitle>
+									<ItemTitle className="line-clamp-1">{t(($) => $.exposures[exposure])}</ItemTitle>
 									<ItemDescription className={cn(`text-${dangerLevel}`)}>
 										{t(($) => $.dangerLevels[dangerLevel])}
 									</ItemDescription>

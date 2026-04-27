@@ -1,27 +1,24 @@
 import { ExposureTooltip } from "@/components/exposure-line-chart/exposure-tooltip";
 import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { useFormatDate } from "@/hooks/use-format-date";
-import { type DangerLevel, DangerLevels, dangerlevelStyles, getDangerLevel } from "@/lib/danger-levels";
-import { toTZDate } from "@/lib/date";
-import type { SensorDto, SensorTypeField } from "@/lib/dto";
-import type { Sensor, SensorUnit } from "@/lib/sensors";
+import { getLocale } from "@/i18n/locale";
+import { DangerLevels } from "@/lib/danger-levels";
+import { now as getNow, toTZDate } from "@/lib/date";
+import type { ExposureDto, ExposureTypeField } from "@/lib/dto";
+import type { Exposure, ExposureUnit } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
-import { cn, formatSensorValue } from "@/lib/utils";
+import { buildYAxisTicks, cn, DUST_Y_AXIS_STEP, formatExposureValue } from "@/lib/utils";
 import { TZDate } from "@date-fns/tz";
+import { addMinutes, formatDistanceToNowStrict } from "date-fns";
 import { type PropsWithChildren, useId } from "react";
 import { useTranslation } from "react-i18next";
-import {
-	type ActiveDotProps,
-	CartesianGrid,
-	Legend,
-	Line,
-	LineChart,
-	XAxis,
-	type XAxisTickContentProps,
-	YAxis,
-} from "recharts";
+import { CartesianGrid, Legend, Line, LineChart, XAxis, type XAxisTickContentProps, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
+import { ExposureDot } from "./exposure-dot";
+import { ExposureLineChartGradientStops } from "./exposure-line-chart-gradient-stops";
 import { ThresholdLegend } from "./threshold-legend";
+
+export type XAxisMode = "default" | "windowed";
 
 const Y_AXIS_WIDTH = 60;
 
@@ -34,26 +31,21 @@ const chartConfig = {
 
 type LineChartVariant = "default" | "compact";
 
-type XAxisTickLabels = {
-	start: string;
-	end: string;
-};
-
 export interface ExposureLineChartProps extends PropsWithChildren {
-	chartData: Array<SensorDto>;
+	chartData: Array<ExposureDto>;
 	maxY: number;
 	minY: number;
-	unit: SensorUnit;
+	unit: ExposureUnit;
 	lineType?: CurveType;
-	sensor: Sensor;
+	exposure: Exposure;
 	usePeakData?: boolean;
-	dustField?: SensorTypeField;
+	dustField?: ExposureTypeField;
 
 	chartContainerClassName?: string;
 	showLegend?: boolean;
 
 	variant?: LineChartVariant;
-	xTickLabels?: XAxisTickLabels;
+	xAxisMode?: XAxisMode;
 	minTime: Date;
 	maxTime: Date;
 }
@@ -65,7 +57,7 @@ export function ExposureLineChart({
 	unit,
 	lineType = "linear",
 	children,
-	sensor,
+	exposure,
 	usePeakData = false,
 	dustField,
 	minTime,
@@ -73,14 +65,17 @@ export function ExposureLineChart({
 	chartContainerClassName,
 	variant = "default",
 	showLegend = true,
-	xTickLabels,
+	xAxisMode = "default",
 }: ExposureLineChartProps) {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const id = useId();
 	const formatDate = useFormatDate();
 
-	const { warning, danger, peakDanger } = getThreshold(sensor, dustField);
+	const { warning, danger, peakDanger } = getThreshold(exposure, dustField);
 	const dangerThreshold = usePeakData && peakDanger ? peakDanger : danger;
+	const yTicks = exposure === "dust" ? buildYAxisTicks(minY, maxY, DUST_Y_AXIS_STEP) : undefined;
+	const defaultFractionDigits = exposure === "dust" ? 1 : 0;
+	const fractionDigitsPerUnit = exposure === "dust" ? { mg: 4 } : { mg: 3 };
 
 	const transformedData = chartData.map((item) => ({
 		time: item.time.getTime(),
@@ -89,26 +84,9 @@ export function ExposureLineChart({
 
 	const xMin = minTime.getTime();
 	const xMax = maxTime.getTime();
-	let ticks: Array<number>;
 
-	// Either only show tick labels at the start and end of the chart, or show them at every hour within the given time range
-	if (xTickLabels) {
-		ticks = [xMin, xMax];
-	} else {
-		// Remove minutes and seconds so ticks only show hours
-		const current = new TZDate(minTime);
-		current.setMinutes(0, 0, 0);
-
-		const end = new TZDate(maxTime);
-		end.setMinutes(0, 0, 0);
-
-		ticks = [];
-
-		while (current <= end) {
-			ticks.push(current.getTime());
-			current.setHours(current.getHours() + 1);
-		}
-	}
+	const rawTicks = buildTicks(xAxisMode, minTime, maxTime);
+	const ticks = limitTicks(rawTicks, 6);
 
 	const compact = variant === "compact";
 
@@ -149,7 +127,9 @@ export function ExposureLineChart({
 							formatTime={formatTime}
 							xMin={xMin}
 							xMax={xMax}
-							xTickLabels={xTickLabels}
+							xAxisMode={xAxisMode}
+							t={t}
+							locale={i18n.language}
 						/>
 					)}
 				/>
@@ -163,11 +143,12 @@ export function ExposureLineChart({
 						fill: "var(--color-muted-foreground)",
 					}}
 					domain={[minY, maxY]}
+					ticks={yTicks}
 					label={
 						compact
 							? undefined
 							: {
-									value: t(($) => $.sensors.units[unit]),
+									value: t(($) => $.exposures.units[unit]),
 									position: "inside",
 									dx: -32,
 									angle: -90,
@@ -175,14 +156,15 @@ export function ExposureLineChart({
 									fill: "var(--color-muted-foreground)",
 								}
 					}
-					// only dustchart with mg unit need to show decimals on y axis
-					tickFormatter={(value) => formatSensorValue(value, unit as SensorUnit, 0, { mg: 3 })}
+					tickFormatter={(value) =>
+						formatExposureValue(value, unit as ExposureUnit, defaultFractionDigits, fractionDigitsPerUnit)
+					}
 				/>
 				<ExposureTooltip unit={unit} />
 
 				<defs>
 					<linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
-						<GradientStops
+						<ExposureLineChartGradientStops
 							values={transformedData.map((point) => point.value)}
 							warningThreshold={warning}
 							dangerThreshold={dangerThreshold}
@@ -199,7 +181,7 @@ export function ExposureLineChart({
 					animationDuration={0}
 					dot={false}
 					activeDot={(props) => (
-						<Dot {...props} warning={warning} danger={dangerThreshold} isPeak={usePeakData} />
+						<ExposureDot {...props} warning={warning} danger={dangerThreshold} isPeak={usePeakData} />
 					)}
 				/>
 				{children}
@@ -223,34 +205,35 @@ export function ExposureLineChart({
 								/>
 							</div>
 						)}
-					></Legend>
+					/>
 				)}
 			</LineChart>
 		</ChartContainer>
 	);
 }
 
-type DotProps = ActiveDotProps & { warning: number; danger: number };
-
-const Dot = ({ cx, cy, value, warning, danger, isPeak }: DotProps & { isPeak?: boolean }) => {
-	let dangerLevel = getDangerLevel(value, warning, danger);
-
-	dangerLevel = normalizeDangerLevelForPeak(dangerLevel, isPeak);
-
-	const fillColor = dangerlevelStyles[dangerLevel].color;
-
-	return <circle cx={cx} cy={cy} r={6} fill={fillColor} />;
-};
-
 type CustomXAxisTickProps = XAxisTickContentProps & {
 	xMin: number;
 	xMax: number;
 	variant: LineChartVariant;
 	formatTime: (time: number) => string;
-	xTickLabels?: XAxisTickLabels;
+	xAxisMode?: XAxisMode;
+	t: ReturnType<typeof useTranslation>["t"];
+	locale: string;
 };
 
-function CustomXAxisTick({ x, y, xMin, xMax, payload, xTickLabels, formatTime, variant }: CustomXAxisTickProps) {
+function CustomXAxisTick({
+	x,
+	y,
+	xMin,
+	xMax,
+	payload,
+	formatTime,
+	variant,
+	xAxisMode,
+	t,
+	locale,
+}: CustomXAxisTickProps) {
 	const value: number = payload.value ?? 0;
 
 	const isFirst = value === xMin;
@@ -258,12 +241,11 @@ function CustomXAxisTick({ x, y, xMin, xMax, payload, xTickLabels, formatTime, v
 
 	let label = formatTime(value);
 
-	if (xTickLabels) {
-		if (value === xMin) {
-			label = xTickLabels.start;
-		}
-		if (value === xMax) {
-			label = xTickLabels.end;
+	if (xAxisMode === "windowed") {
+		if (isLast) {
+			label = t(($) => $.live.chart.now);
+		} else {
+			label = formatMsToDistanceString(xMax - value, locale);
 		}
 	}
 
@@ -281,72 +263,77 @@ function CustomXAxisTick({ x, y, xMin, xMax, payload, xTickLabels, formatTime, v
 	);
 }
 
-interface GradientStopsProps {
-	values: Array<number>;
-	warningThreshold: number;
-	dangerThreshold: number;
-	usePeakData?: boolean;
+function formatMsToDistanceString(msDiff: number, language: string) {
+	const minutes = Math.round(msDiff / (1000 * 60));
+
+	const now = getNow();
+	const date = addMinutes(now, -minutes);
+
+	const locale = getLocale(language);
+
+	return formatDistanceToNowStrict(date, {
+		locale,
+	}).replace("en", "1");
 }
 
-function GradientStops({ values, warningThreshold, dangerThreshold, usePeakData }: GradientStopsProps) {
-	const minValue = values.length > 0 ? Math.min(...values) : 0;
-	const maxValue = values.length > 0 ? Math.max(...values) : 0;
+function buildTicks(xAxisMode: XAxisMode, minTime: Date, maxTime: Date) {
+	const min = minTime.getTime();
+	const max = maxTime.getTime();
 
-	let minDangerLevel = getDangerLevel(minValue, warningThreshold, dangerThreshold);
-	let maxDangerLevel = getDangerLevel(maxValue, warningThreshold, dangerThreshold);
+	if (xAxisMode === "windowed") {
+		// Always include edges
+		const ticks = [min, max];
 
-	minDangerLevel = normalizeDangerLevelForPeak(minDangerLevel, usePeakData);
-	maxDangerLevel = normalizeDangerLevelForPeak(maxDangerLevel, usePeakData);
+		// Add ticks per hour
+		const current = new TZDate(minTime);
 
-	const uniformDangerLevel = minDangerLevel === maxDangerLevel ? minDangerLevel : undefined;
+		while (current < maxTime) {
+			const t = current.getTime();
 
-	const getOffset = (y: number) => {
-		if (maxValue === minValue) {
-			return "0%";
+			if (t > min) {
+				ticks.push(t);
+			}
+
+			current.setHours(current.getHours() + 1);
 		}
 
-		return `${((maxValue - y) / (maxValue - minValue)) * 100}%`;
-	};
+		ticks.sort((a, b) => a - b);
 
-	const dangerOffset = getOffset(dangerThreshold);
-	const warningOffset = getOffset(warningThreshold);
-
-	// If all values fall within the same danger level, use a solid color for the line instead of a gradient
-	if (uniformDangerLevel) {
-		const dangerLevelColor = dangerlevelStyles[uniformDangerLevel].color;
-		return (
-			<>
-				<stop offset="0%" stopColor={dangerLevelColor} />
-				<stop offset="100%" stopColor={dangerLevelColor} />
-			</>
-		);
+		return ticks;
 	}
 
-	return (
-		<>
-			<stop offset={dangerOffset} stopColor="var(--danger)" />
+	const current = new TZDate(minTime);
+	current.setMinutes(0, 0, 0);
 
-			{/* Only show the warning gradient for non-peak data */}
-			{usePeakData ? (
-				<stop offset={dangerOffset} stopColor="var(--safe)" />
-			) : (
-				<>
-					<stop offset={dangerOffset} stopColor="var(--warning)" />
-					<stop offset={warningOffset} stopColor="var(--warning)" />
-					<stop offset={warningOffset} stopColor="var(--safe)" />
-				</>
-			)}
+	const end = new TZDate(maxTime);
+	end.setMinutes(0, 0, 0);
 
-			<stop offset="100%" stopColor="var(--safe)" />
-		</>
-	);
+	const ticks = [];
+
+	while (current <= end) {
+		ticks.push(current.getTime());
+		current.setHours(current.getHours() + 1);
+	}
+
+	return ticks;
 }
 
-// Peak data doesn't have a warning danger level, so we treat warning levels as safe
-function normalizeDangerLevelForPeak(dangerLevel: DangerLevel, isPeak?: boolean): DangerLevel {
-	if (isPeak && dangerLevel === "warning") {
-		return "safe";
+function limitTicks(ticks: Array<number>, maxTicks: number) {
+	if (ticks.length <= maxTicks) {
+		return ticks;
 	}
 
-	return dangerLevel;
+	const step = Math.ceil((ticks.length - 1) / (maxTicks - 1));
+	const result = ticks.filter((_, i) => i % step === 0);
+
+	// Ensure first & last are always included
+	if (result[0] !== ticks[0]) {
+		result.unshift(ticks[0]);
+	}
+
+	if (result[result.length - 1] !== ticks[ticks.length - 1]) {
+		result.push(ticks[ticks.length - 1]);
+	}
+
+	return result;
 }

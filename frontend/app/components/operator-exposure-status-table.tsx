@@ -2,16 +2,16 @@ import { ExposureBadge } from "@/components/exposure-badge";
 import { DataTable } from "@/components/ui/data-table";
 import { type DangerLevel, mapDangerLevelToLabel } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
-import type { Sensor } from "@/lib/sensors";
+import type { Exposure } from "@/lib/exposures";
 import type { ColumnDef } from "@tanstack/react-table";
 import { t } from "i18next";
 import { Link, useSearchParams } from "react-router";
 
-export interface SensorTableCellProps {
+export interface ExposureTableCellProps {
 	data: Array<UserWithStatusDto> | undefined;
 }
 
-export function OperatorExposureStatusTable({ data }: SensorTableCellProps) {
+export function OperatorExposureStatusTable({ data }: ExposureTableCellProps) {
 	const [searchParams] = useSearchParams();
 
 	const buildSearchParams = (userId: string, sensor?: string) => {
@@ -43,14 +43,14 @@ export function OperatorExposureStatusTable({ data }: SensorTableCellProps) {
 		},
 		{
 			id: "dust",
-			header: t(($) => $.sensors.dust),
+			header: t(($) => $.exposures.dust),
 			cell: ({ row }) => {
 				const status = row.original.status.dust?.dangerLevel ?? "safe";
 
 				return (
-					<OperatorExposureStatusSensorCell
+					<OperatorExposureStatusExposureCell
 						status={status}
-						sensor="dust"
+						exposure="dust"
 						search={buildSearchParams(row.original.id, "dust")}
 					/>
 				);
@@ -58,14 +58,14 @@ export function OperatorExposureStatusTable({ data }: SensorTableCellProps) {
 		},
 		{
 			id: "noise",
-			header: t(($) => $.sensors.noise),
+			header: t(($) => $.exposures.noise),
 			cell: ({ row }) => {
 				const status = row.original.status.noise?.dangerLevel ?? "safe";
 
 				return (
-					<OperatorExposureStatusSensorCell
+					<OperatorExposureStatusExposureCell
 						status={status}
-						sensor="noise"
+						exposure="noise"
 						search={buildSearchParams(row.original.id, "noise")}
 					/>
 				);
@@ -73,14 +73,14 @@ export function OperatorExposureStatusTable({ data }: SensorTableCellProps) {
 		},
 		{
 			id: "vibration",
-			header: t(($) => $.sensors.vibration),
+			header: t(($) => $.exposures.vibration),
 			cell: ({ row }) => {
 				const status = row.original.status.vibration?.dangerLevel ?? "safe";
 
 				return (
-					<OperatorExposureStatusSensorCell
+					<OperatorExposureStatusExposureCell
 						status={status}
-						sensor="vibration"
+						exposure="vibration"
 						search={buildSearchParams(row.original.id, "vibration")}
 					/>
 				);
@@ -88,16 +88,26 @@ export function OperatorExposureStatusTable({ data }: SensorTableCellProps) {
 		},
 	];
 
-	return <DataTable columns={columns} data={data ?? []} getRowId={(teamMember) => teamMember.id} />;
+	return (
+		<DataTable
+			columns={columns}
+			data={data ?? []}
+			getRowId={(teamMember) => teamMember.id}
+		/>
+	);
 }
 
 interface OperatorExposureStatusCellProps {
 	search: string;
 	status: DangerLevel;
-	sensor: Sensor;
+	exposure: Exposure;
 }
 
-function OperatorExposureStatusSensorCell({ search, status, sensor }: OperatorExposureStatusCellProps) {
+function OperatorExposureStatusExposureCell({
+	search,
+	status,
+	exposure,
+}: OperatorExposureStatusCellProps) {
 	const label = mapDangerLevelToLabel(status);
 
 	return (
@@ -107,7 +117,7 @@ function OperatorExposureStatusSensorCell({ search, status, sensor }: OperatorEx
 			}}
 			className="block w-fit cursor-pointer rounded-full hover:brightness-95"
 		>
-			<ExposureBadge sensor={sensor} dangerLevel={status}>
+			<ExposureBadge exposure={exposure} dangerLevel={status}>
 				{label}
 			</ExposureBadge>
 		</Link>

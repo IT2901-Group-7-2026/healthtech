@@ -1,19 +1,19 @@
-import { type IconType, sensorIconConfig } from "@/components/icons/sensor-icons";
+import { exposureIconConfig, type IconType } from "@/components/icons/exposure-icons";
 import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.js";
-import type { Sensor } from "@/lib/sensors.js";
+import type { Exposure } from "@/lib/exposures.js";
 import { cn } from "@/lib/utils.js";
 import type { PropsWithChildren } from "react";
 
-const iconConfig: Record<Sensor, IconType> = sensorIconConfig;
+const iconConfig: Record<Exposure, IconType> = exposureIconConfig;
 
 interface ExposureBadgeProps extends PropsWithChildren {
-	sensor: Sensor;
+	exposure: Exposure;
 	dangerLevel: DangerLevel;
 	className?: string;
 }
 
-export const ExposureBadge = ({ sensor, dangerLevel, className, children }: ExposureBadgeProps) => {
-	const Icon = iconConfig[sensor];
+export const ExposureBadge = ({ exposure, dangerLevel, className, children }: ExposureBadgeProps) => {
+	const Icon = iconConfig[exposure];
 
 	const dangerLevelClasses = dangerLevel
 		? cn(
@@ -31,7 +31,7 @@ export const ExposureBadge = ({ sensor, dangerLevel, className, children }: Expo
 				className,
 			)}
 		>
-			<Icon title={sensor} className="inline-block h-4 w-4" />
+			<Icon title={exposure} className="inline-block h-4 w-4" />
 			{children}
 		</div>
 	);

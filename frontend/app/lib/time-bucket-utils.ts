@@ -1,22 +1,22 @@
 import { hoursToMinutes } from "date-fns";
 import type { DangerLevel } from "./danger-levels";
-import type { GranularityKey, SensorDto, SensorOverviewBucketDto } from "./dto";
-import { type Sensor, sensors } from "./sensors";
+import type { ExposureDto, ExposureOverviewBucketDto, GranularityKey } from "./dto";
+import { type Exposure, exposures } from "./exposures";
 import type { OverviewChartRow, SummaryCounts, SummaryLevelCounts, TimeBucketStatus } from "./time-bucket-types";
 
 interface CalculateSummaryCountsOptions {
 	peakAggregation: boolean;
 	granularity: GranularityKey;
-	sensor: Sensor | null;
+	exposure: Exposure | null;
 }
 
 export function calculateSummaryCounts(
-	data: Array<SensorDto> | Array<SensorOverviewBucketDto>,
-	{ sensor, peakAggregation, granularity }: CalculateSummaryCountsOptions,
+	data: Array<ExposureDto> | Array<ExposureOverviewBucketDto>,
+	{ exposure, peakAggregation, granularity }: CalculateSummaryCountsOptions,
 ): SummaryCounts {
 	const summary: SummaryCounts = {
 		...createEmptyLevelCounts(),
-		bySensor: {
+		byExposure: {
 			noise: createEmptyLevelCounts(),
 			dust: createEmptyLevelCounts(),
 			vibration: createEmptyLevelCounts(),
@@ -29,16 +29,16 @@ export function calculateSummaryCounts(
 
 		incrementLevelCount(summary, dangerLevel, granularity);
 
-		if ("sensorDangerLevels" in point) {
-			for (const currentSensor of sensors) {
+		if ("exposureDangerLevels" in point) {
+			for (const currentExposure of exposures) {
 				incrementLevelCount(
-					summary.bySensor[currentSensor],
-					point.sensorDangerLevels[currentSensor],
+					summary.byExposure[currentExposure],
+					point.exposureDangerLevels[currentExposure],
 					granularity,
 				);
 			}
-		} else if (sensor) {
-			incrementLevelCount(summary.bySensor[sensor], dangerLevel, granularity);
+		} else if (exposure) {
+			incrementLevelCount(summary.byExposure[exposure], dangerLevel, granularity);
 		}
 	}
 
@@ -83,16 +83,16 @@ function incrementLevelCount(
 	}
 }
 
-export function getDangerLevelFromData(data: SensorDto, peakAggregation: boolean): DangerLevel {
+export function getDangerLevelFromData(data: ExposureDto, peakAggregation: boolean): DangerLevel {
 	if (peakAggregation) {
 		return data.peakDangerLevel ?? data.dangerLevel;
 	}
 	return data.dangerLevel;
 }
 
-export function mapSensorDataToTimeBucketStatuses(
-	data: Array<SensorDto>,
-	sensor: Sensor,
+export function mapExposureDataToTimeBucketStatuses(
+	data: Array<ExposureDto>,
+	exposure: Exposure,
 	peakAggregation: boolean,
 ): Array<TimeBucketStatus> {
 	return data.map((point) => {
@@ -101,25 +101,25 @@ export function mapSensorDataToTimeBucketStatuses(
 		return {
 			time: point.time,
 			dangerLevel,
-			sensorDangerLevels: { [sensor]: dangerLevel },
+			exposureDangerLevels: { [exposure]: dangerLevel },
 		};
 	});
 }
 
-export function mapOverviewDataToTimeBucketStatuses(data: Array<SensorOverviewBucketDto>): Array<TimeBucketStatus> {
+export function mapOverviewDataToTimeBucketStatuses(data: Array<ExposureOverviewBucketDto>): Array<TimeBucketStatus> {
 	return data.map((point) => ({
 		time: point.time,
 		dangerLevel: point.dangerLevel,
-		sensorDangerLevels: point.sensorDangerLevels,
+		exposureDangerLevels: point.exposureDangerLevels,
 	}));
 }
 
 export function mapOverviewBucketsToChartRows(
-	data: Array<SensorOverviewBucketDto>,
+	data: Array<ExposureOverviewBucketDto>,
 	startHour: number,
 	endHour: number,
 ): Array<OverviewChartRow> {
-	return sensors.map((sensor) => {
+	return exposures.map((exposure) => {
 		const dangerLevelByHour: Record<number, DangerLevel | null> = {};
 
 		for (let hour = startHour; hour <= endHour; hour++) {
@@ -130,11 +130,11 @@ export function mapOverviewBucketsToChartRows(
 			const hour = bucket.time.getUTCHours();
 			if (hour < startHour || hour > endHour) return;
 
-			dangerLevelByHour[hour] = bucket.sensorDangerLevels[sensor] ?? null;
+			dangerLevelByHour[hour] = bucket.exposureDangerLevels[exposure] ?? null;
 		});
 
 		return {
-			sensor,
+			exposure,
 			dangerLevelByHour,
 		};
 	});

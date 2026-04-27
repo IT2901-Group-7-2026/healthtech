@@ -7,24 +7,24 @@ namespace Backend.Utils;
 public static class ThresholdUtils
 {
 	public static IEnumerable<(
-		RawSensorData data,
+		RawExposureData data,
 		(DangerLevel dangerLevel, DangerLevel? peakDangerLevel) dangerLevels
 	)> CalculateDangerLevels(
-		SensorType sensorType,
-		IEnumerable<RawSensorData> rawSensorData,
+		ExposureType exposureType,
+		IEnumerable<RawExposureData> rawExposureData,
 		Field? field = null
 	)
 	{
 		var result =
 			new List<(
-				RawSensorData data,
+				RawExposureData data,
 				(DangerLevel dangerLevel, DangerLevel? peakDangerLevel) dangerLevels
 			)>();
 
 		// Vibration thresholds are calculated cumulatively over a day
-		if (sensorType == SensorType.Vibration)
+		if (exposureType == ExposureType.Vibration)
 		{
-			var sortedData = rawSensorData.OrderBy(data => data.Time).ToList();
+			var sortedData = rawExposureData.OrderBy(data => data.Time).ToList();
 			double cumulativeValue = 0;
 			DateOnly? currentDate = null;
 
@@ -38,31 +38,33 @@ public static class ThresholdUtils
 
 				cumulativeValue += data.SumValue;
 
-				result.Add((data, CalculateDangerLevel(sensorType, cumulativeValue, null, field)));
+				result.Add(
+					(data, CalculateDangerLevel(exposureType, cumulativeValue, null, field))
+				);
 			}
 
 			return result;
 		}
 
-		foreach (var data in rawSensorData)
+		foreach (var data in rawExposureData)
 		{
 			// We only use max value for noise thresholds to calculate peak danger levels
-			double? maxValue = sensorType == SensorType.Noise ? data.MaxValue : null;
+			double? maxValue = exposureType == ExposureType.Noise ? data.MaxValue : null;
 
-			result.Add((data, CalculateDangerLevel(sensorType, data.AvgValue, maxValue, field)));
+			result.Add((data, CalculateDangerLevel(exposureType, data.AvgValue, maxValue, field)));
 		}
 
 		return result;
 	}
 
 	public static (DangerLevel dangerLevel, DangerLevel? peakDangerLevel) CalculateDangerLevel(
-		SensorType sensorType,
+		ExposureType exposureType,
 		double value,
 		double? maxValue,
 		Field? field = null
 	)
 	{
-		Threshold threshold = Threshold.GetThresholdForSensorTypeAndField(sensorType, field);
+		Threshold threshold = Threshold.GetThresholdForExposureTypeAndField(exposureType, field);
 
 		DangerLevel dangerLevel = DangerLevel.Safe;
 		DangerLevel? peakDangerLevel = null;

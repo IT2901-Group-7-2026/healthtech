@@ -5,30 +5,42 @@
   },
   "common": {
     "loading": "Loading data...",
-    "error": "Something went wrong while fetching sensor data.",
+    "error": "Something went wrong while fetching exposure data.",
     "noData": "No data",
     "noDataForDay": "No exposure data found for this day",
     "noOptions": "No options available",
     "today": "Today",
     "total": "Total exposure",
     "notifications": "Notifications",
-    "exportAsPdf": "Export as PDF"
+    "exportAsPdf": "Export as PDF",
+    "weekNumber": "Week {{week}}",
+    "noDataLive": "No data as of now."
   },
-  "sensors": {
+  "exposures": {
     "dust": "Dust",
     "vibration": "Vibration",
     "noise": "Noise",
-    "all": "All sensors",
+    "all": "All exposures",
     "overview": "Overview",
-    "selectPlaceholder": "Sensor",
+    "selectPlaceholder": "Exposure",
     "dustFields": {
+      "pm1_stel": "PM1",
+      "pm25_stel": "PM2.5",
+      "pm4_stel": "PM4",
+      "pm10_stel": "PM10",
       "pm1_twa": "PM1",
       "pm25_twa": "PM2.5",
+      "pm4_twa": "PM4",
       "pm10_twa": "PM10"
     },
     "dustExposureLabels": {
+      "pm1_stel": "PM1 (STEL)",
+      "pm25_stel": "PM2.5 (STEL)",
+      "pm4_stel": "PM4 (STEL)",
+      "pm10_stel": "PM10 (STEL)",
       "pm1_twa": "PM1 (TWA)",
       "pm25_twa": "PM2.5 (TWA)",
+      "pm4_twa": "PM4 (TWA)",
       "pm10_twa": "PM10 (TWA)"
     },
     "units": {
@@ -65,7 +77,12 @@
   "measurement": {
     "peak": "Peak",
     "average": "Average",
-    "averageExposure": "Average exposure"
+    "averageExposure": "Average exposure",
+    "maximum": "Maximum",
+    "latest": "Latest",
+    "recordedAt": "Recorded at {{time}}",
+    "limitValuePercentageShort": "{{percentage}} %",
+    "limitValuePercentageFull": "{{percentage}} % of the limit value"
   },
   "layout": {
     "live": "Live",
@@ -150,10 +167,12 @@
     "startDate": "Start date...",
     "endDate": "End date...",
     "date": "date",
-    "invalidDate": "Please select a start date that starts before the end date. "
+    "invalidDate": "Please select a start date that starts before the end date. ",
+    "pickDate": "Choose a date range..."
   },
   "profile": {
     "title": "My account",
+    "privacySettings": "Privacy settings",
     "location": "Location",
     "name": "Name",
     "currentSecurityRegulations": "Current security regulations",
@@ -200,7 +219,7 @@
       "pieChart": {
         "noData": "No data found for this date"
       },
-      "sensor": "Sensors",
+      "exposure": "Exposures",
       "statCards": {
         "danger": {
           "label": "Above limit value",
@@ -235,18 +254,18 @@
     },
     "userStatusChart": {
       "xAxisLabel": "Percentage of exposure limit",
-      "noData": "No sensor data available for any operators"
+      "noData": "No exposure data available for any operators"
     },
     "siteMap": {
       "title": "Site map",
       "noOperators": "No operators in hall",
       "viewUser": "View {{name}}",
       "viewUserAria": "View user {{name}}",
-      "viewSensorData": "View {{sensor}} data for {{name}}",
-      "operatorSensorStatus": {
-        "danger": "Above limit value for {{sensor}}",
-        "warning": "Above action value for {{sensor}}",
-        "safe": "Within safe limit for {{sensor}}"
+      "viewExposureData": "View {{exposure}} data for {{name}}",
+      "operatorExposureStatus": {
+        "danger": "Above limit value for {{exposure}}",
+        "warning": "Above action value for {{exposure}}",
+        "safe": "Within safe limit for {{exposure}}"
       }
     }
   },
@@ -270,7 +289,7 @@
   "operatorHeader": {
     "title": {
       "yourExposure": "Your exposure",
-      "yourSensorExposure": "Your {{sensor}} exposure"
+      "yourExposureExposure": "Your {{exposure}} exposure"
     },
     "subtitle": {
       "allExposureTypes": "All exposure types",
@@ -300,12 +319,24 @@
   "share": {
     "hygienist": {
       "button": "Share data with hygienist",
-      "confirmation": "Monthly data shared ✓"
+      "confirmation": "Shared data from {{from}} to {{to}}.",
+      "shareData": "Share data"
     }
   },
   "viewPicker": {
     "today": "Today",
     "previous": "Previous",
     "next": "Next"
+  },
+  "exposureTrendLineChartCard": {
+    "title": "Exposure trend for {{view}}"
+  },
+  "exposureSlider": {
+    "title": "Average exposure for {{view}}"
+  },
+  "pdf": {
+    "dustExposure": "Dust Exposure",
+    "noiseExposure": "Noise Exposure",
+    "vibrationExposure": "Vibration Exposure"
   }
 }

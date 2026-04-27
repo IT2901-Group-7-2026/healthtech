@@ -91,9 +91,9 @@ public class UserStatusService(AppDbContext _context, SignedInUserContext _signe
 			var dustValue = dustByUser.GetValueOrDefault(userId)?.Value;
 			var vibValue = vibByUser.GetValueOrDefault(userId)?.Value;
 
-			var noiseLevel = TryLevel(SensorType.Noise, noiseValue, noisePeak);
-			var dustLevel = TryLevel(SensorType.Dust, dustValue, null);
-			var vibLevel = TryLevel(SensorType.Vibration, vibValue, null);
+			var noiseLevel = TryLevel(ExposureType.Noise, noiseValue, noisePeak);
+			var dustLevel = TryLevel(ExposureType.Dust, dustValue, null);
+			var vibLevel = TryLevel(ExposureType.Vibration, vibValue, null);
 
 			// Peak danger level is its own separate thing and isn't part of the overall users' status
 			var overall = ThresholdUtils.GetHighestDangerLevel(
@@ -102,8 +102,8 @@ public class UserStatusService(AppDbContext _context, SignedInUserContext _signe
 				vibLevel.dangerLevel
 			);
 
-			var noiseSensorStatus = noiseLevel.dangerLevel.HasValue
-				? new UserSensorStatusDto(
+			var noiseExposureStatus = noiseLevel.dangerLevel.HasValue
+				? new UserExposureStatusDto(
 					noiseLevel.dangerLevel.Value,
 					noiseLevel.peakDangerLevel,
 					noiseValue ?? 0,
@@ -111,8 +111,8 @@ public class UserStatusService(AppDbContext _context, SignedInUserContext _signe
 				)
 				: null;
 
-			var dustSensorStatus = dustLevel.dangerLevel.HasValue
-				? new UserSensorStatusDto(
+			var dustExposureStatus = dustLevel.dangerLevel.HasValue
+				? new UserExposureStatusDto(
 					dustLevel.dangerLevel.Value,
 					dustLevel.peakDangerLevel,
 					dustValue ?? 0,
@@ -120,8 +120,8 @@ public class UserStatusService(AppDbContext _context, SignedInUserContext _signe
 				)
 				: null;
 
-			var vibSensorStatus = vibLevel.dangerLevel.HasValue
-				? new UserSensorStatusDto(
+			var vibExposureStatus = vibLevel.dangerLevel.HasValue
+				? new UserExposureStatusDto(
 					vibLevel.dangerLevel.Value,
 					vibLevel.peakDangerLevel,
 					vibValue ?? 0,
@@ -134,9 +134,9 @@ public class UserStatusService(AppDbContext _context, SignedInUserContext _signe
 				{
 					UserId = userId,
 					Status = overall,
-					Noise = noiseSensorStatus,
-					Dust = dustSensorStatus,
-					Vibration = vibSensorStatus,
+					Noise = noiseExposureStatus,
+					Dust = dustExposureStatus,
+					Vibration = vibExposureStatus,
 				}
 			);
 		}
@@ -145,7 +145,7 @@ public class UserStatusService(AppDbContext _context, SignedInUserContext _signe
 	}
 
 	private static (DangerLevel? dangerLevel, DangerLevel? peakDangerLevel) TryLevel(
-		SensorType type,
+		ExposureType type,
 		double? value,
 		double? maxValue = null
 	)

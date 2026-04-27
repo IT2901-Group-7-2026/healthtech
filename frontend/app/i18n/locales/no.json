@@ -5,7 +5,7 @@
   },
   "common": {
     "loading": "Laster inn data...",
-    "error": "Noe gikk galt under henting av sensordata.",
+    "error": "Noe gikk galt under henting av exposuredata.",
     "noData": "Ingen data",
     "noDataForDay": "Ingen eksponeringsdata funnet for denne dagen",
     "noOptions": "Ingen alternativer tilgjengelig",
@@ -13,23 +13,35 @@
     "total": "Total eksponering",
     "points": "Poeng",
     "notifications": "Notifikasjoner",
-    "exportAsPdf": "Eksporter som PDF"
+    "exportAsPdf": "Eksporter som PDF",
+    "weekNumber": "Uke {{week}}",
+    "noDataLive": "Ingen data per nå."
   },
-  "sensors": {
+  "exposures": {
     "dust": "Støv",
     "vibration": "Vibrasjon",
     "noise": "Støy",
-    "all": "Alle sensorer",
+    "all": "Alle exposureer",
     "overview": "Oversikt",
-    "selectPlaceholder": "Sensor",
+    "selectPlaceholder": "Exposure",
     "dustFields": {
+      "pm1_stel": "PM1",
+      "pm25_stel": "PM2.5",
+      "pm4_stel": "PM4",
+      "pm10_stel": "PM10",
       "pm1_twa": "PM1",
       "pm25_twa": "PM2.5",
+      "pm4_twa": "PM4",
       "pm10_twa": "PM10"
     },
     "dustExposureLabels": {
+      "pm1_stel": "PM1 (STEL)",
+      "pm25_stel": "PM2.5 (STEL)",
+      "pm4_stel": "PM4 (STEL)",
+      "pm10_stel": "PM10 (STEL)",
       "pm1_twa": "PM1 (TWA)",
       "pm25_twa": "PM2.5 (TWA)",
+      "pm4_twa": "PM4 (TWA)",
       "pm10_twa": "PM10 (TWA)"
     },
     "units": {
@@ -66,7 +78,12 @@
   "measurement": {
     "peak": "Topp",
     "average": "Gjennomsnitt",
-    "averageExposure": "Gjennomsnittlig eksponering"
+    "averageExposure": "Gjennomsnittlig eksponering",
+    "maximum": "Maksimum",
+    "latest": "Siste",
+    "recordedAt": "Registrert kl. {{time}}",
+    "limitValuePercentageShort": "{{percentage}} %",
+    "limitValuePercentageFull": "{{percentage}} % av grenseverdien"
   },
   "layout": {
     "live": "Live",
@@ -151,10 +168,12 @@
     "startDate": "Startdato...",
     "endDate": "Sluttdato...",
     "date": "dato",
-    "invalidDate": "Velg en startdato som starter før sluttdato."
+    "invalidDate": "Velg en startdato som starter før sluttdato.",
+    "pickDate": "Velg et datointervall..."
   },
   "profile": {
     "title": "Min side",
+    "privacySettings": "Personverninnstillinger",
     "location": "Lokasjon",
     "name": "Navn",
     "currentSecurityRegulations": "Gjeldende sikkerhetsreguleringer",
@@ -201,7 +220,7 @@
       "pieChart": {
         "noData": "Ingen data funnet for denne datoen"
       },
-      "sensor": "Sensorer",
+      "exposure": "Exposureer",
       "statCards": {
         "danger": {
           "label": "Over grenseverdi",
@@ -236,18 +255,18 @@
     },
     "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",
-      "noData": "Ingen sensordata tilgjengelig for operatører"
+      "noData": "Ingen exposuredata tilgjengelig for operatører"
     },
     "siteMap": {
       "title": "Områdekart",
       "noOperators": "Ingen operatører i bygg",
       "viewUser": "Se {{name}}",
       "viewUserAria": "Se bruker {{name}}",
-      "viewSensorData": "Se {{sensor}} data for {{name}}",
-      "operatorSensorStatus": {
-        "danger": "Over grenseverdi for {{sensor}}",
-        "warning": "Over tiltaksverdi for {{sensor}}",
-        "safe": "Innenfor trygge grenseverdier for {{sensor}}"
+      "viewExposureData": "Se {{exposure}} data for {{name}}",
+      "operatorExposureStatus": {
+        "danger": "Over grenseverdi for {{exposure}}",
+        "warning": "Over tiltaksverdi for {{exposure}}",
+        "safe": "Innenfor trygge grenseverdier for {{exposure}}"
       }
     }
   },
@@ -271,7 +290,7 @@
   "operatorHeader": {
     "title": {
       "yourExposure": "Din eksponering",
-      "yourSensorExposure": "Din {{sensor}}eksponering"
+      "yourExposureExposure": "Din {{exposure}}eksponering"
     },
     "subtitle": {
       "allExposureTypes": "Alle eksponeringstyper",
@@ -301,12 +320,24 @@
   "share": {
     "hygienist": {
       "button": "Del data med hygieniker",
-      "confirmation": "Månedlige data delt ✓"
+      "confirmation": "Data delt fra {{from}} til {{to}}.",
+      "shareData": "Del data"
     }
   },
   "viewPicker": {
     "today": "I dag",
     "previous": "Forrige",
     "next": "Neste"
+  },
+  "exposureTrendLineChartCard": {
+    "title": "Eksponeringstrend for {{view}}"
+  },
+  "exposureSlider": {
+    "title": "Gjennomsnittlig eksponering for {{view}}"
+  },
+  "pdf": {
+    "dustExposure": "Støveksponering",
+    "noiseExposure": "Støyeksponering",
+    "vibrationExposure": "Vibrasjoneksponering"
   }
 }

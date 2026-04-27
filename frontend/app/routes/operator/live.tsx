@@ -1,19 +1,20 @@
-import { ExposureLineChartCard } from "@/components/exposure-line-chart/exposure-line-chart-card";
 import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { ExposureSlider } from "@/components/exposure-slider";
 import { NotesCard } from "@/components/notes-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.js";
+import { BaseExposureLineChartCard } from "@/features/exposure-line-chart-card/base-exposure-line-chart-card";
 import { SecurityRegulationsCard } from "@/features/security-regulations-card/security-regulations-card";
 import { useUser } from "@/features/user/user-context";
-import { sensorQueryOptions } from "@/lib/api";
-import { now, toTZDate } from "@/lib/date";
-import type { SensorDto } from "@/lib/dto";
-import { buildSensorQuery } from "@/lib/sensor-query-utils";
-import type { SensorUnit } from "@/lib/sensors";
+import { useFormatDate } from "@/hooks/use-format-date";
+import { exposureQueryOptions } from "@/lib/api";
+import { today as getToday, now, toTZDate } from "@/lib/date";
+import type { ExposureDto, ExposureTypeField } from "@/lib/dto";
+import { buildExposureQuery } from "@/lib/exposure-query-utils";
+import type { ExposureUnit } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
-import { computeYAxisRange } from "@/lib/utils";
+import { computeYAxisRange, DUST_Y_AXIS_STEP } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries } from "@tanstack/react-query";
 import { addMinutes, isWithinInterval, startOfDay, startOfMinute } from "date-fns";
@@ -36,21 +37,26 @@ const TIME_RANGE_MINUTES: Record<TimeRangeOption, number> = {
 export default function OperatorLiveView() {
 	const { user } = useUser();
 	const [selectedUserId] = useQueryState("userId", parseAsString);
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
+	const formatDate = useFormatDate();
+
+	const today = getToday();
 
 	const [timeRange, setTimeRange] = useQueryState<TimeRangeOption>("timeRange", parseTimeRange.withDefault("30"));
 
 	const targetUserId = selectedUserId ?? user.id;
 
+	const timeRangeInMinutes = TIME_RANGE_MINUTES[timeRange];
+
 	const startOfCurrentMinute = startOfMinute(now());
 	const end = startOfCurrentMinute;
-	const start = addMinutes(startOfCurrentMinute, -TIME_RANGE_MINUTES[timeRange]);
+	const start = addMinutes(startOfCurrentMinute, -timeRangeInMinutes);
 
 	const [dustTwa1Result, dustTwa25Result, dustTwa10Result, noiseResult, vibrationResult] = useQueries({
 		queries: [
-			sensorQueryOptions({
-				sensor: "dust",
-				query: buildSensorQuery("dust", "day", end, {
+			exposureQueryOptions({
+				exposure: "dust",
+				query: buildExposureQuery("dust", "day", end, {
 					granularity: "minute",
 					aggregationFunction: "avg",
 					field: "pm1_twa",
@@ -58,10 +64,12 @@ export default function OperatorLiveView() {
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
-			sensorQueryOptions({
-				sensor: "dust",
-				query: buildSensorQuery("dust", "day", end, {
+			exposureQueryOptions({
+				exposure: "dust",
+				query: buildExposureQuery("dust", "day", end, {
 					granularity: "minute",
 					aggregationFunction: "avg",
 					field: "pm25_twa",
@@ -69,10 +77,12 @@ export default function OperatorLiveView() {
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
-			sensorQueryOptions({
-				sensor: "dust",
-				query: buildSensorQuery("dust", "day", end, {
+			exposureQueryOptions({
+				exposure: "dust",
+				query: buildExposureQuery("dust", "day", end, {
 					granularity: "minute",
 					aggregationFunction: "avg",
 					field: "pm10_twa",
@@ -80,24 +90,30 @@ export default function OperatorLiveView() {
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
-			sensorQueryOptions({
-				sensor: "noise",
-				query: buildSensorQuery("noise", "day", end, {
+			exposureQueryOptions({
+				exposure: "noise",
+				query: buildExposureQuery("noise", "day", end, {
 					granularity: "minute",
 					startTime: start,
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
-			sensorQueryOptions({
-				sensor: "vibration",
-				query: buildSensorQuery("vibration", "day", end, {
+			exposureQueryOptions({
+				exposure: "vibration",
+				query: buildExposureQuery("vibration", "day", end, {
 					granularity: "minute",
 					startTime: toTZDate(startOfDay(start)),
 					endTime: end,
 				}),
 				userId: targetUserId,
+				queryKind: "windowed",
+				windowMinutes: timeRangeInMinutes,
 			}),
 		],
 	});
@@ -117,6 +133,8 @@ export default function OperatorLiveView() {
 		return rawVibrationData.filter((d) => isWithinInterval(d.time, { start, end }));
 	}, [rawVibrationData, start, end]);
 
+	const formattedDate = formatDate(today, i18n.language === "en" ? "MMM d, yyyy" : "d. MMM yyyy");
+
 	return (
 		<div
 			className="flex w-full flex-col gap-4 md:grid"
@@ -132,39 +150,39 @@ export default function OperatorLiveView() {
 			<div className="flex min-w-0 flex-col gap-4 md:col-start-2">
 				<Card>
 					<CardHeader>
-						<CardTitle>{t(($) => $.sensors.dust)}</CardTitle>
+						<CardTitle>{t(($) => $.exposures.dust)}</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<LiveExposureCard
-							sensor="dust"
-							exposureLabel={"PM1 TWA"}
+							exposure="dust"
+							exposureLabel="PM1 TWA"
 							exposureUnitLabel="µg/m³"
-							chartUnit={"ug"}
-							data={dustTwa1Data ?? []}
+							chartUnit="ug"
+							data={dustTwa1Data}
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
 						/>
 						<Separator />
 						<LiveExposureCard
-							sensor="dust"
-							exposureLabel={"PM2.5 TWA"}
+							exposure="dust"
+							exposureLabel="PM2.5 TWA"
 							exposureField="pm25_twa"
 							exposureUnitLabel="µg/m³"
-							chartUnit={"ug"}
-							data={dustTwa25Data ?? []}
+							chartUnit="ug"
+							data={dustTwa25Data}
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
 						/>
 						<Separator />
 						<LiveExposureCard
-							sensor="dust"
-							exposureLabel={"PM10 TWA"}
+							exposure="dust"
+							exposureLabel="PM10 TWA"
 							exposureField="pm10_twa"
 							exposureUnitLabel="µg/m³"
-							chartUnit={"ug"}
-							data={dustTwa10Data ?? []}
+							chartUnit="ug"
+							data={dustTwa10Data}
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
@@ -175,15 +193,15 @@ export default function OperatorLiveView() {
 
 				<Card>
 					<CardHeader>
-						<CardTitle>{t(($) => $.sensors.noise)}</CardTitle>
+						<CardTitle>{t(($) => $.exposures.noise)}</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<LiveExposureCard
-							sensor="noise"
-							exposureLabel={t(($) => $.sensors.noise)}
+							exposure="noise"
+							exposureLabel={t(($) => $.exposures.noise)}
 							exposureUnitLabel="dB"
 							chartUnit="dbTwa"
-							data={noiseData ?? []}
+							data={noiseData}
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
@@ -194,15 +212,15 @@ export default function OperatorLiveView() {
 
 				<Card>
 					<CardHeader>
-						<CardTitle>{t(($) => $.sensors.vibration)}</CardTitle>
+						<CardTitle>{t(($) => $.exposures.vibration)}</CardTitle>
 					</CardHeader>
 					<CardContent>
 						<LiveExposureCard
-							sensor="vibration"
-							exposureLabel={t(($) => $.sensors.vibration)}
-							exposureUnitLabel={t(($) => $.sensors.units.points)}
-							chartUnit={"points"}
-							data={vibrationData ?? []}
+							exposure="vibration"
+							exposureLabel={t(($) => $.exposures.vibration)}
+							exposureUnitLabel={t(($) => $.exposures.units.points)}
+							chartUnit="points"
+							data={vibrationData}
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
@@ -215,10 +233,13 @@ export default function OperatorLiveView() {
 
 			<aside className="md:col-start-3">
 				<Card muted={true} className="flex flex-col gap-4">
-					<p className="flex items-center gap-2 text-sm">
-						<Clock size="1rem" />
-						{t(($) => $.live.timeRange.label)}
-					</p>
+					<div className="flex w-full flex-row justify-between">
+						<p className="flex items-center gap-2 text-sm">
+							<Clock size="1rem" />
+							{t(($) => $.live.timeRange.label)}
+						</p>
+						<p className="text-sm">{formattedDate}</p>
+					</div>
 					<ToggleGroup
 						type="single"
 						value={timeRange}
@@ -265,12 +286,12 @@ export default function OperatorLiveView() {
 }
 
 interface LiveExposureCardProps {
-	sensor: "dust" | "noise" | "vibration";
+	exposure: "dust" | "noise" | "vibration";
 	exposureLabel: string;
-	exposureField?: "pm1_twa" | "pm25_twa" | "pm10_twa";
+	exposureField?: ExposureTypeField;
 	exposureUnitLabel: string;
-	chartUnit: SensorUnit;
-	data: Array<SensorDto>;
+	chartUnit: ExposureUnit;
+	data: Array<ExposureDto>;
 	minTime: TZDate;
 	maxTime: TZDate;
 	chartClassName?: string;
@@ -279,7 +300,7 @@ interface LiveExposureCardProps {
 }
 
 const LiveExposureCard = ({
-	sensor,
+	exposure,
 	exposureLabel,
 	exposureField,
 	exposureUnitLabel,
@@ -291,17 +312,21 @@ const LiveExposureCard = ({
 	showLegend = false,
 	lineType,
 }: LiveExposureCardProps) => {
-	const { t } = useTranslation();
-
 	const maxValue = Math.max(...data.map((d) => d.value));
 
 	const minY = 0;
-	let maxY = sensor === "vibration" ? 450 : sensor === "noise" ? 150 : 45;
+	let maxY = exposure === "vibration" ? 450 : exposure === "noise" ? 150 : 45;
 	if (maxValue > maxY) {
-		maxY = computeYAxisRange(data ?? []).maxY;
+		maxY =
+			exposure === "dust"
+				? computeYAxisRange(data ?? [], {
+						step: DUST_Y_AXIS_STEP,
+						topPadding: DUST_Y_AXIS_STEP,
+					}).maxY
+				: computeYAxisRange(data ?? []).maxY;
 	}
 
-	const threshold = getThreshold(sensor, exposureField);
+	const threshold = getThreshold(exposure, exposureField);
 	const latestData = data.at(-1);
 	const latestValue = latestData?.value;
 	const latestDangerLevel = latestData?.dangerLevel;
@@ -310,7 +335,7 @@ const LiveExposureCard = ({
 		<div className="flex w-full gap-4">
 			<ExposureSlider
 				label={exposureLabel}
-				sensor={sensor}
+				exposure={exposure}
 				field={exposureField}
 				value={latestValue}
 				dangerLevel={latestDangerLevel}
@@ -318,7 +343,7 @@ const LiveExposureCard = ({
 				className="w-48"
 			/>
 			<div className="w-128 flex-1 self-stretch">
-				<ExposureLineChartCard
+				<BaseExposureLineChartCard
 					minTime={minTime}
 					maxTime={maxTime}
 					chartData={data}
@@ -326,20 +351,18 @@ const LiveExposureCard = ({
 					maxY={maxY}
 					minY={minY}
 					lineType={lineType}
-					sensor={sensor}
+					exposure={exposure}
 					variant="compact"
 					className={chartClassName}
 					contentClassName="p-0"
 					chartContainerClassName="!aspect-auto"
 					showLegend={showLegend}
-					xTickLabels={{
-						start: "", // TODO: We should show something like "8 hours ago"
-						end: t(($) => $.live.chart.now),
-					}}
+					xAxisMode="windowed"
+					dustField={exposureField}
 				>
 					<ThresholdLine y={threshold.danger} dangerLevel="danger" />
 					<ThresholdLine y={threshold.warning} dangerLevel="warning" />
-				</ExposureLineChartCard>
+				</BaseExposureLineChartCard>
 			</div>
 		</div>
 	);

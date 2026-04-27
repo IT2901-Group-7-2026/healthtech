@@ -67,7 +67,7 @@ public class UserController(IUserService _userService, IUserStatusService _userS
 
 	[HttpGet("{managerId}/subordinates/threshold-summary")]
 	public async Task<
-		ActionResult<Dictionary<string, SensorThresholdSummaryDto>>
+		ActionResult<Dictionary<string, ExposureThresholdSummaryDto>>
 	> GetSubordinatesThresholdStatus(
 		Guid managerId,
 		[FromQuery] DateTime? startTime,
@@ -77,7 +77,7 @@ public class UserController(IUserService _userService, IUserStatusService _userS
 		List<User> subordinates = await _userService.GetSubordinatesAsync(managerId);
 		if (subordinates.Count == 0)
 		{
-			return Ok(new Dictionary<string, SensorThresholdSummaryDto>());
+			return Ok(new Dictionary<string, ExposureThresholdSummaryDto>());
 		}
 
 		var start = startTime ?? DateTime.UtcNow.Date;
@@ -89,18 +89,18 @@ public class UserController(IUserService _userService, IUserStatusService _userS
 			end
 		);
 
-		var summary = new Dictionary<string, SensorThresholdSummaryDto>(
+		var summary = new Dictionary<string, ExposureThresholdSummaryDto>(
 			StringComparer.OrdinalIgnoreCase
 		)
 		{
-			["noise"] = new SensorThresholdSummaryDto(),
-			["dust"] = new SensorThresholdSummaryDto(),
-			["vibration"] = new SensorThresholdSummaryDto(),
-			["total"] = new SensorThresholdSummaryDto(),
+			["noise"] = new ExposureThresholdSummaryDto(),
+			["dust"] = new ExposureThresholdSummaryDto(),
+			["vibration"] = new ExposureThresholdSummaryDto(),
+			["total"] = new ExposureThresholdSummaryDto(),
 		};
 
 		// Helper function to safely increment the correct bucket
-		void IncrementBucket(SensorThresholdSummaryDto counts, DangerLevel? level)
+		void IncrementBucket(ExposureThresholdSummaryDto counts, DangerLevel? level)
 		{
 			switch (level)
 			{

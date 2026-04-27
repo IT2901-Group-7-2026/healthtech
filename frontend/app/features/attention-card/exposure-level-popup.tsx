@@ -3,17 +3,17 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BasePopup } from "@/features/popups/base-popup";
 import type { DangerLevel } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto.js";
-import { sensors } from "@/lib/sensors.js";
+import { exposures } from "@/lib/exposures.js";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 const getExposureBadges = (worker: UserWithStatusDto, popupStatus: DangerLevel) => {
-	const exposures = sensors.map((sensor) => ({
-		sensor,
-		data: worker.status[sensor],
+	const entries = exposures.map((exposure) => ({
+		exposure,
+		data: worker.status[exposure],
 	}));
 
-	return exposures.filter(({ data }) => {
+	return entries.filter(({ data }) => {
 		if (!data) return false;
 
 		if (popupStatus === "danger") {
@@ -31,9 +31,9 @@ const getExposureBadges = (worker: UserWithStatusDto, popupStatus: DangerLevel) 
 const WorkerRow = ({ worker, status }: { worker: UserWithStatusDto; status: DangerLevel }) => {
 	const { t } = useTranslation();
 
-	const exposureBadges = getExposureBadges(worker, status).map(({ sensor, data }) => (
-		<ExposureBadge key={sensor} sensor={sensor} dangerLevel={data?.dangerLevel ?? "safe"}>
-			{t(($) => $.sensors[sensor])}
+	const exposureBadges = getExposureBadges(worker, status).map(({ exposure, data }) => (
+		<ExposureBadge key={exposure} exposure={exposure} dangerLevel={data?.dangerLevel ?? "safe"}>
+			{t(($) => $.exposures[exposure])}
 		</ExposureBadge>
 	));
 

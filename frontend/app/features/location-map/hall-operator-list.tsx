@@ -1,16 +1,16 @@
-import { SensorIcon } from "@/components/sensor-icon";
+import { ExposureIcon } from "@/components/exposure-icon";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { UserWithStatusDto } from "@/lib/dto";
-import { type Sensor, sensors } from "@/lib/sensors";
+import { type Exposure, exposures } from "@/lib/exposures";
 import { ChevronDownIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 export interface HallOperatorListProps {
-	sensor: Sensor | "all";
+	exposure: Exposure | "all";
 	operators: Array<UserWithStatusDto>;
 	hallName: string;
 	selectedHall: string | null;
@@ -18,7 +18,7 @@ export interface HallOperatorListProps {
 }
 
 export const HallOperatorList = ({
-	sensor,
+	exposure,
 	operators,
 	hallName,
 	selectedHall,
@@ -64,12 +64,12 @@ export const HallOperatorList = ({
 											{operator.name}
 										</Link>
 									</TableCell>
-									{sensor === "all" ? (
-										sensors.map((s) => (
-											<HallOperatorListItem key={s} operator={operator} sensor={s} />
+									{exposure === "all" ? (
+										exposures.map((s) => (
+											<HallOperatorListItem key={s} operator={operator} exposure={s} />
 										))
 									) : (
-										<HallOperatorListItem operator={operator} sensor={sensor} />
+										<HallOperatorListItem operator={operator} exposure={exposure} />
 									)}
 								</TableRow>
 							))
@@ -83,30 +83,30 @@ export const HallOperatorList = ({
 
 interface HallOperatorListItemProps {
 	operator: UserWithStatusDto;
-	sensor: Sensor;
+	exposure: Exposure;
 }
 
-const HallOperatorListItem = ({ operator, sensor }: HallOperatorListItemProps) => {
+const HallOperatorListItem = ({ operator, exposure }: HallOperatorListItemProps) => {
 	const { t } = useTranslation();
 
-	const dangerLevel = operator.status[sensor]?.dangerLevel ?? "safe";
-	const title = t(($) => $.foremanDashboard.siteMap.operatorSensorStatus[dangerLevel], {
-		sensor: t(($$) => $$.sensors[sensor]).toLowerCase(),
+	const dangerLevel = operator.status[exposure]?.dangerLevel ?? "safe";
+	const title = t(($) => $.foremanDashboard.siteMap.operatorExposureStatus[dangerLevel], {
+		exposure: t(($$) => $$.exposures[exposure]).toLowerCase(),
 	});
 
 	return (
 		<TableCell className="items-center">
 			<Link
-				to={`/foreman?userId=${operator.id}&sensor=${sensor}`}
+				to={`/foreman?userId=${operator.id}&exposure=${exposure}`}
 				title={title}
-				aria-label={t(($) => $.foremanDashboard.siteMap.viewSensorData, {
+				aria-label={t(($) => $.foremanDashboard.siteMap.viewExposureData, {
 					name: operator.name,
-					sensor: t(($$) => $$.sensors[sensor]).toLowerCase(),
+					exposure: t(($$) => $$.exposures[exposure]).toLowerCase(),
 				})}
 				className="block w-fit"
 			>
-				<SensorIcon
-					type={sensor}
+				<ExposureIcon
+					type={exposure}
 					size="xs"
 					dangerLevel={dangerLevel}
 					className="w-fit cursor-pointer transition-transform hover:scale-110"

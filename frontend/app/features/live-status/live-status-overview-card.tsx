@@ -1,12 +1,12 @@
 import { Card } from "@/components/ui/card";
 import type { DangerLevel } from "@/lib/danger-levels";
 import { mapDangerLevelToColor } from "@/lib/danger-levels";
-import { sensors } from "@/lib/sensors";
+import { exposures } from "@/lib/exposures";
 import { getEmoji } from "@/lib/utils";
 import { t } from "i18next";
 
 interface LiveStatusOverviewCardProps {
-	sensorDangerLevels: {
+	exposureDangerLevels: {
 		dust: DangerLevel;
 		noise: DangerLevel;
 		vibration: DangerLevel;
@@ -17,19 +17,19 @@ function mapDangerLevelToLabel(dangerLevel: DangerLevel) {
 	return t(($) => $.live.overviewCard[dangerLevel]);
 }
 
-export const LiveStatusOverviewCard = ({ sensorDangerLevels }: LiveStatusOverviewCardProps) => (
+export const LiveStatusOverviewCard = ({ exposureDangerLevels }: LiveStatusOverviewCardProps) => (
 	<Card>
 		<div className="grid grid-cols-3 gap-2">
-			{sensors.map((sensor) => {
-				const dangerLevel = sensorDangerLevels[sensor];
+			{exposures.map((exposure) => {
+				const dangerLevel = exposureDangerLevels[exposure];
 				const Icon = getEmoji(dangerLevel);
 
 				return (
 					<div
-						key={sensor}
+						key={exposure}
 						className="flex flex-row justify-between rounded-md border border-b-card-highlight p-2"
 					>
-						<div>{t(($) => $.sensors[sensor])}</div>
+						<div>{t(($) => $.exposures[exposure])}</div>
 
 						<div
 							className={`flex flex-row items-center text-xs text-${mapDangerLevelToColor(dangerLevel)} gap-1`}

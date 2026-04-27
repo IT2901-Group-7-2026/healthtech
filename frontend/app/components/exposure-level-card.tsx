@@ -1,21 +1,21 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import type { Sensor } from "@/features/sensor-picker/sensors";
+import type { Exposure } from "@/features/exposure-picker/exposures";
 import { mapDangerLevelToColor } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
 import { useTranslation } from "react-i18next";
 
 interface Props {
 	users: Array<UserWithStatusDto>;
-	sensor: Sensor;
+	exposure: Exposure;
 	dangerLevel: "safe" | "warning" | "danger";
 	onUserClick?: (userId: string | null) => void;
 }
 
-export function ExposureRiskCard({ users, sensor, dangerLevel, onUserClick }: Props) {
+export function ExposureRiskCard({ users, exposure, dangerLevel, onUserClick }: Props) {
 	const { t } = useTranslation();
 
-	const operators = users.filter((user) => (user.status[sensor]?.dangerLevel ?? "safe") === dangerLevel);
+	const operators = users.filter((user) => (user.status[exposure]?.dangerLevel ?? "safe") === dangerLevel);
 
 	return (
 		<Card className="group h-fit w-full flex-1 basis-64 rounded-2xl">
@@ -45,7 +45,7 @@ export function ExposureRiskCard({ users, sensor, dangerLevel, onUserClick }: Pr
 										<div className="flex w-full items-center gap-5">
 											<div
 												className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(
-													sub.status[sensor]?.dangerLevel ?? "safe",
+													sub.status[exposure]?.dangerLevel ?? "safe",
 												)}`}
 											/>
 											<span>{sub.name}</span>

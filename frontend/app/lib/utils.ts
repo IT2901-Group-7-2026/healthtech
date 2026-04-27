@@ -7,12 +7,19 @@ import { addDays, addMonths, addWeeks, subDays, subMonths, subWeeks } from "date
 import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import type { DangerLevel } from "./danger-levels";
-import { DEFAULT_MAX_HOUR_DOMAIN, DEFAULT_MIN_HOUR_DOMAIN, type HourDomainDto, type SensorDto, type User } from "./dto";
-import type { Sensor, SensorUnit } from "./sensors";
+import {
+	DEFAULT_MAX_HOUR_DOMAIN,
+	DEFAULT_MIN_HOUR_DOMAIN,
+	type ExposureDto,
+	type HourDomainDto,
+	type User,
+} from "./dto";
+import type { Exposure, ExposureUnit } from "./exposures";
 
 const MAX_CHART_HOUR = 23;
 const MIN_CHART_HOUR = 0;
 const UG_TO_MG = 0.001;
+export const DUST_Y_AXIS_STEP = 7.5;
 
 export function cn(...inputs: Array<ClassValue>) {
 	return twMerge(clsx(inputs));
@@ -45,7 +52,7 @@ export const getNextDay = (selectedDay: TZDate, view: View): TZDate => {
 };
 
 export function computeYAxisRange(
-	data: Array<SensorDto>,
+	data: Array<ExposureDto>,
 	options?: {
 		topPadding?: number;
 		bottomPadding?: number;
@@ -70,6 +77,17 @@ export function computeYAxisRange(
 	return { minY: clampedMinY, maxY };
 }
 
+export function buildYAxisTicks(minY: number, maxY: number, step: number): Array<number> {
+	const ticks: Array<number> = [];
+	const precision = Math.max(0, `${step}`.split(".")[1]?.length ?? 0);
+
+	for (let value = minY; value <= maxY + step / 1000; value += step) {
+		ticks.push(Number(value.toFixed(precision)));
+	}
+
+	return ticks;
+}
+
 export const userRoleToString = (role: User["role"], t: TranslateFn) => {
 	switch (role) {
 		case "operator":
@@ -81,8 +99,8 @@ export const userRoleToString = (role: User["role"], t: TranslateFn) => {
 	}
 };
 
-export function downsampleDataPoints(data: Array<SensorDto>, bucketSize: number): Array<SensorDto> {
-	const result: Array<SensorDto> = [];
+export function downsampleDataPoints(data: Array<ExposureDto>, bucketSize: number): Array<ExposureDto> {
+	const result: Array<ExposureDto> = [];
 
 	for (let i = 0; i < data.length; i += bucketSize) {
 		const bucket = data.slice(i, i + bucketSize);
@@ -107,8 +125,8 @@ export function downsampleDataPoints(data: Array<SensorDto>, bucketSize: number)
 	return result;
 }
 
-export function downsampleSensorData(sensor: Sensor, data: Array<SensorDto>): Array<SensorDto> {
-	if (sensor === "vibration") {
+export function downsampleExposureData(exposure: Exposure, data: Array<ExposureDto>): Array<ExposureDto> {
+	if (exposure === "vibration") {
 		return data;
 	}
 
@@ -196,11 +214,11 @@ function convertUtcHourToLocalHour(utcHour: number, date: TZDate): number {
 	return localDate.getHours();
 }
 
-export function formatSensorValue(
+export function formatExposureValue(
 	value: number | undefined,
-	unit: SensorUnit,
+	unit: ExposureUnit,
 	numberOfDigits = 2,
-	numberOfDigitsPerUnit?: Partial<Record<SensorUnit, number>>,
+	numberOfDigitsPerUnit?: Partial<Record<ExposureUnit, number>>,
 ) {
 	if (value == null) {
 		return "N/A";
@@ -213,4 +231,15 @@ export function formatSensorValue(
 	}
 
 	return value.toFixed(resolvedNumberOfUnits);
+}
+
+/**
+ * Peak data doesn't have a warning danger level, so we treat warning levels as safe
+ */
+export function normalizeDangerLevelForPeakForLineChart(dangerLevel: DangerLevel, isPeak?: boolean): DangerLevel {
+	if (isPeak && dangerLevel === "warning") {
+		return "safe";
+	}
+
+	return dangerLevel;
 }

@@ -1,23 +1,32 @@
-import type { Sensor } from "@/features/sensor-picker/sensors";
+import type { Exposure } from "@/features/exposure-picker/exposures";
 import type { TZDate } from "@date-fns/tz";
-import { queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { minutesToMilliseconds } from "date-fns";
 import { fetchWithUserId } from "./api-client";
 import {
+	type ExposureDataRequestDto,
+	type ExposureOverviewRequestDto,
+	type ExposureOverviewResponseDto,
+	ExposureOverviewResponseDtoSchema,
+	type ExposureResponseDto,
+	ExposureResponseDtoSchema,
 	type Note,
 	type NoteDataRequest,
 	NoteSchema,
-	type SensorDataRequestDto,
-	type SensorOverviewRequestDto,
-	type SensorOverviewResponseDto,
-	SensorOverviewResponseDtoSchema,
-	type SensorResponseDto,
-	SensorResponseDtoSchema,
 	ThresholdSummarySchema,
 	UserSchema,
 	UserWithStatusSchema,
 } from "./dto";
-import { getStartEnd } from "./sensor-query-utils";
+import { getStartEnd } from "./exposure-query-utils";
+import {
+	buildExposureOverviewQueryKey,
+	buildExposureQueryKey,
+	buildNotesQueryKey,
+	buildSubordinatesQueryKey,
+	buildSubordinatesQueryPrefix,
+	buildThresholdSummaryQueryKey,
+	type ExposureQueryKind,
+} from "./query-key-builder";
 import type { View } from "./views";
 
 // We have at most 1 data point every minute so we don't need a shorter refetch interval than that
@@ -40,79 +49,103 @@ export function usersQueryOptions() {
 		queryFn: () => fetchAllUsers(),
 		staleTime: minutesToMilliseconds(10),
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
+		placeholderData: keepPreviousData,
 	});
 }
 
-const fetchSensorData = async (
-	sensor: Sensor,
-	sensorDataRequest: SensorDataRequestDto,
+const fetchExposureData = async (
+	exposure: Exposure,
+	exposureDataRequest: ExposureDataRequestDto,
 	userId?: string,
-): Promise<SensorResponseDto> => {
-	const response = await fetchWithUserId(`sensor/${sensor}/${userId}`, {
+): Promise<ExposureResponseDto> => {
+	const response = await fetchWithUserId(`exposure/${exposure}/${userId}`, {
 		method: "POST",
-		body: JSON.stringify(sensorDataRequest),
+		body: JSON.stringify(exposureDataRequest),
 	});
 
 	if (!response.ok) {
-		throw new Error("Failed to fetch sensor data");
+		throw new Error("Failed to fetch exposure data");
 	}
 
 	const json = await response.json();
-	return SensorResponseDtoSchema.parseAsync(json);
+	return ExposureResponseDtoSchema.parseAsync(json);
 };
 
-const fetchSensorOverviewData = async (
-	requests: SensorOverviewRequestDto,
+const fetchExposureOverviewData = async (
+	requests: ExposureOverviewRequestDto,
 	userId?: string,
-): Promise<SensorOverviewResponseDto> => {
-	const response = await fetchWithUserId(`sensor/overview/${userId}`, {
+): Promise<ExposureOverviewResponseDto> => {
+	const response = await fetchWithUserId(`exposure/overview/${userId}`, {
 		method: "POST",
 		body: JSON.stringify(requests),
 	});
 
 	if (!response.ok) {
-		throw new Error("Failed to fetch sensor overview data");
+		throw new Error("Failed to fetch exposure overview data");
 	}
 
 	const json = await response.json();
-	return SensorOverviewResponseDtoSchema.parseAsync(json);
+	return ExposureOverviewResponseDtoSchema.parseAsync(json);
 };
 
-export function sensorOverviewQueryOptions({
+export function exposureOverviewQueryOptions({
 	query,
 	userId,
 	enabled,
+	queryKind,
+	windowMinutes,
 }: {
-	query: SensorOverviewRequestDto;
+	query: ExposureOverviewRequestDto;
 	userId?: string;
 	enabled?: boolean;
+	queryKind?: ExposureQueryKind;
+	windowMinutes?: number;
 }) {
 	return queryOptions({
-		queryKey: [query, userId],
-		queryFn: () => fetchSensorOverviewData(query, userId),
+		queryKey: buildExposureOverviewQueryKey({
+			userId,
+			query,
+			queryKind,
+			windowMinutes,
+		}),
+		queryFn: () => fetchExposureOverviewData(query, userId),
 		staleTime: minutesToMilliseconds(10),
 		enabled,
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
+		placeholderData: keepPreviousData,
+		refetchIntervalInBackground: true,
 	});
 }
 
-export function sensorQueryOptions({
-	sensor,
+export function exposureQueryOptions({
+	exposure,
 	query,
 	userId,
 	enabled,
+	queryKind,
+	windowMinutes,
 }: {
-	sensor: Sensor;
-	query: SensorDataRequestDto;
+	exposure: Exposure;
+	query: ExposureDataRequestDto;
 	userId?: string;
 	enabled?: boolean;
+	queryKind?: ExposureQueryKind;
+	windowMinutes?: number;
 }) {
 	return queryOptions({
-		queryKey: [sensor, query, userId],
-		queryFn: () => fetchSensorData(sensor, query, userId),
+		queryKey: buildExposureQueryKey({
+			exposure,
+			userId,
+			query,
+			queryKind,
+			windowMinutes,
+		}),
+		queryFn: () => fetchExposureData(exposure, query, userId),
 		staleTime: minutesToMilliseconds(10),
 		enabled,
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
+		placeholderData: keepPreviousData,
+		refetchIntervalInBackground: true,
 	});
 }
 
@@ -134,10 +167,11 @@ export function notesQueryOptions({ view, selectedDay, userId }: { view: View; s
 	const query = getStartEnd(view, selectedDay);
 
 	return queryOptions({
-		queryKey: ["notes", query, userId],
+		queryKey: buildNotesQueryKey(userId, query.startTime, query.endTime),
 		queryFn: () => fetchNoteData(query, userId),
 		staleTime: minutesToMilliseconds(10),
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
+		placeholderData: keepPreviousData,
 	});
 }
 
@@ -196,7 +230,7 @@ export const fetchSubordinatesQueryOptions = (userId: string, startTime?: TZDate
 	}
 
 	return queryOptions({
-		queryKey: ["user.subordinates", userId, startTime, endTime],
+		queryKey: buildSubordinatesQueryKey(userId, startTime, endTime),
 		queryFn: async () => {
 			const response = await fetchWithUserId(`users/${userId}/subordinates?${params.toString()}`);
 
@@ -209,6 +243,8 @@ export const fetchSubordinatesQueryOptions = (userId: string, startTime?: TZDate
 		},
 		staleTime: minutesToMilliseconds(10),
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
+		placeholderData: keepPreviousData,
+		refetchIntervalInBackground: true,
 	});
 };
 
@@ -232,7 +268,7 @@ export const useRemoveSubordinatesMutation = (parentUserId: string) => {
 		mutationFn: (subordinateIds: Array<string>) => removeSubordinates(parentUserId, subordinateIds),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: fetchSubordinatesQueryOptions(parentUserId).queryKey,
+				queryKey: buildSubordinatesQueryPrefix(parentUserId),
 			});
 		},
 	});
@@ -258,7 +294,7 @@ export const useAddSubordinatesMutation = (parentUserId: string) => {
 		mutationFn: (subordinateIds: Array<string>) => addSubordinates(parentUserId, subordinateIds),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: fetchSubordinatesQueryOptions(parentUserId).queryKey,
+				queryKey: buildSubordinatesQueryPrefix(parentUserId),
 			});
 		},
 	});
@@ -266,7 +302,7 @@ export const useAddSubordinatesMutation = (parentUserId: string) => {
 
 export const fetchThresholdSummaryQueryOptions = (managerUserId: string, startTime?: TZDate, endTime?: TZDate) =>
 	queryOptions({
-		queryKey: ["user.subordinates.threshold-summary", managerUserId, startTime, endTime],
+		queryKey: buildThresholdSummaryQueryKey(managerUserId, startTime, endTime),
 		queryFn: async () => {
 			const params = new URLSearchParams();
 			if (startTime) {
@@ -292,4 +328,6 @@ export const fetchThresholdSummaryQueryOptions = (managerUserId: string, startTi
 		},
 		staleTime: minutesToMilliseconds(10),
 		refetchInterval: DEFAULT_REFETCH_INTERVAL,
+		placeholderData: keepPreviousData,
+		refetchIntervalInBackground: true,
 	});
