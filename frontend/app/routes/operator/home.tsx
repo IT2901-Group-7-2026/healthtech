@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
-
 import { ExportButton } from "@/components/export-button";
 import { Card } from "@/components/ui/card";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
