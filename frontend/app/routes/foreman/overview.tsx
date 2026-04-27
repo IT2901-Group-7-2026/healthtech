@@ -1,5 +1,3 @@
-/** biome-ignore-all lint/suspicious/noAlert: we allow alerts for testing */
-
 import { DatePicker } from "@/components/date-picker";
 import { NotesCard } from "@/components/notes-card";
 import { OperatorExposureStatusTable } from "@/components/operator-exposure-status-table";
