@@ -227,7 +227,7 @@ function ExposureSummaryGrid({ thresholdSummary }: { thresholdSummary: Threshold
 				{t(($) => $.foremanDashboard.overview.exposure)}
 			</div>
 			<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
-				{exposures.map((exposureType: Exposure) => (
+				{exposures.map((exposureType) => (
 					<PieChartCard
 						data={{
 							safe: thresholdSummary[exposureType].safe,

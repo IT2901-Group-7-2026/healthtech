@@ -28,7 +28,7 @@ export function UserStatusPieChart({ data, hoverable }: Props) {
 
 	return (
 		<ChartContainer config={{}} className="size-full">
-			<PieChart responsive={true} style={{ cursor: hoverable ? "pointer" : "default" }}>
+			<PieChart responsive={true} style={{ cursor: hoverable ? "pointer" : undefined }}>
 				<Pie
 					dataKey={"value"}
 					isAnimationActive={false}
