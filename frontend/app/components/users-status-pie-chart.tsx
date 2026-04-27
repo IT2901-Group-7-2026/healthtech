@@ -1,34 +1,38 @@
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { DangerLevelSchema } from "@/lib/danger-levels.js";
+import { type DangerLevel, DangerLevelSchema, dangerlevelStyles } from "@/lib/danger-levels.js";
+import { useTranslation } from "react-i18next";
 import { Pie, PieChart, type PieLabelRenderProps, type PieSectorShapeProps, Sector } from "recharts";
 import { DangerLevelDots } from "./danger-level-dots.js";
 
 const RADIAN = Math.PI / 180;
 
 const pieShape = (props: PieSectorShapeProps) => {
-	const colorMap: Record<string, string> = {
-		Danger: "var(--danger)",
-		Warning: "var(--warning)",
-		Safe: "var(--safe)",
-	};
-	const color = (props.name && colorMap[props.name]) || "#ccc";
+	const color = (props.name && dangerlevelStyles[props.name as DangerLevel].color) || "#ccc";
+
 	return <Sector {...props} fill={color} />;
 };
 
-export interface UserStatusData {
-	safe: { name: string; value: number; label: string };
-	warning: { name: string; value: number; label: string };
-	danger: { name: string; value: number; label: string };
+interface Props {
+	data: Record<DangerLevel, number>;
+	hoverable?: boolean;
 }
 
-export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
+export function UserStatusPieChart({ data, hoverable }: Props) {
+	const { t } = useTranslation();
+
+	const chartData = DangerLevelSchema.options.map((level) => ({
+		name: level,
+		value: data[level],
+		label: t(($) => $.foremanDashboard.overview.statCards[level].label),
+	}));
+
 	return (
 		<ChartContainer config={{}} className="size-full">
-			<PieChart responsive={true}>
+			<PieChart responsive={true} style={{ cursor: hoverable ? "pointer" : undefined }}>
 				<Pie
 					dataKey={"value"}
 					isAnimationActive={false}
-					data={[safe, warning, danger]}
+					data={chartData}
 					labelLine={false}
 					shape={pieShape}
 					innerRadius="60%"
@@ -41,7 +45,9 @@ export function UserStatusPieChart({ safe, warning, danger }: UserStatusData) {
 							return null;
 						}
 
-						const label = payload[0].name;
+						const level = payload[0].name as DangerLevel;
+
+						const label = t(($) => $.foremanDashboard.overview.statCards[level].label);
 						const value = payload[0].value;
 
 						return (

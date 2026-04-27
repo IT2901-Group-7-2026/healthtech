@@ -1,9 +1,10 @@
 import { ExposureIcon } from "@/components/exposure-icon";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { type UserStatusData, UserStatusPieChart } from "@/components/users-status-pie-chart";
+import { UserStatusPieChart } from "@/components/users-status-pie-chart";
 import type { Exposure } from "@/features/exposure-picker/exposures";
 import {
 	DANGER_LEVEL_SEVERITY,
+	type DangerLevel,
 	DangerLevelSchema,
 	dangerlevelStyles,
 	mapDangerLevelToColor,
@@ -17,14 +18,16 @@ export type PieChartCardProps = {
 	className?: string;
 	to: string;
 	label: string;
-	data: UserStatusData;
+	data: Record<DangerLevel, number>;
 	exposureType: Exposure;
 };
 
 export const PieChartCard = ({ className, to, label, data, exposureType }: PieChartCardProps) => {
 	const { t } = useTranslation();
 
-	if (data.danger.value === 0 && data.warning.value === 0 && data.safe.value === 0) {
+	const hasData = DangerLevelSchema.options.some((level) => data[level] && data[level] > 0);
+
+	if (!hasData) {
 		return (
 			<Card hoverable={true} className={cn("h-full gap-4", className)}>
 				<CardHeader className="text-sm">
@@ -60,19 +63,19 @@ export const PieChartCard = ({ className, to, label, data, exposureType }: PieCh
 								<div key={level}>
 									<div className={`${dangerlevelStyles[level].border} border-l-4 pl-1.5`}>
 										<p className="pb-1 text-neutral-500 text-xs dark:text-zinc-400">
-											{data[level].label}
+											{t(($) => $.foremanDashboard.overview.statCards[level].label)}
 										</p>
 										<p
 											className={`text-2xl tabular-nums leading-6 text-${mapDangerLevelToColor(level)}`}
 										>
-											{data[level].value}
+											{data[level]}
 										</p>
 									</div>
 								</div>
 							))}
 					</div>
 					<div className="h-full w-2/3">
-						<UserStatusPieChart safe={data.safe} warning={data.warning} danger={data.danger} />
+						<UserStatusPieChart data={data} hoverable={true} />
 					</div>
 				</CardContent>
 
