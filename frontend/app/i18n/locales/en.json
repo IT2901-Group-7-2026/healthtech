@@ -13,7 +13,8 @@
     "total": "Total exposure",
     "notifications": "Notifications",
     "exportAsPdf": "Export as PDF",
-    "weekNumber": "Week {{week}}"
+    "weekNumber": "Week {{week}}",
+    "noDataLive": "No data as of now."
   },
   "sensors": {
     "dust": "Dust",

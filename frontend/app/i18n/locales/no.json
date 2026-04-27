@@ -14,7 +14,8 @@
     "points": "Poeng",
     "notifications": "Notifikasjoner",
     "exportAsPdf": "Eksporter som PDF",
-    "weekNumber": "Uke {{week}}"
+    "weekNumber": "Uke {{week}}",
+    "noDataLive": "Ingen data per nå."
   },
   "sensors": {
     "dust": "Støv",
