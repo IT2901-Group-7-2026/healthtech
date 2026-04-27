@@ -6,7 +6,10 @@ namespace Backend.Utils;
 
 public class ExposureUtils
 {
-	public static string GetMaterializedViewName(ExposureType exposureType, TimeGranularity granularity)
+	public static string GetMaterializedViewName(
+		ExposureType exposureType,
+		TimeGranularity granularity
+	)
 	{
 		var exposureTypeLower = exposureType.ToString().ToLower();
 

@@ -48,7 +48,10 @@ public class Threshold(double warning, double danger, double? peakDanger = null)
 		};
 	}
 
-	public static Threshold GetThresholdForExposureTypeAndField(ExposureType exposureType, Field? field)
+	public static Threshold GetThresholdForExposureTypeAndField(
+		ExposureType exposureType,
+		Field? field
+	)
 	{
 		if (exposureType != ExposureType.Dust)
 		{

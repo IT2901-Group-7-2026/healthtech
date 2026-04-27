@@ -38,7 +38,9 @@ public static class ThresholdUtils
 
 				cumulativeValue += data.SumValue;
 
-				result.Add((data, CalculateDangerLevel(exposureType, cumulativeValue, null, field)));
+				result.Add(
+					(data, CalculateDangerLevel(exposureType, cumulativeValue, null, field))
+				);
 			}
 
 			return result;

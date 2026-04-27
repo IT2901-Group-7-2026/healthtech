@@ -64,10 +64,8 @@ public class ExposureDataController(IExposureDataService exposureDataService) : 
 		[FromRoute] Guid? userId
 	)
 	{
-		IEnumerable<CombinedExposureBucketDto> data = await _exposureDataService.GetOverviewDataAsync(
-			requests,
-			userId
-		);
+		IEnumerable<CombinedExposureBucketDto> data =
+			await _exposureDataService.GetOverviewDataAsync(requests, userId);
 
 		HourDomainDto hourDomain = await _exposureDataService.GetHourDomainForWeekAsync(
 			requests,

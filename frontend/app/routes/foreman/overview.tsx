@@ -17,7 +17,7 @@ import { ViewPicker } from "@/features/views/view-picker";
 import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions } from "@/lib/api.js";
 import { today, toTZDate } from "@/lib/date";
 import type { ThresholdSummary } from "@/lib/dto";
-import { parseAsExposure, type Exposure, exposures } from "@/lib/exposures";
+import { type Exposure, exposures, parseAsExposure } from "@/lib/exposures";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { addWeeks, endOfDay, startOfDay, subDays } from "date-fns";

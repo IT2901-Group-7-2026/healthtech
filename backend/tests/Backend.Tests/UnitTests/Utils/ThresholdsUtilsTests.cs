@@ -70,7 +70,9 @@ public class ThresholdsUtilsTests
 			),
 		};
 
-		var result = ThresholdUtils.CalculateDangerLevels(ExposureType.Noise, rawExposureData).ToList();
+		var result = ThresholdUtils
+			.CalculateDangerLevels(ExposureType.Noise, rawExposureData)
+			.ToList();
 
 		Assert.Single(result);
 		var (_, dangerLevels) = result[0];
@@ -90,7 +92,9 @@ public class ThresholdsUtilsTests
 			new(DateTime.UtcNow, 0, threshold.Danger + 1, 0, 0, Guid.NewGuid()),
 		};
 
-		var result = ThresholdUtils.CalculateDangerLevels(ExposureType.Dust, rawExposureData).ToList();
+		var result = ThresholdUtils
+			.CalculateDangerLevels(ExposureType.Dust, rawExposureData)
+			.ToList();
 
 		Assert.Single(result);
 		var (_, dangerLevels) = result[0];

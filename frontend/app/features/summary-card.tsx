@@ -7,7 +7,7 @@ import { getLocale } from "@/i18n/locale";
 import { exposureOverviewQueryOptions, exposureQueryOptions } from "@/lib/api";
 import { type Aggregation, Aggregations } from "@/lib/dto";
 import { buildExposureOverviewQuery, buildExposureQuery } from "@/lib/exposure-query-utils";
-import { defaultDustField, parseAsDustField, exposures } from "@/lib/exposures";
+import { defaultDustField, exposures, parseAsDustField } from "@/lib/exposures";
 import { calculateSummaryCounts } from "@/lib/time-bucket-utils";
 import { cn } from "@/lib/utils";
 import { useQueries } from "@tanstack/react-query";

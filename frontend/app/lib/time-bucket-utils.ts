@@ -1,6 +1,6 @@
 import { hoursToMinutes } from "date-fns";
 import type { DangerLevel } from "./danger-levels";
-import type { GranularityKey, ExposureDto, ExposureOverviewBucketDto } from "./dto";
+import type { ExposureDto, ExposureOverviewBucketDto, GranularityKey } from "./dto";
 import { type Exposure, exposures } from "./exposures";
 import type { OverviewChartRow, SummaryCounts, SummaryLevelCounts, TimeBucketStatus } from "./time-bucket-types";
 

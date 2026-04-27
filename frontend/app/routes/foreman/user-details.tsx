@@ -29,10 +29,10 @@ import {
 	type DustField,
 	defaultDustField,
 	dustFields,
-	parseAsDustField,
-	parseAsExposureUnit,
 	type Exposure,
 	exposures,
+	parseAsDustField,
+	parseAsExposureUnit,
 } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
 import { mapOverviewBucketsToChartRows, mapOverviewDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
@@ -43,7 +43,13 @@ import { parseAsStringLiteral, useQueryState } from "nuqs";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
-export function UserDetails({ selectedUser, exposure }: { selectedUser: UserWithStatusDto; exposure: Exposure | null }) {
+export function UserDetails({
+	selectedUser,
+	exposure,
+}: {
+	selectedUser: UserWithStatusDto;
+	exposure: Exposure | null;
+}) {
 	return (
 		<section className="flex flex-col gap-6">
 			<div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
@@ -398,7 +404,13 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 				/>
 			)}
 
-			<ExposureChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={date} isExposure={true}>
+			<ExposureChartCard
+				isLoading={isLoading}
+				isError={isError}
+				data={data}
+				selectedDate={date}
+				isExposure={true}
+			>
 				{view === "week" ? (
 					<WeekWidget
 						dayStartHour={minHour}
@@ -503,7 +515,13 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 					formatTime={(time) => formatDate(time, "HH:mm")}
 				/>
 			)}
-			<ExposureChartCard isLoading={isLoading} isError={isError} data={data} selectedDate={date} isExposure={true}>
+			<ExposureChartCard
+				isLoading={isLoading}
+				isError={isError}
+				data={data}
+				selectedDate={date}
+				isExposure={true}
+			>
 				{view === "week" ? (
 					<WeekWidget
 						dayStartHour={minHour}

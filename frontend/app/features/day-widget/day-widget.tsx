@@ -85,7 +85,9 @@ export function DayWidget({ data, startHour = 0, endHour = 23, headerRight, buil
 								<>
 									<div className="sticky left-0 flex w-fit items-center gap-2 px-4 py-3">
 										<ExposureIcon type={exposure} size="sm" />
-										<span className="text-base text-foreground">{t(($) => $.exposures[exposure])}</span>
+										<span className="text-base text-foreground">
+											{t(($) => $.exposures[exposure])}
+										</span>
 									</div>
 
 									<div className="flex items-start gap-1.5 px-4 pb-3">

@@ -1,4 +1,4 @@
-import { type IconType, exposureIconConfig } from "@/components/icons/exposure-icons";
+import { exposureIconConfig, type IconType } from "@/components/icons/exposure-icons";
 import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.js";
 import type { Exposure } from "@/lib/exposures.js";
 import { cn } from "@/lib/utils.js";

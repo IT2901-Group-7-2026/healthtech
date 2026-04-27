@@ -16,9 +16,9 @@ import {
 	type DustField,
 	defaultDustField,
 	dustFields,
+	type Exposure,
 	parseAsDustField,
 	parseAsExposureUnit,
-	type Exposure,
 } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
 import { mapExposureDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";

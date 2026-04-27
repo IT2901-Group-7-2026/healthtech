@@ -15,10 +15,10 @@ import { buildExposureQuery } from "@/lib/exposure-query-utils";
 import {
 	type DustField,
 	defaultDustField,
-	parseAsDustField,
-	parseAsExposureUnit,
 	type Exposure,
 	type ExposureUnit,
+	parseAsDustField,
+	parseAsExposureUnit,
 } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
 import { computeYAxisRange, DUST_Y_AXIS_STEP, downsampleExposureData, getHourDomain } from "@/lib/utils";

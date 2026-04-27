@@ -7,7 +7,13 @@ import { addDays, addMonths, addWeeks, subDays, subMonths, subWeeks } from "date
 import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 import type { DangerLevel } from "./danger-levels";
-import { DEFAULT_MAX_HOUR_DOMAIN, DEFAULT_MIN_HOUR_DOMAIN, type HourDomainDto, type ExposureDto, type User } from "./dto";
+import {
+	DEFAULT_MAX_HOUR_DOMAIN,
+	DEFAULT_MIN_HOUR_DOMAIN,
+	type ExposureDto,
+	type HourDomainDto,
+	type User,
+} from "./dto";
 import type { Exposure, ExposureUnit } from "./exposures";
 
 const MAX_CHART_HOUR = 23;

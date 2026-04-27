@@ -4,10 +4,10 @@ import type { TZDate } from "@date-fns/tz";
 import { endOfDay, endOfMonth, endOfWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import type {
 	AggregateFnKey,
-	GranularityKey,
 	ExposureDataRequestDto,
 	ExposureOverviewRequestDto,
 	ExposureTypeField,
+	GranularityKey,
 } from "./dto";
 
 function getGranularityFromView(view: View, isOverview?: boolean): GranularityKey {

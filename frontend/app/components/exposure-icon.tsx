@@ -26,7 +26,15 @@ interface ExposureIconProps {
 
 const defaultIconContainerClass = "bg-muted text-foreground border border-border";
 
-export const ExposureIcon = ({ type, size, dangerLevel, className, iconClassName, title, inline }: ExposureIconProps) => {
+export const ExposureIcon = ({
+	type,
+	size,
+	dangerLevel,
+	className,
+	iconClassName,
+	title,
+	inline,
+}: ExposureIconProps) => {
 	const Icon = exposureIconConfig[type];
 	const Component = inline ? "span" : "div";
 

@@ -4,29 +4,29 @@ import { keepPreviousData, queryOptions, useMutation, useQueryClient } from "@ta
 import { minutesToMilliseconds } from "date-fns";
 import { fetchWithUserId } from "./api-client";
 import {
-	type Note,
-	type NoteDataRequest,
-	NoteSchema,
 	type ExposureDataRequestDto,
 	type ExposureOverviewRequestDto,
 	type ExposureOverviewResponseDto,
 	ExposureOverviewResponseDtoSchema,
 	type ExposureResponseDto,
 	ExposureResponseDtoSchema,
+	type Note,
+	type NoteDataRequest,
+	NoteSchema,
 	ThresholdSummarySchema,
 	UserSchema,
 	UserWithStatusSchema,
 } from "./dto";
+import { getStartEnd } from "./exposure-query-utils";
 import {
-	buildNotesQueryKey,
 	buildExposureOverviewQueryKey,
 	buildExposureQueryKey,
+	buildNotesQueryKey,
 	buildSubordinatesQueryKey,
 	buildSubordinatesQueryPrefix,
 	buildThresholdSummaryQueryKey,
 	type ExposureQueryKind,
 } from "./query-key-builder";
-import { getStartEnd } from "./exposure-query-utils";
 import type { View } from "./views";
 
 // We have at most 1 data point every minute so we don't need a shorter refetch interval than that

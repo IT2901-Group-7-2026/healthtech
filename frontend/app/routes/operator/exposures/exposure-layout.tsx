@@ -1,6 +1,6 @@
 import { DatePicker } from "@/components/date-picker";
-import { NotesCard } from "@/components/notes-card";
 import { ExposureIcon } from "@/components/exposure-icon";
+import { NotesCard } from "@/components/notes-card";
 import { Badge } from "@/components/ui/badge";
 import { useDate } from "@/features/date-picker/use-date";
 import { ExposureSummary } from "@/features/summary-card";

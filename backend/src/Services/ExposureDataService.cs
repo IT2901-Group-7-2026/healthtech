@@ -155,7 +155,12 @@ public class ExposureDataService(AppDbContext context, SignedInUserContext signe
 
 			foreach (var exposureData in exposureDataList)
 			{
-				if (!combinedData.TryGetValue(exposureData.Time, out CombinedExposureBucketDto? bucket))
+				if (
+					!combinedData.TryGetValue(
+						exposureData.Time,
+						out CombinedExposureBucketDto? bucket
+					)
+				)
 				{
 					bucket = new CombinedExposureBucketDto
 					{
