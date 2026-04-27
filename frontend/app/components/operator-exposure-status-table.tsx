@@ -5,27 +5,40 @@ import type { UserWithStatusDto } from "@/lib/dto";
 import type { Exposure } from "@/lib/exposures";
 import type { ColumnDef } from "@tanstack/react-table";
 import { t } from "i18next";
+import { Link, useSearchParams } from "react-router";
 
 export interface ExposureTableCellProps {
 	data: Array<UserWithStatusDto> | undefined;
-	setSelectedUserId: (userId: string) => void;
-	setExposure: (exposure: string) => void;
 }
 
-export function OperatorExposureStatusTable({ data, setSelectedUserId, setExposure }: ExposureTableCellProps) {
+export function OperatorExposureStatusTable({ data }: ExposureTableCellProps) {
+	const [searchParams] = useSearchParams();
+
+	const buildSearchParams = (userId: string, sensor?: string) => {
+		const params = new URLSearchParams(searchParams);
+		params.set("userId", userId);
+
+		if (sensor) {
+			params.set("sensor", sensor);
+		} else {
+			params.delete("sensor");
+		}
+
+		return params.toString();
+	};
+
 	const columns: Array<ColumnDef<UserWithStatusDto>> = [
 		{
 			id: "name",
 			accessorKey: "name",
 			header: t(($) => $.foremanDashboard.team.table.name),
 			cell: ({ row }) => (
-				<button
-					type="button"
-					className="cursor-pointer font-medium hover:underline"
-					onClick={() => setSelectedUserId(row.original.id)}
+				<Link
+					to={{ search: buildSearchParams(row.original.id, undefined) }}
+					className="font-medium hover:underline"
 				>
 					{row.original.name}
-				</button>
+				</Link>
 			),
 		},
 		{
@@ -38,10 +51,7 @@ export function OperatorExposureStatusTable({ data, setSelectedUserId, setExposu
 					<OperatorExposureStatusExposureCell
 						status={status}
 						exposure="dust"
-						onClick={() => {
-							setSelectedUserId(row.original.id);
-							setExposure("dust");
-						}}
+						search={buildSearchParams(row.original.id, "dust")}
 					/>
 				);
 			},
@@ -56,10 +66,7 @@ export function OperatorExposureStatusTable({ data, setSelectedUserId, setExposu
 					<OperatorExposureStatusExposureCell
 						status={status}
 						exposure="noise"
-						onClick={() => {
-							setSelectedUserId(row.original.id);
-							setExposure("noise");
-						}}
+						search={buildSearchParams(row.original.id, "noise")}
 					/>
 				);
 			},
@@ -74,10 +81,7 @@ export function OperatorExposureStatusTable({ data, setSelectedUserId, setExposu
 					<OperatorExposureStatusExposureCell
 						status={status}
 						exposure="vibration"
-						onClick={() => {
-							setSelectedUserId(row.original.id);
-							setExposure("vibration");
-						}}
+						search={buildSearchParams(row.original.id, "vibration")}
 					/>
 				);
 			},
@@ -88,19 +92,24 @@ export function OperatorExposureStatusTable({ data, setSelectedUserId, setExposu
 }
 
 interface OperatorExposureStatusCellProps {
-	onClick?: () => void;
+	search: string;
 	status: DangerLevel;
 	exposure: Exposure;
 }
 
-function OperatorExposureStatusExposureCell({ onClick, status, exposure }: OperatorExposureStatusCellProps) {
+function OperatorExposureStatusExposureCell({ search, status, exposure }: OperatorExposureStatusCellProps) {
 	const label = mapDangerLevelToLabel(status);
 
 	return (
-		<button type="button" className="w-fit cursor-pointer" onClick={onClick}>
+		<Link
+			to={{
+				search,
+			}}
+			className="block w-fit cursor-pointer rounded-full hover:brightness-95"
+		>
 			<ExposureBadge exposure={exposure} dangerLevel={status}>
 				{label}
 			</ExposureBadge>
-		</button>
+		</Link>
 	);
 }

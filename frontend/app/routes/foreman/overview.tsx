@@ -171,11 +171,7 @@ export default function ForemanOverview() {
 													{t(($) => $.foremanDashboard.team.noMembersFound)}
 												</div>
 											) : (
-												<OperatorExposureStatusTable
-													data={subordinates}
-													setSelectedUserId={(id) => setSelectedUserId(id)}
-													setExposure={(s) => setExposure(s as Exposure)}
-												/>
+												<OperatorExposureStatusTable data={subordinates} />
 											)}
 										</Card>
 									</>
