@@ -1,16 +1,16 @@
-import { ExposureLineChartCard } from "@/components/exposure-line-chart/exposure-line-chart-card";
 import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { ExposureSlider } from "@/components/exposure-slider";
 import { NotesCard } from "@/components/notes-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.js";
+import { BaseExposureLineChartCard } from "@/features/exposure-line-chart-card/base-exposure-line-chart-card";
 import { SecurityRegulationsCard } from "@/features/security-regulations-card/security-regulations-card";
 import { useUser } from "@/features/user/user-context";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { sensorQueryOptions } from "@/lib/api";
 import { today as getToday, now, toTZDate } from "@/lib/date";
-import type { SensorDto } from "@/lib/dto";
+import type { SensorDto, SensorTypeField } from "@/lib/dto";
 import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { SensorUnit } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
@@ -155,10 +155,10 @@ export default function OperatorLiveView() {
 					<CardContent>
 						<LiveExposureCard
 							sensor="dust"
-							exposureLabel={"PM1 TWA"}
+							exposureLabel="PM1 TWA"
 							exposureUnitLabel="µg/m³"
-							chartUnit={"ug"}
-							data={dustTwa1Data ?? []}
+							chartUnit="ug"
+							data={dustTwa1Data}
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
@@ -166,11 +166,11 @@ export default function OperatorLiveView() {
 						<Separator />
 						<LiveExposureCard
 							sensor="dust"
-							exposureLabel={"PM2.5 TWA"}
+							exposureLabel="PM2.5 TWA"
 							exposureField="pm25_twa"
 							exposureUnitLabel="µg/m³"
-							chartUnit={"ug"}
-							data={dustTwa25Data ?? []}
+							chartUnit="ug"
+							data={dustTwa25Data}
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
@@ -178,11 +178,11 @@ export default function OperatorLiveView() {
 						<Separator />
 						<LiveExposureCard
 							sensor="dust"
-							exposureLabel={"PM10 TWA"}
+							exposureLabel="PM10 TWA"
 							exposureField="pm10_twa"
 							exposureUnitLabel="µg/m³"
-							chartUnit={"ug"}
-							data={dustTwa10Data ?? []}
+							chartUnit="ug"
+							data={dustTwa10Data}
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
@@ -201,7 +201,7 @@ export default function OperatorLiveView() {
 							exposureLabel={t(($) => $.sensors.noise)}
 							exposureUnitLabel="dB"
 							chartUnit="dbTwa"
-							data={noiseData ?? []}
+							data={noiseData}
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
@@ -219,8 +219,8 @@ export default function OperatorLiveView() {
 							sensor="vibration"
 							exposureLabel={t(($) => $.sensors.vibration)}
 							exposureUnitLabel={t(($) => $.sensors.units.points)}
-							chartUnit={"points"}
-							data={vibrationData ?? []}
+							chartUnit="points"
+							data={vibrationData}
 							minTime={start}
 							maxTime={end}
 							chartClassName="h-42 p-0 border-none"
@@ -288,7 +288,7 @@ export default function OperatorLiveView() {
 interface LiveExposureCardProps {
 	sensor: "dust" | "noise" | "vibration";
 	exposureLabel: string;
-	exposureField?: "pm1_twa" | "pm25_twa" | "pm10_twa";
+	exposureField?: SensorTypeField;
 	exposureUnitLabel: string;
 	chartUnit: SensorUnit;
 	data: Array<SensorDto>;
@@ -343,7 +343,7 @@ const LiveExposureCard = ({
 				className="w-48"
 			/>
 			<div className="w-128 flex-1 self-stretch">
-				<ExposureLineChartCard
+				<BaseExposureLineChartCard
 					minTime={minTime}
 					maxTime={maxTime}
 					chartData={data}
@@ -358,10 +358,11 @@ const LiveExposureCard = ({
 					chartContainerClassName="!aspect-auto"
 					showLegend={showLegend}
 					xAxisMode="windowed"
+					dustField={exposureField}
 				>
 					<ThresholdLine y={threshold.danger} dangerLevel="danger" />
 					<ThresholdLine y={threshold.warning} dangerLevel="warning" />
-				</ExposureLineChartCard>
+				</BaseExposureLineChartCard>
 			</div>
 		</div>
 	);

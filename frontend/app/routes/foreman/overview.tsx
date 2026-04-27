@@ -134,6 +134,7 @@ export default function ForemanOverview() {
 					}}
 				>
 					<div className="flex flex-col gap-12">
+						{/* TODO: Redo the loading logic here */}
 						{isUserSelected ? (
 							<UserDetails selectedUser={selectedUser} sensor={sensor} />
 						) : (

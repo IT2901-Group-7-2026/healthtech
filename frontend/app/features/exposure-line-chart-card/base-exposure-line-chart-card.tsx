@@ -3,22 +3,27 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
-import { Skeleton } from "../ui/skeleton";
-import { ExposureLineChart, type ExposureLineChartProps } from "./exposure-line-chart";
+import {
+	ExposureLineChart,
+	type ExposureLineChartProps,
+} from "../../components/exposure-line-chart/exposure-line-chart";
+import { Skeleton } from "../../components/ui/skeleton";
 
-export function ExposureLineChartCard({
+export function BaseExposureLineChartCard({
 	headerRight,
 	contentClassName,
 	className,
+	id,
 	...props
 }: ExposureLineChartProps & {
 	headerRight?: React.ReactNode;
 	contentClassName?: string;
 	className?: string;
+	id?: string;
 }) {
 	const { t } = useTranslation();
 	return (
-		<Card className={cn("relative w-full", props.variant === "compact" && "pl-0", className)}>
+		<Card className={cn("relative w-full", props.variant === "compact" && "pl-0", className)} id={id}>
 			{headerRight && <div className="absolute top-2 right-2 z-10 flex items-center gap-2">{headerRight}</div>}
 			<CardContent className={cn("flex h-full flex-1", contentClassName)}>
 				<ExposureLineChart {...props} />

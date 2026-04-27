@@ -1,19 +1,14 @@
-import { ExportButton } from "@/components/export-button";
-import {
-	ExposureLineChartCard,
-	ExposureLineChartCardSkeleton,
-} from "@/components/exposure-line-chart/exposure-line-chart-card";
-import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
 import { useDate } from "@/features/date-picker/use-date";
+import { ExposureLineChartCardSkeleton } from "@/features/exposure-line-chart-card/base-exposure-line-chart-card";
+import NoiseExposureLineChartCard from "@/features/exposure-line-chart-card/noise-exposure-line-chart-card";
 import { SensorGraphEmptyState, SensorStatisticsSection } from "@/features/statistic-card";
 import { getMaxPointByValue } from "@/features/statistic-card-utils";
 import { NoiseTrendLineChartCard } from "@/features/trend-line-chart-card/noise-trend-line-chart-card";
 import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
-import { useExportPDF } from "@/hooks/use-export-pdf";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { sensorQueryOptions } from "@/lib/api";
 import { type Aggregation, Aggregations, type SensorDto } from "@/lib/dto";
@@ -21,11 +16,9 @@ import { buildSensorQuery } from "@/lib/sensor-query-utils";
 import type { Sensor } from "@/lib/sensors";
 import { getThreshold } from "@/lib/thresholds";
 import { mapSensorDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, downsampleSensorData, getHourDomain } from "@/lib/utils";
+import { computeYAxisRange, getHourDomain } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { setHours } from "date-fns";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
-import { useId } from "react";
 import { useTranslation } from "react-i18next";
 
 export default function Noise() {
@@ -35,8 +28,6 @@ export default function Noise() {
 
 	const { date } = useDate();
 	const { user } = useUser();
-	const { exportToPDF } = useExportPDF();
-	const chartContainerId = useId();
 
 	const sensor: Sensor = "noise";
 	const parseAsAggregation = parseAsStringLiteral(Aggregations);
@@ -86,7 +77,6 @@ export default function Noise() {
 
 	const maxValue = maxPoint ? getDisplayedNoiseValue(maxPoint, usePeakAggregation) : 0;
 
-	const minY = 0;
 	let maxY = 150;
 	if (maxValue > maxY) {
 		maxY = computeYAxisRange(data ?? [], {
@@ -95,8 +85,6 @@ export default function Noise() {
 	}
 
 	const calendarData = mapSensorDataToTimeBucketStatuses(data ?? [], sensor, usePeakAggregation);
-	const minTime = setHours(date, minHour);
-	const maxTime = setHours(date, maxHour);
 
 	const showTrendLineChart = view === "month" || view === "week";
 	const showNoiseStatistics = view === "day";
@@ -136,48 +124,7 @@ export default function Noise() {
 				) : !data || data.length === 0 ? (
 					<SensorGraphEmptyState date={date} locale={i18n.language} />
 				) : (
-					<div className="w-full">
-						<div id={chartContainerId}>
-							<ExposureLineChartCard
-								minTime={minTime}
-								maxTime={maxTime}
-								chartData={downsampleSensorData(sensor, data ?? [])}
-								unit="dbTwa"
-								maxY={maxY}
-								minY={minY}
-								sensor={sensor}
-								headerRight={
-									<ExportButton
-										title={t(($) => $.common.exportAsPdf)}
-										onClick={() =>
-											exportToPDF(
-												chartContainerId,
-												`${date.toLocaleDateString(i18n.language, {
-													day: "numeric",
-													month: "long",
-													year: "numeric",
-												})}-${user.name}-Noise-Exposure-Overview`,
-												`${t(($) => $.pdf.noiseExposure)} - ${user.name} - ${date.toLocaleDateString(i18n.language)}`,
-											)
-										}
-									/>
-								}
-							>
-								<ThresholdLine
-									y={
-										usePeakAggregation
-											? // biome-ignore lint/style/noNonNullAssertion: If usePeakAggregation is true and peakDangerLevel is null, there is a bug somewhere else
-												noiseThreshold.peakDanger!
-											: noiseThreshold.danger
-									}
-									dangerLevel="danger"
-								/>
-								{!usePeakAggregation && (
-									<ThresholdLine y={noiseThreshold.warning} dangerLevel="warning" />
-								)}
-							</ExposureLineChartCard>
-						</div>
-					</div>
+					<NoiseExposureLineChartCard />
 				)}
 			</div>
 			{showTrendLineChart && <NoiseTrendLineChartCard usePeakAggregation={usePeakAggregation} />}
