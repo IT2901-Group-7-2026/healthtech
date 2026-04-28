@@ -182,7 +182,12 @@ export default function ForemanOverview() {
 
 					<aside className="flex flex-col gap-4">
 						<Card muted={true}>
-							<ViewPicker allowedViews={["day", "week"]} withNavigationButtons={true} />
+							<ViewPicker
+								allowedViews={["day", "week"]}
+								withNavigationButtons={true}
+								minDate={minSelectableDate}
+								maxDate={maxSelectableDate}
+							/>
 						</Card>
 
 						<Card muted={true}>
