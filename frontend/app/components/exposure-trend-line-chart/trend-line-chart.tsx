@@ -8,7 +8,7 @@ import { buildYAxisTicks, cn, DUST_Y_AXIS_STEP, formatExposureValue } from "@/li
 import { addDays, addWeeks, endOfMonth, endOfWeek, getISOWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from "recharts";
+import { Area, CartesianGrid, ComposedChart, Legend, Line, XAxis, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
 import { ExposureDot } from "../exposure-line-chart/exposure-dot";
 import { ExposureLegend } from "../exposure-line-chart/exposure-legend";
@@ -106,10 +106,13 @@ export function TrendLineChart({
 
 	const showDot = dataBucketCount === 1;
 
+	// Pre-calculate max value for Area bounding box alignment
+	const maxDataValue = singleSeriesValues.length > 0 ? Math.max(...singleSeriesValues) : maxY;
+
 	return (
 		<ChartContainer config={{}} className={cn("h-full w-full", chartContainerClassName)}>
-			<LineChart accessibilityLayer={true} data={chartData} margin={{ left: 12, right: 12 }}>
-				<CartesianGrid vertical={true} strokeDasharray="3 3" />
+			<ComposedChart accessibilityLayer={true} data={chartData} margin={{ left: 12, right: 12 }}>
+				<CartesianGrid vertical={true} stroke="var(--color-muted-foreground)" strokeOpacity={0.2} />
 
 				<XAxis
 					dataKey="label"
@@ -149,7 +152,8 @@ export function TrendLineChart({
 
 				{isSingleSeries && singleSeriesThreshold && singleSeriesDangerThreshold && (
 					<defs>
-						<linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+						{/* Gradient for line stroke */}
+						<linearGradient id={`${gradientId}-line`} x1="0" y1="0" x2="0" y2="1">
 							<ExposureLineChartGradientStops
 								values={singleSeriesValues}
 								warningThreshold={singleSeriesWarningThreshold}
@@ -157,7 +161,42 @@ export function TrendLineChart({
 								usePeakData={usePeakDangerThreshold}
 							/>
 						</linearGradient>
+
+						{/* Gradient for area background bounding box */}
+						<linearGradient id={`${gradientId}-area`} x1="0" y1="0" x2="0" y2="1">
+							<ExposureLineChartGradientStops
+								values={[minY, maxDataValue]}
+								warningThreshold={singleSeriesWarningThreshold}
+								dangerThreshold={singleSeriesDangerThreshold}
+								usePeakData={usePeakDangerThreshold}
+							/>
+						</linearGradient>
+
+						{/* Fade Mask (Aggressive fadeout in the bottom 50%) */}
+						<linearGradient id={`${gradientId}-fade-gradient`} x1="0" y1="0" x2="0" y2="1">
+							<stop offset="0%" stopColor="white" stopOpacity={1} />
+							<stop offset="50%" stopColor="white" stopOpacity={1} />
+							<stop offset="100%" stopColor="white" stopOpacity={0} />
+						</linearGradient>
+						<mask id={`${gradientId}-fade-mask`}>
+							<rect x="0" y="0" width="100%" height="100%" fill={`url(#${gradientId}-fade-gradient)`} />
+						</mask>
 					</defs>
+				)}
+
+				{isSingleSeries && activeSeriesKey && (
+					<Area
+						dataKey={activeSeriesKey}
+						type={lineType}
+						fill={`url(#${gradientId}-area)`}
+						stroke="none"
+						baseValue={minY}
+						fillOpacity={0.25}
+						mask={`url(#${gradientId}-fade-mask)`}
+						isAnimationActive={false}
+						animationDuration={0}
+						connectNulls={true}
+					/>
 				)}
 
 				{seriesDefinitions.map((serie) => (
@@ -166,7 +205,7 @@ export function TrendLineChart({
 						name={serie.label}
 						dataKey={serie.dataKey}
 						type={lineType}
-						stroke={isSingleSeries ? `url(#${gradientId})` : getDustFieldColor(serie.exposureField)}
+						stroke={isSingleSeries ? `url(#${gradientId}-line)` : getDustFieldColor(serie.exposureField)}
 						strokeWidth={3}
 						isAnimationActive={false}
 						connectNulls={true}
@@ -192,6 +231,7 @@ export function TrendLineChart({
 						}
 					/>
 				))}
+
 				{thresholdLines.map((line) => (
 					<ThresholdLine key={line.key} y={line.y} dangerLevel={line.dangerLevel} />
 				))}
@@ -223,7 +263,7 @@ export function TrendLineChart({
 						</div>
 					)}
 				/>
-			</LineChart>
+			</ComposedChart>
 		</ChartContainer>
 	);
 }
