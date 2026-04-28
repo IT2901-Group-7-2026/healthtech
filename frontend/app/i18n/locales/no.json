@@ -315,7 +315,11 @@
     "next": "Neste"
   },
   "exposureTrendLineChartCard": {
-    "title": "Eksponeringstrend for {{view}}"
+    "title": {
+      "day": "Daglig eksponeringstrend",
+      "week": "Ukentlig eksponeringstrend",
+      "month": "Månedlig eksponeringstrend"
+    }
   },
   "exposureSlider": {
     "title": "Gjennomsnittlig eksponering for {{view}}"
