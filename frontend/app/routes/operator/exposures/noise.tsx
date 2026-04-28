@@ -108,7 +108,7 @@ export default function Noise() {
 						maxTime={maxPoint?.time ?? null}
 						latestValue={latestPoint ? getDisplayedNoiseValue(latestPoint, usePeakAggregation) : null}
 						dangerThreshold={noiseDangerThreshold}
-						unit="dbTwa"
+						unit="db"
 						formatTime={(time) => formatDate(time, "HH:mm")}
 					/>
 				)}
