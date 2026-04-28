@@ -70,20 +70,6 @@ export default function Vibration() {
 		<div className="flex flex-col gap-16">
 			<div className="flex h-full w-full flex-col-reverse gap-4 md:flex-row">
 				<div className="flex flex-1 flex-col gap-4">
-					{showVibrationStatistics && (
-						<ExposureStatisticsSection
-							isLoading={isLoading}
-							isEmpty={isError || !data?.length}
-							averageValue={null}
-							maxValue={maxPoint?.value ?? null}
-							maxTime={null}
-							latestValue={null}
-							dangerThreshold={vibrationThreshold.danger}
-							unit="points"
-							formatTime={(time) => formatDate(time, "HH:mm")}
-						/>
-					)}
-
 					{isLoading ? (
 						<ExposureLineChartCardSkeleton />
 					) : isError ? (
@@ -96,6 +82,20 @@ export default function Vibration() {
 						<ExposureGraphEmptyState date={date} locale={i18n.language} />
 					) : (
 						<VibrationExposureLineChartCard />
+					)}
+
+					{showVibrationStatistics && (
+						<ExposureStatisticsSection
+							isLoading={isLoading}
+							isEmpty={isError || !data?.length}
+							averageValue={null}
+							maxValue={maxPoint?.value ?? null}
+							maxTime={null}
+							latestValue={null}
+							dangerThreshold={vibrationThreshold.danger}
+							unit="points"
+							formatTime={(time) => formatDate(time, "HH:mm")}
+						/>
 					)}
 				</div>
 			</div>

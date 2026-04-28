@@ -81,8 +81,7 @@
     "maximum": "Maximum",
     "latest": "Latest",
     "recordedAt": "Recorded at {{time}}",
-    "limitValuePercentageShort": "{{percentage}} %",
-    "limitValuePercentageFull": "{{percentage}} % of the limit value"
+    "ofTheLimitValue": "of the limit value"
   },
   "layout": {
     "live": "Live",
@@ -244,9 +243,11 @@
       "yourTeam": "Your team"
     },
     "actionCard": {
-      "safe": "All good!",
-      "warning": "Attention may be required!",
-      "danger": "Attention may be required!",
+      "safe": "Team status: Within exposure limits",
+      "warning": "Team status: Attention may be required",
+      "warningDescription": "One or more operators are above the action value. Monitoring or preventative measure may be needed.",
+      "danger": "Team status: Immediate action required",
+      "dangerDescription": "One or more operators are above the limit value. Immediate follow-up according to procedure is required.",
       "dayView": {
         "danger": "Operators above the exposure limit. Immediate follow-up recommended.",
         "warning": "Operators approaching the exposure limit. Consider preventive measures."
@@ -255,7 +256,6 @@
         "danger": "Operators above the weekly exposure limit. Immediate follow-up recommended.",
         "warning": "Operators approaching the weekly exposure limit. Consider preventive measures."
       },
-      "oldData": "You are viewing old data.",
       "day": "Day",
       "week": "Week"
     },
@@ -345,5 +345,15 @@
     "dustExposure": "Dust Exposure",
     "noiseExposure": "Noise Exposure",
     "vibrationExposure": "Vibration Exposure"
+  },
+  "limitExplanation": {
+    "actionValue": {
+      "label": "Action value",
+      "description": "Level where preventative action should be taken." 
+    },
+    "limitValue": {
+      "label": "Limit value",
+      "description": "Level that must not be exceeded."
+    }
   }
 }

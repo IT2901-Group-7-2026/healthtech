@@ -12,7 +12,7 @@ import { NotebookPenIcon } from "lucide-react";
 import { type PropsWithChildren, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
-import { Card, CardContent, CardHeader } from "./ui/card";
+import { Card, CardContent, CardHeader, CardLabelHeader } from "./ui/card";
 import { Skeleton } from "./ui/skeleton.js";
 import { Textarea } from "./ui/textarea";
 
@@ -115,50 +115,78 @@ export const NotesCard = ({ forceInteractiveMode = false }: NotesCardProps) => {
 
 	if (isLoading) {
 		return (
-			<CustomCard title={title}>
-				<Skeleton className="h-4 w-[90%]" />
-				<Skeleton className="h-4 w-1/2" />
-			</CustomCard>
+			<Card muted={true} variant="labeled" className="max-h-96 w-full overflow-y-auto">
+				<CardLabelHeader>
+					<NotebookPenIcon className="size-3.5 text-muted-foreground" />
+					<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
+				</CardLabelHeader>
+				<CardContent>
+					<Skeleton className="h-4 w-[90%]" />
+					<Skeleton className="h-4 w-1/2" />
+				</CardContent>
+			</Card>
 		);
 	}
 
 	if (isError) {
 		return (
-			<CustomCard title={title}>
-				<p>{t(($) => $.common.error)}</p>
-			</CustomCard>
+			<Card muted={true} variant="labeled" className="max-h-96 w-full overflow-y-auto">
+				<CardLabelHeader>
+					<NotebookPenIcon className="size-3.5 text-muted-foreground" />
+					<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
+				</CardLabelHeader>
+				<CardContent>
+					<p>{t(($) => $.common.error)}</p>
+				</CardContent>
+			</Card>
 		);
 	}
 
 	if (isInteractiveMode) {
 		return (
-			<CustomCard title={title}>
-				<Textarea
-					placeholder={t(($) => $.notes.interactive.placeholder)}
-					value={noteValue}
-					className="-mx-2 -my-1 min-h-17 w-[calc(100%+var(--spacing)*4)] rounded-t-none border-none bg-transparent px-2 py-1 text-foreground dark:bg-transparent"
-					onChange={(e) => setNoteValue(e.target.value)}
-					onBlur={handleBlur}
-				/>
-			</CustomCard>
+			<Card muted={true} variant="labeled" className="max-h-96 w-full overflow-y-auto">
+				<CardLabelHeader>
+					<NotebookPenIcon className="size-3.5 text-muted-foreground" />
+					<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
+				</CardLabelHeader>
+				<CardContent>
+					<Textarea
+						placeholder={t(($) => $.notes.interactive.placeholder)}
+						value={noteValue}
+						className="-mx-2 -my-1 min-h-17 w-[calc(100%+var(--spacing)*4)] rounded-t-none border-none bg-transparent px-2 py-1 text-foreground text-sm dark:bg-transparent"
+						onChange={(e) => setNoteValue(e.target.value)}
+						onBlur={handleBlur}
+					/>
+				</CardContent>
+			</Card>
 		);
 	}
 
 	if (!data || data.length === 0) {
 		return (
-			<CustomCard title={title}>
-				<p className="text-sm">
-					{t(($) => $.notes.list.noNotes, {
-						view: t(($$) => $$.views[view]),
-					})}
-				</p>
-			</CustomCard>
+			<Card muted={true} variant="labeled" className="max-h-96 w-full overflow-y-auto">
+				<CardLabelHeader>
+					<NotebookPenIcon className="size-3.5 text-muted-foreground" />
+					<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
+				</CardLabelHeader>
+				<CardContent>
+					<p className="text-xs">
+						{t(($) => $.notes.list.noNotes, {
+							view: t(($$) => $$.views[view]),
+						})}
+					</p>
+				</CardContent>
+			</Card>
 		);
 	}
 
 	return (
-		<CustomCard title={title}>
-			<div className="grid grid-cols-[max-content_1fr] gap-y-1">
+		<Card muted={true} variant="labeled" className="max-h-96 w-full overflow-y-auto">
+			<CardLabelHeader>
+				<NotebookPenIcon className="size-3.5 text-muted-foreground" />
+				<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
+			</CardLabelHeader>
+			<CardContent className="grid grid-cols-[max-content_1fr] gap-y-1">
 				{data.map((note) => {
 					const rowContent = (
 						<>
@@ -207,25 +235,7 @@ export const NotesCard = ({ forceInteractiveMode = false }: NotesCardProps) => {
 						</Link>
 					);
 				})}
-			</div>
-		</CustomCard>
-	);
-};
-
-interface CustomCardProps extends PropsWithChildren {
-	title: string;
-}
-
-function CustomCard({ title, children }: CustomCardProps) {
-	return (
-		<Card muted={true} className="max-h-96 w-full gap-0 overflow-y-auto p-0">
-			<CardHeader className="rounded-t-xl bg-secondary px-3 py-2 pb-0">
-				<div className="flex items-center gap-2">
-					<NotebookPenIcon className="size-3.5 text-muted-foreground" />
-					<h2 className="text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
-				</div>
-			</CardHeader>
-			<CardContent className="rounded-t-none p-3 py-2">{children}</CardContent>
+			</CardContent>
 		</Card>
 	);
-}
+};

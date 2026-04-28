@@ -20,6 +20,7 @@ interface ExposureIconProps {
 	dangerLevel?: DangerLevel;
 	className?: string;
 	iconClassName?: string;
+	dangerLevelClassName?: string;
 	title?: string;
 	inline?: boolean;
 	iconOnly?: boolean;
@@ -36,6 +37,7 @@ export const ExposureIcon = ({
 	inline,
 	iconOnly,
 	includeDangerLevelDots = true,
+	dangerLevelClassName,
 }: ExposureIconProps) => {
 	const Component = inline ? "span" : "div";
 
@@ -52,7 +54,8 @@ export const ExposureIcon = ({
 				<DangerLevelDots
 					dangerLevel={dangerLevel ?? null}
 					horizontal={true}
-					className="absolute -right-0.25 -bottom-0.25"
+					className={cn("absolute -right-0.5 -bottom-0.5", dangerLevelClassName)}
+					size={size === "xs" ? "sm" : "md"}
 				/>
 			)}
 		</Component>

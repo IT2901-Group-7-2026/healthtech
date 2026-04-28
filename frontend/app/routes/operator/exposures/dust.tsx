@@ -88,20 +88,6 @@ export default function Dust() {
 					</TabsList>
 				</Tabs>
 
-				{showDustStatistics && (
-					<ExposureStatisticsSection
-						isLoading={isLoading}
-						isEmpty={isError || data?.length === 0}
-						averageValue={averageValue}
-						maxValue={maxPoint?.value ?? null}
-						maxTime={maxPoint?.time ?? null}
-						latestValue={latestPoint?.value ?? null}
-						dangerThreshold={dustThreshold.danger}
-						unit={dustUnit}
-						formatTime={(time) => formatDate(time, "HH:mm")}
-					/>
-				)}
-
 				{isLoading ? (
 					<ExposureLineChartCardSkeleton />
 				) : isError ? (
@@ -114,6 +100,20 @@ export default function Dust() {
 					<ExposureGraphEmptyState date={date} locale={locale} />
 				) : (
 					<DustExposureLineChartCard />
+				)}
+
+				{showDustStatistics && (
+					<ExposureStatisticsSection
+						isLoading={isLoading}
+						isEmpty={isError || data?.length === 0}
+						averageValue={averageValue}
+						maxValue={maxPoint?.value ?? null}
+						maxTime={maxPoint?.time ?? null}
+						latestValue={latestPoint?.value ?? null}
+						dangerThreshold={dustThreshold.danger}
+						unit={dustUnit}
+						formatTime={(time) => formatDate(time, "HH:mm")}
+					/>
 				)}
 			</div>
 			{showTrendLineChart && <DustTrendLineChartCard unit={dustUnit} />}

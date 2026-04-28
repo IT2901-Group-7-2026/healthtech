@@ -11,6 +11,7 @@ import { UserStatusChart } from "@/components/users-status-chart";
 import { AttentionCard } from "@/features/attention-card/attention-card.js";
 import { PieChartCard } from "@/features/attention-card/pie-chart-card";
 import { useDate } from "@/features/date-picker/use-date.js";
+import { LimitExplanation } from "@/features/sidebar/limit-explanation.js";
 import { TeamSummary } from "@/features/sidebar/team-summary.js";
 import { useUser } from "@/features/user/user-context";
 import { UserSelect } from "@/features/user/user-select";
@@ -93,9 +94,9 @@ export default function ForemanOverview() {
 					</div>
 				</div>
 
-				<div className="flex min-w-0 flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-6">
-					<div className="flex min-w-0 flex-1 flex-wrap items-center gap-2 md:min-w-0 md:pr-2">
-						<Badge
+				<div className="flex min-w-0 flex-col gap-4 md:flex-row md:items-center md:gap-6">
+					<div className="grid w-full grid-cols-[auto_1fr_auto] items-center gap-3">
+						{/*<Badge
 							variant="secondary"
 							className="wrap-break-word max-w-full gap-1.5 px-2.5 py-1 text-muted-foreground text-sm"
 						>
@@ -110,33 +111,9 @@ export default function ForemanOverview() {
 							<span className="wrap-break-word min-w-0">
 								{getForemanDateLabel(t, view, selection, formatDate, i18n.language)}
 							</span>
-						</Badge>
+						</Badge>*/}
 
-						<Badge
-							variant="secondary"
-							className="wrap-break-word max-w-full gap-1.5 px-2.5 py-1 font-normal text-muted-foreground text-sm"
-						>
-							{selectedUser ? (
-								<User2Icon className="size-5 shrink-0" />
-							) : (
-								<Users2Icon className="size-5 shrink-0" />
-							)}
-							<span className="wrap-break-word min-w-0">
-								{selectedUser?.name ?? t(($) => $.foremanDashboard.overview.yourTeam)}
-							</span>
-						</Badge>
-
-						<Badge
-							variant="secondary"
-							className="wrap-break-word max-w-full gap-1.5 px-2.5 py-1 font-normal text-muted-foreground text-sm"
-						>
-							<ExposureIcon type={exposure ?? "all"} iconOnly={true} iconClassName="size-3.5" />
-							<span className="wrap-break-word min-w-0">{exposureTitle}</span>
-						</Badge>
-					</div>
-
-					<div className="flex w-full min-w-0 flex-col gap-3 md:w-auto md:max-w-[min(100%,32rem)] md:shrink-0 md:flex-row md:flex-wrap md:items-stretch md:justify-end md:gap-3 lg:max-w-[min(100%,40rem)] lg:gap-4">
-						<div className="flex min-w-0 flex-1 gap-1 md:min-w-[12rem] md:max-w-[22rem] lg:max-w-[26rem]">
+						<div className="flex gap-1">
 							<ToggleGroup
 								type="single"
 								value={exposure ?? "all"}
@@ -184,10 +161,12 @@ export default function ForemanOverview() {
 							</Button>
 						</div>
 
+						<div></div>
+
 						{users === undefined || isSubordinatesLoading ? (
-							<Skeleton className="h-9 w-full md:w-60 md:shrink-0" />
+							<Skeleton className="h-9 w-73" />
 						) : (
-							<div className="w-full min-w-0 md:w-56 md:shrink-0 lg:w-64">
+							<div className="w-73 min-w-0">
 								<UserSelect
 									users={users}
 									value={selectedUserId}
@@ -204,6 +183,7 @@ export default function ForemanOverview() {
 				<aside className="flex flex-col gap-6 md:w-1/5">
 					<TeamSummary subordinateCount={subordinateCount} />
 					<NotesCard />
+					<LimitExplanation />
 				</aside>
 
 				<div

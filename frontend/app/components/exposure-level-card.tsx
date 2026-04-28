@@ -1,9 +1,11 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { Exposure } from "@/features/exposure-picker/exposures";
-import { mapDangerLevelToColor } from "@/lib/danger-levels";
+import { dangerlevelStyles } from "@/lib/danger-levels";
 import type { UserWithStatusDto } from "@/lib/dto";
+import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
+import { ExposureIcon } from "./exposure-icon.js";
 
 interface Props {
 	users: Array<UserWithStatusDto>;
@@ -17,20 +19,31 @@ export function ExposureRiskCard({ users, exposure, dangerLevel, onUserClick }: 
 
 	const operators = users.filter((user) => (user.status[exposure]?.dangerLevel ?? "safe") === dangerLevel);
 
+	const { bgSubtle, border, text } = dangerlevelStyles[dangerLevel];
+
 	return (
-		<Card className="group h-fit w-full flex-1 basis-64 rounded-2xl">
-			<CardHeader>
-				<CardTitle className={`text-center text-${mapDangerLevelToColor(dangerLevel ?? "safe")}`}>
-					{t((x) => x.foremanDashboard.overview.statCards[dangerLevel].label)} {`(${operators.length})`}
-				</CardTitle>
+		<Card className="group w-full flex-1 basis-64 rounded-2xl p-2">
+			<CardHeader className={cn("flex items-center gap-3 rounded-xl border px-3 py-2", bgSubtle, border, text)}>
+				<ExposureIcon
+					size="xs"
+					iconOnly={true}
+					type={exposure}
+					iconClassName="size-4.5 mt-0.5"
+					dangerLevel={dangerLevel}
+					dangerLevelClassName="-bottom-0.75 -right-0.75"
+				/>
+
+				<h3 className={cn("font-semibold text-sm", text)}>
+					{t((x) => x.foremanDashboard.overview.statCards[dangerLevel].label)}
+				</h3>
 			</CardHeader>
 
 			<CardContent>
 				<Table>
-					<TableBody>
+					<TableBody className="mx-0">
 						{operators.length === 0 ? (
-							<TableRow className="hover:bg-transparent">
-								<TableCell className="whitespace-normal text-center text-zinc-500">
+							<TableRow className="border-none hover:bg-transparent">
+								<TableCell className="whitespace-normal text-zinc-500">
 									{t((x) => x.foremanDashboard.overview.statCards[dangerLevel].noOperators)}
 								</TableCell>
 							</TableRow>
@@ -39,17 +52,10 @@ export function ExposureRiskCard({ users, exposure, dangerLevel, onUserClick }: 
 								<TableRow
 									key={sub.id}
 									onClick={() => onUserClick?.(sub.id)}
-									className="cursor-pointer hover:bg-zinc-100 dark:hover:bg-zinc-700/50"
+									className="cursor-pointer rounded-lg border-none even:bg-zinc-100/75 hover:bg-accent dark:hover:bg-accent dark:even:bg-zinc-700/33"
 								>
-									<TableCell>
-										<div className="flex w-full items-center gap-5">
-											<div
-												className={`h-3 w-3 rounded-sm bg-${mapDangerLevelToColor(
-													sub.status[exposure]?.dangerLevel ?? "safe",
-												)}`}
-											/>
-											<span>{sub.name}</span>
-										</div>
+									<TableCell className="rounded-lg px-3">
+										<p>{sub.name}</p>
 									</TableCell>
 								</TableRow>
 							))
