@@ -12,7 +12,7 @@ import { TZDate } from "@date-fns/tz";
 import { addMinutes, formatDistanceToNowStrict } from "date-fns";
 import { type PropsWithChildren, useId } from "react";
 import { useTranslation } from "react-i18next";
-import { CartesianGrid, Legend, Line, LineChart, XAxis, type XAxisTickContentProps, YAxis } from "recharts";
+import { Area, CartesianGrid, ComposedChart, Legend, Line, XAxis, type XAxisTickContentProps, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
 import { ExposureDot } from "./exposure-dot";
 import { ExposureLineChartGradientStops } from "./exposure-line-chart-gradient-stops";
@@ -92,12 +92,16 @@ export function ExposureLineChart({
 
 	const formatTime = (time: number) => formatDate(toTZDate(time), "HH:mm");
 
+	// Pre-calculate values to ensure the Area's gradient bounding box perfectly matches
+	const dataValues = transformedData.map((point) => point.value);
+	const maxDataValue = dataValues.length > 0 ? Math.max(...dataValues) : maxY;
+
 	return (
 		<ChartContainer
 			config={chartConfig}
 			className={cn("h-full w-full", chartContainerClassName, compact && "!aspect-auto")}
 		>
-			<LineChart
+			<ComposedChart
 				accessibilityLayer={true}
 				data={transformedData}
 				margin={
@@ -109,7 +113,7 @@ export function ExposureLineChart({
 							}
 				}
 			>
-				<CartesianGrid vertical={true} strokeDasharray="3 3" />
+				<CartesianGrid vertical={true} stroke="var(--color-muted-foreground)" strokeOpacity={0.3} />
 				<XAxis
 					dataKey="time"
 					type="number"
@@ -161,21 +165,55 @@ export function ExposureLineChart({
 					}
 				/>
 				<ExposureTooltip unit={unit} />
-
 				<defs>
-					<linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+					{/* Gradient for line stroke */}
+					<linearGradient id={`${id}-line`} x1="0" y1="0" x2="0" y2="1">
 						<ExposureLineChartGradientStops
-							values={transformedData.map((point) => point.value)}
+							values={dataValues}
 							warningThreshold={warning}
 							dangerThreshold={dangerThreshold}
 							usePeakData={usePeakData}
 						/>
 					</linearGradient>
+
+					{/* Gradient for area background */}
+					<linearGradient id={`${id}-area`} x1="0" y1="0" x2="0" y2="1">
+						<ExposureLineChartGradientStops
+							values={[minY, maxDataValue]}
+							warningThreshold={warning}
+							dangerThreshold={dangerThreshold}
+							usePeakData={usePeakData}
+						/>
+					</linearGradient>
+
+					<linearGradient id={`${id}-fade-gradient`} x1="0" y1="0" x2="0" y2="1">
+						{/* How much of the gradient (50%) should be fully visible until it starts fading out */}
+						<stop offset="0%" stopColor="white" stopOpacity={1} />
+						<stop offset="50%" stopColor="white" stopOpacity={1} />
+
+						{/* Fades out completely at the bottom (100%) */}
+						<stop offset="100%" stopColor="white" stopOpacity={0} />
+					</linearGradient>
+
+					<mask id={`${id}-fade-mask`}>
+						<rect x="0" y="0" width="100%" height="100%" fill={`url(#${id}-fade-gradient)`} />
+					</mask>
 				</defs>
+				<Area
+					dataKey="value"
+					type={lineType}
+					fill={`url(#${id}-area)`}
+					stroke="none"
+					baseValue={minY}
+					fillOpacity={0.25}
+					mask={`url(#${id}-fade-mask)`}
+					isAnimationActive={false}
+					animationDuration={0}
+				/>
 				<Line
 					dataKey="value"
 					type={lineType}
-					stroke={`url(#${id})`}
+					stroke={`url(#${id}-line)`}
 					strokeWidth={1.25}
 					isAnimationActive={false}
 					animationDuration={0}
@@ -207,7 +245,7 @@ export function ExposureLineChart({
 						)}
 					/>
 				)}
-			</LineChart>
+			</ComposedChart>
 		</ChartContainer>
 	);
 }
@@ -281,10 +319,8 @@ function buildTicks(xAxisMode: XAxisMode, minTime: Date, maxTime: Date) {
 	const max = maxTime.getTime();
 
 	if (xAxisMode === "windowed") {
-		// Always include edges
 		const ticks = [min, max];
 
-		// Add ticks per hour
 		const current = new TZDate(minTime);
 
 		while (current < maxTime) {
@@ -326,7 +362,6 @@ function limitTicks(ticks: Array<number>, maxTicks: number) {
 	const step = Math.ceil((ticks.length - 1) / (maxTicks - 1));
 	const result = ticks.filter((_, i) => i % step === 0);
 
-	// Ensure first & last are always included
 	if (result[0] !== ticks[0]) {
 		result.unshift(ticks[0]);
 	}
