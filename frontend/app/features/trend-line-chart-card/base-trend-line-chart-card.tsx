@@ -11,7 +11,7 @@ export function BaseTrendLineChartCard({ children }: PropsWithChildren) {
 		<Card>
 			<CardHeader>
 				<CardTitle>
-					{t(($) => $.exposureTrendLineChartCard.title, {
+					{t(($) => $.exposureTrendLineChartCard.title[view], {
 						view: t(($) => $.views[view]).toLowerCase(),
 					})}
 				</CardTitle>
