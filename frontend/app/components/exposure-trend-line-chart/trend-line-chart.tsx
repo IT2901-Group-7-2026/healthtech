@@ -332,7 +332,7 @@ function getSeriesLabel(
 		return t(($) => $.exposures[exposure]);
 	}
 
-	return t(($) => $.exposures.dustExposureLabels[field]);
+	return t(($) => $.exposures.dustFields[field]);
 }
 
 function getDustFieldColor(field?: ExposureTypeField): string {

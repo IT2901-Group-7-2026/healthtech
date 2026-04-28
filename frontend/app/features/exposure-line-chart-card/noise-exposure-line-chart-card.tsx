@@ -92,7 +92,7 @@ export default function NoiseExposureLineChartCard({ userId }: Props) {
 			minTime={minTime}
 			maxTime={maxTime}
 			chartData={downsampleExposureData(exposure, data ?? [])}
-			unit="dbTwa"
+			unit="db"
 			maxY={maxY}
 			minY={minY}
 			exposure={exposure}
