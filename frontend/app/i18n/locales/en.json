@@ -228,12 +228,13 @@
         }
       },
       "selectUserPlaceholder": "Select team member",
+      "clearUserSelection": "Clear user selection",
       "clearExposureFilter": "Clear exposure filter"
     },
     "actionCard": {
       "safe": "Team status: Within exposure limits",
       "warning": "Team status: Attention may be required",
-      "warningDescription": "One or more operators are above the action value. Monitoring or preventative measure may be needed.",
+      "warningDescription": "One or more operators are above the action value. Monitoring or preventative measures may be needed.",
       "danger": "Team status: Immediate action required",
       "dangerDescription": "One or more operators are above the limit value. Immediate follow-up according to procedure is required.",
       "dayView": {

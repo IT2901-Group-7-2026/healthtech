@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
 import { cn } from "@/lib/utils";
 import { XIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export type UserSelectUser = { id: string; name: string };
 
@@ -24,17 +25,40 @@ export function UserSelect({
 	contentClassName,
 	itemClassName,
 }: UserSelectProps) {
-	const disabled = !users || users.length === 0;
-	const selectedUser = users?.find((u) => u.id === value);
+	const { t } = useTranslation();
 
-	const items = users.map((u) => ({
-		value: u.id,
-		label: u.name,
+	const disabled = !users || users.length === 0;
+
+	const items = users.map((user) => ({
+		value: user.id,
+		label: user.name,
 	}));
+
+	const resolveItemLabel = (item: string | UserSelectListItem) => userSelectItemToStringLabel(item, users);
+
+	function handleComboboxValueChange(nextValue: string | UserSelectListItem | null) {
+		if (nextValue === null) {
+			onValueChange(null);
+			return;
+		}
+
+		if (typeof nextValue === "string") {
+			onValueChange(nextValue);
+			return;
+		}
+
+		onValueChange(nextValue.value);
+	}
 
 	return (
 		<div className="flex gap-1">
-			<Combobox items={items} disabled={disabled} value={value ?? undefined} onValueChange={onValueChange}>
+			<Combobox
+				items={items}
+				disabled={disabled}
+				value={value ?? undefined}
+				onValueChange={handleComboboxValueChange}
+				itemToStringLabel={resolveItemLabel}
+			>
 				<ComboboxInput
 					placeholder={placeholder}
 					disabled={disabled}
@@ -42,7 +66,6 @@ export function UserSelect({
 						"rounded-r-md rounded-l-xl bg-background font-medium dark:bg-input/30",
 						inputClassName,
 					)}
-					value={selectedUser?.name ?? ""}
 				/>
 				<ComboboxContent className={cn("rounded-xl", contentClassName)}>
 					<ComboboxList>
@@ -60,7 +83,7 @@ export function UserSelect({
 			</Combobox>
 
 			<Button
-				aria-label="Clear user selection"
+				aria-label={t(($) => $.foremanDashboard.overview.clearUserSelection)}
 				variant="outline"
 				size="icon"
 				onClick={() => onValueChange(null)}
@@ -71,4 +94,18 @@ export function UserSelect({
 			</Button>
 		</div>
 	);
+}
+
+type UserSelectListItem = { value: string; label: string };
+
+function userSelectItemToStringLabel(item: string | UserSelectListItem, users: Array<UserSelectUser>): string {
+	if (typeof item === "string") {
+		return users.find((user) => user.id === item)?.name ?? "";
+	}
+
+	if (item.label == null) {
+		return "";
+	}
+
+	return String(item.label);
 }

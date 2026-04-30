@@ -225,6 +225,7 @@
         }
       },
       "selectUserPlaceholder": "Velg et teammedlem",
+      "clearUserSelection": "Fjern brukervalg",
       "clearExposureFilter": "Fjern eksponeringsfilter"
     },
     "actionCard": {

@@ -361,10 +361,7 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 
 	const data = response?.data;
 	const hourDomain = response?.hourDomain;
-	const latestPoint = data?.at(-1) ?? null;
 	const maxPoint = data && data.length > 0 ? getMaxPointByValue(data, (point) => point.value) : null;
-	const averageValue =
-		data && data.length > 0 ? data.reduce((sum, point) => sum + point.value, 0) / data.length : null;
 
 	const maxValue = maxPoint?.value ?? 0;
 	let maxY = 450;

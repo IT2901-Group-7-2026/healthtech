@@ -113,7 +113,7 @@ export const AttentionCard = ({
 				{actionCardHeader}
 
 				<CardContent className="gap-2">
-					{showActionCard || (isWeekly && detailText && <p>{detailText}</p>)}
+					{detailText && (showActionCard || isWeekly) && <p>{detailText}</p>}
 					<div className="mt-5 grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
 						{!exposure && (
 							<>

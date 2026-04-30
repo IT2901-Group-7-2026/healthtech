@@ -123,7 +123,7 @@ function StatisticCard({ label, value, unit, recordedAt, warningThreshold, dange
 	const { t } = useTranslation();
 
 	const valueString = formatValue(value, unit);
-	const actionLimitPercentage = getLimitPercentage(value, dangerThreshold);
+	const limitValuePercentage = getLimitPercentage(value, dangerThreshold);
 
 	const dangerLevel =
 		warningThreshold !== null && dangerThreshold !== null
@@ -142,7 +142,7 @@ function StatisticCard({ label, value, unit, recordedAt, warningThreshold, dange
 				<div className="size-4 rounded-md" style={{ backgroundColor: color }} />
 
 				<p className="font-semibold text-2xl">
-					{actionLimitPercentage}
+					{limitValuePercentage}
 					{" % "}
 					<span className="font-normal text-muted-foreground text-sm">
 						{t(($) => $.measurement.ofTheLimitValue)}

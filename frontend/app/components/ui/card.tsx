@@ -1,7 +1,5 @@
 import type * as React from "react";
-
 import { cn } from "@/lib/utils";
-import type { LucideIcon } from "lucide-react";
 
 type CardVariant = "default" | "labeled";
 
@@ -41,13 +39,10 @@ function Card({
 	);
 }
 
-type CardLabelHeaderProps = React.ComponentProps<"div"> & React.PropsWithChildren<{
-	icon?: LucideIcon;
-}>;
+type CardLabelHeaderProps = React.PropsWithChildren<React.ComponentProps<"div">>
 
 function CardLabelHeader({
 	className,
-	icon: Icon,
 	children,
 	...props
 }: CardLabelHeaderProps) {
