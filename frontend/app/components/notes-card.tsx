@@ -168,7 +168,7 @@ export const NotesCard = ({ forceInteractiveMode = false }: NotesCardProps) => {
 				<CardContent>
 					<p className="text-xs">
 						{t(($) => $.notes.list.noNotes, {
-							view: t(($$) => $$.views[view]),
+							view: t(($$) => $$.views[view]).toLowerCase(),
 						})}
 					</p>
 				</CardContent>
