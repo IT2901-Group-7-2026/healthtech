@@ -191,4 +191,4 @@ sudo ./svc.sh stop
 sudo ./svc.sh uninstall
 ```
 
-See `~./.github/workflows/deploy.yml` for the deployment workflow.
+See [`./.github/workflows/deploy.yml`](./.github/workflows/deploy.yml) for the deployment workflow.
