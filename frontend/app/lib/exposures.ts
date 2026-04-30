@@ -5,7 +5,7 @@ export const exposures = ["dust", "noise", "vibration"] as const;
 export type Exposure = (typeof exposures)[number];
 export const parseAsExposure = parseAsStringLiteral(exposures);
 
-export const exposureUnits = ["mg", "ug", "points", "db", "dbTwa"] as const;
+export const exposureUnits = ["mg", "ug", "points", "db"] as const;
 export type ExposureUnit = (typeof exposureUnits)[number];
 export const parseAsExposureUnit = parseAsStringLiteral(exposureUnits);
 

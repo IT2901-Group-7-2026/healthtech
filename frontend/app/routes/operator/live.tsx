@@ -200,7 +200,7 @@ export default function OperatorLiveView() {
 							exposure="noise"
 							exposureLabel={t(($) => $.exposures.noise)}
 							exposureUnitLabel="dB"
-							chartUnit="dbTwa"
+							chartUnit="db"
 							data={noiseData}
 							minTime={start}
 							maxTime={end}

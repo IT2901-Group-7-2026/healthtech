@@ -25,31 +25,16 @@
     "overview": "Oversikt",
     "selectPlaceholder": "Eksponering",
     "dustFields": {
-      "pm1_stel": "PM1",
-      "pm25_stel": "PM2.5",
-      "pm4_stel": "PM4",
-      "pm10_stel": "PM10",
       "pm1_twa": "PM1",
       "pm25_twa": "PM2.5",
       "pm4_twa": "PM4",
       "pm10_twa": "PM10"
     },
-    "dustExposureLabels": {
-      "pm1_stel": "PM1 (STEL)",
-      "pm25_stel": "PM2.5 (STEL)",
-      "pm4_stel": "PM4 (STEL)",
-      "pm10_stel": "PM10 (STEL)",
-      "pm1_twa": "PM1 (TWA)",
-      "pm25_twa": "PM2.5 (TWA)",
-      "pm4_twa": "PM4 (TWA)",
-      "pm10_twa": "PM10 (TWA)"
-    },
     "units": {
       "ug": "µg/m³",
       "mg": "mg/m³",
       "points": "Poeng",
-      "db": "dB",
-      "dbTwa": "dB (TWA)"
+      "db": "dB"
     }
   },
   "dangerLevels": {
@@ -336,7 +321,11 @@
     "next": "Neste"
   },
   "exposureTrendLineChartCard": {
-    "title": "Eksponeringstrend for {{view}}"
+    "title": {
+      "day": "Daglig eksponeringstrend",
+      "week": "Ukentlig eksponeringstrend",
+      "month": "Månedlig eksponeringstrend"
+    }
   },
   "exposureSlider": {
     "title": "Gjennomsnittlig eksponering for {{view}}"

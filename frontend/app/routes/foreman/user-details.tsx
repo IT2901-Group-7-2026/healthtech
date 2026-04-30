@@ -285,7 +285,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 				<CardContent className="flex flex-row flex-wrap">
 					<ExposureSlider
 						className="flex-1"
-						label={t(($) => $.exposures.dustExposureLabels.pm1_twa)}
+						label={t(($) => $.exposures.dustFields.pm1_twa)}
 						value={avgPm1Twa}
 						exposure={exposure}
 						unitLabel="ug"
@@ -293,7 +293,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 					/>
 					<ExposureSlider
 						className="flex-1"
-						label={t(($) => $.exposures.dustExposureLabels.pm25_twa)}
+						label={t(($) => $.exposures.dustFields.pm25_twa)}
 						value={avgPm25Twa}
 						exposure={exposure}
 						unitLabel="ug"
@@ -305,7 +305,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 					/>
 					<ExposureSlider
 						className="flex-1"
-						label={t(($) => $.exposures.dustExposureLabels.pm4_twa)}
+						label={t(($) => $.exposures.dustFields.pm4_twa)}
 						value={avgPm4Twa}
 						exposure={exposure}
 						unitLabel="ug"
@@ -313,7 +313,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 					/>
 					<ExposureSlider
 						className="flex-1"
-						label={t(($) => $.exposures.dustExposureLabels.pm10_twa)}
+						label={t(($) => $.exposures.dustFields.pm10_twa)}
 						value={avgPm10Twa}
 						exposure={exposure}
 						unitLabel="ug"
@@ -505,7 +505,7 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 					latestValue={latestPoint ? getDisplayedNoiseValue(latestPoint, usePeakAggregation) : null}
 					warningThreshold={noiseThreshold.warning}
 					dangerThreshold={noiseDangerThreshold}
-					unit="dbTwa"
+					unit="db"
 					formatTime={(time) => formatDate(time, "HH:mm")}
 				/>
 			)}

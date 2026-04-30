@@ -24,31 +24,20 @@
     "overview": "Overview",
     "selectPlaceholder": "Exposure",
     "dustFields": {
-      "pm1_stel": "PM1",
-      "pm25_stel": "PM2.5",
-      "pm4_stel": "PM4",
-      "pm10_stel": "PM10",
       "pm1_twa": "PM1",
       "pm25_twa": "PM2.5",
       "pm4_twa": "PM4",
-      "pm10_twa": "PM10"
-    },
-    "dustExposureLabels": {
-      "pm1_stel": "PM1 (STEL)",
-      "pm25_stel": "PM2.5 (STEL)",
-      "pm4_stel": "PM4 (STEL)",
-      "pm10_stel": "PM10 (STEL)",
-      "pm1_twa": "PM1 (TWA)",
-      "pm25_twa": "PM2.5 (TWA)",
-      "pm4_twa": "PM4 (TWA)",
-      "pm10_twa": "PM10 (TWA)"
+      "pm10_twa": "PM10",
+      "pm1_stel": "PM1",
+      "pm25_stel": "PM2.5",
+      "pm4_stel": "PM4",
+      "pm10_stel": "PM10"
     },
     "units": {
       "ug": "µg/m³",
       "mg": "mg/m³",
       "points": "Points",
-      "db": "dB",
-      "dbTwa": "dB (TWA)"
+      "db": "dB"
     }
   },
   "dangerLevels": {
@@ -335,7 +324,11 @@
     "next": "Next"
   },
   "exposureTrendLineChartCard": {
-    "title": "Exposure trend for {{view}}"
+    "title": {
+      "day": "Daily exposure trend",
+      "week": "Weekly exposure trend",
+      "month": "Monthly exposure trend"
+    }
   },
   "exposureSlider": {
     "title": "Average exposure for {{view}}"

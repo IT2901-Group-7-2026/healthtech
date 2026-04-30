@@ -8,10 +8,10 @@ export function BaseTrendLineChartCard({ children }: PropsWithChildren) {
 	const { t } = useTranslation();
 
 	return (
-		<Card className="max-w-lg">
+		<Card>
 			<CardHeader>
 				<CardTitle>
-					{t(($) => $.exposureTrendLineChartCard.title, {
+					{t(($) => $.exposureTrendLineChartCard.title[view], {
 						view: t(($) => $.views[view]).toLowerCase(),
 					})}
 				</CardTitle>

@@ -24,7 +24,7 @@ export function DustTrendLineChartCard({ unit, userId }: Props) {
 	const exposure = "dust";
 
 	//TODO: Switch 2500 instead of 25, same for the other ones
-	const dustFieldsToQuery: Array<ExposureTypeField> = ["pm1_twa", "pm4_twa", "pm25_twa", "pm10_twa"];
+	const dustFieldsToQuery: Array<ExposureTypeField> = ["pm1_twa", "pm25_twa", "pm4_twa", "pm10_twa"];
 
 	const queriesEnabled = view !== "day";
 
