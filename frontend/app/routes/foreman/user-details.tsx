@@ -241,21 +241,6 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 				</TabsList>
 			</Tabs>
 
-			{showDustStatistics && (
-				<ExposureStatisticsSection
-					isLoading={dataResult.isLoading}
-					isEmpty={dataResult.isError || !data?.length}
-					averageValue={averageValue}
-					maxValue={maxPoint?.value ?? null}
-					maxTime={maxPoint?.time ?? null}
-					latestValue={latestPoint?.value ?? null}
-					warningThreshold={dustThreshold.warning}
-					dangerThreshold={dustThreshold.danger}
-					unit={dustUnit}
-					formatTime={(time) => formatDate(time, "HH:mm")}
-				/>
-			)}
-
 			<ExposureChartCard
 				isLoading={dataResult.isLoading}
 				isError={dataResult.isError}
@@ -273,6 +258,21 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 					<DustExposureLineChartCard userId={selectedUser.id} />
 				)}
 			</ExposureChartCard>
+
+			{showDustStatistics && (
+				<ExposureStatisticsSection
+					isLoading={dataResult.isLoading}
+					isEmpty={dataResult.isError || !data?.length}
+					averageValue={averageValue}
+					maxValue={maxPoint?.value ?? null}
+					maxTime={maxPoint?.time ?? null}
+					latestValue={latestPoint?.value ?? null}
+					warningThreshold={dustThreshold.warning}
+					dangerThreshold={dustThreshold.danger}
+					unit={dustUnit}
+					formatTime={(time) => formatDate(time, "HH:mm")}
+				/>
+			)}
 
 			<Card className="w-full">
 				<CardHeader>
@@ -382,21 +382,6 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 
 	return (
 		<div className="flex flex-col gap-4">
-			{showVibrationStatistics && (
-				<ExposureStatisticsSection
-					isLoading={isLoading}
-					isEmpty={isError || !data?.length}
-					averageValue={averageValue}
-					maxValue={maxPoint?.value ?? null}
-					maxTime={maxPoint?.time ?? null}
-					latestValue={latestPoint?.value ?? null}
-					warningThreshold={vibrationThreshold.warning}
-					dangerThreshold={vibrationThreshold.danger}
-					unit="points"
-					formatTime={(time) => formatDate(time, "HH:mm")}
-				/>
-			)}
-
 			<ExposureChartCard
 				isLoading={isLoading}
 				isError={isError}
@@ -414,6 +399,22 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 					<VibrationExposureLineChartCard userId={selectedUser.id} />
 				)}
 			</ExposureChartCard>
+
+			{showVibrationStatistics && (
+				<ExposureStatisticsSection
+					isLoading={isLoading}
+					isEmpty={isError || !data?.length}
+					averageValue={null}
+					maxValue={maxPoint?.value ?? null}
+					maxTime={null}
+					latestValue={null}
+					warningThreshold={vibrationThreshold.warning}
+					dangerThreshold={vibrationThreshold.danger}
+					unit="points"
+					formatTime={(time) => formatDate(time, "HH:mm")}
+				/>
+			)}
+
 			{showTrendLineChart && <VibrationTrendLineChartCard userId={selectedUser.id} />}
 		</div>
 	);
@@ -495,20 +496,7 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 					<TabsTrigger value="peak">{t(($) => $.measurement.peak)}</TabsTrigger>
 				</TabsList>
 			</Tabs>
-			{showNoiseStatistics && (
-				<ExposureStatisticsSection
-					isLoading={isLoading}
-					isEmpty={isError || !data?.length}
-					averageValue={averageValue}
-					maxValue={maxPoint ? getDisplayedNoiseValue(maxPoint, usePeakAggregation) : null}
-					maxTime={maxPoint?.time ?? null}
-					latestValue={latestPoint ? getDisplayedNoiseValue(latestPoint, usePeakAggregation) : null}
-					warningThreshold={noiseThreshold.warning}
-					dangerThreshold={noiseDangerThreshold}
-					unit="db"
-					formatTime={(time) => formatDate(time, "HH:mm")}
-				/>
-			)}
+
 			<ExposureChartCard
 				isLoading={isLoading}
 				isError={isError}
@@ -526,6 +514,22 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 					<NoiseExposureLineChartCard userId={selectedUser.id} />
 				)}
 			</ExposureChartCard>
+
+			{showNoiseStatistics && (
+				<ExposureStatisticsSection
+					isLoading={isLoading}
+					isEmpty={isError || !data?.length}
+					averageValue={averageValue}
+					maxValue={maxPoint ? getDisplayedNoiseValue(maxPoint, usePeakAggregation) : null}
+					maxTime={maxPoint?.time ?? null}
+					latestValue={latestPoint ? getDisplayedNoiseValue(latestPoint, usePeakAggregation) : null}
+					warningThreshold={noiseThreshold.warning}
+					dangerThreshold={noiseDangerThreshold}
+					unit="db"
+					formatTime={(time) => formatDate(time, "HH:mm")}
+				/>
+			)}
+
 			{showTrendLineChart && <NoiseTrendLineChartCard userId={selectedUser.id} />}
 		</div>
 	);

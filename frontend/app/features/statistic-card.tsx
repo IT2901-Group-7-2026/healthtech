@@ -137,13 +137,18 @@ function StatisticCard({ label, value, unit, recordedAt, warningThreshold, dange
 	return (
 		<Card className="min-h-26.25 gap-1">
 			<p className="text-muted-foreground text-xs uppercase tracking-widest">{label}</p>
-			<p className="font-semibold text-2xl" style={{ color }}>
-				{actionLimitPercentage}
-				{" % "}
-				<span className="font-normal text-muted-foreground text-sm">
-					{t(($) => $.measurement.ofTheLimitValue)}
-				</span>
-			</p>
+
+			<div className="flex flex-col gap-1 lg:flex-row lg:items-center lg:gap-2">
+				<div className="size-4 rounded-md" style={{ backgroundColor: color }} />
+
+				<p className="font-semibold text-2xl">
+					{actionLimitPercentage}
+					{" % "}
+					<span className="font-normal text-muted-foreground text-sm">
+						{t(($) => $.measurement.ofTheLimitValue)}
+					</span>
+				</p>
+			</div>
 
 			<div className="flex flex-wrap items-center gap-x-2 text-muted-foreground text-xs">
 				<p className="tabular-nums">
