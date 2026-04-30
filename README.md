@@ -2,11 +2,39 @@
 
 HealthTech is a Bachelor's thesis project for Aker Solutions. This is the second group of students to work on the project.
 
-<p align="center">
-  <img src="./assets/showcase/foreman-team-noise.png" alt="Foreman noise data for team" width="32%" />
-  <img src="./assets/showcase/operator-noise-month.png" alt="Operator monthly view of noise data" width="32%" />
-  <img src="./assets/showcase/operator-overview-week.png" alt="Operator overview of a week" width="32%" />
-</p>
+<table>
+  <tr>
+    <td rowspan="2" align="center" width="50%">
+      <img
+        src="./assets/showcase/operator-noise-month.png"
+        alt="Operator monthly view of noise data"
+        width="100%"
+      />
+      <br />
+      <sub>A month of an operator's noise data</sub>
+    </td>
+    <td align="center" width="50%">
+      <img
+        src="./assets/showcase/foreman-team-noise.png"
+        alt="Foreman noise data for team"
+        width="100%"
+      />
+      <br />
+      <sub>A foreman's noise data for their team</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img
+        src="./assets/showcase/operator-overview-week.png"
+        alt="Operator overview of a week"
+        width="100%"
+      />
+      <br />
+      <sub>An operator's weekly overview</sub>
+    </td>
+  </tr>
+</table>
 
 ## Requirements
 
