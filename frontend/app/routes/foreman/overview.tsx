@@ -2,7 +2,6 @@ import { DatePicker } from "@/components/date-picker";
 import { ExposureIcon } from "@/components/exposure-icon";
 import { NotesCard } from "@/components/notes-card";
 import { OperatorExposureStatusTable } from "@/components/operator-exposure-status-table";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,38 +16,30 @@ import { useUser } from "@/features/user/user-context";
 import { UserSelect } from "@/features/user/user-select";
 import { useView } from "@/features/views/use-view";
 import { ViewPicker } from "@/features/views/view-picker";
-import { getViewIcon } from "@/features/views/views";
-import { useFormatDate } from "@/hooks/use-format-date.js";
-import type { TranslateFn } from "@/i18n/config";
 import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions } from "@/lib/api.js";
 import { today, toTZDate } from "@/lib/date";
 import type { ThresholdSummary } from "@/lib/dto";
 import { type Exposure, exposures, parseAsExposure } from "@/lib/exposures";
-import type { View } from "@/lib/views";
-import type { TZDate } from "@date-fns/tz";
 import { useQuery } from "@tanstack/react-query";
-import { addWeeks, endOfDay, getISOWeek, startOfDay, subDays } from "date-fns";
-import { User2Icon, Users2Icon, XIcon } from "lucide-react";
+import { addWeeks, endOfDay, startOfDay, subDays } from "date-fns";
+import { XIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
 import { UserDetails } from "./user-details";
 
 export default function ForemanOverview() {
-	const { t, i18n } = useTranslation();
+	const { t } = useTranslation();
 	const { user } = useUser();
-	const formatDate = useFormatDate();
 
 	const [exposure, setExposure] = useQueryState("exposure", parseAsExposure.withOptions({ history: "push" }));
-	const { date, setDate, selection } = useDate();
+	const { date, setDate } = useDate();
 	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString.withOptions({ history: "push" }));
 
-	const selectedDate = date;
 	const { view } = useView();
 	const isWeekly = view === "week";
 
-	const startDate = isWeekly ? toTZDate(startOfDay(addWeeks(selectedDate, -1))) : toTZDate(startOfDay(selectedDate));
-
-	const endDate = toTZDate(endOfDay(selectedDate));
+	const startDate = isWeekly ? toTZDate(startOfDay(addWeeks(date, -1))) : toTZDate(startOfDay(date));
+	const endDate = toTZDate(endOfDay(date));
 
 	// Foremen can only see dates within the last week
 	const minSelectableDate = subDays(today(), 7);
@@ -68,7 +59,6 @@ export default function ForemanOverview() {
 	const subordinateCount = subordinates?.length ?? 0;
 	const isUserSelected = selectedUser !== undefined;
 
-	const ViewIcon = getViewIcon(view);
 	const exposureTitle = exposure
 		? t(($) => $.exposures[exposure])
 		: t(($) => $.operatorHeader.subtitle.allExposureTypes);
@@ -95,24 +85,7 @@ export default function ForemanOverview() {
 				</div>
 
 				<div className="flex min-w-0 flex-col gap-4 md:flex-row md:items-center md:gap-6">
-					<div className="grid w-full grid-cols-[auto_1fr_auto] items-center gap-3">
-						{/*<Badge
-							variant="secondary"
-							className="wrap-break-word max-w-full gap-1.5 px-2.5 py-1 text-muted-foreground text-sm"
-						>
-							<ViewIcon className="size-3.5 shrink-0" />
-							<span className="wrap-break-word min-w-0">{getForemanViewLabel(t, view, selection)}</span>
-						</Badge>
-
-						<Badge
-							variant="secondary"
-							className="wrap-break-word max-w-full gap-1.5 px-2.5 py-1 font-normal text-muted-foreground text-sm"
-						>
-							<span className="wrap-break-word min-w-0">
-								{getForemanDateLabel(t, view, selection, formatDate, i18n.language)}
-							</span>
-						</Badge>*/}
-
+					<div className="grid w-full grid-cols-[auto_1fr] items-center gap-3">
 						<div className="flex gap-1">
 							<ToggleGroup
 								type="single"
@@ -161,12 +134,10 @@ export default function ForemanOverview() {
 							</Button>
 						</div>
 
-						<div></div>
-
 						{users === undefined || isSubordinatesLoading ? (
-							<Skeleton className="h-9 w-73" />
+							<Skeleton className="h-9 w-73 justify-self-end" />
 						) : (
-							<div className="w-73 min-w-0">
+							<div className="w-73 min-w-0 justify-self-end">
 								<UserSelect
 									users={users}
 									value={selectedUserId}
@@ -267,41 +238,6 @@ export default function ForemanOverview() {
 			</div>
 		</div>
 	);
-}
-
-function getForemanViewLabel(t: TranslateFn, view: View, selection: { start: TZDate; end: TZDate }) {
-	if (view === "week") {
-		return t(($) => $.operatorHeader.subtitle.viewWeek, {
-			week: getISOWeek(selection.start),
-		});
-	}
-
-	if (view === "month") {
-		return t(($) => $.operatorHeader.subtitle.viewMonth);
-	}
-
-	return t(($) => $.operatorHeader.subtitle.viewDay);
-}
-
-function getForemanDateLabel(
-	t: TranslateFn,
-	view: View,
-	selection: { start: TZDate; end: TZDate },
-	formatDate: ReturnType<typeof useFormatDate>,
-	locale: string,
-) {
-	const isEn = locale === "en";
-
-	if (view === "day") {
-		const dateStr = formatDate(selection.start, isEn ? "MMM d, yyyy" : "d. MMM yyyy");
-
-		return t(($) => $.operatorHeader.subtitle.dateDay, { date: dateStr });
-	}
-
-	const startDate = formatDate(selection.start, isEn ? "MMM d" : "d. MMM");
-	const endDate = formatDate(selection.end, isEn ? "MMM d, yyyy" : "d. MMM yyyy");
-
-	return t(($) => $.operatorHeader.subtitle.dateRange, { startDate, endDate });
 }
 
 function ExposureSummaryGrid({ thresholdSummary }: { thresholdSummary: ThresholdSummary | undefined }) {

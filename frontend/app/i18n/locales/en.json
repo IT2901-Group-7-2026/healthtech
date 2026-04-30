@@ -239,8 +239,7 @@
         }
       },
       "selectUserPlaceholder": "Select team member",
-      "clearExposureFilter": "Clear exposure filter",
-      "yourTeam": "Your team"
+      "clearExposureFilter": "Clear exposure filter"
     },
     "actionCard": {
       "safe": "Team status: Within exposure limits",
@@ -349,7 +348,7 @@
   "limitExplanation": {
     "actionValue": {
       "label": "Action value",
-      "description": "Level where preventative action should be taken." 
+      "description": "Level where preventative action should be taken."
     },
     "limitValue": {
       "label": "Limit value",

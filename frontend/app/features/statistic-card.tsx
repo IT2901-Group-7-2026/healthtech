@@ -1,10 +1,8 @@
 import { Card, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { dangerlevelStyles, getDangerLevel } from "@/lib/danger-levels.js";
 import type { ExposureUnit } from "@/lib/exposures";
-import { cn, formatExposureValue } from "@/lib/utils";
-import { dangerlevelStyles, getDangerLevel, mapDangerLevelToColor } from "app/lib/danger-levels.js";
-import { ArrowUpToLine } from "lucide-react";
+import { formatExposureValue } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
 const formatValue = (value: number | null, unit: ExposureUnit) =>

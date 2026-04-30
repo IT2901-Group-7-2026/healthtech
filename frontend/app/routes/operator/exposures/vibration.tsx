@@ -92,6 +92,7 @@ export default function Vibration() {
 							maxValue={maxPoint?.value ?? null}
 							maxTime={null}
 							latestValue={null}
+							warningThreshold={vibrationThreshold.warning}
 							dangerThreshold={vibrationThreshold.danger}
 							unit="points"
 							formatTime={(time) => formatDate(time, "HH:mm")}

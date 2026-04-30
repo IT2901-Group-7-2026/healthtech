@@ -110,6 +110,7 @@ export default function Dust() {
 						maxValue={maxPoint?.value ?? null}
 						maxTime={maxPoint?.time ?? null}
 						latestValue={latestPoint?.value ?? null}
+						warningThreshold={dustThreshold.warning}
 						dangerThreshold={dustThreshold.danger}
 						unit={dustUnit}
 						formatTime={(time) => formatDate(time, "HH:mm")}

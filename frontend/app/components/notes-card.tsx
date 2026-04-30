@@ -12,9 +12,21 @@ import { NotebookPenIcon } from "lucide-react";
 import { type PropsWithChildren, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
-import { Card, CardContent, CardHeader, CardLabelHeader } from "./ui/card";
+import { Card, CardContent, CardLabelHeader } from "./ui/card";
 import { Skeleton } from "./ui/skeleton.js";
 import { Textarea } from "./ui/textarea";
+
+function NotesShell({ title, children }: PropsWithChildren<{ title: string }>) {
+	return (
+		<Card muted={true} variant="labeled" className="max-h-96 w-full overflow-y-auto">
+			<CardLabelHeader>
+				<NotebookPenIcon className="size-3.5 text-muted-foreground" />
+				<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
+			</CardLabelHeader>
+			{children}
+		</Card>
+	);
+}
 
 interface NotesCardProps {
 	forceInteractiveMode?: boolean;
@@ -115,40 +127,28 @@ export const NotesCard = ({ forceInteractiveMode = false }: NotesCardProps) => {
 
 	if (isLoading) {
 		return (
-			<Card muted={true} variant="labeled" className="max-h-96 w-full overflow-y-auto">
-				<CardLabelHeader>
-					<NotebookPenIcon className="size-3.5 text-muted-foreground" />
-					<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
-				</CardLabelHeader>
+			<NotesShell title={title}>
 				<CardContent>
 					<Skeleton className="h-4 w-[90%]" />
 					<Skeleton className="h-4 w-1/2" />
 				</CardContent>
-			</Card>
+			</NotesShell>
 		);
 	}
 
 	if (isError) {
 		return (
-			<Card muted={true} variant="labeled" className="max-h-96 w-full overflow-y-auto">
-				<CardLabelHeader>
-					<NotebookPenIcon className="size-3.5 text-muted-foreground" />
-					<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
-				</CardLabelHeader>
+			<NotesShell title={title}>
 				<CardContent>
 					<p>{t(($) => $.common.error)}</p>
 				</CardContent>
-			</Card>
+			</NotesShell>
 		);
 	}
 
 	if (isInteractiveMode) {
 		return (
-			<Card muted={true} variant="labeled" className="max-h-96 w-full overflow-y-auto">
-				<CardLabelHeader>
-					<NotebookPenIcon className="size-3.5 text-muted-foreground" />
-					<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
-				</CardLabelHeader>
+			<NotesShell title={title}>
 				<CardContent>
 					<Textarea
 						placeholder={t(($) => $.notes.interactive.placeholder)}
@@ -158,17 +158,13 @@ export const NotesCard = ({ forceInteractiveMode = false }: NotesCardProps) => {
 						onBlur={handleBlur}
 					/>
 				</CardContent>
-			</Card>
+			</NotesShell>
 		);
 	}
 
 	if (!data || data.length === 0) {
 		return (
-			<Card muted={true} variant="labeled" className="max-h-96 w-full overflow-y-auto">
-				<CardLabelHeader>
-					<NotebookPenIcon className="size-3.5 text-muted-foreground" />
-					<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
-				</CardLabelHeader>
+			<NotesShell title={title}>
 				<CardContent>
 					<p className="text-xs">
 						{t(($) => $.notes.list.noNotes, {
@@ -176,16 +172,12 @@ export const NotesCard = ({ forceInteractiveMode = false }: NotesCardProps) => {
 						})}
 					</p>
 				</CardContent>
-			</Card>
+			</NotesShell>
 		);
 	}
 
 	return (
-		<Card muted={true} variant="labeled" className="max-h-96 w-full overflow-y-auto">
-			<CardLabelHeader>
-				<NotebookPenIcon className="size-3.5 text-muted-foreground" />
-				<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
-			</CardLabelHeader>
+		<NotesShell title={title}>
 			<CardContent className="grid grid-cols-[max-content_1fr] gap-y-1">
 				{data.map((note) => {
 					const rowContent = (
@@ -236,6 +228,6 @@ export const NotesCard = ({ forceInteractiveMode = false }: NotesCardProps) => {
 					);
 				})}
 			</CardContent>
-		</Card>
+		</NotesShell>
 	);
 };

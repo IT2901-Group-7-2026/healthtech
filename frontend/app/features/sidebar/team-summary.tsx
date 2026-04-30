@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardLabelHeader } from "@/components/ui/card.js";
+import { Card, CardContent, CardLabelHeader } from "@/components/ui/card.js";
 import { createLocationName } from "@/lib/dto.js";
 import { MapPinIcon, ShieldUserIcon, UsersIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";

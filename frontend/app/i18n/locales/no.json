@@ -82,8 +82,7 @@
     "maximum": "Maksimum",
     "latest": "Siste",
     "recordedAt": "Registrert kl. {{time}}",
-    "limitValuePercentageShort": "{{percentage}} %",
-    "limitValuePercentageFull": "{{percentage}} % av grenseverdien"
+    "ofTheLimitValue": "av grenseverdien"
   },
   "layout": {
     "live": "Live",
@@ -241,13 +240,14 @@
         }
       },
       "selectUserPlaceholder": "Velg et teammedlem",
-      "clearExposureFilter": "Fjern eksponeringsfilter",
-      "yourTeam": "Ditt team"
+      "clearExposureFilter": "Fjern eksponeringsfilter"
     },
     "actionCard": {
-      "safe": "Alt er bra!",
-      "warning": "Oppmerksomhet anbefales!",
-      "danger": "Oppmerksomhet anbefales!",
+      "safe": "Teamstatus: Innenfor eksponeringsgrenser",
+      "warning": "Teamstatus: Oppmerksomhet kan være nødvendig",
+      "warningDescription": "En eller flere operatører er over tiltaksverdien. Overvåking eller forebyggende tiltak kan være nødvendig.",
+      "danger": "Teamstatus: Umiddelbar handling kreves",
+      "dangerDescription": "En eller flere operatører er over grenseverdien. Umiddelbar oppfølging i henhold til prosedyre kreves.",
       "dayView": {
         "danger": "Operatører over eksponeringsgrensen. Umiddelbar oppfølging anbefales.",
         "warning": "Operatører nærmer seg eksponeringsgrensen. Vurder forebyggende tiltak."
@@ -256,7 +256,6 @@
         "danger": "Operatører over ukentlig eksponeringsgrense. Umiddelbar oppfølging anbefales.",
         "warning": "Operatører nærmer seg ukentlig eksponeringsgrense. Umiddelbar oppfølging anbefales."
       },
-      "oldData": "Du ser på tidligere data.",
       "day": "Dag",
       "week": "Uke"
     },
@@ -346,5 +345,15 @@
     "dustExposure": "Støveksponering",
     "noiseExposure": "Støyeksponering",
     "vibrationExposure": "Vibrasjoneksponering"
+  },
+  "limitExplanation": {
+    "actionValue": {
+      "label": "Tiltaksverdi",
+      "description": "Nivå hvor forebyggende tiltak bør iverksettes."
+    },
+    "limitValue": {
+      "label": "Grenseverdi",
+      "description": "Nivå som ikke må overskrides."
+    }
   }
 }

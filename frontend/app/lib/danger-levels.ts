@@ -61,37 +61,29 @@ export const dangerlevelStyles = {
 	danger: {
 		bg: "bg-danger",
 		bgSubtle: "bg-danger-subtle",
-		bgFaint: "bg-danger-faint",
 		text: "text-danger-text",
 		border: "border-danger-border",
-		borderSubtle: "border-danger-border/15 dark:border-danger-border/15",
 		color: "var(--danger)",
 	},
 	warning: {
 		bg: "bg-warning",
 		bgSubtle: "bg-warning-subtle",
-		bgFaint: "bg-warning-faint",
 		text: "text-warning-text",
 		border: "border-warning-border",
-		borderSubtle: "border-warning-border/15 dark:border-warning-border/15",
 		color: "var(--warning)",
 	},
 	safe: {
 		bg: "bg-safe",
 		bgSubtle: "bg-safe-subtle",
-		bgFaint: "bg-safe-faint",
 		text: "text-safe-text",
 		border: "border-safe-border",
-		borderSubtle: "border-safe-border/15 dark:border-safe-border/15",
 		color: "var(--safe)",
 	},
 	none: {
 		bg: "bg-muted",
 		bgSubtle: "bg-muted",
-		bgFaint: "bg-muted-faint",
 		text: "text-foreground",
 		border: "border-border",
-		borderSubtle: "border-border/15 dark:border-border/15",
 		color: "var(--foreground)",
 	},
 } satisfies Record<
@@ -99,10 +91,8 @@ export const dangerlevelStyles = {
 	{
 		bg: string;
 		bgSubtle: string;
-		bgFaint: string;
 		text: string;
 		border: string;
-		borderSubtle: string;
 		color: string;
 	}
 >;

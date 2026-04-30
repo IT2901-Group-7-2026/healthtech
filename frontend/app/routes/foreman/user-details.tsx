@@ -249,6 +249,7 @@ function DustUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 					maxValue={maxPoint?.value ?? null}
 					maxTime={maxPoint?.time ?? null}
 					latestValue={latestPoint?.value ?? null}
+					warningThreshold={dustThreshold.warning}
 					dangerThreshold={dustThreshold.danger}
 					unit={dustUnit}
 					formatTime={(time) => formatDate(time, "HH:mm")}
@@ -389,6 +390,7 @@ function VibrationUserChart({ selectedUser }: { selectedUser: UserWithStatusDto 
 					maxValue={maxPoint?.value ?? null}
 					maxTime={maxPoint?.time ?? null}
 					latestValue={latestPoint?.value ?? null}
+					warningThreshold={vibrationThreshold.warning}
 					dangerThreshold={vibrationThreshold.danger}
 					unit="points"
 					formatTime={(time) => formatDate(time, "HH:mm")}
@@ -501,6 +503,7 @@ function NoiseUserChart({ selectedUser }: { selectedUser: UserWithStatusDto }) {
 					maxValue={maxPoint ? getDisplayedNoiseValue(maxPoint, usePeakAggregation) : null}
 					maxTime={maxPoint?.time ?? null}
 					latestValue={latestPoint ? getDisplayedNoiseValue(latestPoint, usePeakAggregation) : null}
+					warningThreshold={noiseThreshold.warning}
 					dangerThreshold={noiseDangerThreshold}
 					unit="dbTwa"
 					formatTime={(time) => formatDate(time, "HH:mm")}
