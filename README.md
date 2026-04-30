@@ -1,40 +1,54 @@
 # HealthTech
 
+HealthTech is a Bachelor's thesis project for Aker Solutions. This is the second group of students to work on the project.
+
+<p align="center">
+  <img src="./assets/showcase/foreman-team-noise.png" alt="Foreman noise data for team" width="32%" />
+  <img src="./assets/showcase/operator-noise-month.png" alt="Operator monthly view of noise data" width="32%" />
+  <img src="./assets/showcase/operator-overview-week.png" alt="Operator overview of a week" width="32%" />
+</p>
+
 ## Requirements
 
 - [Docker](https://www.docker.com/get-started)
 - [.NET SDK 10](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
-- [node](https://nodejs.org/en)
+- [Node](https://nodejs.org/en)
 - [pnpm](https://pnpm.io/)
 
 ## Documentation
 
-- [Onboarding: READ IF ITS YOUR FIRST TIME OPENING THIS REPO](./docs/onboarding.md)
-- [Hosting](./docs/hosting.md)
-- [Tech Stack](./docs/tech-stack.md)
+See [PRODUCTION.md](./PRODUCTION.md) for instructions about how to deploy to production.
 
-## Getting Started
+---
+
+## Getting started with local development
 
 ### Set up environment variables
 
-You need two `.env` files for the project to run correctly:
+Copy the `.env.example` files into `.env` files in both `./backend/` and `./frontend/` from project root.
 
-- `/backend/.env`
-- `/frontend/.env`
+```sh	
+# From project root
+cp ./backend/.env.example ./backend/.env
+cp ./frontend/.env.example ./frontend/.env
+```
 
-Make a copy of the `.env.example` file in each respective directory. Remember to change the default database password (`your_secure_password`) in the variables POSTGRES_PASSWORD and DATABASE_URL.
+Remember to change the default database password (`your_secure_password`) in `POSTGRES_PASSWORD` and `DATABASE_URL`.
 
-### Run the backend
+### Set up the backend
 
-First, download the files `NoiseData.csv`, `DustData.csv`, `VibrationData.csv` from [https://drive.proton.me/urls/FYRKP45DT8#CyS2vd2gzQHH](https://drive.proton.me/urls/FYRKP45DT8#CyS2vd2gzQHH) and place them in the `/backend/seed/` directory.
+1. Download the CSV-files from [https://drive.proton.me/urls/FYRKP45DT8#CyS2vd2gzQHH](https://drive.proton.me/urls/FYRKP45DT8#CyS2vd2gzQHH)
+2. Copy them into `./backend/seed/` from project root.
 
 You may also have to download `ef`, which you can do by running: `dotnet tool install --global dotnet-ef`
 
 Then run the following commands in the root directory of the project:
 
 ```sh
+# From project root
+
 # Start the database
-docker compose --env-file ./backend/.env up -d
+docker compose --env-file ./backend/.env up -d db
 
 # Navigate to the backend directory
 cd backend
@@ -45,19 +59,24 @@ dotnet ef database update --project src
 # Navigate back to the root directory
 cd ..
 
-# Seed the database with sample data
+# Seed the database with sample data. This may take a few minutes.
 docker exec -it healthtech-dev-db-1 psql -U postgres -d healthtech -f /seed/seed.sql
+```
 
-# Navigate back to the backend directory
+### Start the backend
+
+```sh
+# From project root
 cd backend
 
-# Start the backend either with f5 (if you have the C# extension installed) or with the following command:
+# Start the backend:
 dotnet watch run --project src
+# If you have the C# VS Code extension installed, you can also start the backend with F5.
 
 # The backend will be running at http://localhost:5063
 ```
 
-### Run the Frontend
+### Run the frontend
 
 In a new terminal, run the following commands:
 
@@ -84,65 +103,37 @@ cd backend
 dotnet test
 ```
 
-## Formatting in Backend
+## Linting and formatting
 
 In the backend directory, you can run the following commands:
 
 ```sh
-dotnet csharpier format .
-```
+# Navigate to the backend directory
+cd backend
 
-## Linting and Formatting in Frontend
+# Format the backend code
+dotnet csharpier format .
+
+# Check for linting errors
+dotnet csharpier check .
+```
 
 In the frontend directory, you can run the following commands:
 
 ```sh
+# Navigate to the frontend directory
+cd frontend
+
+# Lint and format
+pnpm run check:fix
+
+# Or separately:
+
 # Check for linting errors and apply safe fixes
-pnpm run lint:fix
+# pnpm run lint:fix
 
 # Check for formatting errors and apply safe fixes
-pnpm run format:fix
+# pnpm run format:fix
 
-# Do both in one check
-pnpm run check:fix
-```
-
-## Frontend Deployment
-
-### Build for Production
-
-First, build your app for production:
-
-```sh
-pnpm run build
-```
-
-Then run the app in production mode:
-
-```sh
-pnpm run start
-```
-
-Now you'll need to pick a host to deploy it to.
-
-### Example Deployment of Whole Application Stack
-
-An example deployment configuration is available in [an example file](docker-compose-deployment-example.yml).
-This configuration uses traefik as a reverse proxy, with letsencrypt as a certificate resolver.
-
-#### Important Notes About Docker Images for Deployment
-
-The frontend needs to be rebuilt for the correct API URL. This value is taken from the `VITE_BASE_URL` variable in the `.env` file. Also note that both frontend and backend dockerfiles support multi-architecture builds, such as `linux/arm64`, but are not built with this support for the GitHub container registry. Both images need to be rebuilt if this is needed.
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-Make sure to deploy the output of `pnpm run build`
-As this is a single page application (no server-side rendering), we only create a client-side bundle under `build/client/`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   └── client/    # Client-side code
+# Omitting the `:fix` will only check for errors and not apply any fixes.
 ```
