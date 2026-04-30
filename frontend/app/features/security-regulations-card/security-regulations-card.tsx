@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Footprints, HardHat } from "lucide-react";
+import { Card, CardContent, CardLabelHeader } from "@/components/ui/card";
+import { Footprints, HardHat, ShieldCheckIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export const SecurityRegulationsCard = () => {
@@ -17,12 +17,13 @@ export const SecurityRegulationsCard = () => {
 	];
 
 	return (
-		<Card muted={true} className="max-h-96 w-full overflow-y-auto">
-			<CardHeader>
-				<h2 className="text-muted-foreground text-xs uppercase tracking-wider">
+		<Card muted={true} variant="labeled" className="max-h-96 w-full overflow-y-auto">
+			<CardLabelHeader>
+				<ShieldCheckIcon size="1rem" />
+				<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
 					{t(($) => $.securityRegulationsCard.title)}
 				</h2>
-			</CardHeader>
+			</CardLabelHeader>
 
 			<CardContent>
 				<ul className="space-y-3">

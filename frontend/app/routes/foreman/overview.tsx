@@ -1,24 +1,29 @@
 import { DatePicker } from "@/components/date-picker";
+import { ExposureIcon } from "@/components/exposure-icon";
 import { NotesCard } from "@/components/notes-card";
 import { OperatorExposureStatusTable } from "@/components/operator-exposure-status-table";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { UserStatusChart } from "@/components/users-status-chart";
 import { AttentionCard } from "@/features/attention-card/attention-card.js";
 import { PieChartCard } from "@/features/attention-card/pie-chart-card";
 import { useDate } from "@/features/date-picker/use-date.js";
+import { LimitExplanation } from "@/features/sidebar/limit-explanation.js";
 import { TeamSummary } from "@/features/sidebar/team-summary.js";
 import { useUser } from "@/features/user/user-context";
+import { UserSelect } from "@/features/user/user-select";
 import { useView } from "@/features/views/use-view";
 import { ViewPicker } from "@/features/views/view-picker";
+import type { TranslateFn } from "@/i18n/config.js";
 import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions } from "@/lib/api.js";
 import { today, toTZDate } from "@/lib/date";
-import type { ThresholdSummary } from "@/lib/dto";
+import type { ThresholdSummary, User } from "@/lib/dto";
 import { type Exposure, exposures, parseAsExposure } from "@/lib/exposures";
-import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { addWeeks, endOfDay, startOfDay, subDays } from "date-fns";
+import { XIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
 import { UserDetails } from "./user-details";
@@ -31,13 +36,11 @@ export default function ForemanOverview() {
 	const { date, setDate } = useDate();
 	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString.withOptions({ history: "push" }));
 
-	const selectedDate = date;
 	const { view } = useView();
 	const isWeekly = view === "week";
 
-	const startDate = isWeekly ? toTZDate(startOfDay(addWeeks(selectedDate, -1))) : toTZDate(startOfDay(selectedDate));
-
-	const endDate = toTZDate(endOfDay(selectedDate));
+	const startDate = isWeekly ? toTZDate(startOfDay(addWeeks(date, -1))) : toTZDate(startOfDay(date));
+	const endDate = toTZDate(endOfDay(date));
 
 	// Foremen can only see dates within the last week
 	const minSelectableDate = subDays(today(), 7);
@@ -55,74 +58,93 @@ export default function ForemanOverview() {
 
 	const selectedUser = users?.find((subordinate) => subordinate.id === selectedUserId);
 	const subordinateCount = subordinates?.length ?? 0;
-	const isUserComboboxDisabled = !users || users.length === 0;
 	const isUserSelected = selectedUser !== undefined;
 
-	const userComboboxOptions =
-		users?.map((u) => ({
-			value: u.id,
-			label: u.name,
-		})) ?? [];
+	const title = resolveForemanOverviewTitle(t, exposure, selectedUser);
 
 	return (
 		<div className="flex flex-col gap-8">
-			<Card muted={true} className="flex flex-row justify-between p-2">
-				<ToggleGroup
-					type="single"
-					value={exposure ?? "all"}
-					variant="outline"
-					className={cn("inline-grid auto-cols-fr grid-flow-col")}
-					onValueChange={(value: Exposure | "all" | "") => {
-						if (value) {
-							setExposure(value === "all" ? null : value);
-						}
-					}}
-				>
-					<ToggleGroupItem value="all" aria-label={t(($) => $.exposures.overview)}>
-						<p className="text-sm">{t(($) => $.exposures.overview)}</p>
-					</ToggleGroupItem>
-					<ToggleGroupItem value="dust" aria-label={t(($) => $.exposures.dust)}>
-						<p className="text-sm">{t(($) => $.exposures.dust)}</p>
-					</ToggleGroupItem>
-					<ToggleGroupItem value="noise" aria-label={t(($) => $.exposures.noise)}>
-						<p className="text-sm">{t(($) => $.exposures.noise)}</p>
-					</ToggleGroupItem>
-					<ToggleGroupItem value="vibration" aria-label={t(($) => $.exposures.vibration)}>
-						<p className="text-sm">{t(($) => $.exposures.vibration)}</p>
-					</ToggleGroupItem>
-				</ToggleGroup>
-
-				<div className="flex flex-end flex-row gap-4">
-					<Combobox
-						items={userComboboxOptions}
-						disabled={isUserComboboxDisabled}
-						value={selectedUserId ?? undefined}
-						onValueChange={(value) => setSelectedUserId(value)}
-					>
-						<ComboboxInput
-							placeholder={t(($) => $.foremanDashboard.overview.selectUserPlaceholder)}
-							showClear={true}
-							disabled={isUserComboboxDisabled}
-							className="bg-background dark:bg-input/30"
-							value={selectedUser?.name ?? ""}
-						/>
-						<ComboboxContent>
-							<ComboboxList>
-								{(item) => (
-									<ComboboxItem key={item.value} value={item.value}>
-										{item.label}
-									</ComboboxItem>
-								)}
-							</ComboboxList>
-						</ComboboxContent>
-					</Combobox>
+			<header className="flex w-full min-w-0 flex-col gap-4">
+				<div className="min-w-0">
+					<div className="flex min-w-0 items-center gap-2 md:gap-3">
+						<ExposureIcon type={exposure ?? "all"} size="lg" className="mt-0.5 shrink-0 md:mt-1" />
+						<h1 className="min-w-0 max-w-prose text-balance font-medium text-lg leading-tight md:text-2xl lg:text-3xl">
+							{title}
+						</h1>
+					</div>
 				</div>
-			</Card>
+
+				<div className="flex min-w-0 flex-col gap-4 md:flex-row md:items-center md:gap-6">
+					<div className="grid w-full grid-cols-[auto_1fr] items-center gap-3">
+						<div className="flex gap-1">
+							<ToggleGroup
+								type="single"
+								value={exposure ?? "all"}
+								variant="outline"
+								onValueChange={(value: Exposure | "") => {
+									setExposure(value || null);
+								}}
+							>
+								<ToggleGroupItem
+									value="dust"
+									aria-label={t(($) => $.exposures.dust)}
+									className="rounded-l-xl! px-2 lg:px-3"
+								>
+									<ExposureIcon type="dust" iconOnly={true} iconClassName="size-4" />
+									<p className="min-w-0 text-xs lg:text-sm">{t(($) => $.exposures.dust)}</p>
+								</ToggleGroupItem>
+								<ToggleGroupItem
+									value="noise"
+									aria-label={t(($) => $.exposures.noise)}
+									className="px-2 lg:px-3"
+								>
+									<ExposureIcon type="noise" iconOnly={true} iconClassName="size-4" />
+									<p className="min-w-0 text-xs lg:text-sm">{t(($) => $.exposures.noise)}</p>
+								</ToggleGroupItem>
+								<ToggleGroupItem
+									value="vibration"
+									aria-label={t(($) => $.exposures.vibration)}
+									className="rounded-r-md! px-2 lg:px-3"
+								>
+									<ExposureIcon type="vibration" iconOnly={true} iconClassName="size-4" />
+									<p className="min-w-0 text-xs lg:text-sm">{t(($) => $.exposures.vibration)}</p>
+								</ToggleGroupItem>
+							</ToggleGroup>
+
+							<Button
+								type="button"
+								aria-label={t(($) => $.foremanDashboard.overview.clearExposureFilter)}
+								variant="outline"
+								size="icon"
+								onClick={() => setExposure(null)}
+								disabled={exposure === null}
+								className="shrink-0 rounded-r-xl"
+							>
+								<XIcon className="size-4" aria-hidden="true" />
+							</Button>
+						</div>
+
+						{users === undefined || isSubordinatesLoading ? (
+							<Skeleton className="h-9 w-73 justify-self-end" />
+						) : (
+							<div className="w-73 min-w-0 justify-self-end">
+								<UserSelect
+									users={users}
+									value={selectedUserId}
+									onValueChange={setSelectedUserId}
+									placeholder={t(($) => $.foremanDashboard.overview.selectUserPlaceholder)}
+								/>
+							</div>
+						)}
+					</div>
+				</div>
+			</header>
 
 			<div className="flex w-full flex-row gap-6">
 				<aside className="flex flex-col gap-6 md:w-1/5">
 					<TeamSummary subordinateCount={subordinateCount} />
 					<NotesCard />
+					<LimitExplanation />
 				</aside>
 
 				<div
@@ -242,4 +264,34 @@ function ExposureSummaryGrid({ thresholdSummary }: { thresholdSummary: Threshold
 			</div>
 		</div>
 	);
+}
+
+function resolveForemanOverviewTitle(t: TranslateFn, exposure: Exposure | null, selectedUser: User | undefined) {
+	const exposureTitle = exposure
+		? t(($) => $.exposures[exposure]).toLowerCase()
+		: t(($) => $.operatorHeader.subtitle.allExposureTypes).toLowerCase();
+
+	if (selectedUser) {
+		if (exposure === null) {
+			return t(($) => $.foremanDashboard.overview.title.allForUser, {
+				exposure: exposureTitle,
+				name: selectedUser.name,
+			});
+		}
+
+		return t(($) => $.foremanDashboard.overview.title.exposureForUser, {
+			exposure: exposureTitle,
+			name: selectedUser.name,
+		});
+	}
+
+	if (exposure === null) {
+		return t(($) => $.foremanDashboard.overview.title.all, {
+			exposure: exposureTitle,
+		});
+	}
+
+	return t(($) => $.foremanDashboard.overview.title.exposure, {
+		exposure: exposureTitle,
+	});
 }

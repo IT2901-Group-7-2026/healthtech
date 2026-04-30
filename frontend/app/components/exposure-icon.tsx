@@ -20,11 +20,12 @@ interface ExposureIconProps {
 	dangerLevel?: DangerLevel;
 	className?: string;
 	iconClassName?: string;
+	dangerLevelClassName?: string;
 	title?: string;
 	inline?: boolean;
+	iconOnly?: boolean;
+	includeDangerLevelDots?: boolean;
 }
-
-const defaultIconContainerClass = "bg-muted text-foreground border border-border";
 
 export const ExposureIcon = ({
 	type,
@@ -34,30 +35,29 @@ export const ExposureIcon = ({
 	iconClassName,
 	title,
 	inline,
+	iconOnly,
+	includeDangerLevelDots = true,
+	dangerLevelClassName,
 }: ExposureIconProps) => {
-	const Icon = exposureIconConfig[type];
 	const Component = inline ? "span" : "div";
 
-	const resolvedIconSize = size ?? "md";
-	const dangerLevelIconClasses = dangerLevel
-		? cn(
-				dangerlevelStyles[dangerLevel].bgSubtle,
-				dangerlevelStyles[dangerLevel].text,
-				dangerlevelStyles[dangerLevel].border,
-			)
-		: defaultIconContainerClass;
+	const Icon = exposureIconConfig[type];
+	const iconSize = iconSizeClass[size ?? "md"];
+
+	const styles = dangerlevelStyles[dangerLevel ?? "none"];
+	const containerClassName = iconOnly ? undefined : cn(styles.text, styles.bgSubtle, styles.border);
 
 	return (
-		<Component className={cn("relative flex h-fit w-fit rounded-full border", dangerLevelIconClasses, className)}>
-			<Icon
-				className={cn(iconSizeClass[resolvedIconSize], inline && "inline-block", iconClassName)}
-				title={title}
-			/>
-			<DangerLevelDots
-				dangerLevel={dangerLevel ?? null}
-				horizontal={true}
-				className="absolute -right-0.25 -bottom-0.25"
-			/>
+		<Component className={cn("relative flex h-fit w-fit rounded-full", containerClassName, className)}>
+			<Icon className={cn(iconSize, inline && "inline-block", iconOnly && "p-0", iconClassName)} title={title} />
+			{includeDangerLevelDots && (
+				<DangerLevelDots
+					dangerLevel={dangerLevel ?? null}
+					horizontal={true}
+					className={cn("absolute -right-0.5 -bottom-0.5", dangerLevelClassName)}
+					size={size === "xs" ? "sm" : "md"}
+				/>
+			)}
 		</Component>
 	);
 };

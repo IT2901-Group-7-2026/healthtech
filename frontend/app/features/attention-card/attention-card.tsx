@@ -4,11 +4,10 @@ import { Skeleton } from "@/components/ui/skeleton.js";
 import { AtRiskPopup } from "@/features/attention-card/exposure-level-popup.js";
 import { StatCard } from "@/features/attention-card/stat-card";
 import { TIMEZONE } from "@/i18n/locale";
-import { type DangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels.js";
+import type { DangerLevel } from "@/lib/danger-levels.js";
 import { now } from "@/lib/date";
 import type { ThresholdSummary, UserWithStatusDto } from "@/lib/dto.js";
 import { parseAsExposure } from "@/lib/exposures.js";
-import { cn } from "@/lib/utils";
 import { isSameDay } from "date-fns";
 import { parseAsString, useQueryState } from "nuqs";
 import { useMemo, useState } from "react";
@@ -71,7 +70,6 @@ export const AttentionCard = ({
 	const selectedExposureKey = exposure ?? "total";
 	const showActionCard = !isWeekly && date ? isSameDay(date, now(), { in: TIMEZONE }) : false;
 
-	const dangerLevelColor = highestDangerLevel === null ? null : `text-${mapDangerLevelToColor(highestDangerLevel)}`;
 	const viewKey = isWeekly ? "weekView" : "dayView";
 
 	const attentionHeaderText =
@@ -80,6 +78,11 @@ export const AttentionCard = ({
 	const detailText =
 		highestDangerLevel === "danger" || highestDangerLevel === "warning"
 			? t(($) => $.foremanDashboard.actionCard[viewKey][highestDangerLevel])
+			: null;
+
+	const warningDescription =
+		highestDangerLevel === "danger" || highestDangerLevel === "warning"
+			? t(($) => $.foremanDashboard.actionCard[`${highestDangerLevel}Description`])
 			: null;
 
 	if (isThresholdSummaryLoading || thresholdSummary === undefined || highestDangerLevel === null) {
@@ -92,11 +95,14 @@ export const AttentionCard = ({
 	}
 
 	const actionCardHeader = (
-		<CardHeader className="flex flex-row items-center justify-between">
+		<CardHeader className="flex flex-col gap-2">
 			{isSubordinatesLoading ? (
 				<Skeleton className="h-8 w-[50%] rounded-full bg-zinc-100 dark:bg-accent" />
 			) : (
-				<h2 className={cn("font-bold text-2xl", dangerLevelColor)}>{attentionHeaderText}</h2>
+				<>
+					<h2 className="font-bold text-2xl text-foreground">{attentionHeaderText}</h2>
+					{warningDescription && <p className="text-muted-foreground text-sm">{warningDescription}</p>}
+				</>
 			)}
 		</CardHeader>
 	);
@@ -107,11 +113,7 @@ export const AttentionCard = ({
 				{actionCardHeader}
 
 				<CardContent className="gap-2">
-					{showActionCard || isWeekly ? (
-						detailText && <p>{detailText}</p>
-					) : (
-						<p>{t(($) => $.foremanDashboard.actionCard.oldData)}</p>
-					)}
+					{detailText && (showActionCard || isWeekly) && <p>{detailText}</p>}
 					<div className="mt-5 grid items-stretch gap-6 md:grid-cols-2 lg:col-span-3 lg:grid-cols-3">
 						{!exposure && (
 							<>

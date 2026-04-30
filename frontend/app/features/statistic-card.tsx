@@ -1,10 +1,12 @@
 import { Card, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { dangerlevelStyles, getDangerLevel } from "@/lib/danger-levels.js";
 import type { ExposureUnit } from "@/lib/exposures";
 import { formatExposureValue } from "@/lib/utils";
-import { ArrowUpToLine } from "lucide-react";
 import { useTranslation } from "react-i18next";
+
+const formatValue = (value: number | null, unit: ExposureUnit) =>
+	formatExposureValue(value ?? undefined, unit, 2, { mg: 3 });
 
 type ExposureStatisticsSectionProps = {
 	isLoading: boolean;
@@ -13,6 +15,7 @@ type ExposureStatisticsSectionProps = {
 	maxValue: number | null;
 	maxTime: Date | null;
 	latestValue: number | null;
+	warningThreshold: number | null;
 	dangerThreshold: number | null;
 	unit: ExposureUnit;
 	formatTime: (time: Date) => string;
@@ -25,6 +28,7 @@ export function ExposureStatisticsSection({
 	maxValue,
 	maxTime,
 	latestValue,
+	warningThreshold,
 	dangerThreshold,
 	unit,
 	formatTime,
@@ -39,8 +43,6 @@ export function ExposureStatisticsSection({
 		return null;
 	}
 
-	const unitLabel = t(($) => $.exposures.units[unit]);
-	const formatValue = (value: number | null) => formatExposureValue(value ?? undefined, unit, 2, { mg: 3 });
 	const maxPointCaption = maxTime ? t(($) => $.measurement.recordedAt, { time: formatTime(maxTime) }) : undefined;
 
 	return (
@@ -48,26 +50,29 @@ export function ExposureStatisticsSection({
 			{averageValue !== null && (
 				<StatisticCard
 					label={t(($) => $.measurement.average)}
-					value={formatValue(averageValue)}
-					unitLabel={unitLabel}
-					limitPercentage={getLimitPercentage(averageValue, dangerThreshold)}
+					value={averageValue}
+					unit={unit}
+					warningThreshold={warningThreshold}
+					dangerThreshold={dangerThreshold}
 				/>
 			)}
 			{maxValue !== null && (
 				<StatisticCard
 					label={t(($) => $.measurement.maximum)}
-					value={formatValue(maxValue)}
-					unitLabel={unitLabel}
+					value={maxValue}
+					unit={unit}
 					recordedAt={maxPointCaption}
-					limitPercentage={getLimitPercentage(maxValue, dangerThreshold)}
+					warningThreshold={warningThreshold}
+					dangerThreshold={dangerThreshold}
 				/>
 			)}
 			{latestValue !== null && (
 				<StatisticCard
 					label={t(($) => $.measurement.latest)}
-					value={formatValue(latestValue)}
-					unitLabel={unitLabel}
-					limitPercentage={getLimitPercentage(latestValue, dangerThreshold)}
+					value={latestValue}
+					unit={unit}
+					warningThreshold={warningThreshold}
+					dangerThreshold={dangerThreshold}
 				/>
 			)}
 		</div>
@@ -107,35 +112,48 @@ function ExposureStatisticsSkeleton() {
 
 type StatisticCardProps = {
 	label: string;
-	value: string;
-	unitLabel: string;
+	value: number;
+	unit: ExposureUnit;
+	warningThreshold: number | null;
+	dangerThreshold: number | null;
 	recordedAt?: string;
-	limitPercentage?: number | null;
 };
 
-function StatisticCard({ label, value, unitLabel, recordedAt, limitPercentage }: StatisticCardProps) {
+function StatisticCard({ label, value, unit, recordedAt, warningThreshold, dangerThreshold }: StatisticCardProps) {
 	const { t } = useTranslation();
+
+	const valueString = formatValue(value, unit);
+	const limitValuePercentage = getLimitPercentage(value, dangerThreshold);
+
+	const dangerLevel =
+		warningThreshold !== null && dangerThreshold !== null
+			? getDangerLevel(value, warningThreshold, dangerThreshold)
+			: null;
+
+	const color = dangerLevel ? dangerlevelStyles[dangerLevel].color : "var(--foreground)";
+
+	const unitLabel = t(($) => $.exposures.units[unit]);
 
 	return (
 		<Card className="min-h-26.25 gap-1">
 			<p className="text-muted-foreground text-xs uppercase tracking-widest">{label}</p>
-			<p className="font-semibold text-2xl tabular-nums">
-				{value} <span className="font-normal text-muted-foreground text-sm">{unitLabel}</span>
-			</p>
+
+			<div className="flex flex-col gap-1 lg:flex-row lg:items-center lg:gap-2">
+				<div className="size-4 rounded-md" style={{ backgroundColor: color }} />
+
+				<p className="font-semibold text-2xl">
+					{limitValuePercentage}
+					{" % "}
+					<span className="font-normal text-muted-foreground text-sm">
+						{t(($) => $.measurement.ofTheLimitValue)}
+					</span>
+				</p>
+			</div>
+
 			<div className="flex flex-wrap items-center gap-x-2 text-muted-foreground text-xs">
-				<Tooltip>
-					<TooltipTrigger asChild={true}>
-						<span className="inline-flex items-center gap-1">
-							<ArrowUpToLine className="size-3 shrink-0" />
-							<span>
-								{t(($) => $.measurement.limitValuePercentageShort, { percentage: limitPercentage })}
-							</span>
-						</span>
-					</TooltipTrigger>
-					<TooltipContent sideOffset={4}>
-						<p>{t(($) => $.measurement.limitValuePercentageFull, { percentage: limitPercentage })}</p>
-					</TooltipContent>
-				</Tooltip>
+				<p className="tabular-nums">
+					{valueString} {unitLabel}
+				</p>
 
 				{recordedAt !== undefined && (
 					<>

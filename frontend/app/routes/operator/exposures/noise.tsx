@@ -99,20 +99,6 @@ export default function Noise() {
 					</TabsList>
 				</Tabs>
 
-				{showNoiseStatistics && (
-					<ExposureStatisticsSection
-						isLoading={isLoading}
-						isEmpty={isError || !data?.length}
-						averageValue={averageValue}
-						maxValue={maxPoint ? getDisplayedNoiseValue(maxPoint, usePeakAggregation) : null}
-						maxTime={maxPoint?.time ?? null}
-						latestValue={latestPoint ? getDisplayedNoiseValue(latestPoint, usePeakAggregation) : null}
-						dangerThreshold={noiseDangerThreshold}
-						unit="db"
-						formatTime={(time) => formatDate(time, "HH:mm")}
-					/>
-				)}
-
 				{isLoading ? (
 					<ExposureLineChartCardSkeleton />
 				) : isError ? (
@@ -125,6 +111,21 @@ export default function Noise() {
 					<ExposureGraphEmptyState date={date} locale={i18n.language} />
 				) : (
 					<NoiseExposureLineChartCard />
+				)}
+
+				{showNoiseStatistics && (
+					<ExposureStatisticsSection
+						isLoading={isLoading}
+						isEmpty={isError || !data?.length}
+						averageValue={averageValue}
+						maxValue={maxPoint ? getDisplayedNoiseValue(maxPoint, usePeakAggregation) : null}
+						maxTime={maxPoint?.time ?? null}
+						latestValue={latestPoint ? getDisplayedNoiseValue(latestPoint, usePeakAggregation) : null}
+						warningThreshold={noiseThreshold.warning}
+						dangerThreshold={noiseDangerThreshold}
+						unit="db"
+						formatTime={(time) => formatDate(time, "HH:mm")}
+					/>
 				)}
 			</div>
 			{showTrendLineChart && <NoiseTrendLineChartCard usePeakAggregation={usePeakAggregation} />}

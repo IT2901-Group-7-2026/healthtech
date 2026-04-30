@@ -5,14 +5,17 @@ interface DangerLevelDotsProps {
 	dangerLevel: DangerLevel | null;
 	horizontal?: boolean;
 	className?: string;
+	size?: "sm" | "md";
 }
 
-export function DangerLevelDots({ dangerLevel, className, horizontal = false }: DangerLevelDotsProps) {
+export function DangerLevelDots({ dangerLevel, className, horizontal = false, size = "md" }: DangerLevelDotsProps) {
 	if (dangerLevel === null) {
 		return null;
 	}
 
 	const dotCount = DANGER_LEVEL_SEVERITY[dangerLevel] + 1;
+
+	const gap = size === "sm" ? "gap-0.25" : "gap-0.5";
 
 	if (dotCount === 1) {
 		return (
@@ -24,7 +27,7 @@ export function DangerLevelDots({ dangerLevel, className, horizontal = false }: 
 
 	if (dotCount === 2) {
 		return (
-			<div className={cn("flex", horizontal ? "flex-row gap-0.5" : "flex-col gap-0.5", className)}>
+			<div className={cn("flex", horizontal ? "flex-row" : "flex-col", gap, className)}>
 				<Dot dangerLevel={dangerLevel} />
 				<Dot dangerLevel={dangerLevel} />
 			</div>
@@ -32,7 +35,7 @@ export function DangerLevelDots({ dangerLevel, className, horizontal = false }: 
 	}
 
 	return (
-		<div className={cn("grid grid-cols-2 justify-items-center gap-0.5", className)}>
+		<div className={cn("grid grid-cols-2 justify-items-center", gap, className)}>
 			<Dot dangerLevel={dangerLevel} className="col-span-2" />
 			<Dot dangerLevel={dangerLevel} />
 			<Dot dangerLevel={dangerLevel} />

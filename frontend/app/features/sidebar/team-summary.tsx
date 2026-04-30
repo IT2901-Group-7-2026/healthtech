@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card.js";
+import { Card, CardContent, CardLabelHeader } from "@/components/ui/card.js";
 import { createLocationName } from "@/lib/dto.js";
-import { MapPinIcon, UsersIcon } from "lucide-react";
+import { MapPinIcon, ShieldUserIcon, UsersIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../user/user-context.js";
 
@@ -9,21 +9,23 @@ export const TeamSummary = ({ subordinateCount }: { subordinateCount: number }) 
 	const { user } = useUser();
 
 	return (
-		<Card muted={true}>
-			<CardHeader>
-				<h2 className="text-muted-foreground text-xs uppercase tracking-wider">
+		<Card muted={true} variant="labeled">
+			<CardLabelHeader>
+				<ShieldUserIcon size="1rem" />
+				<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
 					{t(($) => $.sidebar.yourTeam)}
 				</h2>
-			</CardHeader>
+			</CardLabelHeader>
+
 			<CardContent>
 				<div className="flex items-center gap-2">
-					<MapPinIcon size="1rem" />
-					<p className="text-sm">{createLocationName(user.location)}</p>
+					<MapPinIcon className="size-3.5" />
+					<p className="text-xs">{createLocationName(user.location)}</p>
 				</div>
 
 				<div className="flex items-center gap-2">
-					<UsersIcon size="1rem" />
-					<p className="text-sm">
+					<UsersIcon className="size-3.5" />
+					<p className="text-xs">
 						{t(($) => $.foremanDashboard.team.membersCount, {
 							count: subordinateCount,
 						})}

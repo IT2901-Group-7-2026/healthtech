@@ -79,8 +79,15 @@ export const dangerlevelStyles = {
 		border: "border-safe-border",
 		color: "var(--safe)",
 	},
+	none: {
+		bg: "bg-muted",
+		bgSubtle: "bg-muted",
+		text: "text-foreground",
+		border: "border-border",
+		color: "var(--foreground)",
+	},
 } satisfies Record<
-	DangerLevel,
+	DangerLevel | "none",
 	{
 		bg: string;
 		bgSubtle: string;

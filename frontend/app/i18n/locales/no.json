@@ -5,7 +5,7 @@
   },
   "common": {
     "loading": "Laster inn data...",
-    "error": "Noe gikk galt under henting av exposuredata.",
+    "error": "Noe gikk galt under henting av eksponeringsdata.",
     "noData": "Ingen data",
     "noDataForDay": "Ingen eksponeringsdata funnet for denne dagen",
     "noOptions": "Ingen alternativer tilgjengelig",
@@ -21,9 +21,9 @@
     "dust": "Støv",
     "vibration": "Vibrasjon",
     "noise": "Støy",
-    "all": "Alle exposureer",
+    "all": "Alle eksponeringer",
     "overview": "Oversikt",
-    "selectPlaceholder": "Exposure",
+    "selectPlaceholder": "Eksponering",
     "dustFields": {
       "pm1_twa": "PM1",
       "pm25_twa": "PM2.5",
@@ -67,8 +67,7 @@
     "maximum": "Maksimum",
     "latest": "Siste",
     "recordedAt": "Registrert kl. {{time}}",
-    "limitValuePercentageShort": "{{percentage}} %",
-    "limitValuePercentageFull": "{{percentage}} % av grenseverdien"
+    "ofTheLimitValue": "av grenseverdien"
   },
   "layout": {
     "live": "Live",
@@ -201,11 +200,16 @@
       "mapTitle": "Lokasjonskart"
     },
     "overview": {
-      "title": "Foreman Oversikt",
+      "title": {
+        "all": "Ditt teams eksponering",
+        "allForUser": "{{name}}s eksponering",
+        "exposure": "Ditt teams {{exposure}}eksponering",
+        "exposureForUser": "{{name}}s {{exposure}}eksponering"
+      },
       "pieChart": {
         "noData": "Ingen data funnet for denne datoen"
       },
-      "exposure": "Exposureer",
+      "exposure": "Eksponeringer",
       "statCards": {
         "danger": {
           "label": "Over grenseverdi",
@@ -220,12 +224,16 @@
           "noOperators": "Ingen innenfor trygge grenseverdier"
         }
       },
-      "selectUserPlaceholder": "Velg et teammedlem"
+      "selectUserPlaceholder": "Velg et teammedlem",
+      "clearUserSelection": "Fjern brukervalg",
+      "clearExposureFilter": "Fjern eksponeringsfilter"
     },
     "actionCard": {
-      "safe": "Alt er bra!",
-      "warning": "Oppmerksomhet anbefales!",
-      "danger": "Oppmerksomhet anbefales!",
+      "safe": "Teamstatus: Innenfor eksponeringsgrenser",
+      "warning": "Teamstatus: Oppmerksomhet kan være nødvendig",
+      "warningDescription": "En eller flere operatører er over tiltaksverdien. Overvåking eller forebyggende tiltak kan være nødvendig.",
+      "danger": "Teamstatus: Umiddelbar handling kreves",
+      "dangerDescription": "En eller flere operatører er over grenseverdien. Umiddelbar oppfølging i henhold til prosedyre kreves.",
       "dayView": {
         "danger": "Operatører over eksponeringsgrensen. Umiddelbar oppfølging anbefales.",
         "warning": "Operatører nærmer seg eksponeringsgrensen. Vurder forebyggende tiltak."
@@ -234,13 +242,12 @@
         "danger": "Operatører over ukentlig eksponeringsgrense. Umiddelbar oppfølging anbefales.",
         "warning": "Operatører nærmer seg ukentlig eksponeringsgrense. Umiddelbar oppfølging anbefales."
       },
-      "oldData": "Du ser på tidligere data.",
       "day": "Dag",
       "week": "Uke"
     },
     "userStatusChart": {
       "xAxisLabel": "Prosent av faregrense",
-      "noData": "Ingen exposuredata tilgjengelig for operatører"
+      "noData": "Ingen eksponeringsdata tilgjengelig for operatører"
     },
     "siteMap": {
       "title": "Områdekart",
@@ -328,5 +335,15 @@
     "dustExposure": "Støveksponering",
     "noiseExposure": "Støyeksponering",
     "vibrationExposure": "Vibrasjoneksponering"
+  },
+  "limitExplanation": {
+    "actionValue": {
+      "label": "Tiltaksverdi",
+      "description": "Nivå hvor forebyggende tiltak bør iverksettes."
+    },
+    "limitValue": {
+      "label": "Grenseverdi",
+      "description": "Nivå som ikke må overskrides."
+    }
   }
 }
