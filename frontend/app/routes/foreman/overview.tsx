@@ -16,9 +16,10 @@ import { useUser } from "@/features/user/user-context";
 import { UserSelect } from "@/features/user/user-select";
 import { useView } from "@/features/views/use-view";
 import { ViewPicker } from "@/features/views/view-picker";
+import type { TranslateFn } from "@/i18n/config.js";
 import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions } from "@/lib/api.js";
 import { today, toTZDate } from "@/lib/date";
-import type { ThresholdSummary } from "@/lib/dto";
+import type { ThresholdSummary, User } from "@/lib/dto";
 import { type Exposure, exposures, parseAsExposure } from "@/lib/exposures";
 import { useQuery } from "@tanstack/react-query";
 import { addWeeks, endOfDay, startOfDay, subDays } from "date-fns";
@@ -59,18 +60,7 @@ export default function ForemanOverview() {
 	const subordinateCount = subordinates?.length ?? 0;
 	const isUserSelected = selectedUser !== undefined;
 
-	const exposureTitle = exposure
-		? t(($) => $.exposures[exposure])
-		: t(($) => $.operatorHeader.subtitle.allExposureTypes);
-
-	const title = selectedUser
-		? t(($) => $.foremanDashboard.overview.title[exposure === null ? "allForUser" : "exposureForUser"], {
-				exposure: exposureTitle.toLowerCase(),
-				name: selectedUser.name,
-			})
-		: t(($) => $.foremanDashboard.overview.title[exposure === null ? "all" : "exposure"], {
-				exposure: exposureTitle.toLowerCase(),
-			});
+	const title = resolveForemanOverviewTitle(t, exposure, selectedUser);
 
 	return (
 		<div className="flex flex-col gap-8">
@@ -274,4 +264,34 @@ function ExposureSummaryGrid({ thresholdSummary }: { thresholdSummary: Threshold
 			</div>
 		</div>
 	);
+}
+
+function resolveForemanOverviewTitle(t: TranslateFn, exposure: Exposure | null, selectedUser: User | undefined) {
+	const exposureTitle = exposure
+		? t(($) => $.exposures[exposure]).toLowerCase()
+		: t(($) => $.operatorHeader.subtitle.allExposureTypes).toLowerCase();
+
+	if (selectedUser) {
+		if (exposure === null) {
+			return t(($) => $.foremanDashboard.overview.title.allForUser, {
+				exposure: exposureTitle,
+				name: selectedUser.name,
+			});
+		}
+
+		return t(($) => $.foremanDashboard.overview.title.exposureForUser, {
+			exposure: exposureTitle,
+			name: selectedUser.name,
+		});
+	}
+
+	if (exposure === null) {
+		return t(($) => $.foremanDashboard.overview.title.all, {
+			exposure: exposureTitle,
+		});
+	}
+
+	return t(($) => $.foremanDashboard.overview.title.exposure, {
+		exposure: exposureTitle,
+	});
 }
