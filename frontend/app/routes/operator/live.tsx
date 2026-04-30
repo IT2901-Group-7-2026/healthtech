@@ -6,6 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.js";
 import { BaseExposureLineChartCard } from "@/features/exposure-line-chart-card/base-exposure-line-chart-card";
 import { SecurityRegulationsCard } from "@/features/security-regulations-card/security-regulations-card";
+import { LimitExplanation } from "@/features/sidebar/limit-explanation";
 import { useUser } from "@/features/user/user-context";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { exposureQueryOptions } from "@/lib/api";
@@ -145,6 +146,7 @@ export default function OperatorLiveView() {
 			<aside className="flex flex-col gap-4 md:col-start-1">
 				<SecurityRegulationsCard />
 				<NotesCard />
+				<LimitExplanation />
 			</aside>
 
 			<div className="flex min-w-0 flex-col gap-4 md:col-start-2">

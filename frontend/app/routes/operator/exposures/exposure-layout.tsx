@@ -3,6 +3,7 @@ import { ExposureIcon } from "@/components/exposure-icon";
 import { NotesCard } from "@/components/notes-card";
 import { Badge } from "@/components/ui/badge";
 import { useDate } from "@/features/date-picker/use-date";
+import { LimitExplanation } from "@/features/sidebar/limit-explanation";
 import { ExposureSummary } from "@/features/summary-card";
 import { useView } from "@/features/views/use-view";
 import { ViewPicker } from "@/features/views/view-picker";
@@ -75,6 +76,7 @@ export default function ExposureLayout() {
 
 			<aside className="col-start-1 row-start-2 flex flex-col gap-4">
 				<NotesCard />
+				<LimitExplanation />
 			</aside>
 
 			<article className="col-start-2 row-start-2 flex flex-col gap-4">
