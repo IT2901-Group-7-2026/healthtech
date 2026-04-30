@@ -160,9 +160,17 @@ docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml logs -f tr
 
 ## Setting up the GitHub Actions runner
 
+IMPORTANT: Set up this runner in the VM.
+
 Our CI/CD pipeline is set up to run lint/test on GitHub's hosted runners, and the deployment on our own self-hosted runner. This is to avoid having to SSH into the server, where we had trouble with NTNU blocking requests to port 22 from GitHub's hosted runners.
 
-You need to set up the runner like GitHub describes in [their documentation](https://docs.github.com/en/actions/hosting-your-own-runners/adding-self-hosted-runners).
+You need to set up the runner like GitHub describes in GitHub's "Runners" page (your repository > Actions > Runners > New runner > New runner > New self-hosted runner).
+
+Notes:
+- We chose Linux and x64.
+- We made sure the runner exists at `~/actions-runner/` by doing `mkdir ~/actions-runner && cd ~/actions-runner`.
+
+<img src="./assets/docs/github-organization-runners.png" alt="Screenshot of the our organization's runners page in GitHub" width="540" />
 
 After setting the local GitHub Actions runner and confirming that `./run.sh` works, install the runner as a service (so it starts on boot):
 
