@@ -1,10 +1,8 @@
-import { Item, ItemContent, ItemDescription, ItemGroup, ItemTitle } from "@/components/ui/item";
 import { useUser } from "@/features/user/user-context";
 import { TIMEZONE } from "@/i18n/locale";
 import type { DangerLevel } from "@/lib/danger-levels";
 import type { Exposure } from "@/lib/exposures";
 import { cn } from "@/lib/utils";
-import { Card } from "@/ui/card";
 import { TZDate } from "@date-fns/tz";
 import { formatDate } from "date-fns";
 import { useTranslation } from "react-i18next";
@@ -43,50 +41,46 @@ export function Notifications({ onParentClose }: { onParentClose: () => void }) 
 	const { user } = useUser();
 
 	return (
-		<Card className="h-64 w-full gap-0 overflow-y-auto px-4">
-			<ItemGroup className="gap-1" role="list">
-				{notifications.map(({ exposure, date, dangerLevel }) => {
-					const notificationLink = user.role === "foreman" ? `/foreman` : `/operator/${exposure}`;
-					let notificationLinkSearch = "";
+		<ul className="flex max-h-72 flex-col divide-y divide-border overflow-y-auto">
+			{notifications.map(({ exposure, date, dangerLevel }) => {
+				const notificationLink = user.role === "foreman" ? `/foreman` : `/operator/${exposure}`;
+				let notificationLinkSearch = "";
 
-					if (user.role === "foreman") {
-						const formattedDate = formatDate(date, "yyyy-MM-dd");
-						notificationLinkSearch = `?exposure=${exposure}&date=${formattedDate}`;
-					} else {
-						const formattedDate = formatDate(date, "yyyy-MM-dd");
-						notificationLinkSearch = `?view=Day&date=${formattedDate}`;
-					}
+				if (user.role === "foreman") {
+					const formattedDate = formatDate(date, "yyyy-MM-dd");
+					notificationLinkSearch = `?exposure=${exposure}&date=${formattedDate}`;
+				} else {
+					const formattedDate = formatDate(date, "yyyy-MM-dd");
+					notificationLinkSearch = `?view=Day&date=${formattedDate}`;
+				}
 
-					return (
+				return (
+					<li key={`${date} ${exposure} ${dangerLevel}`}>
 						<NavLink
-							key={`${date} ${exposure} ${dangerLevel}`}
 							to={`${notificationLink}${notificationLinkSearch}`}
-							className="cursor-pointer"
 							onClick={onParentClose}
+							className="flex items-center gap-3 py-2.5 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 						>
-							<Item
-								variant="outline"
-								role="listitem"
-								size="sm"
-								className="rounded-3xl border-3 border-border bg-background hover:bg-card-highlight"
+							<ExposureIcon type={exposure} size="md" dangerLevel={dangerLevel} />
+
+							<div className="flex flex-col justify-center gap-1">
+								<span className="font-medium text-sm">{t(($) => $.exposures[exposure])}</span>
+								<span className={cn("font-semibold text-xs", `text-${dangerLevel}`)}>
+									{t(($) => $.dangerLevels[dangerLevel])}
+								</span>
+							</div>
+
+							<time
+								dateTime={date.toISOString()}
+								className="flex shrink-0 flex-col items-end gap-1 text-muted-foreground text-xs tabular-nums"
 							>
-								<ExposureIcon type={exposure} size="md" dangerLevel={dangerLevel} />
-								<ItemContent>
-									<ItemTitle className="line-clamp-1">{t(($) => $.exposures[exposure])}</ItemTitle>
-									<ItemDescription className={cn(`text-${dangerLevel}`)}>
-										{t(($) => $.dangerLevels[dangerLevel])}
-									</ItemDescription>
-								</ItemContent>
-								<ItemContent>
-									<span>{formatNotificationDate(date)}</span>
-								</ItemContent>
-							</Item>
+								<span>{formatDate(date, "dd.MM.yyyy", { in: TIMEZONE })}</span>
+								<span>{formatDate(date, "HH:mm", { in: TIMEZONE })}</span>
+							</time>
 						</NavLink>
-					);
-				})}
-			</ItemGroup>
-		</Card>
+					</li>
+				);
+			})}
+		</ul>
 	);
 }
-
-const formatNotificationDate = (date: TZDate): string => formatDate(date, "dd.MM HH.mm", { in: TIMEZONE });
