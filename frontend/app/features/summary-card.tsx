@@ -83,40 +83,49 @@ export function ExposureSummary({ exposureType }: ExposureSummaryProps) {
 		return <SummaryCardSkeleton />;
 	}
 
-	const safeMinutesLabel = `${formatMinutesAsDuration(data.safeMinutes, locale)} ${t(($) => $.exposureSummary.aggregated.safe)}`;
-	const warningMinutesLabel = `${formatMinutesAsDuration(data.warningMinutes, locale)} ${t(($) => $.exposureSummary.aggregated.warning)}`;
-	const dangerMinutesLabel = `${formatMinutesAsDuration(data.dangerMinutes, locale)} ${t(($) => $.exposureSummary.aggregated.danger)}`;
+	const safeLabel = capitalizeFirstLetter(t(($) => $.exposureSummary.aggregated.safe));
+	const warningLabel = capitalizeFirstLetter(t(($) => $.exposureSummary.aggregated.warning));
+	const dangerLabel = capitalizeFirstLetter(t(($) => $.exposureSummary.aggregated.danger));
+
+	const safeDuration = formatMinutesAsDuration(data.safeMinutes, locale);
+	const warningDuration = formatMinutesAsDuration(data.warningMinutes, locale);
+	const dangerDuration = formatMinutesAsDuration(data.dangerMinutes, locale);
 
 	return (
-		<div className="grid grid-cols-3 items-center gap-3">
+		<div className="grid grid-cols-3 gap-3">
 			<p
-				title={safeMinutesLabel}
+				title={`${safeLabel}: ${safeDuration}`}
 				className={cn(
-					"h-6 truncate rounded-lg px-2 py-1 text-[0.675rem]",
-					data.safeMinutes > 0 ? "bg-safe-subtle text-safe" : "bg-secondary text-muted-foreground",
+					"flex flex-col rounded-lg px-2 py-1",
+					data.safeMinutes > 0 ? "bg-safe-subtle text-safe-text" : "bg-secondary text-muted-foreground",
 				)}
 			>
-				{safeMinutesLabel}
+				<span className="text-xs">{safeLabel}</span>
+				<span className="font-medium text-sm tabular-nums">{safeDuration}</span>
 			</p>
 
 			<p
-				title={warningMinutesLabel}
+				title={`${warningLabel}: ${warningDuration}`}
 				className={cn(
-					"h-6 truncate rounded-lg px-2 py-1 text-[0.675rem]",
-					data.warningMinutes > 0 ? "bg-warning-subtle text-warning" : "bg-secondary text-muted-foreground",
+					"flex flex-col rounded-lg px-2 py-1",
+					data.warningMinutes > 0
+						? "bg-warning-subtle text-warning-text"
+						: "bg-secondary text-muted-foreground",
 				)}
 			>
-				{warningMinutesLabel}
+				<span className="text-xs">{warningLabel}</span>
+				<span className="font-medium text-sm tabular-nums">{warningDuration}</span>
 			</p>
 
 			<p
-				title={dangerMinutesLabel}
+				title={`${dangerLabel}: ${dangerDuration}`}
 				className={cn(
-					"h-6 truncate rounded-lg px-2 py-1 text-[0.675rem]",
-					data.dangerMinutes > 0 ? "bg-danger-subtle text-danger" : "bg-secondary text-muted-foreground",
+					"flex flex-col rounded-lg px-2 py-1",
+					data.dangerMinutes > 0 ? "bg-danger-subtle text-danger-text" : "bg-secondary text-muted-foreground",
 				)}
 			>
-				{dangerMinutesLabel}
+				<span className="text-xs">{dangerLabel}</span>
+				<span className="font-medium text-sm tabular-nums">{dangerDuration}</span>
 			</p>
 		</div>
 	);
@@ -151,12 +160,16 @@ function formatMinutesAsDuration(totalMinutes: number, locale: Locale) {
 	return formatDuration({ days, hours, minutes: minutes }, { locale, format }).replace("en", "1");
 }
 
+function capitalizeFirstLetter(value: string) {
+	return value.length === 0 ? value : value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 function SummaryCardSkeleton() {
 	return (
-		<div className="grid grid-cols-3 items-center gap-2">
-			<Skeleton className="h-6 w-full" />
-			<Skeleton className="h-6 w-full" />
-			<Skeleton className="h-6 w-full" />
+		<div className="grid grid-cols-3 gap-3">
+			<Skeleton className="h-11 w-full rounded-xl" />
+			<Skeleton className="h-11 w-full rounded-xl" />
+			<Skeleton className="h-11 w-full rounded-xl" />
 		</div>
 	);
 }
