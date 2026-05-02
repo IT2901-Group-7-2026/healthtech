@@ -20,7 +20,7 @@ function NotesShell({ title, children }: PropsWithChildren<{ title: string }>) {
 	return (
 		<Card muted={true} variant="labeled" className="max-h-96 w-full overflow-y-auto">
 			<CardLabelHeader>
-				<NotebookPenIcon className="size-3.5 text-muted-foreground" />
+				<NotebookPenIcon className="size-4 text-muted-foreground" />
 				<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">{title}</h2>
 			</CardLabelHeader>
 			{children}
