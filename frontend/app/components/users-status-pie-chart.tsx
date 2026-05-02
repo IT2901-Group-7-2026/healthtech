@@ -1,15 +1,12 @@
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import { type DangerLevel, DangerLevelSchema, dangerlevelStyles } from "@/lib/danger-levels.js";
 import { useTranslation } from "react-i18next";
-import { Pie, PieChart, type PieLabelRenderProps, type PieSectorShapeProps, Sector } from "recharts";
-import { DangerLevelDots } from "./danger-level-dots.js";
-
-const RADIAN = Math.PI / 180;
+import { Pie, PieChart, type PieSectorShapeProps, Sector } from "recharts";
 
 const pieShape = (props: PieSectorShapeProps) => {
 	const color = (props.name && dangerlevelStyles[props.name as DangerLevel].color) || "#ccc";
 
-	return <Sector {...props} fill={color} />;
+	return <Sector {...props} fill={color} fillOpacity={0.4} stroke={color} />;
 };
 
 interface Props {
@@ -37,7 +34,7 @@ export function UserStatusPieChart({ data, hoverable }: Props) {
 					shape={pieShape}
 					innerRadius="60%"
 					outerRadius="100%"
-					label={CustomLabel}
+					label={false}
 				/>
 				<ChartTooltip
 					content={({ active, payload }) => {
@@ -64,27 +61,3 @@ export function UserStatusPieChart({ data, hoverable }: Props) {
 		</ChartContainer>
 	);
 }
-
-const CustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, name }: PieLabelRenderProps) => {
-	// Don't render a label if the pie takes up 0% of the chart
-	if (percent === 0) {
-		return null;
-	}
-
-	const sizePx = 10;
-
-	const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-	const x = Number(cx) + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
-	const y = Number(cy) + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
-
-	const dangerLevelParseResult = DangerLevelSchema.safeParse(name?.toLowerCase());
-	const dangerLevel = dangerLevelParseResult.success ? dangerLevelParseResult.data : null;
-
-	return (
-		<g transform={`translate(${x},${y})`} className="pointer-events-none relative">
-			<foreignObject x={-sizePx / 2} y={-sizePx / 2} width={sizePx} height={sizePx}>
-				<DangerLevelDots dangerLevel={dangerLevel} />
-			</foreignObject>
-		</g>
-	);
-};

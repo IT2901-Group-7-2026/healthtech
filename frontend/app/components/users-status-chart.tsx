@@ -66,7 +66,7 @@ export function UserStatusChart({ users, exposure, userOnClick, isWeekly }: Prop
 
 	if (!hasAnyExposureData) {
 		return (
-			<Card className="w-192">
+			<Card className="w-full">
 				<CardContent className="flex h-48 items-center justify-center text-muted-foreground text-sm">
 					{t(($) => $.foremanDashboard.userStatusChart.noData)}
 				</CardContent>
@@ -129,8 +129,8 @@ export function UserStatusChart({ users, exposure, userOnClick, isWeekly }: Prop
 	const xTicks = Array.from({ length: Math.ceil(xDomainMax / 25) + 1 }, (_, i) => i * 25);
 
 	return (
-		<Card className="w-192 py-0">
-			<CardContent className="px-2 sm:p-6">
+		<Card className="sm:p-6">
+			<CardContent>
 				<ChartContainer
 					config={{}}
 					className={cn(
@@ -194,7 +194,7 @@ export function UserStatusChart({ users, exposure, userOnClick, isWeekly }: Prop
 															userOnClick?.(user.id);
 														}
 													}}
-													className="w-full cursor-pointer text-left text-muted-foreground text-sm leading-tight hover:text-white"
+													className="w-full cursor-pointer text-left text-muted-foreground text-sm leading-tight hover:text-black dark:hover:text-white"
 												>
 													{payload.value}
 												</button>
@@ -243,6 +243,8 @@ export function UserStatusChart({ users, exposure, userOnClick, isWeekly }: Prop
 							dataKey="safe"
 							stackId="risk"
 							fill="var(--safe)"
+							fillOpacity={0.3}
+							stroke="var(--safe)"
 							onClick={barOnClick}
 							shape={renderBarSegment("safe")}
 						/>
@@ -250,6 +252,8 @@ export function UserStatusChart({ users, exposure, userOnClick, isWeekly }: Prop
 							dataKey="warning"
 							stackId="risk"
 							fill="var(--warning)"
+							fillOpacity={0.3}
+							stroke="var(--warning)"
 							onClick={barOnClick}
 							shape={renderBarSegment("warning")}
 						/>
@@ -257,6 +261,8 @@ export function UserStatusChart({ users, exposure, userOnClick, isWeekly }: Prop
 							dataKey="danger"
 							stackId="risk"
 							fill="var(--danger)"
+							fillOpacity={0.3}
+							stroke="var(--danger-border)"
 							onClick={barOnClick}
 							shape={renderBarSegment("danger")}
 						/>

@@ -44,19 +44,16 @@ export const PieChartCard = ({ className, to, label, data, exposureType }: PieCh
 	}
 
 	return (
-		<Link
-			to={to}
-			className={cn("h-full w-full flex-1 basis-64 rounded-2xl md:last:col-span-2 lg:last:col-span-1", className)}
-		>
-			<Card hoverable={true} className={cn("h-full gap-4", className)}>
+		<Link to={to} className={className}>
+			<Card hoverable={true} className={cn("h-full gap-3 px-3 pt-3", className)}>
 				<CardHeader className="text-sm">
 					<h2 className="flex items-center gap-3 text-sm uppercase tracking-wide">
 						<ExposureIcon type={exposureType} size="sm" />
 						{label}
 					</h2>
 				</CardHeader>
-				<CardContent className="flex flex-row items-center gap-0">
-					<div className="flex w-1/3 flex-col gap-2 text-xs">
+				<CardContent className="grid flex-1 grid-cols-[minmax(0,2fr)_minmax(0,3fr)] grid-rows-[1fr_auto] gap-x-3 gap-y-2">
+					<div className="row-span-2 flex flex-col justify-center gap-2 text-xs">
 						{DangerLevelSchema.options
 							.toSorted((a, b) => DANGER_LEVEL_SEVERITY[b] - DANGER_LEVEL_SEVERITY[a])
 							.map((level) => (
@@ -74,15 +71,14 @@ export const PieChartCard = ({ className, to, label, data, exposureType }: PieCh
 								</div>
 							))}
 					</div>
-					<div className="h-full w-2/3">
+					<div className="min-h-0">
 						<UserStatusPieChart data={data} hoverable={true} />
 					</div>
+					<CardFooter className="justify-end gap-1 self-end pr-1 text-muted-foreground text-xs">
+						<p>{t(($) => $.interactiveCard.viewDetails)}</p>
+						<ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
+					</CardFooter>
 				</CardContent>
-
-				<CardFooter className="gap-1 text-muted-foreground text-xs">
-					<p>{t(($) => $.interactiveCard.viewDetails)}</p>
-					<ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
-				</CardFooter>
 			</Card>
 		</Link>
 	);
