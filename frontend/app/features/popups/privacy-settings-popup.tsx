@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { DateRangePicker } from "@/components/ui/date-range-picker";
 import { Field } from "@/components/ui/field";
 import { Form } from "@/components/ui/form";
@@ -7,7 +6,7 @@ import { useFormatDate } from "@/hooks/use-format-date";
 import { now } from "@/lib/date";
 import { TZDate } from "@date-fns/tz";
 import { isBefore } from "date-fns";
-import { Share2, Trash2 } from "lucide-react";
+import { Share, Trash2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -85,13 +84,13 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 		<BasePopup title={title} open={open} relevantDate={null} onClose={onClose}>
 			{children}
 
-			<div className="flex flex-col gap-3 text-sm md:px-0 md:pb-1">
+			<div className="mx-auto flex flex-col gap-4 pt-6 text-sm">
 				<div className="flex flex-col gap-2">
 					<p className="label text-muted-foreground">{t(($) => $.share.hygienist.button)}</p>
-					<Card className="p-3">
-						<Form {...shareForm}>
-							<form onSubmit={shareForm.handleSubmit(handleShareSubmit)} className="max-w-sm space-y-2">
-								<Field className="mx-auto w-full">
+					<Form {...shareForm}>
+						<form onSubmit={shareForm.handleSubmit(handleShareSubmit)} className="space-y-2">
+							<div className="flex flex-col gap-2 sm:flex-row">
+								<Field className="w-74">
 									<DateRangePicker
 										value={{ from: shareFrom, to: shareTo }}
 										onChange={handleShareRangeChange}
@@ -101,37 +100,38 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 									/>
 								</Field>
 
-								<div className="relative mt-4">
-									<Button type="submit" disabled={!(shareFrom && shareTo)} className="h-8 text-sm">
-										<Share2 />
-										{t(($) => $.share.hygienist.shareData)}
-									</Button>
+								<Button type="submit" disabled={!(shareFrom && shareTo)} className="w-fit">
+									<Share />
+									{t(($) => $.share.hygienist.shareData)}
+								</Button>
+							</div>
 
-									<div className="relative mt-2 h-2">
-										{showShareDataConfirmationMessage && shareFrom && shareTo && (
-											<p
-												className={`absolute inset-0 text-green-700 text-xs ${
-													showShareDataConfirmationMessage
-														? "visible opacity-100"
-														: "invisible opacity-0"
-												}`}
-											>
-												{t(($) => $.share.hygienist.confirmation, {
-													from: formatDate(shareFrom, "d MMMM yyyy"),
-													to: formatDate(shareTo, "d MMMM yyyy"),
-												})}
-											</p>
-										)}
-									</div>
-								</div>
-							</form>
-						</Form>
-					</Card>
+							<div className="relative min-h-4">
+								{showShareDataConfirmationMessage && shareFrom && shareTo && (
+									<p
+										className={`absolute inset-0 text-green-700 text-xs ${
+											showShareDataConfirmationMessage
+												? "visible opacity-100"
+												: "invisible opacity-0"
+										}`}
+									>
+										{t(($) => $.share.hygienist.confirmation, {
+											from: formatDate(shareFrom, "d MMMM yyyy"),
+											to: formatDate(shareTo, "d MMMM yyyy"),
+										})}
+									</p>
+								)}
+							</div>
+						</form>
+					</Form>
+				</div>
+
+				<div className="flex flex-col gap-2">
 					<p className="label text-muted-foreground">{t(($) => $.profile.deletePersonalInformation)}</p>
-					<Card className="p-3">
-						<Form {...form}>
-							<form onSubmit={form.handleSubmit(handleSubmit)} className="max-w-sm space-y-2">
-								<Field className="mx-auto w-full">
+					<Form {...form}>
+						<form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-2">
+							<div className="flex flex-col gap-2 sm:flex-row">
+								<Field className="w-74">
 									<DateRangePicker
 										value={{ from: deleteFrom, to: deleteTo }}
 										onChange={handleDeleteRangeChange}
@@ -141,30 +141,33 @@ export function PrivacySettingsPopup({ open, onClose, children }: PrivacySetting
 									/>
 								</Field>
 
-								<div className="relative mt-4">
-									<Button type="submit" disabled={!(deleteFrom && deleteTo)} className="h-8 text-sm">
-										<Trash2 />
-										{t(($) => $.popup.deleteData)}
-									</Button>
+								<Button
+									type="submit"
+									disabled={!(deleteFrom && deleteTo)}
+									variant="destructive"
+									className="w-fit"
+								>
+									<Trash2 />
+									{t(($) => $.popup.deleteData)}
+								</Button>
+							</div>
 
-									<div className="relative mt-2 mb-4">
-										{showDeleteText && deleteFrom && deleteTo && (
-											<p
-												className={`absolute inset-0 text-green-700 text-xs ${
-													showDeleteText ? "visible opacity-100" : "invisible opacity-0"
-												}`}
-											>
-												{t(($) => $.popup.dataDeleted, {
-													from: formatDate(deleteFrom, "d MMMM yyyy"),
-													to: formatDate(deleteTo, "d MMMM yyyy"),
-												})}
-											</p>
-										)}
-									</div>
-								</div>
-							</form>
-						</Form>
-					</Card>
+							<div className="relative min-h-4">
+								{showDeleteText && deleteFrom && deleteTo && (
+									<p
+										className={`absolute inset-0 text-green-700 text-xs ${
+											showDeleteText ? "visible opacity-100" : "invisible opacity-0"
+										}`}
+									>
+										{t(($) => $.popup.dataDeleted, {
+											from: formatDate(deleteFrom, "d MMMM yyyy"),
+											to: formatDate(deleteTo, "d MMMM yyyy"),
+										})}
+									</p>
+								)}
+							</div>
+						</form>
+					</Form>
 				</div>
 			</div>
 		</BasePopup>
