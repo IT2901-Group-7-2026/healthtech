@@ -1,5 +1,5 @@
 import { useUser } from "@/features/user/user-context";
-import { TIMEZONE } from "@/i18n/locale";
+import { useFormatDate } from "@/hooks/use-format-date";
 import type { DangerLevel } from "@/lib/danger-levels";
 import type { Exposure } from "@/lib/exposures";
 import { cn } from "@/lib/utils";
@@ -39,12 +39,16 @@ const notifications: Array<{
 export function Notifications({ onParentClose }: { onParentClose: () => void }) {
 	const { t } = useTranslation();
 	const { user } = useUser();
+	const formatNotificationDate = useFormatDate();
 
 	return (
 		<ul className="flex max-h-72 flex-col divide-y divide-border overflow-y-auto">
 			{notifications.map(({ exposure, date, dangerLevel }) => {
 				const notificationLink = user.role === "foreman" ? `/foreman` : `/operator/${exposure}`;
 				let notificationLinkSearch = "";
+				const isCurrentYear =
+					formatNotificationDate(date, "yyyy") === formatNotificationDate(new Date(), "yyyy");
+				const dateFormat = isCurrentYear ? "MMM d" : "MMM d, yyyy";
 
 				if (user.role === "foreman") {
 					const formattedDate = formatDate(date, "yyyy-MM-dd");
@@ -59,11 +63,11 @@ export function Notifications({ onParentClose }: { onParentClose: () => void }) 
 						<NavLink
 							to={`${notificationLink}${notificationLinkSearch}`}
 							onClick={onParentClose}
-							className="flex items-center gap-3 py-2.5 transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+							className="flex gap-3 px-2 py-2.5 transition-colors hover:bg-accent"
 						>
 							<ExposureIcon type={exposure} size="md" dangerLevel={dangerLevel} />
 
-							<div className="flex flex-col justify-center gap-1">
+							<div className="flex flex-1 flex-col gap-0.5">
 								<span className="font-medium text-sm">{t(($) => $.exposures[exposure])}</span>
 								<span className={cn("font-semibold text-xs", `text-${dangerLevel}`)}>
 									{t(($) => $.dangerLevels[dangerLevel])}
@@ -72,10 +76,9 @@ export function Notifications({ onParentClose }: { onParentClose: () => void }) 
 
 							<time
 								dateTime={date.toISOString()}
-								className="flex shrink-0 flex-col items-end gap-1 text-muted-foreground text-xs tabular-nums"
+								className="shrink-0 text-muted-foreground text-xs tabular-nums"
 							>
-								<span>{formatDate(date, "dd.MM.yyyy", { in: TIMEZONE })}</span>
-								<span>{formatDate(date, "HH:mm", { in: TIMEZONE })}</span>
+								{formatNotificationDate(date, dateFormat)} {"-"} {formatNotificationDate(date, "HH:mm")}
 							</time>
 						</NavLink>
 					</li>
