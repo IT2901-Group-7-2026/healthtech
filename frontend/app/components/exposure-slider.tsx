@@ -60,7 +60,7 @@ export function ExposureSlider({ exposure, field, value, dangerLevel, unitLabel:
 				</div>
 			</div>
 
-			<p className="font-semibold text-2xl tracking-tight">
+			<p className="font-semibold text-2xl">
 				{formattedValue}
 				<span className="ml-1 font-medium text-muted-foreground text-sm">{unit}</span>
 			</p>

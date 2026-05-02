@@ -63,7 +63,7 @@ export function UserSelect({
 					placeholder={placeholder}
 					disabled={disabled}
 					className={cn(
-						"rounded-r-md rounded-l-xl bg-background font-medium dark:bg-input/30",
+						"w-full rounded-r-md rounded-l-xl bg-background font-medium dark:bg-input/30",
 						inputClassName,
 					)}
 				/>
