@@ -23,7 +23,7 @@ function Card({
 			className={cn(
 				"group/card flex flex-col rounded-xl",
 				"bg-card text-card-foreground",
-				"border border-zinc-200 dark:border-card",
+				"border border-card-border",
 				variant === "default" && "gap-2 p-4",
 				variant === "labeled" && "gap-0 overflow-hidden p-0",
 				muted && "bg-card/50 text-muted-foreground not-dark:border-zinc-200/66",
