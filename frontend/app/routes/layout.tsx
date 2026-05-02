@@ -196,7 +196,7 @@ export default function Layout() {
 							>
 								<div className="relative">
 									<Bell className="size-5" />
-									<span className="absolute -top-2 -right-2 flex size-4.75 items-center justify-center rounded-full border-2 border-background bg-red-500 text-[0.625rem] text-white">
+									<span className="absolute -top-2 -right-2 flex size-4.75 items-center justify-center rounded-full border-2 border-background bg-red-600 text-[0.625rem] text-white">
 										{"4"}
 									</span>
 								</div>
