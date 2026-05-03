@@ -102,14 +102,9 @@
   "exposureSummary": {
     "title": "Eksponering",
     "aggregated": {
-      "safe": "innenfor trygge grenseverdier",
-      "warning": "over tiltaksverdi",
-      "danger": "over grenseverdi"
-    },
-    "status": {
-      "danger": "Over grenseverdi",
-      "safe": "Over tiltaksverdi",
-      "warning": "Under grenseverdi"
+      "safe": "Innenfor trygge grenseverdier",
+      "warning": "Over tiltaksverdi",
+      "danger": "Over grenseverdi"
     }
   },
   "lineChart": {
