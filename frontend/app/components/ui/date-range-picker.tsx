@@ -40,8 +40,8 @@ export function DateRangePicker({
 	return (
 		<Popover>
 			<PopoverTrigger asChild={true}>
-				<Button variant="outline" className="justify-center px-2.5 font-normal max-w-[300px]">
-					<CalendarIcon className="mr-2 h-[1.2rem] w-[1.2rem]" />
+				<Button variant="outline" className="justify-start font-normal max-w-75">
+					<CalendarIcon className="mr-1 size-4" />
 					{value.from ? (
 						value.to ? (
 							<>
