@@ -83,9 +83,9 @@ export function ExposureSummary({ exposureType }: ExposureSummaryProps) {
 		return <SummaryCardSkeleton />;
 	}
 
-	const safeLabel = capitalizeFirstLetter(t(($) => $.exposureSummary.aggregated.safe));
-	const warningLabel = capitalizeFirstLetter(t(($) => $.exposureSummary.aggregated.warning));
-	const dangerLabel = capitalizeFirstLetter(t(($) => $.exposureSummary.aggregated.danger));
+	const safeLabel = t(($) => $.exposureSummary.aggregated.safe);
+	const warningLabel = t(($) => $.exposureSummary.aggregated.warning);
+	const dangerLabel = t(($) => $.exposureSummary.aggregated.danger);
 
 	const safeDuration = formatMinutesAsDuration(data.safeMinutes, locale);
 	const warningDuration = formatMinutesAsDuration(data.warningMinutes, locale);
@@ -158,10 +158,6 @@ function formatMinutesAsDuration(totalMinutes: number, locale: Locale) {
 	}
 
 	return formatDuration({ days, hours, minutes: minutes }, { locale, format }).replace("en", "1");
-}
-
-function capitalizeFirstLetter(value: string) {
-	return value.length === 0 ? value : value.charAt(0).toUpperCase() + value.slice(1);
 }
 
 function SummaryCardSkeleton() {

@@ -105,9 +105,9 @@
   "exposureSummary": {
     "title": "Exposure",
     "aggregated": {
-      "safe": "within safe limits",
-      "warning": "above action value",
-      "danger": "above limit value"
+      "safe": "Within safe limits",
+      "warning": "Above action value",
+      "danger": "Above limit value"
     },
     "status": {
       "danger": "Above limit value",
