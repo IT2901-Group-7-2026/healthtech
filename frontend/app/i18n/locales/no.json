@@ -105,11 +105,6 @@
       "safe": "Innenfor trygge grenseverdier",
       "warning": "Over tiltaksverdi",
       "danger": "Over grenseverdi"
-    },
-    "status": {
-      "danger": "Over grenseverdi",
-      "safe": "Over tiltaksverdi",
-      "warning": "Under grenseverdi"
     }
   },
   "lineChart": {

@@ -108,11 +108,6 @@
       "safe": "Within safe limits",
       "warning": "Above action value",
       "danger": "Above limit value"
-    },
-    "status": {
-      "danger": "Above limit value",
-      "safe": "Above action value",
-      "warning": "Below limit value"
     }
   },
   "lineChart": {
