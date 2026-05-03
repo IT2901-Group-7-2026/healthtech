@@ -246,7 +246,7 @@
       "week": "Uke"
     },
     "userStatusChart": {
-      "xAxisLabel": "Prosent av faregrense",
+      "xAxisLabel": "% av faregrense",
       "noData": "Ingen eksponeringsdata tilgjengelig for operatører"
     },
     "siteMap": {
@@ -290,7 +290,7 @@
       "viewWeek": "Uke {{week}}",
       "viewMonth": "Måned",
       "dateDay": "{{date}}",
-      "dateRange": "{{startDate}} til {{endDate}}"
+      "dateRange": "{{startDate}} - {{endDate}}"
     }
   },
   "register": {
@@ -307,7 +307,8 @@
   "securityRegulationsCard": {
     "title": "Gjeldene sikkerhetsreguleringer",
     "safetyBoots": "Sikkerhetsstøvler",
-    "helmet": "Hjelm"
+    "helmet": "Hjelm",
+    "protectiveMask": "Beskyttelsesmaske"
   },
   "share": {
     "hygienist": {

@@ -1,25 +1,16 @@
 import { Card, CardContent, CardLabelHeader } from "@/components/ui/card";
-import { Footprints, HardHat, ShieldCheckIcon } from "lucide-react";
+import { getSecurityRegulations } from "@/lib/security-regulations.js";
+import { ShieldCheckIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export const SecurityRegulationsCard = () => {
 	const { t } = useTranslation();
-
-	const regulations = [
-		{
-			icon: Footprints,
-			label: t(($) => $.securityRegulationsCard.safetyBoots),
-		},
-		{
-			icon: HardHat,
-			label: t(($) => $.securityRegulationsCard.helmet),
-		},
-	];
+	const regulations = getSecurityRegulations(t);
 
 	return (
 		<Card muted={true} variant="labeled" className="max-h-96 w-full overflow-y-auto">
 			<CardLabelHeader>
-				<ShieldCheckIcon size="1rem" />
+				<ShieldCheckIcon className="size-4 shrink-0" />
 				<h2 className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
 					{t(($) => $.securityRegulationsCard.title)}
 				</h2>

@@ -249,7 +249,7 @@
       "week": "Week"
     },
     "userStatusChart": {
-      "xAxisLabel": "Percentage of exposure limit",
+      "xAxisLabel": "% of exposure limit",
       "noData": "No exposure data available for any operators"
     },
     "siteMap": {
@@ -293,7 +293,7 @@
       "viewWeek": "Week {{week}}",
       "viewMonth": "Month",
       "dateDay": "{{date}}",
-      "dateRange": "{{startDate}} to {{endDate}}"
+      "dateRange": "{{startDate}} - {{endDate}}"
     }
   },
   "register": {
@@ -310,7 +310,8 @@
   "securityRegulationsCard": {
     "title": "Current safety regulations",
     "safetyBoots": "Safety boots",
-    "helmet": "Helmet"
+    "helmet": "Helmet",
+    "protectiveMask": "Protective mask"
   },
   "share": {
     "hygienist": {
