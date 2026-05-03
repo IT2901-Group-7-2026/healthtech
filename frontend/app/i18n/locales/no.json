@@ -124,7 +124,7 @@
     },
     "list": {
       "title": "Dine notater",
-      "noNotes": "Ingen notater for denne {{view}}. Velg en dag for å legge til notater."
+      "noNotes": "Ingen notater for denne {{view}}. Se en dag for å legge til notater."
     }
   },
   "table": {

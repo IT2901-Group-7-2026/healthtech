@@ -127,7 +127,7 @@
     },
     "list": {
       "title": "Your notes",
-      "noNotes": "No notes for this {{view}}. Select a day to add notes."
+      "noNotes": "No notes for this {{view}}. View a day to add notes."
     }
   },
   "table": {
