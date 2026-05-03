@@ -101,7 +101,7 @@ export const AttentionCard = ({
 			) : (
 				<>
 					<h2 className="font-bold text-2xl text-foreground">{attentionHeaderText}</h2>
-					{warningDescription && <p className="text-muted-foreground text-sm">{warningDescription}</p>}
+					{warningDescription && <p className="text-muted-foreground">{warningDescription}</p>}
 				</>
 			)}
 		</CardHeader>
@@ -118,22 +118,22 @@ export const AttentionCard = ({
 						{!exposure && (
 							<>
 								<StatCard
-									className="text-red-500"
 									label={t(($) => $.foremanDashboard.overview.statCards.danger.label)}
+									dangerLevel="danger"
 									onClick={() => openForStatus("danger")}
 									value={thresholdSummary[selectedExposureKey].danger}
 								/>
 
 								<StatCard
-									className="text-orange-400"
 									label={t(($) => $.foremanDashboard.overview.statCards.warning.label)}
+									dangerLevel="warning"
 									onClick={() => openForStatus("warning")}
 									value={thresholdSummary[selectedExposureKey].warning}
 								/>
 
 								<StatCard
-									className="text-green-600"
 									label={t(($) => $.foremanDashboard.overview.statCards.safe.label)}
+									dangerLevel="safe"
 									onClick={() => openForStatus("safe")}
 									value={thresholdSummary[selectedExposureKey].safe}
 								/>

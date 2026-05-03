@@ -22,20 +22,26 @@ export function ExposureRiskCard({ users, exposure, dangerLevel, onUserClick }: 
 	const { bgSubtle, border, text } = dangerlevelStyles[dangerLevel];
 
 	return (
-		<Card className="group w-full flex-1 basis-64 rounded-2xl p-2">
-			<CardHeader className={cn("flex items-center gap-3 rounded-xl border px-3 py-2", bgSubtle, border, text)}>
-				<ExposureIcon
-					size="xs"
-					iconOnly={true}
-					type={exposure}
-					iconClassName="size-4.5 mt-0.5"
-					dangerLevel={dangerLevel}
-					dangerLevelClassName="-bottom-0.75 -right-0.75"
-				/>
+		<Card className="group w-full flex-1 basis-64 p-2">
+			<CardHeader
+				className={cn("flex justify-between gap-3 rounded-lg border px-3 py-2", bgSubtle, border, text)}
+			>
+				<div className="flex gap-3">
+					<ExposureIcon
+						size="xs"
+						iconOnly={true}
+						type={exposure}
+						iconClassName="size-4.5 mt-0.5"
+						dangerLevel={dangerLevel}
+						dangerLevelClassName="-bottom-0.75 -right-0.75"
+					/>
 
-				<h3 className={cn("font-semibold text-sm", text)}>
-					{t((x) => x.foremanDashboard.overview.statCards[dangerLevel].label)}
-				</h3>
+					<h3 className={cn("my-auto font-medium text-sm/4", text)}>
+						{t((x) => x.foremanDashboard.overview.statCards[dangerLevel].label)}
+					</h3>
+				</div>
+
+				{operators.length > 0 && <p className="text-lg/5 tabular-nums">{operators.length}</p>}
 			</CardHeader>
 
 			<CardContent>
