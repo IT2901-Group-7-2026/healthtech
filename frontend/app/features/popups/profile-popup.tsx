@@ -5,7 +5,7 @@ import { BasePopup } from "./base-popup";
 
 interface ProfilePopupProps {
 	user: User;
-	avatarSrc: string;
+	avatarSrc?: string;
 	open: boolean;
 	onClose: () => void;
 	users?: Array<User>;

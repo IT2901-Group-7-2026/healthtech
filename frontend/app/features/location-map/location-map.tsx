@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { dangerlevelStyles, getHighestDangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
@@ -118,11 +118,6 @@ export function LocationMap({ operators, isLoading, imageUrl = "/aker_verdal_sit
 
 	return (
 		<Card className="overflow-hidden">
-			<CardHeader>
-				<h2 className="text-muted-foreground text-xs uppercase tracking-wider">
-					{t(($) => $.foremanDashboard.siteMap.title)}
-				</h2>
-			</CardHeader>
 			<CardContent>
 				<div className="flex h-full w-full flex-row gap-4">
 					<div className="flex w-72 min-w-72 flex-col gap-1 border-r-2 border-solid pr-2">

@@ -21,7 +21,7 @@ import {
 import { useView } from "../views/use-view";
 
 // ensure alignment between time-labels and hour slots
-const ROW_HEIGHT = "h-10";
+const ROW_HEIGHT = "h-9";
 const CELL_GAP = "gap-y-1";
 const HEADER_HEIGHT = "h-6";
 const PADDING_Y = "py-1.5";

@@ -76,7 +76,7 @@ export default function Dust() {
 	const showDustStatistics = view === "day";
 
 	return (
-		<div className="flex flex-col gap-16">
+		<div className="flex flex-col gap-8">
 			<div className="flex flex-1 flex-col gap-4">
 				<Tabs value={dustField} onValueChange={(value) => setDustField(value as DustField)}>
 					<TabsList>

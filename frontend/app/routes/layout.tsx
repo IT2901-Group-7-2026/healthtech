@@ -196,7 +196,7 @@ export default function Layout() {
 							>
 								<div className="relative">
 									<Bell className="size-5" />
-									<span className="absolute -top-2 -right-2 flex size-4.75 items-center justify-center rounded-full border-2 border-background bg-red-500 text-[0.625rem] text-white">
+									<span className="absolute -top-2 -right-2 flex size-4.75 items-center justify-center rounded-full border-2 border-background bg-red-600 text-[0.625rem] text-white">
 										{"4"}
 									</span>
 								</div>
@@ -262,7 +262,7 @@ function UserDropdown({
 					</Button>
 				</DropdownMenuTrigger>
 
-				<DropdownMenuContent align="end" className="" sideOffset={10}>
+				<DropdownMenuContent align="end" sideOffset={10}>
 					<DropdownMenuItem onSelect={openProfilePopup}>
 						<UserIcon className="size-4" />
 						<span>{t(($) => $.profile.title)}</span>
@@ -325,7 +325,7 @@ function UserDropdown({
 							<Languages className="mr-2 size-4 text-muted-foreground" />
 							<span>{t(($) => $.layout.language)}</span>
 						</DropdownMenuSubTrigger>
-						<DropdownMenuSubContent className="w-44">
+						<DropdownMenuSubContent>
 							<DropdownMenuRadioGroup
 								value={currentLanguage}
 								onValueChange={(value) => {
@@ -341,10 +341,8 @@ function UserDropdown({
 						</DropdownMenuSubContent>
 					</DropdownMenuSub>
 
-					<DropdownMenuSeparator />
-
-					<div className="rounded-md bg-yellow-100 p-3 dark:bg-amber-950">
-						<p className="font-bold text-sm text-zinc-600 dark:text-zinc-300">{"DEMO"}</p>
+					<div className="m-1 mt-4 rounded-lg bg-yellow-100 p-2 dark:bg-amber-950">
+						<h3 className="font-semibold text-sm text-zinc-600 dark:text-zinc-300">{"DEMO"}</h3>
 
 						<div className="mt-2 flex gap-2.5">
 							{users.length > 0 ? (
@@ -400,7 +398,6 @@ function UserDropdown({
 
 			<ProfilePopup
 				user={user}
-				avatarSrc="/userimage.png"
 				open={profilePopupVisible}
 				onClose={closeProfilePopup}
 				users={users}

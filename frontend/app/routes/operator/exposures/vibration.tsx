@@ -67,7 +67,7 @@ export default function Vibration() {
 	const showVibrationStatistics = view === "day";
 
 	return (
-		<div className="flex flex-col gap-16">
+		<div className="flex flex-col gap-8">
 			<div className="flex h-full w-full flex-col-reverse gap-4 md:flex-row">
 				<div className="flex flex-1 flex-col gap-4">
 					{isLoading ? (

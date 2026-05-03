@@ -178,8 +178,8 @@ export default function ForemanOverview() {
 									<>
 										<ExposureSummaryGrid thresholdSummary={thresholdSummary} />
 
-										<Card muted={true} className="flex flex-col gap-4 p-4">
-											<h2 className="font-semibold text-lg">
+										<div className="flex flex-col gap-4">
+											<h2 className="font-medium text-lg">
 												{t(($) => $.foremanDashboard.team.title)}
 											</h2>
 											{isSubordinatesLoading ? (
@@ -195,7 +195,7 @@ export default function ForemanOverview() {
 											) : (
 												<OperatorExposureStatusTable data={subordinates} />
 											)}
-										</Card>
+										</div>
 									</>
 								)}
 							</>
@@ -244,9 +244,7 @@ function ExposureSummaryGrid({ thresholdSummary }: { thresholdSummary: Threshold
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="font-extralight text-2xl text-color-muted">
-				{t(($) => $.foremanDashboard.overview.exposure)}
-			</div>
+			<h2 className="font-medium text-lg">{t(($) => $.foremanDashboard.overview.exposure)}</h2>
 			<div className="grid w-full grid-cols-1 gap-6 lg:grid-cols-3">
 				{exposures.map((exposureType) => (
 					<PieChartCard

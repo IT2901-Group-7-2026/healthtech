@@ -90,7 +90,7 @@ export default function Noise() {
 	const showNoiseStatistics = view === "day";
 
 	return (
-		<div className="flex flex-col gap-16">
+		<div className="flex flex-col gap-8">
 			<div className="flex flex-1 flex-col gap-4">
 				<Tabs value={aggregation} onValueChange={(value) => setAggregation(value as Aggregation)}>
 					<TabsList>

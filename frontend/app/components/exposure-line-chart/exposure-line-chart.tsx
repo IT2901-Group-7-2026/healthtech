@@ -110,6 +110,7 @@ export function ExposureLineChart({
 						: {
 								left: 12,
 								right: 12,
+								top: 12,
 							}
 				}
 			>
@@ -123,7 +124,7 @@ export function ExposureLineChart({
 					allowDataOverflow={true}
 					tickLine={false}
 					axisLine={false}
-					tickMargin={8}
+					tickMargin={12}
 					tick={(props) => (
 						<CustomXAxisTick
 							{...props}
@@ -143,7 +144,7 @@ export function ExposureLineChart({
 					tickLine={false}
 					axisLine={false}
 					tick={{
-						className: compact ? "text-sm" : "text-base",
+						className: compact ? "text-xs" : "text-sm",
 						fill: "var(--color-muted-foreground)",
 					}}
 					domain={[minY, maxY]}
@@ -294,7 +295,7 @@ function CustomXAxisTick({
 			textAnchor={isFirst ? "start" : isLast ? "end" : "middle"}
 			fill="var(--color-muted-foreground)"
 			fontSize={12}
-			className={cn(variant === "compact" ? "text-sm" : "text-base")}
+			className={cn(variant === "compact" ? "text-xs" : "text-sm")}
 		>
 			{label}
 		</text>
