@@ -36,12 +36,12 @@ export function ExposureRiskCard({ users, exposure, dangerLevel, onUserClick }: 
 						dangerLevelClassName="-bottom-0.75 -right-0.75"
 					/>
 
-					<h3 className={cn("font-medium text-sm", text)}>
+					<h3 className={cn("font-medium text-sm/4 my-auto", text)}>
 						{t((x) => x.foremanDashboard.overview.statCards[dangerLevel].label)}
 					</h3>
 				</div>
 
-				{operators.length > 0 && <p className="text-lg tabular-nums leading-5">{operators.length}</p>}
+				{operators.length > 0 && <p className="text-lg/5 tabular-nums">{operators.length}</p>}
 			</CardHeader>
 
 			<CardContent>
