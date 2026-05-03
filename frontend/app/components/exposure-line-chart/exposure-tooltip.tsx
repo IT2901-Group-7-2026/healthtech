@@ -12,6 +12,7 @@ export function ExposureTooltip({ unit }: { unit: ExposureUnit }) {
 	return (
 		<ChartTooltip
 			cursor={false}
+			payloadUniqBy={true}
 			content={
 				<ChartTooltipContent
 					labelFormatter={(_label, payload) => {

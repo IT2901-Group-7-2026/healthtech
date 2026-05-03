@@ -16,6 +16,7 @@ export function ExposureTrendTooltip({
 	return (
 		<ChartTooltip
 			cursor={false}
+			payloadUniqBy={true}
 			content={({ active, payload, label }) => {
 				if (!(active && payload?.length)) {
 					return null;
