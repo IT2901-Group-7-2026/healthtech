@@ -36,7 +36,7 @@ export function ExposureRiskCard({ users, exposure, dangerLevel, onUserClick }: 
 						dangerLevelClassName="-bottom-0.75 -right-0.75"
 					/>
 
-					<h3 className={cn("font-medium text-sm/4 my-auto", text)}>
+					<h3 className={cn("my-auto font-medium text-sm/4", text)}>
 						{t((x) => x.foremanDashboard.overview.statCards[dangerLevel].label)}
 					</h3>
 				</div>
