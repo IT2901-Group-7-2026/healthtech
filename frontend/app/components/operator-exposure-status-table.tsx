@@ -14,14 +14,14 @@ export interface ExposureTableCellProps {
 export function OperatorExposureStatusTable({ data }: ExposureTableCellProps) {
 	const [searchParams] = useSearchParams();
 
-	const buildSearchParams = (userId: string, sensor?: string) => {
+	const buildSearchParams = (userId: string, exposure?: Exposure) => {
 		const params = new URLSearchParams(searchParams);
 		params.set("userId", userId);
 
-		if (sensor) {
-			params.set("sensor", sensor);
+		if (exposure) {
+			params.set("exposure", exposure);
 		} else {
-			params.delete("sensor");
+			params.delete("exposure");
 		}
 
 		return params.toString();
