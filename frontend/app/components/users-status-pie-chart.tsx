@@ -34,7 +34,6 @@ export function UserStatusPieChart({ data, hoverable }: Props) {
 					shape={pieShape}
 					innerRadius="60%"
 					outerRadius="100%"
-					label={false}
 				/>
 				<ChartTooltip
 					content={({ active, payload }) => {
