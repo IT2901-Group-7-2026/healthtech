@@ -164,7 +164,6 @@ export default function ForemanOverview() {
 									isSubordinatesLoading={isSubordinatesLoading}
 									thresholdSummary={thresholdSummary}
 									isThresholdSummaryLoading={isThresholdSummaryLoading}
-									isWeekly={isWeekly}
 								/>
 
 								{exposure ? (
