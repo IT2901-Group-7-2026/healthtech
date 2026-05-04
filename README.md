@@ -65,8 +65,8 @@ Remember to change the default database password (`your_secure_password`) in `PO
 
 ### Set up the backend
 
-1. Download the CSV-files from [https://drive.proton.me/urls/FYRKP45DT8#CyS2vd2gzQHH](https://drive.proton.me/urls/FYRKP45DT8#CyS2vd2gzQHH)
-2. Copy them into `./backend/seed/` from project root.
+1. Download the CSV-files from [https://drive.google.com/drive/folders/13XkM6DRK6iyz9pC4Akvj1-1KjRx4wFkc?usp=drive_link](https://drive.google.com/drive/folders/13XkM6DRK6iyz9pC4Akvj1-1KjRx4wFkc?usp=drive_link).
+2. Copy them into `./backend/seed/`.
 
 You may also have to download `ef`, which you can do by running: `dotnet tool install --global dotnet-ef`
 
