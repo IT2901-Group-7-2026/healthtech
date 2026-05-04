@@ -18,11 +18,11 @@ import { useView } from "@/features/views/use-view";
 import { ViewPicker } from "@/features/views/view-picker";
 import type { TranslateFn } from "@/i18n/config.js";
 import { fetchSubordinatesQueryOptions, fetchThresholdSummaryQueryOptions } from "@/lib/api.js";
-import { today, toTZDate } from "@/lib/date";
+import { today } from "@/lib/date";
 import type { ThresholdSummary, User } from "@/lib/dto";
 import { type Exposure, exposures, parseAsExposure } from "@/lib/exposures";
 import { useQuery } from "@tanstack/react-query";
-import { addWeeks, endOfDay, startOfDay, subDays } from "date-fns";
+import { subDays } from "date-fns";
 import { XIcon } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";
@@ -33,14 +33,15 @@ export default function ForemanOverview() {
 	const { user } = useUser();
 
 	const [exposure, setExposure] = useQueryState("exposure", parseAsExposure.withOptions({ history: "push" }));
-	const { date, setDate } = useDate();
+	const {
+		date,
+		setDate,
+		selection: { start: startDate, end: endDate },
+	} = useDate();
 	const [selectedUserId, setSelectedUserId] = useQueryState("userId", parseAsString.withOptions({ history: "push" }));
 
 	const { view } = useView();
 	const isWeekly = view === "week";
-
-	const startDate = isWeekly ? toTZDate(startOfDay(addWeeks(date, -1))) : toTZDate(startOfDay(date));
-	const endDate = toTZDate(endOfDay(date));
 
 	// Foremen can only see dates within the last week
 	const minSelectableDate = subDays(today(), 7);
