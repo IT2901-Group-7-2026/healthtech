@@ -229,14 +229,6 @@
       "warningDescription": "En eller flere operatører er over tiltaksverdien. Overvåking eller forebyggende tiltak kan være nødvendig.",
       "danger": "Teamstatus: Umiddelbar handling kreves",
       "dangerDescription": "En eller flere operatører er over grenseverdien. Umiddelbar oppfølging i henhold til prosedyre kreves.",
-      "dayView": {
-        "danger": "Operatører over eksponeringsgrensen. Umiddelbar oppfølging anbefales.",
-        "warning": "Operatører nærmer seg eksponeringsgrensen. Vurder forebyggende tiltak."
-      },
-      "weekView": {
-        "danger": "Operatører over ukentlig eksponeringsgrense. Umiddelbar oppfølging anbefales.",
-        "warning": "Operatører nærmer seg ukentlig eksponeringsgrense. Umiddelbar oppfølging anbefales."
-      },
       "day": "Dag",
       "week": "Uke"
     },

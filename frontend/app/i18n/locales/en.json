@@ -232,14 +232,6 @@
       "warningDescription": "One or more operators are above the action value. Monitoring or preventative measures may be needed.",
       "danger": "Team status: Immediate action required",
       "dangerDescription": "One or more operators are above the limit value. Immediate follow-up according to procedure is required.",
-      "dayView": {
-        "danger": "Operators above the exposure limit. Immediate follow-up recommended.",
-        "warning": "Operators approaching the exposure limit. Consider preventive measures."
-      },
-      "weekView": {
-        "danger": "Operators above the weekly exposure limit. Immediate follow-up recommended.",
-        "warning": "Operators approaching the weekly exposure limit. Consider preventive measures."
-      },
       "day": "Day",
       "week": "Week"
     },
