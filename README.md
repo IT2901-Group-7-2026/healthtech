@@ -12,7 +12,7 @@ HealthTech is a Bachelor's thesis project for Aker Solutions. This is the second
     <td align="center" width="50%">
       <img src="./assets/showcase/foreman-team-noise.png" alt="Foreman noise data for team" width="100%" />
       <br />
-      <sub>A foreman's noise data for their team</sub>
+      <sub>A foreman's vibration data for their team</sub>
     </td>
   </tr>
   <tr>
