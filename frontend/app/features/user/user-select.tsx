@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
 import { cn } from "@/lib/utils";
 import { XIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export type UserSelectUser = { id: string; name: string };
@@ -26,6 +27,13 @@ export function UserSelect({
 	itemClassName,
 }: UserSelectProps) {
 	const { t } = useTranslation();
+
+	const [searchValue, setSearchValue] = useState<string>(value ? userSelectItemToStringLabel(value, users) : "");
+
+	useEffect(() => {
+		const currentLabel = value ? userSelectItemToStringLabel(value, users) : "";
+		setSearchValue(currentLabel);
+	}, [value, users]);
 
 	const disabled = !users || users.length === 0;
 
@@ -62,6 +70,10 @@ export function UserSelect({
 				<ComboboxInput
 					placeholder={placeholder}
 					disabled={disabled}
+					value={searchValue}
+					onChange={(e) => {
+						setSearchValue(e.target.value);
+					}}
 					className={cn(
 						"w-full rounded-r-md rounded-l-xl bg-background font-medium dark:bg-input/30",
 						inputClassName,
@@ -86,7 +98,10 @@ export function UserSelect({
 				aria-label={t(($) => $.foremanDashboard.overview.clearUserSelection)}
 				variant="outline"
 				size="icon"
-				onClick={() => onValueChange(null)}
+				onClick={() => {
+					onValueChange(null);
+					setSearchValue("");
+				}}
 				disabled={disabled || value === null}
 				className="rounded-r-xl"
 			>
