@@ -4,7 +4,7 @@ import { TIMEZONE } from "@/i18n/locale";
 import { today } from "@/lib/date";
 import { cn } from "@/lib/utils";
 import type { TZDate } from "@date-fns/tz";
-import { isAfter, isBefore, isToday } from "date-fns";
+import { isAfter, isBefore, isEqual, isToday } from "date-fns";
 import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useDate } from "../date-picker/use-date";
@@ -32,8 +32,11 @@ export function ViewPicker({
 	const { t } = useTranslation();
 	const views = allowedViews ?? ["day", "week", "month"];
 
-	const canNavigatePrevious = minDate ? !isBefore(navigate.previousValue, minDate) : true;
-	const canNavigateNext = maxDate ? !isAfter(navigate.nextValue, maxDate) : true;
+	const previousTarget = minDate && isBefore(navigate.previousValue, minDate) ? minDate : navigate.previousValue;
+	const nextTarget = maxDate && isAfter(navigate.nextValue, maxDate) ? maxDate : navigate.nextValue;
+
+	const canNavigatePrevious = !isEqual(previousTarget, date);
+	const canNavigateNext = !isEqual(nextTarget, date);
 
 	const isTodayDate = isToday(date, { in: TIMEZONE });
 
@@ -93,7 +96,7 @@ export function ViewPicker({
 						size="xs"
 						variant="ghost"
 						className="px-1!"
-						onClick={() => navigate.previous()}
+						onClick={() => setDate(previousTarget)}
 						disabled={!canNavigatePrevious}
 					>
 						<ChevronLeftIcon className="size-3.5 shrink-0" />
@@ -117,7 +120,7 @@ export function ViewPicker({
 						size="xs"
 						variant="ghost"
 						className="px-1!"
-						onClick={() => navigate.next()}
+						onClick={() => setDate(nextTarget)}
 						disabled={!canNavigateNext}
 					>
 						<p className="truncate text-xs">{nextString}</p>
