@@ -1,6 +1,6 @@
 import type { TZDate } from "@date-fns/tz";
 import { startOfDay } from "date-fns";
-import type { ExposureDataRequestDto, ExposureOverviewRequestDto } from "./dto";
+import type { ExposureDataRequestDto, ExposureOverviewRequestDto } from "./dto/exposure";
 import { type Exposure, exposures } from "./exposures";
 
 /**

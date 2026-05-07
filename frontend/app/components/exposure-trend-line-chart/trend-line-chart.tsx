@@ -1,7 +1,7 @@
 import { ChartContainer } from "@/components/ui/chart";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { DangerLevels } from "@/lib/danger-levels";
-import type { ExposureDto, ExposureTypeField } from "@/lib/dto";
+import type { ExposureDto, ExposureTypeField } from "@/lib/dto/exposure";
 import type { Exposure, ExposureUnit } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
 import { buildYAxisTicks, cn, DUST_Y_AXIS_STEP, formatExposureValue } from "@/lib/utils";

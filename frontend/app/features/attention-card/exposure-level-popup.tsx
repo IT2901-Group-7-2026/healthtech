@@ -2,7 +2,7 @@ import { ExposureBadge } from "@/components/exposure-badge";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { BasePopup } from "@/features/popups/base-popup";
 import type { DangerLevel } from "@/lib/danger-levels";
-import type { UserWithStatusDto } from "@/lib/dto.js";
+import type { UserWithStatusDto } from "@/lib/dto/user";
 import { exposures } from "@/lib/exposures.js";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";

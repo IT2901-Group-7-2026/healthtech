@@ -5,7 +5,7 @@ import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { getLocale } from "@/i18n/locale";
 import { exposureOverviewQueryOptions, exposureQueryOptions } from "@/lib/api";
-import { type Aggregation, Aggregations } from "@/lib/dto";
+import { type Aggregation, Aggregations } from "@/lib/dto/exposure";
 import { buildExposureOverviewQuery, buildExposureQuery } from "@/lib/exposure-query-utils";
 import { defaultDustField, exposures, parseAsDustField } from "@/lib/exposures";
 import { calculateSummaryCounts } from "@/lib/time-bucket-utils";

@@ -11,7 +11,7 @@ import { useView } from "@/features/views/use-view";
 import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { exposureQueryOptions } from "@/lib/api";
-import { type Aggregation, Aggregations, type ExposureDto } from "@/lib/dto";
+import { type Aggregation, Aggregations, type ExposureDto } from "@/lib/dto/exposure";
 import { buildExposureQuery } from "@/lib/exposure-query-utils";
 import type { Exposure } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";

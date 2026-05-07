@@ -8,7 +8,7 @@ import type {
 	ExposureOverviewRequestDto,
 	ExposureTypeField,
 	GranularityKey,
-} from "./dto";
+} from "./dto/exposure";
 
 function getGranularityFromView(view: View, isOverview?: boolean): GranularityKey {
 	switch (view) {

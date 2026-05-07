@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import type { UserWithStatusDto } from "@/lib/dto";
+import type { UserWithStatusDto } from "@/lib/dto/user";
 import { type Exposure, exposures } from "@/lib/exposures";
 import { ChevronDownIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";

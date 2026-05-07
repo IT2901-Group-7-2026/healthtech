@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
 import type { Exposure } from "@/features/exposure-picker/exposures";
 import { type DangerLevel, DangerLevelSchema, DangerLevels } from "@/lib/danger-levels";
-import type { UserWithStatusDto } from "@/lib/dto";
+import type { UserWithStatusDto } from "@/lib/dto/user";
 import { getThreshold } from "@/lib/thresholds";
 import { cn } from "@/lib/utils";
 import type { ComponentProps } from "react";

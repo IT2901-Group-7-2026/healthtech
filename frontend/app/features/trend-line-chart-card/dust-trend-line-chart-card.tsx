@@ -1,6 +1,6 @@
 import { TrendLineChart } from "@/components/exposure-trend-line-chart/trend-line-chart";
 import { exposureQueryOptions } from "@/lib/api";
-import type { ExposureTypeField } from "@/lib/dto";
+import type { ExposureTypeField } from "@/lib/dto/exposure";
 import { buildExposureQuery } from "@/lib/exposure-query-utils";
 import type { ExposureUnit } from "@/lib/exposures";
 import { computeYAxisRange, DUST_Y_AXIS_STEP } from "@/lib/utils";

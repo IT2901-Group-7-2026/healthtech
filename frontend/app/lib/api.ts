@@ -10,13 +10,10 @@ import {
 	ExposureOverviewResponseDtoSchema,
 	type ExposureResponseDto,
 	ExposureResponseDtoSchema,
-	type Note,
-	type NoteDataRequest,
-	NoteSchema,
-	ThresholdSummarySchema,
-	UserSchema,
-	UserWithStatusSchema,
-} from "./dto";
+} from "./dto/exposure";
+import { type Note, type NoteDataRequest, NoteSchema } from "./dto/note";
+import { ThresholdSummarySchema } from "./dto/threshold";
+import { UserSchema, UserWithStatusSchema } from "./dto/user";
 import { getStartEnd } from "./exposure-query-utils";
 import {
 	buildExposureOverviewQueryKey,

@@ -1,5 +1,5 @@
 import { useUser } from "@/features/user/user-context.js";
-import { UserRole } from "@/lib/dto.js";
+import { UserRole } from "@/lib/dto/user";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { ErrorBoundary } from "../root.js";

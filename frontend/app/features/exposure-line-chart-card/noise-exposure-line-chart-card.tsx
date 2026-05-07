@@ -10,7 +10,7 @@ import { useUser } from "@/features/user/user-context";
 import { useView } from "@/features/views/use-view";
 import { useExportPDF } from "@/hooks/use-export-pdf";
 import { exposureQueryOptions } from "@/lib/api";
-import { type Aggregation, Aggregations, type ExposureDto } from "@/lib/dto";
+import { type Aggregation, Aggregations, type ExposureDto } from "@/lib/dto/exposure";
 import { buildExposureQuery } from "@/lib/exposure-query-utils";
 import type { Exposure } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
