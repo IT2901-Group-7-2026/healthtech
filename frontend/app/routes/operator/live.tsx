@@ -11,7 +11,7 @@ import { useUser } from "@/features/user/user-context";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { exposureQueryOptions } from "@/lib/api";
 import { today as getToday, now, toTZDate } from "@/lib/date";
-import type { ExposureDto, ExposureTypeField } from "@/lib/dto";
+import type { ExposureDto, ExposureTypeField } from "@/lib/dto/exposure";
 import { buildExposureQuery } from "@/lib/exposure-query-utils";
 import type { ExposureUnit } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";

@@ -1,5 +1,5 @@
 import { Card, CardContent, CardLabelHeader } from "@/components/ui/card.js";
-import { createLocationName } from "@/lib/dto.js";
+import { createLocationName } from "@/lib/dto/user";
 import { MapPinIcon, ShieldUserIcon, UsersIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useUser } from "../user/user-context.js";

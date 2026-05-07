@@ -11,7 +11,7 @@ import {
 	useRemoveSubordinatesMutation,
 	usersQueryOptions,
 } from "@/lib/api";
-import { type User, UserRole, type UserWithStatusDto } from "@/lib/dto";
+import { type User, UserRole, type UserWithStatusDto } from "@/lib/dto/user";
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { useMemo, useState } from "react";

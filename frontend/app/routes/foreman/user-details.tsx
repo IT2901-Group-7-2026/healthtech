@@ -17,13 +17,8 @@ import { WeekWidget } from "@/features/week-widget/week-widget";
 import { useFormatDate } from "@/hooks/use-format-date";
 import { exposureOverviewQueryOptions, exposureQueryOptions } from "@/lib/api";
 import { getDangerLevel } from "@/lib/danger-levels";
-import {
-	type Aggregation,
-	Aggregations,
-	type ExposureDto,
-	type ExposureOverviewBucketDto,
-	type UserWithStatusDto,
-} from "@/lib/dto";
+import { type Aggregation, Aggregations, type ExposureDto, type ExposureOverviewBucketDto } from "@/lib/dto/exposure";
+import type { UserWithStatusDto } from "@/lib/dto/user";
 import { buildExposureOverviewQuery, buildExposureQuery } from "@/lib/exposure-query-utils";
 import {
 	type DustField,

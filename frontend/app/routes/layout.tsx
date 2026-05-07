@@ -25,7 +25,7 @@ import { useView } from "@/features/views/use-view";
 import { useFormatDate } from "@/hooks/use-format-date";
 import type { TranslateFn } from "@/i18n/config.js";
 import { usersQueryOptions } from "@/lib/api";
-import { type User, UserRoleSchema } from "@/lib/dto.js";
+import { type User, UserRoleSchema } from "@/lib/dto/user";
 import { cn, shorthandName, userRoleToString } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import "leaflet/dist/leaflet.css";

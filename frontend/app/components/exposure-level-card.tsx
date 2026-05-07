@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import type { Exposure } from "@/features/exposure-picker/exposures";
 import { dangerlevelStyles } from "@/lib/danger-levels";
-import type { UserWithStatusDto } from "@/lib/dto";
+import type { UserWithStatusDto } from "@/lib/dto/user";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 import { ExposureIcon } from "./exposure-icon.js";

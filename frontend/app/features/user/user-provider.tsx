@@ -1,4 +1,4 @@
-import type { User } from "@/lib/dto.js";
+import type { User } from "@/lib/dto/user";
 import { type ReactNode, useEffect, useState } from "react";
 import { UserContext } from "./user-context";
 import { DEFAULT_USER, USER_STORAGE_KEY } from "./user-utils";

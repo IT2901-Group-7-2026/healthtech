@@ -1,4 +1,4 @@
-import type { User } from "@/lib/dto.js";
+import type { User } from "@/lib/dto/user";
 import { getSecurityRegulations } from "@/lib/security-regulations.js";
 import { userRoleToString } from "@/lib/utils.js";
 import { BriefcaseBusiness, MapPin, User as UserIcon } from "lucide-react";

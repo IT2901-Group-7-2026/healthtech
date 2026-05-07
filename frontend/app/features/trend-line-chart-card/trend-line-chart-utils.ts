@@ -1,4 +1,4 @@
-import type { ExposureDto } from "@/lib/dto";
+import type { ExposureDto } from "@/lib/dto/exposure";
 import { startOfWeek } from "date-fns";
 
 /**

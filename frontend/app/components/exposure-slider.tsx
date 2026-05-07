@@ -1,7 +1,7 @@
 import { ExposureIcon } from "@/components/exposure-icon";
 import type { Exposure } from "@/features/exposure-picker/exposures";
 import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels";
-import type { ExposureTypeField } from "@/lib/dto";
+import type { ExposureTypeField } from "@/lib/dto/exposure";
 import { getThreshold } from "@/lib/thresholds";
 import { cn, getEmoji } from "@/lib/utils";
 import { useTranslation } from "react-i18next";

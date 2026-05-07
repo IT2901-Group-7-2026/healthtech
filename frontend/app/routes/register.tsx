@@ -2,7 +2,7 @@ import { SignupForm } from "@/components/signup-form.js";
 import { Button } from "@/components/ui/button.js";
 import { useUser } from "@/features/user/user-context.js";
 import { usersQueryOptions } from "@/lib/api.js";
-import { type User, UserRoleSchema } from "@/lib/dto.js";
+import { type User, UserRoleSchema } from "@/lib/dto/user";
 import { userRoleToString } from "@/lib/utils.js";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";

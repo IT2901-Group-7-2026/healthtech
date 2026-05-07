@@ -4,7 +4,7 @@ import { useFormatDate } from "@/hooks/use-format-date";
 import { getLocale } from "@/i18n/locale";
 import { DangerLevels } from "@/lib/danger-levels";
 import { now as getNow, toTZDate } from "@/lib/date";
-import type { ExposureDto, ExposureTypeField } from "@/lib/dto";
+import type { ExposureDto, ExposureTypeField } from "@/lib/dto/exposure";
 import type { Exposure, ExposureUnit } from "@/lib/exposures";
 import { getThreshold } from "@/lib/thresholds";
 import { buildYAxisTicks, cn, DUST_Y_AXIS_STEP, formatExposureValue } from "@/lib/utils";
