@@ -1,5 +1,5 @@
 import type { t } from "i18next";
-import type { resources } from "@/i18n/config";
+import type { resources } from "@/i18n/config.ts";
 
 export type TranslatedString = ReturnType<typeof t>;
 

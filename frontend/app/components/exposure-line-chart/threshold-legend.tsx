@@ -1,4 +1,4 @@
-import type { DangerLevel } from "@/lib/danger-levels";
+import type { DangerLevel } from "@/lib/danger-levels.ts";
 import { useTranslation } from "react-i18next";
 
 export type ThresholdLegendItem = {

@@ -1,8 +1,8 @@
-import { exposureIconConfig } from "@/components/icons/exposure-icons";
-import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.js";
-import type { Exposure } from "@/lib/exposures.js";
-import { cn } from "@/lib/utils.js";
-import { DangerLevelDots } from "./danger-level-dots.js";
+import { exposureIconConfig } from "@/components/icons/exposure-icons.ts";
+import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.ts";
+import type { Exposure } from "@/lib/exposures.ts";
+import { cn } from "@/lib/utils.ts";
+import { DangerLevelDots } from "./danger-level-dots.tsx";
 
 type ExposureIconSize = "xs" | "sm" | "md" | "lg" | "xl";
 

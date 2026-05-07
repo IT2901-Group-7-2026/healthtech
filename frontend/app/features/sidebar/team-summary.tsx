@@ -1,8 +1,8 @@
-import { Card, CardContent, CardLabelHeader } from "@/components/ui/card.js";
-import { createLocationName } from "@/lib/dto/user";
+import { Card, CardContent, CardLabelHeader } from "@/components/ui/card.tsx";
+import { createLocationName } from "@/lib/dto/user.ts";
 import { MapPinIcon, ShieldUserIcon, UsersIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useUser } from "../user/user-context.js";
+import { useUser } from "../user/user-context.tsx";
 
 export const TeamSummary = ({ subordinateCount }: { subordinateCount: number }) => {
 	const { t } = useTranslation();

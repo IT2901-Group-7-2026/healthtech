@@ -1,6 +1,6 @@
-import { tzDateSchema } from "@/lib/date";
+import { tzDateSchema } from "@/lib/date.ts";
 import { z } from "zod";
-import { DangerLevelSchema } from "../danger-levels";
+import { DangerLevelSchema } from "../danger-levels.ts";
 
 export const UserRoleSchema = z.enum(["operator", "foreman"]);
 

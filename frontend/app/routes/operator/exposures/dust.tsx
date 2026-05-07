@@ -1,17 +1,17 @@
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CalendarWidget } from "@/features/calendar-widget/calendar-widget";
-import { useDate } from "@/features/date-picker/use-date";
-import { ExposureLineChartCardSkeleton } from "@/features/exposure-line-chart-card/base-exposure-line-chart-card";
-import { DustExposureLineChartCard } from "@/features/exposure-line-chart-card/dust-exposure-line-chart-card";
-import { ExposureGraphEmptyState, ExposureStatisticsSection } from "@/features/statistic-card";
-import { getMaxPointByValue } from "@/features/statistic-card-utils";
-import { DustTrendLineChartCard } from "@/features/trend-line-chart-card/dust-trend-line-chart-card";
-import { useUser } from "@/features/user/user-context";
-import { useView } from "@/features/views/use-view";
-import { WeekWidget } from "@/features/week-widget/week-widget";
-import { useFormatDate } from "@/hooks/use-format-date";
-import { exposureQueryOptions } from "@/lib/api";
-import { buildExposureQuery } from "@/lib/exposure-query-utils";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
+import { CalendarWidget } from "@/features/calendar-widget/calendar-widget.tsx";
+import { useDate } from "@/features/date-picker/use-date.ts";
+import { ExposureLineChartCardSkeleton } from "@/features/exposure-line-chart-card/base-exposure-line-chart-card.tsx";
+import { DustExposureLineChartCard } from "@/features/exposure-line-chart-card/dust-exposure-line-chart-card.tsx";
+import { ExposureGraphEmptyState, ExposureStatisticsSection } from "@/features/statistic-card.tsx";
+import { getMaxPointByValue } from "@/features/statistic-card-utils.ts";
+import { DustTrendLineChartCard } from "@/features/trend-line-chart-card/dust-trend-line-chart-card.tsx";
+import { useUser } from "@/features/user/user-context.tsx";
+import { useView } from "@/features/views/use-view.ts";
+import { WeekWidget } from "@/features/week-widget/week-widget.tsx";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { exposureQueryOptions } from "@/lib/api.ts";
+import { buildExposureQuery } from "@/lib/exposure-query-utils.ts";
 import {
 	type DustField,
 	defaultDustField,
@@ -19,10 +19,10 @@ import {
 	type Exposure,
 	parseAsDustField,
 	parseAsExposureUnit,
-} from "@/lib/exposures";
-import { getThreshold } from "@/lib/thresholds";
-import { mapExposureDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { getHourDomain } from "@/lib/utils";
+} from "@/lib/exposures.ts";
+import { getThreshold } from "@/lib/thresholds.ts";
+import { mapExposureDataToTimeBucketStatuses } from "@/lib/time-bucket-utils.ts";
+import { getHourDomain } from "@/lib/utils.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
 import { useTranslation } from "react-i18next";

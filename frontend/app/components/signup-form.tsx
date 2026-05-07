@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button.tsx";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.tsx";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field.tsx";
+import { Input } from "@/components/ui/input.tsx";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
-import { Checkbox } from "./ui/checkbox.js";
+import { Checkbox } from "./ui/checkbox.tsx";
 
 export function SignupForm({ ...props }: React.ComponentProps<typeof Card>) {
 	const nameId = useId();

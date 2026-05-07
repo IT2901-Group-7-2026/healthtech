@@ -1,4 +1,4 @@
-import type { ExposureTypeField } from "@/lib/dto/exposure";
+import type { ExposureTypeField } from "@/lib/dto/exposure.ts";
 import { parseAsStringLiteral } from "nuqs";
 
 export const exposures = ["dust", "noise", "vibration"] as const;

@@ -1,8 +1,8 @@
 import { hoursToMinutes } from "date-fns";
-import type { DangerLevel } from "./danger-levels";
-import type { ExposureDto, ExposureOverviewBucketDto, GranularityKey } from "./dto/exposure";
-import { type Exposure, exposures } from "./exposures";
-import type { OverviewChartRow, SummaryCounts, SummaryLevelCounts, TimeBucketStatus } from "./time-bucket-types";
+import type { DangerLevel } from "./danger-levels.ts";
+import type { ExposureDto, ExposureOverviewBucketDto, GranularityKey } from "./dto/exposure.ts";
+import { type Exposure, exposures } from "./exposures.ts";
+import type { OverviewChartRow, SummaryCounts, SummaryLevelCounts, TimeBucketStatus } from "./time-bucket-types.ts";
 
 interface CalculateSummaryCountsOptions {
 	peakAggregation: boolean;

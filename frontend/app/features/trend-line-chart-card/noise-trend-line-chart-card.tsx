@@ -1,13 +1,13 @@
-import { TrendLineChart } from "@/components/exposure-trend-line-chart/trend-line-chart";
-import { exposureQueryOptions } from "@/lib/api";
-import { buildExposureQuery } from "@/lib/exposure-query-utils";
-import { computeYAxisRange } from "@/lib/utils";
+import { TrendLineChart } from "@/components/exposure-trend-line-chart/trend-line-chart.tsx";
+import { exposureQueryOptions } from "@/lib/api.ts";
+import { buildExposureQuery } from "@/lib/exposure-query-utils.ts";
+import { computeYAxisRange } from "@/lib/utils.ts";
 import { useQuery } from "@tanstack/react-query";
-import { useDate } from "../date-picker/use-date";
-import { useUser } from "../user/user-context";
-import { useView } from "../views/use-view";
-import { BaseTrendLineChartCard } from "./base-trend-line-chart-card";
-import { toWeeklyMax } from "./trend-line-chart-utils";
+import { useDate } from "../date-picker/use-date.ts";
+import { useUser } from "../user/user-context.tsx";
+import { useView } from "../views/use-view.ts";
+import { BaseTrendLineChartCard } from "./base-trend-line-chart-card.tsx";
+import { toWeeklyMax } from "./trend-line-chart-utils.ts";
 
 interface Props {
 	usePeakAggregation?: boolean;

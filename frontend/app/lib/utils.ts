@@ -1,16 +1,16 @@
-import type { View } from "@/features/views/views";
-import type { TranslateFn } from "@/i18n/config.js";
-import { TIMEZONE_NAME } from "@/i18n/locale";
+import type { View } from "@/features/views/views.ts";
+import type { TranslateFn } from "@/i18n/config.ts";
+import { TIMEZONE_NAME } from "@/i18n/locale.ts";
 import { TZDate } from "@date-fns/tz";
 import { type ClassValue, clsx } from "clsx";
 import { addDays, addMonths, addWeeks, subDays, subMonths, subWeeks } from "date-fns";
 import { CircleDashedIcon, FrownIcon, MehIcon, SmileIcon } from "lucide-react";
 import { twMerge } from "tailwind-merge";
-import type { DangerLevel } from "./danger-levels";
-import type { ExposureDto } from "./dto/exposure";
-import { DEFAULT_MAX_HOUR_DOMAIN, DEFAULT_MIN_HOUR_DOMAIN, type HourDomainDto } from "./dto/hour-domain";
-import type { User } from "./dto/user";
-import type { Exposure, ExposureUnit } from "./exposures";
+import type { DangerLevel } from "./danger-levels.ts";
+import type { ExposureDto } from "./dto/exposure.ts";
+import { DEFAULT_MAX_HOUR_DOMAIN, DEFAULT_MIN_HOUR_DOMAIN, type HourDomainDto } from "./dto/hour-domain.ts";
+import type { User } from "./dto/user.ts";
+import type { Exposure, ExposureUnit } from "./exposures.ts";
 
 const MAX_CHART_HOUR = 23;
 const MIN_CHART_HOUR = 0;

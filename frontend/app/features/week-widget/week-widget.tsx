@@ -1,11 +1,11 @@
-import { DangerLevelDots } from "@/components/danger-level-dots.js";
-import { useDate } from "@/features/date-picker/use-date";
-import { useFormatDate } from "@/hooks/use-format-date.js";
-import { TIMEZONE } from "@/i18n/locale";
-import { dangerlevelStyles } from "@/lib/danger-levels";
-import { toTZDate } from "@/lib/date";
-import type { TimeBucketStatus } from "@/lib/time-bucket-types";
-import { cn } from "@/lib/utils";
+import { DangerLevelDots } from "@/components/danger-level-dots.tsx";
+import { useDate } from "@/features/date-picker/use-date.ts";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { TIMEZONE } from "@/i18n/locale.ts";
+import { dangerlevelStyles } from "@/lib/danger-levels.ts";
+import { toTZDate } from "@/lib/date.ts";
+import type { TimeBucketStatus } from "@/lib/time-bucket-types.ts";
+import { cn } from "@/lib/utils.ts";
 import {
 	addDays,
 	eachDayOfInterval,
@@ -18,7 +18,7 @@ import {
 	startOfHour,
 	startOfWeek,
 } from "date-fns";
-import { useView } from "../views/use-view";
+import { useView } from "../views/use-view.ts";
 
 // ensure alignment between time-labels and hour slots
 const ROW_HEIGHT = "h-9";

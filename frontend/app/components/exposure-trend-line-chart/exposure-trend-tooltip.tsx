@@ -1,8 +1,8 @@
-import type { ExposureUnit } from "@/lib/exposures";
-import { formatExposureValue } from "@/lib/utils";
+import type { ExposureUnit } from "@/lib/exposures.ts";
+import { formatExposureValue } from "@/lib/utils.ts";
 import { useTranslation } from "react-i18next";
-import { ChartTooltip } from "../ui/chart";
-import type { SeriesDefinition } from "./trend-line-chart";
+import { ChartTooltip } from "../ui/chart.tsx";
+import type { SeriesDefinition } from "./trend-line-chart.tsx";
 
 export function ExposureTrendTooltip({
 	unit,

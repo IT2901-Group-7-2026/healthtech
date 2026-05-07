@@ -1,15 +1,15 @@
-import { useDate } from "@/features/date-picker/use-date";
-import { exposures } from "@/features/exposure-picker/exposures";
-import { useFormatDate } from "@/hooks/use-format-date";
-import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels";
-import type { OverviewChartRow } from "@/lib/time-bucket-types";
-import { cn } from "@/lib/utils.js";
+import { useDate } from "@/features/date-picker/use-date.ts";
+import { exposures } from "@/features/exposure-picker/exposures.ts";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.ts";
+import type { OverviewChartRow } from "@/lib/time-bucket-types.ts";
+import { cn } from "@/lib/utils.ts";
 import { setHours, startOfDay } from "date-fns";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, type To } from "react-router";
-import { DangerLevelDots } from "../../components/danger-level-dots.js";
-import { ExposureIcon } from "../../components/exposure-icon.js";
+import { DangerLevelDots } from "../../components/danger-level-dots.tsx";
+import { ExposureIcon } from "../../components/exposure-icon.tsx";
 
 const getDangerLevelClasses = (dangerLevel: DangerLevel | null) => {
 	if (dangerLevel) {

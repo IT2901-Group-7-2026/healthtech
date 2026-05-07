@@ -1,17 +1,17 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import type { Exposure } from "@/features/exposure-picker/exposures";
-import { type DangerLevel, DangerLevelSchema, DangerLevels } from "@/lib/danger-levels";
-import type { UserWithStatusDto } from "@/lib/dto/user";
-import { getThreshold } from "@/lib/thresholds";
-import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card.tsx";
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart.tsx";
+import type { Exposure } from "@/features/exposure-picker/exposures.ts";
+import { type DangerLevel, DangerLevelSchema, DangerLevels } from "@/lib/danger-levels.ts";
+import type { UserWithStatusDto } from "@/lib/dto/user.ts";
+import { getThreshold } from "@/lib/thresholds.ts";
+import { cn } from "@/lib/utils.ts";
 import type { ComponentProps } from "react";
 import { useTranslation } from "react-i18next";
 import { Bar, BarChart, type BarProps, CartesianGrid, Legend, Rectangle, XAxis, YAxis } from "recharts";
-import { ThresholdLegend } from "./exposure-line-chart/threshold-legend";
-import { ThresholdLine } from "./exposure-line-chart/threshold-line";
+import { ThresholdLegend } from "./exposure-line-chart/threshold-legend.tsx";
+import { ThresholdLine } from "./exposure-line-chart/threshold-line.tsx";
 
 const OUTER_BAR_RADIUS = 4;
 const LEFT_BAR_RADIUS = 0;

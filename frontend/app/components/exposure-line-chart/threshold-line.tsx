@@ -1,4 +1,4 @@
-import { type DangerLevel, DangerLevels } from "@/lib/danger-levels";
+import { type DangerLevel, DangerLevels } from "@/lib/danger-levels.ts";
 import { ReferenceLine } from "recharts";
 
 const getThresholdStrokeDasharray = (dangerLevel: DangerLevel) => (dangerLevel === "danger" ? "8 4" : "4 4");

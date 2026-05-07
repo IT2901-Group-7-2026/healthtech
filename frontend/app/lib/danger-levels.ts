@@ -1,7 +1,7 @@
-import type { Exposure } from "@/features/exposure-picker/exposures";
+import type { Exposure } from "@/features/exposure-picker/exposures.ts";
 import { t } from "i18next";
 import z from "zod";
-import type { UserWithStatusDto } from "./dto/user";
+import type { UserWithStatusDto } from "./dto/user.ts";
 
 export const DANGER_LEVEL_SEVERITY: Record<DangerLevel, number> = {
 	danger: 2,

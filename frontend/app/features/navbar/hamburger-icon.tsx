@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button.js";
-import { cn } from "@/lib/utils.js";
+import { Button } from "@/components/ui/button.tsx";
+import { cn } from "@/lib/utils.ts";
 
 export const HamburgerButton = () => (
 	<Button variant="ghost" size="icon">

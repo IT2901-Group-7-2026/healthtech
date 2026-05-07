@@ -1,25 +1,30 @@
-import { ExposureSlider } from "@/components/exposure-slider";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useDate } from "@/features/date-picker/use-date";
-import { DayWidget } from "@/features/day-widget/day-widget";
-import { ExposureLineChartCardSkeleton } from "@/features/exposure-line-chart-card/base-exposure-line-chart-card";
-import { DustExposureLineChartCard } from "@/features/exposure-line-chart-card/dust-exposure-line-chart-card";
-import NoiseExposureLineChartCard from "@/features/exposure-line-chart-card/noise-exposure-line-chart-card";
-import VibrationExposureLineChartCard from "@/features/exposure-line-chart-card/vibration-exposure-line-chart-card";
-import { ExposureStatisticsSection } from "@/features/statistic-card";
-import { getMaxPointByValue } from "@/features/statistic-card-utils";
-import { DustTrendLineChartCard } from "@/features/trend-line-chart-card/dust-trend-line-chart-card";
-import { NoiseTrendLineChartCard } from "@/features/trend-line-chart-card/noise-trend-line-chart-card";
-import { VibrationTrendLineChartCard } from "@/features/trend-line-chart-card/vibration-trend-line-chart-card";
-import { useView } from "@/features/views/use-view";
-import { WeekWidget } from "@/features/week-widget/week-widget";
-import { useFormatDate } from "@/hooks/use-format-date";
-import { exposureOverviewQueryOptions, exposureQueryOptions } from "@/lib/api";
-import { getDangerLevel } from "@/lib/danger-levels";
-import { type Aggregation, Aggregations, type ExposureDto, type ExposureOverviewBucketDto } from "@/lib/dto/exposure";
-import type { UserWithStatusDto } from "@/lib/dto/user";
-import { buildExposureOverviewQuery, buildExposureQuery } from "@/lib/exposure-query-utils";
+import { ExposureSlider } from "@/components/exposure-slider.tsx";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.tsx";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx";
+import { useDate } from "@/features/date-picker/use-date.ts";
+import { DayWidget } from "@/features/day-widget/day-widget.tsx";
+import { ExposureLineChartCardSkeleton } from "@/features/exposure-line-chart-card/base-exposure-line-chart-card.tsx";
+import { DustExposureLineChartCard } from "@/features/exposure-line-chart-card/dust-exposure-line-chart-card.tsx";
+import NoiseExposureLineChartCard from "@/features/exposure-line-chart-card/noise-exposure-line-chart-card.tsx";
+import VibrationExposureLineChartCard from "@/features/exposure-line-chart-card/vibration-exposure-line-chart-card.tsx";
+import { ExposureStatisticsSection } from "@/features/statistic-card.tsx";
+import { getMaxPointByValue } from "@/features/statistic-card-utils.ts";
+import { DustTrendLineChartCard } from "@/features/trend-line-chart-card/dust-trend-line-chart-card.tsx";
+import { NoiseTrendLineChartCard } from "@/features/trend-line-chart-card/noise-trend-line-chart-card.tsx";
+import { VibrationTrendLineChartCard } from "@/features/trend-line-chart-card/vibration-trend-line-chart-card.tsx";
+import { useView } from "@/features/views/use-view.ts";
+import { WeekWidget } from "@/features/week-widget/week-widget.tsx";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { exposureOverviewQueryOptions, exposureQueryOptions } from "@/lib/api.ts";
+import { getDangerLevel } from "@/lib/danger-levels.ts";
+import {
+	type Aggregation,
+	Aggregations,
+	type ExposureDto,
+	type ExposureOverviewBucketDto,
+} from "@/lib/dto/exposure.ts";
+import type { UserWithStatusDto } from "@/lib/dto/user.ts";
+import { buildExposureOverviewQuery, buildExposureQuery } from "@/lib/exposure-query-utils.ts";
 import {
 	type DustField,
 	defaultDustField,
@@ -28,10 +33,10 @@ import {
 	exposures,
 	parseAsDustField,
 	parseAsExposureUnit,
-} from "@/lib/exposures";
-import { getThreshold } from "@/lib/thresholds";
-import { mapOverviewBucketsToChartRows, mapOverviewDataToTimeBucketStatuses } from "@/lib/time-bucket-utils";
-import { computeYAxisRange, DUST_Y_AXIS_STEP, getHourDomain } from "@/lib/utils";
+} from "@/lib/exposures.ts";
+import { getThreshold } from "@/lib/thresholds.ts";
+import { mapOverviewBucketsToChartRows, mapOverviewDataToTimeBucketStatuses } from "@/lib/time-bucket-utils.ts";
+import { computeYAxisRange, DUST_Y_AXIS_STEP, getHourDomain } from "@/lib/utils.ts";
 import type { TZDate } from "@date-fns/tz";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import { parseAsStringLiteral, useQueryState } from "nuqs";

@@ -1,9 +1,9 @@
-import { ExposureIcon } from "@/components/exposure-icon";
-import type { Exposure } from "@/features/exposure-picker/exposures";
-import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels";
-import type { ExposureTypeField } from "@/lib/dto/exposure";
-import { getThreshold } from "@/lib/thresholds";
-import { cn, getEmoji } from "@/lib/utils";
+import { ExposureIcon } from "@/components/exposure-icon.tsx";
+import type { Exposure } from "@/features/exposure-picker/exposures.ts";
+import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.ts";
+import type { ExposureTypeField } from "@/lib/dto/exposure.ts";
+import { getThreshold } from "@/lib/thresholds.ts";
+import { cn, getEmoji } from "@/lib/utils.ts";
 import { useTranslation } from "react-i18next";
 
 interface Props {

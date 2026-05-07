@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import type { IconProps } from "./exposure-icons";
+import type { IconProps } from "./exposure-icons.ts";
 
 export function VibrationIcon({ className, size = 24, strokeWidth = 2, title, ...props }: IconProps) {
 	const { t } = useTranslation();

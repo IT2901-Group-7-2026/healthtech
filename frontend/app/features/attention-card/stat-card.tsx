@@ -1,7 +1,7 @@
-import { DangerLevelDots } from "@/components/danger-level-dots";
-import { Card, CardContent, CardHeader } from "@/components/ui/card.js";
-import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.js";
-import { cn } from "@/lib/utils.js";
+import { DangerLevelDots } from "@/components/danger-level-dots.tsx";
+import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
+import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.ts";
+import { cn } from "@/lib/utils.ts";
 import { ArrowRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 

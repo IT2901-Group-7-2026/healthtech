@@ -1,8 +1,8 @@
-import { Card } from "@/components/ui/card";
-import type { DangerLevel } from "@/lib/danger-levels";
-import { mapDangerLevelToColor } from "@/lib/danger-levels";
-import { exposures } from "@/lib/exposures";
-import { getEmoji } from "@/lib/utils";
+import { Card } from "@/components/ui/card.tsx";
+import type { DangerLevel } from "@/lib/danger-levels.ts";
+import { mapDangerLevelToColor } from "@/lib/danger-levels.ts";
+import { exposures } from "@/lib/exposures.ts";
+import { getEmoji } from "@/lib/utils.ts";
 import { t } from "i18next";
 
 interface LiveStatusOverviewCardProps {

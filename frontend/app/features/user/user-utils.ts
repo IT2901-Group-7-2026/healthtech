@@ -1,5 +1,5 @@
-import { now } from "@/lib/date";
-import type { User } from "@/lib/dto/user";
+import { now } from "@/lib/date.ts";
+import type { User } from "@/lib/dto/user.ts";
 
 export const USER_STORAGE_KEY = "demo_user_id" as const;
 

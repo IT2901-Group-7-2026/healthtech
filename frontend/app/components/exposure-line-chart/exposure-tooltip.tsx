@@ -1,8 +1,8 @@
-import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { useFormatDate } from "@/hooks/use-format-date";
-import { toTZDate } from "@/lib/date";
-import type { ExposureUnit } from "@/lib/exposures";
-import { formatExposureValue } from "@/lib/utils";
+import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart.tsx";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { toTZDate } from "@/lib/date.ts";
+import type { ExposureUnit } from "@/lib/exposures.ts";
+import { formatExposureValue } from "@/lib/utils.ts";
 import { useTranslation } from "react-i18next";
 
 export function ExposureTooltip({ unit }: { unit: ExposureUnit }) {

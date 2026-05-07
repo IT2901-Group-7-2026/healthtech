@@ -1,14 +1,14 @@
-import { exposureIconConfig, type IconType } from "@/components/icons/exposure-icons";
-import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.js";
-import type { Exposure } from "@/lib/exposures.js";
-import { cn } from "@/lib/utils.js";
+import { exposureIconConfig, type IconType } from "@/components/icons/exposure-icons.ts";
+import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.ts";
+import type { Exposure } from "@/lib/exposures.ts";
+import { cn } from "@/lib/utils.ts";
 import type { PropsWithChildren } from "react";
 
 const iconConfig: Record<Exposure, IconType> = exposureIconConfig;
 
 interface ExposureBadgeProps extends PropsWithChildren {
 	exposure: Exposure;
-	dangerLevel: DangerLevel;
+	dangerLevel: DangerLevel | null;
 	className?: string;
 }
 

@@ -1,24 +1,24 @@
-import { ExportButton } from "@/components/export-button";
-import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line";
-import { useDate } from "@/features/date-picker/use-date";
+import { ExportButton } from "@/components/export-button.tsx";
+import { ThresholdLine } from "@/components/exposure-line-chart/threshold-line.tsx";
+import { useDate } from "@/features/date-picker/use-date.ts";
 import {
 	BaseExposureLineChartCard,
 	ExposureLineChartCardSkeleton,
-} from "@/features/exposure-line-chart-card/base-exposure-line-chart-card";
-import { useUser } from "@/features/user/user-context";
-import { parseAsView } from "@/features/views/utils";
-import { useExportPDF } from "@/hooks/use-export-pdf";
-import { exposureQueryOptions } from "@/lib/api";
-import { buildExposureQuery } from "@/lib/exposure-query-utils";
-import type { Exposure } from "@/lib/exposures";
-import { getThreshold } from "@/lib/thresholds";
-import { computeYAxisRange, downsampleExposureData, getHourDomain } from "@/lib/utils";
+} from "@/features/exposure-line-chart-card/base-exposure-line-chart-card.tsx";
+import { useUser } from "@/features/user/user-context.tsx";
+import { parseAsView } from "@/features/views/utils.ts";
+import { useExportPDF } from "@/hooks/use-export-pdf.ts";
+import { exposureQueryOptions } from "@/lib/api.ts";
+import { buildExposureQuery } from "@/lib/exposure-query-utils.ts";
+import type { Exposure } from "@/lib/exposures.ts";
+import { getThreshold } from "@/lib/thresholds.ts";
+import { computeYAxisRange, downsampleExposureData, getHourDomain } from "@/lib/utils.ts";
 import { useQuery } from "@tanstack/react-query";
 import { setHours } from "date-fns";
 import { useQueryState } from "nuqs";
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
-import { ExposureGraphEmptyState } from "../statistic-card";
+import { ExposureGraphEmptyState } from "../statistic-card.tsx";
 
 interface Props {
 	userId?: string;
