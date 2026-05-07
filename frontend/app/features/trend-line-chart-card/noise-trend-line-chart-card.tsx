@@ -35,11 +35,12 @@ export function NoiseTrendLineChartCard({ usePeakAggregation, userId }: Props) {
 
 	const granularity = view === "week" ? "day" : "week";
 
-	const data = granularity === "week" ? toWeeklyMax(response?.data ?? []) : response?.data;
+	const rawData = response?.data ?? [];
+	const normalizedData = usePeakAggregation ? rawData.map((d) => ({ ...d, value: d.peakValue ?? d.value })) : rawData;
 
-	const maxValue = data
-		? Math.max(...data.map((d) => (usePeakAggregation && d.peakValue ? d.peakValue : d.value)))
-		: 0;
+	const data = granularity === "week" ? toWeeklyMax(normalizedData) : normalizedData;
+
+	const maxValue = data ? Math.max(...data.map((d) => d.value)) : 0;
 
 	const minY = 0;
 	let maxY = 150;
@@ -63,6 +64,7 @@ export function NoiseTrendLineChartCard({ usePeakAggregation, userId }: Props) {
 						exposure: exposure,
 					},
 				]}
+				usePeakDangerThreshold={usePeakAggregation === true}
 			/>
 		</BaseTrendLineChartCard>
 	);

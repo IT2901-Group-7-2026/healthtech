@@ -96,6 +96,7 @@ export default function NoiseExposureLineChartCard({ userId }: Props) {
 			maxY={maxY}
 			minY={minY}
 			exposure={exposure}
+			usePeakData={usePeakAggregation}
 			id={chartContainerId}
 			headerRight={
 				<ExportButton
