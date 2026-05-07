@@ -1,9 +1,9 @@
-import { type Exposure, ExposureSchema } from "@/features/exposure-picker/exposures";
-import { tzDateSchema } from "@/lib/date";
+import { type Exposure, ExposureSchema } from "@/features/exposure-picker/exposures.ts";
+import { tzDateSchema } from "@/lib/date.ts";
 import type { TZDate } from "@date-fns/tz";
 import { z } from "zod";
-import { DangerLevelSchema } from "../danger-levels";
-import { HourDomainDtoSchema } from "./hour-domain";
+import { DangerLevelSchema } from "../danger-levels.ts";
+import { HourDomainDtoSchema } from "./hour-domain.ts";
 
 export const granularityEnum = {
 	minute: 0,

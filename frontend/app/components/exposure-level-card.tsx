@@ -1,11 +1,11 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import type { Exposure } from "@/features/exposure-picker/exposures";
-import { dangerlevelStyles } from "@/lib/danger-levels";
-import type { UserWithStatusDto } from "@/lib/dto/user";
-import { cn } from "@/lib/utils";
+import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table.tsx";
+import type { Exposure } from "@/features/exposure-picker/exposures.ts";
+import { dangerlevelStyles } from "@/lib/danger-levels.ts";
+import type { UserWithStatusDto } from "@/lib/dto/user.ts";
+import { cn } from "@/lib/utils.ts";
 import { useTranslation } from "react-i18next";
-import { ExposureIcon } from "./exposure-icon.js";
+import { ExposureIcon } from "./exposure-icon.tsx";
 
 interface Props {
 	users: Array<UserWithStatusDto>;

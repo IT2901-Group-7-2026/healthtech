@@ -1,13 +1,13 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card.tsx";
+import { cn } from "@/lib/utils.ts";
 import { useTranslation } from "react-i18next";
 import {
 	ExposureLineChart,
 	type ExposureLineChartProps,
-} from "../../components/exposure-line-chart/exposure-line-chart";
-import { Skeleton } from "../../components/ui/skeleton";
+} from "../../components/exposure-line-chart/exposure-line-chart.tsx";
+import { Skeleton } from "../../components/ui/skeleton.tsx";
 
 export function BaseExposureLineChartCard({
 	headerRight,

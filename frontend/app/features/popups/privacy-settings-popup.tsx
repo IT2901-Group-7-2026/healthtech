@@ -1,16 +1,16 @@
-import { Button } from "@/components/ui/button";
-import { DateRangePicker } from "@/components/ui/date-range-picker";
-import { Field } from "@/components/ui/field";
-import { Form } from "@/components/ui/form";
-import { useFormatDate } from "@/hooks/use-format-date";
-import { now } from "@/lib/date";
+import { Button } from "@/components/ui/button.tsx";
+import { DateRangePicker } from "@/components/ui/date-range-picker.tsx";
+import { Field } from "@/components/ui/field.tsx";
+import { Form } from "@/components/ui/form.tsx";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { now } from "@/lib/date.ts";
 import { TZDate } from "@date-fns/tz";
 import { isBefore } from "date-fns";
 import { Share, Trash2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { BasePopup } from "./base-popup";
+import { BasePopup } from "./base-popup.tsx";
 
 interface PrivacySettingsPopupProps {
 	open: boolean;

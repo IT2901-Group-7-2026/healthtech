@@ -1,7 +1,7 @@
-import { useFormatDate } from "@/hooks/use-format-date";
-import { TIMEZONE, TIMEZONE_NAME } from "@/i18n/locale";
-import { cn } from "@/lib/utils";
-import { Calendar } from "@/ui/calendar";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { TIMEZONE, TIMEZONE_NAME } from "@/i18n/locale.ts";
+import { cn } from "@/lib/utils.ts";
+import { Calendar } from "@/ui/calendar.tsx";
 import { TZDate } from "@date-fns/tz";
 import { addMonths, addWeeks, startOfMonth, startOfWeek, subMilliseconds } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";

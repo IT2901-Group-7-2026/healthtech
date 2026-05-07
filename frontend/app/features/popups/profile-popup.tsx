@@ -1,9 +1,9 @@
-import type { User } from "@/lib/dto/user";
-import { getSecurityRegulations } from "@/lib/security-regulations.js";
-import { userRoleToString } from "@/lib/utils.js";
+import type { User } from "@/lib/dto/user.ts";
+import { getSecurityRegulations } from "@/lib/security-regulations.ts";
+import { userRoleToString } from "@/lib/utils.ts";
 import { BriefcaseBusiness, MapPin, User as UserIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { BasePopup } from "./base-popup";
+import { BasePopup } from "./base-popup.tsx";
 
 interface ProfilePopupProps {
 	user: User;

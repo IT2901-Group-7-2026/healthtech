@@ -1,6 +1,6 @@
 import type { TZDate } from "@date-fns/tz";
-import type { DangerLevel } from "./danger-levels";
-import type { Exposure } from "./exposures";
+import type { DangerLevel } from "./danger-levels.ts";
+import type { Exposure } from "./exposures.ts";
 
 export type OverviewChartRow = {
 	exposure: Exposure;

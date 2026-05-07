@@ -42,7 +42,8 @@
         "noUndeclaredVariables": "error",
         "noUnusedPrivateClassMembers": "error",
         "useExhaustiveDependencies": "error",
-        "noConstantCondition": "error"
+        "noConstantCondition": "error",
+        "useImportExtensions": "error"
       },
       "nursery": {
         "noShadow": "error",

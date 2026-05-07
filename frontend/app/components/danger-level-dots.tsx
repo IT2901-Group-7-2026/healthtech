@@ -1,5 +1,5 @@
-import { DANGER_LEVEL_SEVERITY, type DangerLevel } from "@/lib/danger-levels.js";
-import { cn } from "@/lib/utils.js";
+import { DANGER_LEVEL_SEVERITY, type DangerLevel } from "@/lib/danger-levels.ts";
+import { cn } from "@/lib/utils.ts";
 
 interface DangerLevelDotsProps {
 	dangerLevel: DangerLevel | null;

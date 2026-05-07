@@ -1,21 +1,21 @@
-import { ChartContainer } from "@/components/ui/chart";
-import { useFormatDate } from "@/hooks/use-format-date";
-import { DangerLevels } from "@/lib/danger-levels";
-import type { ExposureDto, ExposureTypeField } from "@/lib/dto/exposure";
-import type { Exposure, ExposureUnit } from "@/lib/exposures";
-import { getThreshold } from "@/lib/thresholds";
-import { buildYAxisTicks, cn, DUST_Y_AXIS_STEP, formatExposureValue } from "@/lib/utils";
+import { ChartContainer } from "@/components/ui/chart.tsx";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { DangerLevels } from "@/lib/danger-levels.ts";
+import type { ExposureDto, ExposureTypeField } from "@/lib/dto/exposure.ts";
+import type { Exposure, ExposureUnit } from "@/lib/exposures.ts";
+import { getThreshold } from "@/lib/thresholds.ts";
+import { buildYAxisTicks, cn, DUST_Y_AXIS_STEP, formatExposureValue } from "@/lib/utils.ts";
 import { addDays, addWeeks, endOfMonth, endOfWeek, getISOWeek, startOfDay, startOfMonth, startOfWeek } from "date-fns";
 import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Area, CartesianGrid, ComposedChart, Legend, Line, XAxis, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
-import { ExposureDot } from "../exposure-line-chart/exposure-dot";
-import { ExposureLegend } from "../exposure-line-chart/exposure-legend";
-import { ExposureLineChartGradientStops } from "../exposure-line-chart/exposure-line-chart-gradient-stops";
-import { ThresholdLegend } from "../exposure-line-chart/threshold-legend";
-import { ThresholdLine } from "../exposure-line-chart/threshold-line";
-import { ExposureTrendTooltip } from "./exposure-trend-tooltip";
+import { ExposureDot } from "../exposure-line-chart/exposure-dot.tsx";
+import { ExposureLegend } from "../exposure-line-chart/exposure-legend.tsx";
+import { ExposureLineChartGradientStops } from "../exposure-line-chart/exposure-line-chart-gradient-stops.tsx";
+import { ThresholdLegend } from "../exposure-line-chart/threshold-legend.tsx";
+import { ThresholdLine } from "../exposure-line-chart/threshold-line.tsx";
+import { ExposureTrendTooltip } from "./exposure-trend-tooltip.tsx";
 
 type TrendGranularity = "day" | "week";
 

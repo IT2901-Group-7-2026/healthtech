@@ -1,6 +1,6 @@
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select.js";
-import type { i18nInstance, TranslateFn } from "@/i18n/config.js";
-import { cn } from "@/lib/utils.js";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select.tsx";
+import type { i18nInstance, TranslateFn } from "@/i18n/config.ts";
+import { cn } from "@/lib/utils.ts";
 import { Languages } from "lucide-react";
 
 export const LanguageSelect = ({ i18n, t }: { i18n: typeof i18nInstance; t: TranslateFn }) => (

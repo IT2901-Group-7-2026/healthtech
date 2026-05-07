@@ -1,22 +1,22 @@
-import { ExposureTooltip } from "@/components/exposure-line-chart/exposure-tooltip";
-import { type ChartConfig, ChartContainer } from "@/components/ui/chart";
-import { useFormatDate } from "@/hooks/use-format-date";
-import { getLocale } from "@/i18n/locale";
-import { DangerLevels } from "@/lib/danger-levels";
-import { now as getNow, toTZDate } from "@/lib/date";
-import type { ExposureDto, ExposureTypeField } from "@/lib/dto/exposure";
-import type { Exposure, ExposureUnit } from "@/lib/exposures";
-import { getThreshold } from "@/lib/thresholds";
-import { buildYAxisTicks, cn, DUST_Y_AXIS_STEP, formatExposureValue } from "@/lib/utils";
+import { ExposureTooltip } from "@/components/exposure-line-chart/exposure-tooltip.tsx";
+import { type ChartConfig, ChartContainer } from "@/components/ui/chart.tsx";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { getLocale } from "@/i18n/locale.ts";
+import { DangerLevels } from "@/lib/danger-levels.ts";
+import { now as getNow, toTZDate } from "@/lib/date.ts";
+import type { ExposureDto, ExposureTypeField } from "@/lib/dto/exposure.ts";
+import type { Exposure, ExposureUnit } from "@/lib/exposures.ts";
+import { getThreshold } from "@/lib/thresholds.ts";
+import { buildYAxisTicks, cn, DUST_Y_AXIS_STEP, formatExposureValue } from "@/lib/utils.ts";
 import { TZDate } from "@date-fns/tz";
 import { addMinutes, formatDistanceToNowStrict } from "date-fns";
 import { type PropsWithChildren, useId } from "react";
 import { useTranslation } from "react-i18next";
 import { Area, CartesianGrid, ComposedChart, Legend, Line, XAxis, type XAxisTickContentProps, YAxis } from "recharts";
 import type { CurveType } from "recharts/types/shape/Curve";
-import { ExposureDot } from "./exposure-dot";
-import { ExposureLineChartGradientStops } from "./exposure-line-chart-gradient-stops";
-import { ThresholdLegend } from "./threshold-legend";
+import { ExposureDot } from "./exposure-dot.tsx";
+import { ExposureLineChartGradientStops } from "./exposure-line-chart-gradient-stops.tsx";
+import { ThresholdLegend } from "./threshold-legend.tsx";
 
 export type XAxisMode = "default" | "windowed";
 

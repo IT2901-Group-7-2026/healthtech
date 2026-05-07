@@ -1,5 +1,5 @@
-import { ChartContainer, ChartTooltip } from "@/components/ui/chart";
-import { type DangerLevel, DangerLevelSchema, dangerlevelStyles } from "@/lib/danger-levels.js";
+import { ChartContainer, ChartTooltip } from "@/components/ui/chart.tsx";
+import { type DangerLevel, DangerLevelSchema, dangerlevelStyles } from "@/lib/danger-levels.ts";
 import { useTranslation } from "react-i18next";
 import { Pie, PieChart, type PieSectorShapeProps, Sector } from "recharts";
 

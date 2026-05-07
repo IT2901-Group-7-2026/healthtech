@@ -1,15 +1,15 @@
-import { ExposureIcon } from "@/components/exposure-icon";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { UserStatusPieChart } from "@/components/users-status-pie-chart";
-import type { Exposure } from "@/features/exposure-picker/exposures";
+import { ExposureIcon } from "@/components/exposure-icon.tsx";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card.tsx";
+import { UserStatusPieChart } from "@/components/users-status-pie-chart.tsx";
+import type { Exposure } from "@/features/exposure-picker/exposures.ts";
 import {
 	DANGER_LEVEL_SEVERITY,
 	type DangerLevel,
 	DangerLevelSchema,
 	dangerlevelStyles,
 	mapDangerLevelToColor,
-} from "@/lib/danger-levels";
-import { cn } from "@/lib/utils";
+} from "@/lib/danger-levels.ts";
+import { cn } from "@/lib/utils.ts";
 import { ArrowRightIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";

@@ -1,5 +1,5 @@
-import { Card, CardContent, CardLabelHeader } from "@/components/ui/card";
-import { getSecurityRegulations } from "@/lib/security-regulations.js";
+import { Card, CardContent, CardLabelHeader } from "@/components/ui/card.tsx";
+import { getSecurityRegulations } from "@/lib/security-regulations.ts";
 import { ShieldCheckIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 

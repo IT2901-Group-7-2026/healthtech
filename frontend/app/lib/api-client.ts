@@ -1,4 +1,4 @@
-import { DEFAULT_USER, USER_STORAGE_KEY } from "@/features/user/user-utils";
+import { DEFAULT_USER, USER_STORAGE_KEY } from "@/features/user/user-utils.ts";
 
 const baseURL = import.meta.env.VITE_BASE_URL;
 

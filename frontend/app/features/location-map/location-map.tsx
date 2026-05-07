@@ -1,19 +1,19 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { dangerlevelStyles, getHighestDangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels";
-import type { UserWithStatusDto } from "@/lib/dto/user";
+import { Card, CardContent } from "@/components/ui/card.tsx";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx";
+import { dangerlevelStyles, getHighestDangerLevel, mapDangerLevelToColor } from "@/lib/danger-levels.ts";
+import type { UserWithStatusDto } from "@/lib/dto/user.ts";
 import L, { type LatLngBoundsExpression, type PathOptions } from "leaflet";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { Fragment, useRef, useState } from "react";
 import { renderToString } from "react-dom/server";
 import { useTranslation } from "react-i18next";
 import { ImageOverlay, MapContainer, Marker, Polygon } from "react-leaflet";
-import { type Exposure, exposures } from "../exposure-picker/exposures";
-import { HallOperatorList, HallOperatorListSkeleton } from "./hall-operator-list";
-import { MapUsersBadge } from "./location-map-users-badge";
-import { getCenterPoint, xyToyx } from "./location-map-utils";
-import { useImageSize } from "./use-image-size";
+import { type Exposure, exposures } from "../exposure-picker/exposures.ts";
+import { HallOperatorList, HallOperatorListSkeleton } from "./hall-operator-list.tsx";
+import { MapUsersBadge } from "./location-map-users-badge.tsx";
+import { getCenterPoint, xyToyx } from "./location-map-utils.ts";
+import { useImageSize } from "./use-image-size.tsx";
 
 type Hall = {
 	name: string;

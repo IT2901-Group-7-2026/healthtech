@@ -1,19 +1,19 @@
 /** biome-ignore-all lint/correctness/noNestedComponentDefinitions: CustomDay is intentionally defined inside CalendarView for prop access. */
 
-import { DangerLevelDots } from "@/components/danger-level-dots";
-import { Calendar } from "@/components/ui/calendar";
-import { getLocale, TIMEZONE } from "@/i18n/locale";
-import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels";
-import { toTZDate } from "@/lib/date";
-import type { TimeBucketStatus } from "@/lib/time-bucket-types";
-import { cn } from "@/lib/utils";
+import { DangerLevelDots } from "@/components/danger-level-dots.tsx";
+import { Calendar } from "@/components/ui/calendar.tsx";
+import { getLocale, TIMEZONE } from "@/i18n/locale.ts";
+import { type DangerLevel, dangerlevelStyles } from "@/lib/danger-levels.ts";
+import { toTZDate } from "@/lib/date.ts";
+import type { TimeBucketStatus } from "@/lib/time-bucket-types.ts";
+import { cn } from "@/lib/utils.ts";
 import type { TZDate } from "@date-fns/tz";
 import { isSameDay, startOfDay } from "date-fns";
 import type { CalendarDay, Modifiers } from "react-day-picker";
 import { useTranslation } from "react-i18next";
-import { useDate } from "../date-picker/use-date";
-import type { Exposure } from "../exposure-picker/exposures";
-import { useView } from "../views/use-view";
+import { useDate } from "../date-picker/use-date.ts";
+import type { Exposure } from "../exposure-picker/exposures.ts";
+import { useView } from "../views/use-view.ts";
 
 type CalendarProps = {
 	selectedDay: TZDate;

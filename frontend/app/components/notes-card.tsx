@@ -1,20 +1,20 @@
-import { useDate } from "@/features/date-picker/use-date";
-import { useUser } from "@/features/user/user-context";
-import { useView } from "@/features/views/use-view";
-import { useFormatDate } from "@/hooks/use-format-date.js";
-import { TIMEZONE } from "@/i18n/locale";
-import { createNote, deleteNote, notesQueryOptions, updateNote } from "@/lib/api";
-import { buildNotesQueryKeyPrefix } from "@/lib/query-key-builder";
-import { cn } from "@/lib/utils";
+import { useDate } from "@/features/date-picker/use-date.ts";
+import { useUser } from "@/features/user/user-context.tsx";
+import { useView } from "@/features/views/use-view.ts";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import { TIMEZONE } from "@/i18n/locale.ts";
+import { createNote, deleteNote, notesQueryOptions, updateNote } from "@/lib/api.ts";
+import { buildNotesQueryKeyPrefix } from "@/lib/query-key-builder.ts";
+import { cn } from "@/lib/utils.ts";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isSameDay } from "date-fns";
 import { NotebookPenIcon } from "lucide-react";
 import { type PropsWithChildren, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
-import { Card, CardContent, CardLabelHeader } from "./ui/card";
-import { Skeleton } from "./ui/skeleton.js";
-import { Textarea } from "./ui/textarea";
+import { Card, CardContent, CardLabelHeader } from "./ui/card.tsx";
+import { Skeleton } from "./ui/skeleton.tsx";
+import { Textarea } from "./ui/textarea.tsx";
 
 function NotesShell({ title, children }: PropsWithChildren<{ title: string }>) {
 	return (

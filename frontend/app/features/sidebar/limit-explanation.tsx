@@ -1,5 +1,5 @@
-import { DangerLevelDots } from "@/components/danger-level-dots";
-import { Card, CardContent } from "@/components/ui/card";
+import { DangerLevelDots } from "@/components/danger-level-dots.tsx";
+import { Card, CardContent } from "@/components/ui/card.tsx";
 import { useTranslation } from "react-i18next";
 
 export function LimitExplanation() {

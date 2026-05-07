@@ -1,7 +1,7 @@
-import { DustIcon } from "@/components/icons/dust-icon";
-import { NoiseIcon } from "@/components/icons/noise-icon";
-import { VibrationIcon } from "@/components/icons/vibration-icon";
-import type { Exposure } from "@/lib/exposures.js";
+import { DustIcon } from "@/components/icons/dust-icon.tsx";
+import { NoiseIcon } from "@/components/icons/noise-icon.tsx";
+import { VibrationIcon } from "@/components/icons/vibration-icon.tsx";
+import type { Exposure } from "@/lib/exposures.ts";
 import { ShieldAlertIcon } from "lucide-react";
 import type { ComponentType } from "react";
 

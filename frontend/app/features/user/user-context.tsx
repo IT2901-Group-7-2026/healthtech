@@ -1,4 +1,4 @@
-import type { User } from "@/lib/dto/user";
+import type { User } from "@/lib/dto/user.ts";
 import { createContext, useContext } from "react";
 
 type UserContextType = {

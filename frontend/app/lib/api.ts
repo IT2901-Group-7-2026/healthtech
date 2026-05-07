@@ -1,8 +1,8 @@
-import type { Exposure } from "@/features/exposure-picker/exposures";
+import type { Exposure } from "@/features/exposure-picker/exposures.ts";
 import type { TZDate } from "@date-fns/tz";
 import { keepPreviousData, queryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import { minutesToMilliseconds } from "date-fns";
-import { fetchWithUserId } from "./api-client";
+import { fetchWithUserId } from "./api-client.ts";
 import {
 	type ExposureDataRequestDto,
 	type ExposureOverviewRequestDto,
@@ -10,11 +10,11 @@ import {
 	ExposureOverviewResponseDtoSchema,
 	type ExposureResponseDto,
 	ExposureResponseDtoSchema,
-} from "./dto/exposure";
-import { type Note, type NoteDataRequest, NoteSchema } from "./dto/note";
-import { ThresholdSummarySchema } from "./dto/threshold";
-import { UserSchema, UserWithStatusSchema } from "./dto/user";
-import { getStartEnd } from "./exposure-query-utils";
+} from "./dto/exposure.ts";
+import { type Note, type NoteDataRequest, NoteSchema } from "./dto/note.ts";
+import { ThresholdSummarySchema } from "./dto/threshold.ts";
+import { UserSchema, UserWithStatusSchema } from "./dto/user.ts";
+import { getStartEnd } from "./exposure-query-utils.ts";
 import {
 	buildExposureOverviewQueryKey,
 	buildExposureQueryKey,
@@ -23,8 +23,8 @@ import {
 	buildSubordinatesQueryPrefix,
 	buildThresholdSummaryQueryKey,
 	type ExposureQueryKind,
-} from "./query-key-builder";
-import type { View } from "./views";
+} from "./query-key-builder.ts";
+import type { View } from "./views.ts";
 
 // We have at most 1 data point every minute so we don't need a shorter refetch interval than that
 const DEFAULT_REFETCH_INTERVAL = minutesToMilliseconds(1);

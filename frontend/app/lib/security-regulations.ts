@@ -1,4 +1,4 @@
-import type { TranslateFn } from "@/i18n/config.js";
+import type { TranslateFn } from "@/i18n/config.ts";
 import { Footprints, HardHat, type LucideIcon, ShieldPlus } from "lucide-react";
 
 export interface SecurityRegulation {

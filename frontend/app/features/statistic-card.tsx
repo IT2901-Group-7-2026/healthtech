@@ -1,8 +1,8 @@
-import { Card, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { dangerlevelStyles, getDangerLevel } from "@/lib/danger-levels.js";
-import type { ExposureUnit } from "@/lib/exposures";
-import { formatExposureValue } from "@/lib/utils";
+import { Card, CardTitle } from "@/components/ui/card.tsx";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { dangerlevelStyles, getDangerLevel } from "@/lib/danger-levels.ts";
+import type { ExposureUnit } from "@/lib/exposures.ts";
+import { formatExposureValue } from "@/lib/utils.ts";
 import { useTranslation } from "react-i18next";
 
 const formatValue = (value: number | null, unit: ExposureUnit) =>

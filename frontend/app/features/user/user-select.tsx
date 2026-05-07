@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button.tsx";
+import { Combobox, ComboboxContent, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox.tsx";
+import { cn } from "@/lib/utils.ts";
 import { XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";

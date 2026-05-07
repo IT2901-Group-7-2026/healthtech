@@ -1,13 +1,13 @@
-import { useUser } from "@/features/user/user-context";
-import { useFormatDate } from "@/hooks/use-format-date";
-import type { DangerLevel } from "@/lib/danger-levels";
-import type { Exposure } from "@/lib/exposures";
-import { cn } from "@/lib/utils";
+import { useUser } from "@/features/user/user-context.tsx";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
+import type { DangerLevel } from "@/lib/danger-levels.ts";
+import type { Exposure } from "@/lib/exposures.ts";
+import { cn } from "@/lib/utils.ts";
 import { TZDate } from "@date-fns/tz";
 import { formatDate } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router";
-import { ExposureIcon } from "./exposure-icon";
+import { ExposureIcon } from "./exposure-icon.tsx";
 
 const notifications: Array<{
 	exposure: Exposure;

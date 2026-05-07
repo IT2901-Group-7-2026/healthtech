@@ -1,4 +1,4 @@
-import { tzDateSchema } from "@/lib/date";
+import { tzDateSchema } from "@/lib/date.ts";
 import type { TZDate } from "@date-fns/tz";
 import { z } from "zod";
 

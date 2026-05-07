@@ -1,7 +1,7 @@
 import type { TZDate } from "@date-fns/tz";
 import { startOfDay } from "date-fns";
-import type { ExposureDataRequestDto, ExposureOverviewRequestDto } from "./dto/exposure";
-import { type Exposure, exposures } from "./exposures";
+import type { ExposureDataRequestDto, ExposureOverviewRequestDto } from "./dto/exposure.ts";
+import { type Exposure, exposures } from "./exposures.ts";
 
 /**
  * For queries that fetches data for exact time-ranges and not just whole days, `windowed` should be used.

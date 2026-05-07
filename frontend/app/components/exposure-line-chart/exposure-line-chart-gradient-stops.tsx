@@ -1,5 +1,5 @@
-import { dangerlevelStyles, getDangerLevel } from "@/lib/danger-levels";
-import { normalizeDangerLevelForPeakForLineChart } from "@/lib/utils";
+import { dangerlevelStyles, getDangerLevel } from "@/lib/danger-levels.ts";
+import { normalizeDangerLevelForPeakForLineChart } from "@/lib/utils.ts";
 
 interface ExposureLineChartGradientStopsProps {
 	values: Array<number>;

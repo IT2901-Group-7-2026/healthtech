@@ -1,4 +1,4 @@
-import { TIMEZONE, TIMEZONE_NAME } from "@/i18n/locale";
+import { TIMEZONE, TIMEZONE_NAME } from "@/i18n/locale.ts";
 import { TZDate } from "@date-fns/tz";
 import { formatDate, isExists, startOfDay } from "date-fns";
 import { createParser } from "nuqs";

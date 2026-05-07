@@ -1,8 +1,8 @@
 // biome-ignore-all lint/nursery/noShadow: Allow us to use the variable name "user" in different scopes
 
-import { LocationMap } from "@/features/location-map/location-map";
-import { useUser } from "@/features/user/user-context";
-import { fetchSubordinatesQueryOptions } from "@/lib/api";
+import { LocationMap } from "@/features/location-map/location-map.tsx";
+import { useUser } from "@/features/user/user-context.tsx";
+import { fetchSubordinatesQueryOptions } from "@/lib/api.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 

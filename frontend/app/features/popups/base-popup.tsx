@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useFormatDate } from "@/hooks/use-format-date.js";
+import { Button } from "@/components/ui/button.tsx";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog.tsx";
+import { useFormatDate } from "@/hooks/use-format-date.ts";
 import type { TZDate } from "@date-fns/tz";
 import { t } from "i18next";
 import { NavLink } from "react-router";

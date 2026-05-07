@@ -1,17 +1,17 @@
 // biome-ignore-all lint/nursery/noShadow: Allow us to use the variable name "user" in different scopes
 
-import { Button } from "@/components/ui/button.js";
-import { Checkbox } from "@/components/ui/checkbox.js";
-import { DataTable } from "@/components/ui/data-table";
-import { useUser } from "@/features/user/user-context";
-import { UserSearch } from "@/features/user/user-search.js";
+import { Button } from "@/components/ui/button.tsx";
+import { Checkbox } from "@/components/ui/checkbox.tsx";
+import { DataTable } from "@/components/ui/data-table.tsx";
+import { useUser } from "@/features/user/user-context.tsx";
+import { UserSearch } from "@/features/user/user-search.tsx";
 import {
 	fetchSubordinatesQueryOptions,
 	useAddSubordinatesMutation,
 	useRemoveSubordinatesMutation,
 	usersQueryOptions,
-} from "@/lib/api";
-import { type User, UserRole, type UserWithStatusDto } from "@/lib/dto/user";
+} from "@/lib/api.ts";
+import { type User, UserRole, type UserWithStatusDto } from "@/lib/dto/user.ts";
 import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef, RowSelectionState } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
