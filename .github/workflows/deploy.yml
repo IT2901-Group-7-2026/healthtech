@@ -44,7 +44,7 @@ jobs:
           DB_CONTAINER_NAME: healthtech-prd-db-1
         run: |
           echo "Rebuilding and deploying..."
-          docker compose --env-file ./backend/.env -f docker-compose.prd.yml up --build -d
+          docker compose --env-file ./backend/.env --env-file ./frontend/.env -f docker-compose.prd.yml up --build -d
 
           # Simple health check
           sleep 15

@@ -1,6 +1,6 @@
 import { DEFAULT_USER, USER_STORAGE_KEY } from "@/features/user/user-utils.ts";
 
-const baseURL = import.meta.env.VITE_BASE_URL;
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 function getSignedInUserId(): string {
 	try {
