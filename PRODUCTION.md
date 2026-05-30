@@ -69,7 +69,7 @@ The migrator service in our `docker-compose.prd.yml` is set up to run the migrat
 
 cd ~/healthtech
 
-docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml run --rm migrator
+docker compose --env-file ~/env/backend.env --env-file ~/env/frontend.env -f docker-compose.prd.yml run --rm db-migrator
 ```
 
 ### Launch the application
@@ -81,17 +81,17 @@ Build and start all services (database, backend, frontend, and Traefik) from the
 
 cd ~/healthtech
 
-docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml up --build -d
+docker compose --env-file ~/env/backend.env --env-file ~/env/frontend.env -f docker-compose.prd.yml up --build -d
 # NOTE: Seed the database after the containers are running. See the section below.
 
 # To stop the app:
-#   docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml down
+#   docker compose --env-file ~/env/backend.env --env-file ~/env/frontend.env -f docker-compose.prd.yml down
 # If you also want to remove volumes (the database's data):
-#   docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml down -v
+#   docker compose --env-file ~/env/backend.env --env-file ~/env/frontend.env -f docker-compose.prd.yml down -v
 
 # If you run into caching issues, you can try building first, then running:
-#   docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml build --no-cache
-#   docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml up -d
+#   docker compose --env-file ~/env/backend.env --env-file ~/env/frontend.env -f docker-compose.prd.yml build --no-cache
+#   docker compose --env-file ~/env/backend.env --env-file ~/env/frontend.env -f docker-compose.prd.yml up -d
 ```
 
 Note that our Traefik configuration is made for using an IP address instead of a domain. If you want to use a domain, you need to update the `Host` rules in `infra/traefik/traefik.yml` and ensure your DNS points to your server.
@@ -148,14 +148,14 @@ Check if everything is running correctly:
 cd ~/healthtech
 
 # See status of all production containers
-docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml ps
+docker compose --env-file ~/env/backend.env --env-file ~/env/frontend.env -f docker-compose.prd.yml ps
 # To see ALL containers: docker ps
 
 # Follow logs for a specific container (you can find names from the previous command)
-docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml logs -f backend
-docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml logs -f frontend
-docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml logs -f db
-docker compose --env-file ~/env/backend.env -f docker-compose.prd.yml logs -f traefik
+docker compose --env-file ~/env/backend.env --env-file ~/env/frontend.env -f docker-compose.prd.yml logs -f backend
+docker compose --env-file ~/env/backend.env --env-file ~/env/frontend.env -f docker-compose.prd.yml logs -f frontend
+docker compose --env-file ~/env/backend.env --env-file ~/env/frontend.env -f docker-compose.prd.yml logs -f db
+docker compose --env-file ~/env/backend.env --env-file ~/env/frontend.env -f docker-compose.prd.yml logs -f traefik
 ```
 
 ## Setting up the GitHub Actions runner

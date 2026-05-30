@@ -55,6 +55,8 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:?Environment variable VITE_API_BASE_URL is required}
     restart: unless-stopped
     env_file:
       - ~/env/frontend.env
